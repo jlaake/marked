@@ -48,6 +48,7 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
    time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
    if(!is.null(Phi.dmdf$time.interval))
 	   time.intervals=matrix(Phi.dmdf$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
+   time.intervals.save=time.intervals
    Phi.fixed=parameters$Phi$fixed
    p.fixed=parameters$p$fixed
    if(is.null(Phi.fixed))
@@ -146,6 +147,7 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
         p.fixed=cbind( match(chi,indices),occj,val)
        }  
       ch=x$ch[sort(indices)]
+	  time.intervals=time.intervals[sort(indices),]
       imat=process.ch(ch,freq) 
 	  if(sum(freq)!=nrow(x))stop(paste("Error in accumulation. Number of accumulated",sum(freq),"not equal to original number",nrow(x)))
       cat(" ",nrow(x)," capture histories collapsed into ",length(ch),"\n")
@@ -216,7 +218,7 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
    if(!is.null(p.dm.save)) p.dm=p.dm.save
    if(!is.null(Phi.fixed.save)) Phi.fixed=Phi.fixed.save
    if(!is.null(p.fixed.save)) p.fixed=p.fixed.save
-   allval=cjs.lnl(cjs.beta,imat,Phi.dm,p.dm,Phi.fixed,p.fixed,Phi.links,p.links,time.intervals=time.intervals,all=TRUE)
+   allval=cjs.lnl(cjs.beta,imat,Phi.dm,p.dm,Phi.fixed,p.fixed,Phi.links,p.links,time.intervals=time.intervals.save,all=TRUE)
    reals=Phi.dmdf
    names(reals)[names(reals)=="time"]="Phi.time"
    names(reals)[names(reals)=="age"]="Phi.age"
@@ -235,7 +237,7 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("\n Computing hessian\n")
 	   res$hessian=hessian(cjs.lnl,cjs.beta,imat=imat,Phi.dm=Phi.dm,p.dm=p.dm,Phi.fixed=Phi.fixed,p.fixed=p.fixed,Phi.links=Phi.links,
-			   p.links=p.links,time.intervals=time.intervals,all=FALSE)
+			   p.links=p.links,time.intervals=time.intervals.save,all=FALSE)
 	   res$vcv=solve(res$hessian*outer(1/res$scale,1/res$scale,"*"))
        colnames(res$vcv)=names(cjs.beta)
        rownames(res$vcv)=names(cjs.beta)

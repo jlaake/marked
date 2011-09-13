@@ -59,6 +59,7 @@ js=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,me
  time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
  if(!is.null(Phi.dmdf$time.interval))
 	 time.intervals=matrix(Phi.dmdf$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
+ time.intervals.save=time.intervals
  Phi.fixed=parameters$Phi$fixed
  p.fixed=parameters$p$fixed
  pent.fixed=parameters$pent$fixed
@@ -192,6 +193,7 @@ js=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,me
       ch=x$ch[sort(indices)]
 #     Compute new imat
 	  imat=process.ch(ch,freq,all=TRUE)
+	  time.intervals=time.intervals[sort(indices),]
 	  nx=sum(x$freq)
 	  if(sum(freq)!=nx)
 		   stop(paste("Error in accumulation. Number of accumulated",sum(freq),"not equal to original number",nx))
