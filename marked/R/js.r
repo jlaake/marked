@@ -1,3 +1,6 @@
+# Note: Code needs to be changed like with cjs to allow scaling and autoscaling and
+# to compute hessian; to use model_data for arguments and to be modularized.
+#
 js=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method="BFGS",
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
 ###################################################################################

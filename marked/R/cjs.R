@@ -1,4 +1,4 @@
-cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
+cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale, ...)
 ###################################################################################
 # cjs - convenience function for optim to optimize the cjs likelihood (cjs.lnl) for
@@ -40,185 +40,123 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
 #                       to fix p(i,j)=f 
    Phi.dmdf=ddl$Phi
    p.dmdf=ddl$p
-   Phi.dm=dml$Phi
-   p.dm=dml$p
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
-#  so that the initial time interval can vary by animal
+#  so that the initial time interval can vary by animal; use default of 1 if none are in Phi.dmdf
    time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
    if(!is.null(Phi.dmdf$time.interval))
 	   time.intervals=matrix(Phi.dmdf$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
-   time.intervals.save=time.intervals
-   Phi.fixed=parameters$Phi$fixed
-   p.fixed=parameters$p$fixed
-   if(is.null(Phi.fixed))
-      Phi.fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
-   if(is.null(p.fixed))
-      p.fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
+#  If no fixed real parameters are specified, assign dummy unused ones with negative indices and 0 value
+   if(is.null(parameters$Phi$fixed))
+	   parameters$Phi$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
+   if(is.null(parameters$p$fixed))
+	   parameters$p$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
+#  Store data from x into x
    x=x$data
 #  set default frequencies if not used
    if(is.null(x$freq))
       freq=NULL
    else
       freq=x$freq
-#  get first and last vectors, loc and chmat
+#  get first and last vectors, loc and chmat with process.ch and store in imat
    ch=x$ch
    imat=process.ch(ch,freq)
-   imat.save=NULL
-   Phi.dm.save=NULL
-   p.dm.save=NULL  
-   Phi.fixed.save=NULL
-   p.fixed.save=NULL  
-#  if data are to be accumulated based on ch and design matrices do so here;
-#  otherwise simply set ch
-   if(accumulate)
+#  Use specified initial values or create if null
+   if(is.null(initial))
    {
-	  cat("\n Accumulating capture frequencies based on design. This can take awhile.\n")
-	  flush.console()
-	  imat.save=imat   
-      Phi.dm.save=Phi.dm
-      p.dm.save=p.dm
-      chmat=imat$chmat
-      if(sum(imat$loc)>0)
-      {
-         indices=which(imat$loc==1)
-         chmat[cbind(indices,imat$last[indices])]=2
-         ch=apply(chmat,1,paste,collapse="")
-      }
-      else
-         ch=x$ch
-      Phifixmat=NULL
-      pfixmat=NULL
-      Phi.fixed.save=Phi.fixed
-      p.fixed.save=p.fixed
-      if(Phi.fixed[1,1]>0)
-      {
-         Phifixmat=rep(NA,nrow(x)*(nocc-1))
-         Phifixmat[(nocc-1)*(Phi.fixed[,1]-1)+Phi.fixed[,2]]=Phi.fixed[,3]      
-      }
-      if(p.fixed[1,1]>0)
-      {         
-         pfixmat=rep(NA,nrow(x)*(nocc-1))
-         pfixmat[(nocc-1)*(p.fixed[,1]-1)+p.fixed[,2]-1]=p.fixed[,3]      
-      }
-	  nrows=nrow(Phi.dm)
-	  pieces=floor(max(ncol(Phi.dm),ncol(p.dm))*nrows/chunk_size)+1
-	  chdesign=NULL
-	  iseq=seq(1,nrow(x),floor(nrows/pieces/(nocc-1)))
-      if(iseq[length(iseq)]!=nrow(x))iseq=c(iseq,nrow(x))
-	  prev_i=1
-	  for(i in iseq[-1])
-	  {
- 	   lower=(prev_i-1)*(nocc-1)+1
- 	   upper=i*(nocc-1)
-   	   xdesign=cbind(rep(ch[prev_i:i],each=nocc-1),as.matrix(Phi.dm[lower:upper,,drop=FALSE]),as.matrix(p.dm[lower:upper,,drop=FALSE]),
-			                                       Phifixmat[lower:upper],pfixmat[lower:upper])
-	   xdesign=sapply(split(xdesign,rep(1:(i-prev_i+1),each=nocc-1)),paste,collapse="")
-	   chdesign=c(chdesign,xdesign)
-	   prev_i=i+1
-	  }
-#     If time intervals vary across individuals, then use it as part of accumulation 
-#     split
-      occ.int=as.vector(unlist(apply(time.intervals,2,unique)))
-	  if(length(occ.int)!=(nocc-1))
-		  chdesign=paste(chdesign,apply(time.intervals,1,paste,collapse=""),sep="")
-      chsplit=split(1:nrow(x),chdesign)
-      indices=as.vector(sapply(chsplit,min))
-      if(is.null(freq))
-         counts=as.vector(sapply(chsplit,length))
-      else
-         counts=as.vector(sapply(chsplit,function(x)sum(freq[x])))
-      freq=counts[order(indices)]
-      dm.index=rep(1:nrow(x),each=nocc-1)%in%indices
-      Phi.dm=Phi.dm[dm.index,,drop=FALSE]
-      p.dm=p.dm[dm.index,,drop=FALSE]
-      if(!is.null(Phifixmat))
-      {
-        chi=(rep(1:nrow(x),each=nocc-1))[dm.index][!is.na(Phifixmat)[dm.index]]
-        occj=(rep(1:(nocc-1),times=nrow(x)))[dm.index][!is.na(Phifixmat)[dm.index]]
-        val=Phifixmat[dm.index][!is.na(Phifixmat)[dm.index]]
-        Phi.fixed=cbind( match(chi,indices),occj,val)
-       }  
-      if(!is.null(pfixmat))
-      {
-        chi=(rep(1:nrow(x),each=nocc-1))[dm.index][!is.na(pfixmat)[dm.index]]
-        occj=(rep(2:nocc,times=nrow(x)))[dm.index][!is.na(pfixmat)[dm.index]]
-        val=pfixmat[dm.index][!is.na(pfixmat)[dm.index]]
-        p.fixed=cbind( match(chi,indices),occj,val)
-       }  
-      ch=x$ch[sort(indices)]
-	  time.intervals=time.intervals[sort(indices),]
-      imat=process.ch(ch,freq) 
-	  if(sum(freq)!=nrow(x))stop(paste("Error in accumulation. Number of accumulated",sum(freq),"not equal to original number",nrow(x)))
-      cat(" ",nrow(x)," capture histories collapsed into ",length(ch),"\n")
+	   if(is.null(Phi)|is.null(p))
+		   par=cjs.initial(dml,parameters,imat)
+	   else  
+	       par=c(log(Phi/(1-Phi)),rep(0,ncol(dml$Phi)-1),log(p/(1-p)),rep(0,ncol(dml$p)-1))
    }
-#  Create links   
+   else
+   {
+	   if(is.null(names(initial)))
+	   {
+		   if(length(initial)!=(ncol(dml$Phi)+ncol(dml$p)))
+			   stop("Length of initial vector does not match number of parameters.")
+		   else
+			   par=initial
+	   }
+	   else
+	   {
+		   beta.names=c(paste("Phi:",colnames(dml$Phi),sep="") ,paste("p:",colnames(dml$p),sep=""))
+		   par=rep(0,length(beta.names))
+		   par[beta.names%in%names(initial)]=initial[which(names(initial)%in%beta.names)]
+	   }
+   }
+   #  Create list of model data for optimization; if passed as an argument create model_data.save 
+#  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
+#  if requested.
+    if(!is.null(model_data)) 
+	{
+		model_data.save=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
+				p.fixed=parameters$p$fixed,time.intervals=time.intervals)
+	}else
+	{
+		model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
+				p.fixed=parameters$p$fixed,time.intervals=time.intervals)
+#       If data are to be accumulated based on ch and design matrices do so here;
+		if(accumulate)
+		{
+			cat("\n Accumulating capture frequencies based on design. This can take awhile.\n")
+			flush.console()
+			model_data.save=model_data   
+			model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
+		}else
+			model_data.save=NULL
+	}
+#   Create links  -- not used at present; idea here is to use sin links for parameters where you can   
 #   Phi.links=create.links(Phi.dm)
 #   Phi.links=which(Phi.links==1)
 #   p.links=create.links(p.dm)
 #   p.links=which(p.links==1)
-    Phi.links=NULL
-	p.links=NULL
-#  if no initial values set, set some default ones
-   if(is.null(initial))
-   {
-      if(is.null(Phi))Phi=0.5
-      if(is.null(p))p=0.5   
-   }     
+#
 #  Scale the design matrices with either input scale or computed scale
    if(is.null(scale))
    {
-      scale.phi=apply(Phi.dm,2,function(x) mean(x[x!=0]))
-	  scale.p=apply(p.dm,2,function(x) mean(x[x!=0]))
+      scale.phi=apply(model_data$Phi.dm,2,function(x) mean(x[x!=0]))
+	  scale.p=apply(model_data$p.dm,2,function(x) mean(x[x!=0]))
    } else
    {
-	   scale.phi=scale[1:ncol(Phi.dm)]
-	   scale.p=scale[(ncol(Phi.dm)+1):length(scale)]
+	   if(all(scale==1))
+	   {
+		   scale.phi=rep(1,ncol(model_data$Phi.dm))
+		   scale.p=rep(1,ncol(model_data$p.dm))
+	   }else
+	   {
+		   scale.phi=scale[1:ncol(model_data$Phi.dm)]
+		   scale.p=scale[(ncol(model_data$Phi.dm)+1):length(scale)]
+	   }
    }
-   for(i in which(scale.phi<.99 | scale.phi>1.01)) Phi.dm[,i]=Phi.dm[,i]/scale.phi[i]
-   for(i in which(scale.p<.99 | scale.p>1.01)) p.dm[,i]=p.dm[,i]/scale.p[i]
-#  call optim to find mles with cjs.lnl which gives -2 * log-likelihood
-   cat("\n Starting optimization for ",ncol(Phi.dm)+ncol(p.dm)," parameters\n")
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+   for(i in which(scale.phi<.99 | scale.phi>1.01)) model_data$Phi.dm[,i]=model_data$Phi.dm[,i]/scale.phi[i]
+   for(i in which(scale.p<.99 | scale.p>1.01)) model_data$p.dm[,i]=model_data$p.dm[,i]/scale.p[i]
+#  Call optimx to find mles with cjs.lnl which gives -2 * log-likelihood
+   cat("\n Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
    flush.console()
-   if(is.null(initial))
-	  par=c(log(Phi/(1-Phi)),rep(0,ncol(Phi.dm)-1),log(p/(1-p)),rep(0,ncol(p.dm)-1))
-   else
-   {
-      if(is.null(names(initial)))
-      {
-         if(length(initial)!=(ncol(Phi.dm)+ncol(p.dm)))
-            stop("Length of initial vector does not match number of parameters.")
-         else
-            par=initial
-      }
-      else
-      {
-        beta.names=c(paste("Phi:",colnames(Phi.dm),sep="") ,paste("p:",colnames(p.dm),sep=""))
-        par=rep(0,length(beta.names))
-        par[beta.names%in%names(initial)]=initial[which(names(initial)%in%beta.names)]
-      }
-   }
+   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
    convergence=1
    i=0
    if(is.null(scale))par=par*c(scale.phi,scale.p)
    while (convergence!=0 & i <= refit)
    {
-      mod=optimx(par,cjs.lnl,imat=imat,Phi.dm=Phi.dm,p.dm=p.dm,Phi.fixed=Phi.fixed,p.fixed=p.fixed,
-		   Phi.links=Phi.links,p.links=p.links,method=method,hessian=FALSE,debug=debug,time.intervals=time.intervals,control=control,
-		   itnmax=itnmax,...)
+      mod=optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
+			         debug=debug,control=control,itnmax=itnmax,...)
 	  par=mod$par$par
 	  convergence=mod$conv
 	  i=i+1
-   }
+	  assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+  }
+#  Rescale parameter values, restore model_data and call cjs.lnl to compute all values and not just -2lnl
    cjs.beta=mod$par$par/c(scale.phi,scale.p)
-   names(cjs.beta)=c(paste("Phi:",colnames(Phi.dm),sep="") ,paste("p:",colnames(p.dm),sep=""))
-   if(!is.null(imat.save)) imat=imat.save
-   if(!is.null(Phi.dm.save)) Phi.dm=Phi.dm.save
-   if(!is.null(p.dm.save)) p.dm=p.dm.save
-   if(!is.null(Phi.fixed.save)) Phi.fixed=Phi.fixed.save
-   if(!is.null(p.fixed.save)) p.fixed=p.fixed.save
-   allval=cjs.lnl(cjs.beta,imat,Phi.dm,p.dm,Phi.fixed,p.fixed,Phi.links,p.links,time.intervals=time.intervals.save,all=TRUE)
+   names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
+#  Create results list 
+   lnl=mod$fvalues$fvalues
+   res=list(beta=cjs.beta,neg2lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=c(scale.phi,scale.p),model_data=model_data)
+#  Restore complete non-accumulate model_data with unscaled design matrices and call cjs to compute all values including reals
+   if(!is.null(model_data.save)) model_data=model_data.save
+   allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
+#  Create dataframe of real parameter estimates
    reals=Phi.dmdf
    names(reals)[names(reals)=="time"]="Phi.time"
    names(reals)[names(reals)=="age"]="Phi.age"
@@ -229,19 +167,18 @@ cjs=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,m
    reals$Phi=as.vector(t(xx))
    xx=matrix(allval[[3]],nrow=nrow(x),ncol=nocc-1)
    reals$p=as.vector(t(xx))
-   reals=reals[reals$Time>=reals$Cohort,]
-   lnl=mod$fvalues$fvalues
-   res=list(beta=cjs.beta,lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,reals=reals,mod=mod,scale=c(scale.phi,scale.p))
+   res$reals=reals[reals$Time>=reals$Cohort,]
+#  If requested compute hessian and var-cov matrix 
    if(hessian) 
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("\n Computing hessian\n")
-	   res$hessian=hessian(cjs.lnl,cjs.beta,imat=imat,Phi.dm=Phi.dm,p.dm=p.dm,Phi.fixed=Phi.fixed,p.fixed=p.fixed,Phi.links=Phi.links,
-			   p.links=p.links,time.intervals=time.intervals.save,all=FALSE)
-	   res$vcv=solve(res$hessian*outer(1/res$scale,1/res$scale,"*"))
+	   res$vcv=hessian(cjs.lnl,cjs.beta,model_data=model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
+	   res$vcv=solve(res$vcv)
        colnames(res$vcv)=names(cjs.beta)
        rownames(res$vcv)=names(cjs.beta)
    }   
+#  Assign S3 class and return
    class(res)=c("crm","cjs")
    return(res)
 }
