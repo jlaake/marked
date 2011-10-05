@@ -100,10 +100,8 @@ if(debug)
 } else
     if((f_eval-100*floor(f_eval/100))==0)
     {
-	    string=paste(" Number of evaluations: ",f_eval," -lnl:",formatC(lnl,digits=10))
-#		cat(paste(paste(rep("\8",nchar(string)),collapse=""),string,sep=""))
-		cat(paste("\n"),string,sep="")
-	    flush.console()
+		cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(lnl,digits=10))
+		flush.console()
     }	
 return(lnl)
 }

@@ -1,6 +1,7 @@
 cjs.initial=function(dml,parameters,imat)
 {
 #   Create initial values for p using bernoulli glm with Manley-Parr approach
+	cat("\n Computing initial parameter estimates\n")
 	num=nrow(imat$chmat)
 	ind=matrix(c(1:num,imat$first+1,imat$last-1),ncol=3,nrow=num)
 	ind=ind[ind[,2]<ind[,3],]

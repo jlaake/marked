@@ -94,7 +94,7 @@ if(autoscale==0)
 		          refit=0,control=control,itnmax=itnmax,scale=scale,...)
 }else
 {
-	cat("Run to compute scale\n")
+	cat("\n Run to compute scale\n")
 	scale=NULL
 	control$eval.max=autoscale
 	if(model=="cjs")
@@ -106,7 +106,7 @@ if(autoscale==0)
 	scale=abs(1/runmodel$beta)
 	initial=runmodel$beta/abs(runmodel$beta)
 	control$eval.max=itnmax
-	cat("Fitting model\n")
+	cat("\n Fitting model\n")
 	if(model=="cjs")
 		runmodel=cjs(data.proc,ddl,dml,model_data=runmodel$model_data,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,...)
@@ -118,8 +118,8 @@ if(autoscale==0)
 # Return fitted MARK model object or if external, return character string with same class and save file
 #
 runmodel$model_data=NULL
-if(runmodel$convergence!=0)cat("\n ******Model did not converge******")
-if(runmodel$convergence==1)cat("\n Maximum number of iterations exceeded")
+if(runmodel$convergence!=0)cat("\n ******Model did not converge******\n")
+if(runmodel$convergence==1)cat("\n Maximum number of iterations exceeded\n")
 runmodel$model.parameters=model.parameters
 cat(paste("\n Elapsed time in minutes: ",(proc.time()[3]-ptm[3])/60),"\n")
 return(runmodel)

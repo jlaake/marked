@@ -53,8 +53,7 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	} else
 	if((f_eval-100*floor(f_eval/100))==0)
 	{
-		string=paste(" Number of evaluations: ",f_eval," -2lnl:",formatC(lnl$lnl,digits=10))
-		cat(paste(paste(rep("\n",nchar(string)),collapse=""),string,sep=""))
+	    cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(lnl$lnl,digits=10))
 		flush.console()
 	}	
 	if(all)
