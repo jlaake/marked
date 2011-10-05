@@ -65,7 +65,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    if(is.null(initial))
    {
 	   if(is.null(Phi)|is.null(p))
-		   par=cjs.initial(dml,parameters,imat)
+		   par=cjs.initial(dml,imat)
 	   else  
 	       par=c(log(Phi/(1-Phi)),rep(0,ncol(dml$Phi)-1),log(p/(1-p)),rep(0,ncol(dml$p)-1))
    }

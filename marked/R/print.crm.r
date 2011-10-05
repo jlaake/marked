@@ -2,7 +2,7 @@ print.crm=function(x,...)
 {
    cat("\ncrm Model Summary\n")
    cat("\nNpar : ",length(x$beta))
-   cat("\n-2lnL: ",x$lnl)
+   cat("\n-2lnL: ",x$neg2lnl)
    cat("\nAIC  : ",x$AIC)
    cat("\n\nBeta\n")
    print(coef(x))
