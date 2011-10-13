@@ -1,6 +1,6 @@
 "crm" <- function(data,ddl=NULL,begin.time=1,model="cjs",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="nlminb", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=500,scale=NULL,autoscale=0,...)
+ control=NULL,refit=1,itnmax=500,scale=NULL,autoscale=0,run=TRUE,...)
 {
 # -----------------------------------------------------------------------------------------------------------------------
 # crm -  a single function that processes data, creates the design data, makes the crm model and runs it.
@@ -81,21 +81,23 @@ for (i in 1:length(parameters))
    dml[[i]]=create.dm(ddl[[pn]],parameters[[i]]$formula,design.parameters[[pn]]$time.bins,
                                 design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,parameters[[i]]$remove.intercept)
 }
+if(!run) return(dml)
 #
 # Call estimation function
 #
 if(autoscale==0)
 {
+	control$eval.max=itnmax
     if(model=="cjs")
        runmodel=cjs(data.proc,ddl,dml,model_data=NULL,parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=0,control=control,itnmax=itnmax,scale=scale,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
     else
        runmodel=js(data.proc,ddl,dml,parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=0,control=control,itnmax=itnmax,scale=scale,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 }else
 {
-	cat("\n Run to compute scale\n")
-	scale=NULL
+	cat("\n Run to compute scale:")
+	scale=1
 	control$eval.max=autoscale
 	if(model=="cjs")
 		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=FALSE,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
@@ -104,9 +106,9 @@ if(autoscale==0)
 		runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=FALSE,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=0,control=control,itnmax=autoscale,scale=scale,...)
 	scale=abs(1/runmodel$beta)
-	initial=runmodel$beta/abs(runmodel$beta)
+	initial=runmodel$beta
 	control$eval.max=itnmax
-	cat("\n Fitting model\n")
+	cat("\n\n Fitting model:")
 	if(model=="cjs")
 		runmodel=cjs(data.proc,ddl,dml,model_data=runmodel$model_data,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,...)

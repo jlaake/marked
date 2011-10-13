@@ -252,7 +252,7 @@ js=function(x,ddl,dml,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,me
 			   p.fixed=p.fixed,pent.fixed=pent.fixed,method=method,hessian=hessian,
 			   debug=debug,time.intervals=time.intervals,control=control,itnmax=itnmax,nobstot=nobstot,...)
 	   par=mod$par$par
-	   convergence=mod$conv
+	   convergence=mod$conv$conv
 	   i=i+1
    }
    js.beta=mod$par$par

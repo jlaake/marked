@@ -85,7 +85,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 		   par[beta.names%in%names(initial)]=initial[which(names(initial)%in%beta.names)]
 	   }
    }
-   #  Create list of model data for optimization; if passed as an argument create model_data.save 
+#  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
     if(!is.null(model_data)) 
@@ -112,7 +112,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 #   p.links=create.links(p.dm)
 #   p.links=which(p.links==1)
 #
-#  Scale the design matrices with either input scale or computed scale
+#  Scale the design matrices and parameters with either input scale or computed scale
    if(is.null(scale))
    {
       scale.phi=apply(model_data$Phi.dm,2,function(x) mean(x[x!=0]))
@@ -129,31 +129,32 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 		   scale.p=scale[(ncol(model_data$Phi.dm)+1):length(scale)]
 	   }
    }
-   for(i in which(scale.phi<.99 | scale.phi>1.01)) model_data$Phi.dm[,i]=model_data$Phi.dm[,i]/scale.phi[i]
-   for(i in which(scale.p<.99 | scale.p>1.01)) model_data$p.dm[,i]=model_data$p.dm[,i]/scale.p[i]
+   model_data$Phi.dm=t(t(model_data$Phi.dm)/scale.phi)
+   model_data$p.dm=t(t(model_data$p.dm)/scale.p)
+   par=par*c(scale.phi,scale.p)
 #  Call optimx to find mles with cjs.lnl which gives -2 * log-likelihood
    cat("\n Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
    flush.console()
    assign(".markedfunc_eval", 0, envir = .GlobalEnv)
    convergence=1
    i=0
-   if(is.null(scale))par=par*c(scale.phi,scale.p)
    while (convergence!=0 & i <= refit)
    {
-      mod=optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
+       if(i>0) cat("\n Re-starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")   
+	   mod=optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
 			         debug=debug,control=control,itnmax=itnmax,...)
 	  par=mod$par$par
-	  convergence=mod$conv
+	  convergence=mod$conv$conv
 	  i=i+1
 	  assign(".markedfunc_eval", 0, envir = .GlobalEnv)
   }
-#  Rescale parameter values, restore model_data and call cjs.lnl to compute all values and not just -2lnl
-   cjs.beta=mod$par$par/c(scale.phi,scale.p)
+#  Rescale parameter vector, restore model_data and call cjs.lnl to compute all values and not just -2lnl
+   cjs.beta=par/c(scale.phi,scale.p)
    names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
 #  Create results list 
    lnl=mod$fvalues$fvalues
-   res=list(beta=cjs.beta,neg2lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=c(scale.phi,scale.p),model_data=model_data)
-#  Restore complete non-accumulate model_data with unscaled design matrices and call cjs to compute all values including reals
+   res=list(beta=cjs.beta,neg2lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
+#  Restore complete non-accumulated model_data with unscaled design matrices and call cjs to compute all values including reals
    if(!is.null(model_data.save)) model_data=model_data.save
    allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
 #  Create dataframe of real parameter estimates
@@ -173,14 +174,21 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("\n Computing hessian\n")
-	   res$vcv=hessian(cjs.lnl,cjs.beta,model_data=model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
-	   res$vcv=solve(res$vcv)
-       colnames(res$vcv)=names(cjs.beta)
-       rownames(res$vcv)=names(cjs.beta)
+	   res$vcv=cjs.hessian(res,Phi.links=NULL, p.links=NULL,all=FALSE)
    }   
 #  Assign S3 class and return
    class(res)=c("crm","cjs")
    return(res)
 }
-
+cjs.hessian=function(model,Phi.links=NULL, p.links=NULL,all=FALSE)
+{
+	scale=c(model$scale$phi,model$scale$p)
+	cat("\n Computing hessian\n")
+	vcv=hessian(cjs.lnl,model$beta*scale,model_data=model$model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
+	vcv=solve(vcv)
+	vcv=vcv/outer(scale,scale,"*")
+	colnames(vcv)=names(model$beta)
+	rownames(vcv)=names(model$beta)
+	return(vcv)
+}
 
