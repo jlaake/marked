@@ -1,4 +1,4 @@
-"crm" <- function(data,ddl=NULL,begin.time=1,model="cjs",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
+crm <- function(data,ddl=NULL,begin.time=1,model="cjs",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="nlminb", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=NULL,refit=1,itnmax=500,scale=NULL,autoscale=0,run=TRUE,...)
 {
@@ -125,4 +125,56 @@ if(runmodel$convergence==1)cat("\n Maximum number of iterations exceeded\n")
 runmodel$model.parameters=model.parameters
 cat(paste("\n Elapsed time in minutes: ",(proc.time()[3]-ptm[3])/60),"\n")
 return(runmodel)
+}
+crm.wrapper <- function(model.list,data,ddl=NULL,...)
+{
+	for (i in 1:nrow(model.list))
+	{
+		model.parameters=list()
+		for(j in 1:ncol(model.list))
+		{
+			if(!is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
+				model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame())
+		}
+		for(j in 1:ncol(model.list))
+		{
+			if(is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
+				model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame()))
+		}
+		model.name=paste(model.list[i,],collapse=".")
+		cat("\n",model.name,"\n")
+		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters)
+		assign(as.character(as.name(model.name)),mymodel)
+		eval(parse(text=paste("save(",model.name,', file="',model.name,'.rda")',sep="")))
+	}	
+}
+create.model.list<-function(parameters)
+{
+	model.list=list()
+	for(n in parameters)
+	{
+		vec=ls(pat=paste("^",n,"\\.",sep=""),envir=parent.frame())
+		if(length(vec)>0)
+			for (i in 1:length(vec))
+			{
+				if(eval(parse(text=paste("is.list(",vec[i],")",sep="")),envir=parent.frame()))
+				{
+					if(eval(parse(text=paste("!is.null(",vec[i],"$formula)",sep="")),envir=parent.frame()) |
+							eval(parse(text=paste("!is.null(",vec[i],"[[1]]$formula)",sep="")),envir=parent.frame()))
+						model.list[[n]]=c(model.list[[n]],vec[i])
+				}
+			}
+		
+	}
+	if(length(model.list)==0)
+		stop("\nNo model specifications found. Use parameter.description notation (e.g., Phi.time)\n")
+	if(length(model.list)>1)
+	{
+		model.list=expand.grid(model.list)
+		for (j in 1:dim(model.list)[2])
+			model.list[,j]=as.character(model.list[,j])
+	}
+	else
+		model.list=as.data.frame(model.list)
+	return(model.list)
 }
