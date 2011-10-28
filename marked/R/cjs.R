@@ -140,7 +140,12 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    i=0
    while (convergence!=0 & i <= refit)
    {
-       if(i>0) cat("\n Re-starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")   
+       if(i>0)
+	   {
+		   cat("\n Re-starting optimization using Nelder-Mead for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")   
+		   method="Nelder-Mead"
+           itnmax=2*itnmax
+	   }
 	   mod=optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
 			         debug=debug,control=control,itnmax=itnmax,...)
 	  par=mod$par$par

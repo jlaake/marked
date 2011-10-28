@@ -1,6 +1,6 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="cjs",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="nlminb", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=500,scale=NULL,autoscale=0,run=TRUE,...)
+ control=NULL,refit=1,itnmax=5000,scale=NULL,autoscale=0,run=TRUE,...)
 {
 # -----------------------------------------------------------------------------------------------------------------------
 # crm -  a single function that processes data, creates the design data, makes the crm model and runs it.
@@ -119,8 +119,13 @@ if(autoscale==0)
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
 #
-if(runmodel$convergence!=0)cat("\n ******Model did not converge******\n")
-if(runmodel$convergence==1)cat("\n Maximum number of iterations exceeded\n")
+if(runmodel$convergence!=0)
+{
+	cat("\n ******Model did not converge******\n")
+    msg=attr(runmodel$mod,"details")[[1]]$message
+	if(is.null(msg)) msg="Exceeded maximum number of iterations"
+    cat(paste(msg,"\n"))
+}
 runmodel$model.parameters=model.parameters
 cat(paste("\n Elapsed time in minutes: ",(proc.time()[3]-ptm[3])/60),"\n")
 return(runmodel)
