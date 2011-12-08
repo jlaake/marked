@@ -1,3 +1,23 @@
+#' Process release-recapture history data
+#' 
+#' Creates needed constructs from the release-recapture history.
+#' 
+#' 
+#' @param ch Vector of character strings containing 0/1 capture-history
+#' @param freq Optional vector of frequencies for ch; if missing assumed to be
+#' a; if <0 indicates a loss on capture
+#' @param all Not necessary unless R code used to compute lnl instead of
+#' FORTRAN
+#' @return \item{nocc}{number of capture occasions} \item{freq}{absolute value
+#' of frequency for each ch} \item{first}{vector of occasion numbers for first
+#' 1} \item{last}{vector of occasion numbers for last 1} \item{loc}{vector of
+#' indicators of a loss on capture if set to 1} \item{chmat}{capture history
+#' matrix} \item{FtoL}{1's from first (1) to last (1) and 0's elsewhere; only
+#' if all==TRUE} \item{Fplus}{1's from occasion after first (1) to nocc(last
+#' occasion); only if all==TRUE} \item{Lplus}{1's from occasion after last (1)
+#' to nocc; only if all==TRUE} \item{L}{1's from last (1) to nocc; only if
+#' all==TRUE}
+#' @author Jeff Laake
 process.ch=function(ch,freq=NULL,all=FALSE)
 #################################################################################
 # process.ch - from a capture history creates vector of first and last times seen,
@@ -17,7 +37,7 @@ process.ch=function(ch,freq=NULL,all=FALSE)
 #        loc         - indicator of a loss on capture if set to 1
 #        chmat       - capture history matrix
 #        The following only returned if all==TRUE
-#        FtoL        - 1's from first (1) to last (1) and 0's elsewhere
+#        FtoL        - 1's from first (1) to last (1) and 0's elsewhere (excluding
 #        Fplus       - 1's from occasion after first (1) to nocc(last occasion)
 #        Lplus       - 1's from occasion after last (1) to nocc
 #        L           - 1's from last (1) to nocc

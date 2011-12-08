@@ -1,16 +1,16 @@
-###################################################################################
-# cjs.initial - computes starting values for Phi and p parameters from the
-# list of design matrices and the summarized data list including ch matrix and
-# first and last vectors. If any values are missing (NA) or abs(par)>5, they are
-# set to 0.
-#
-# Arguments:
-#    dml             - ist of design matrices for Phi and p
-#    imat            - list containing chmat, first and last 
-#
-# Value: initial parameter vector
-#
-####################################################################################
+#' Computes starting values for CJS p and Phi parameters
+#' 
+#' Computes starting values for Phi and p parameters from the
+#' list of design matrices and the summarized data list including ch matrix and
+#' first and last vectors. If any values are missing (NA) or abs(par)>5, they are
+#' set to 0.
+#' 
+#' 
+#' @param dml design matrix list for Phi and p
+#' @param imat list containing chmat, first and last
+#' @return vector of initial parameter estimates
+#' @author Jeff Laake
+#' @keywords utility
 cjs.initial=function(dml,imat)
 {
 #   Create initial values for p using bernoulli glm with Manley-Parr approach

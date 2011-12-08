@@ -1,3 +1,21 @@
+#' Accumulates common capture history values
+#' 
+#' To speed up compuation, animals with the same capture history and design matrix are
+#' accumulated and represented by a frequency. Computes starting values for Phi and p parameters from the
+#' list of design matrices and the summarized data list including ch matrix and
+#' first and last vectors. If any values are missing (NA) or abs(par)>5, they are
+#' set to 0.
+#' 
+#' 
+#' @param x data
+#' @param model_data list of design matrices, fixed parameters and time intervals all which can vary by animal
+#' @param nocc number of capture occasions
+#' @param freq frequency of each capture history before accumulation
+#' @param chunk_size size that determines number of pieces of data/design matrix that are handled. Smaller chunk_size requires more
+#' time but less memory. 1e7 is default set in cjs. 
+#' @return modified model_data list that is accumulated
+#' @author Jeff Laake
+#' @keywords utility
 cjs.accumulate=function(x,model_data,nocc,freq,chunk_size)
 {
    chmat=model_data$imat$chmat

@@ -1,3 +1,22 @@
+#' Creates a design matrix for a parameter
+#' 
+#' Creates a design matrix using the design dataframe, a formula and any
+#' intervals defined for time, cohort and age.
+#' 
+#' 
+#' @param x design dataframe created by \code{\link{create.dmdf}}
+#' @param formula formula for model in R format
+#' @param time.bins any bins of time to collapse values
+#' @param cohort.bins any bins of cohort to collapse values
+#' @param age.bins any bins of cohort to collapse values
+#' @param chunk_size specifies amount of memory to use in creating design
+#' matrices; amount used is 8*chunk_size/1e6 MB (default 80MB)
+#' @param remove.intercept if TRUE, forces removal of intercept in design
+#' matrix
+#' @return A design matrix constructed with the design dataframe and the
+#' formula.  It contains a row for each animal-occasion and a column for each
+#' beta parameter in the model. It excludes any columns that are all 0.
+#' @author Jeff Laake
 create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 ##############################################################################
 # create.dm - create design matrix with nch*(nocc-1) rows

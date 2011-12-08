@@ -1,3 +1,23 @@
+#' Print model results or extract coefficients
+#' 
+#' Provides a printed simple summary of the model results or extracts the beta
+#' coefficients from the model results.
+#' 
+#' @usage \method{coef}{crm}(object,...)
+#'        \method{print}{crm}(x,...)
+#' @S3method coef crm
+#' @S3method print crm
+#' @aliases print.crm coef.crm
+#' @param x crm model result
+#' @param object crm model result
+#' @param ... generic arguments not used here
+#' @return \code{print} prints a simple summary of the model to the screen and
+#' returns NULL. \code{coef} returns a dataframe with estimates and standard
+#' errors and confidence intervals if hessian=TRUE on model run.
+#' @author Jeff Laake
+#' @export 
+#' @seealso \code{\link{crm}}
+#' @keywords utility
 print.crm=function(x,...)
 {
    cat("\ncrm Model Summary\n")

@@ -1,3 +1,76 @@
+#' Fitting function for CJS models
+#' 
+#' A function for computing MLEs for a specified Cormack-Jolly-Seber open
+#' population capture-recapture model for processed dataframe \code{x} with
+#' user specified formulas in \code{parameters} that create list of design
+#' matrices \code{dml}. This function can be called directly but is most easily
+#' called from \code{\link{crm}} that sets up needed arguments.
+#' 
+#' It is easiest to call \code{cjs} through the function \code{\link{crm}}.
+#' Details are explained there.
+#' 
+#' Be cautious with this function at present.  It does not include many checks
+#' to make sure values like fixed values will remain in the specified range of
+#' the data.  Normally this would not be a big problem but because
+#' \code{\link{cjs.lnl}} calls an external FORTRAN subroutine, if it gets a
+#' subscript out of bounds, it will cause R to terminate.  So make sure to save
+#' your workspace frequently if you use this function in its current
+#' implementation.
+#' 
+#' @param x processed dataframe created by process.data
+#' @param ddl list of dataframes for design data; created by call to
+#' \code{\link{make.design.data}}
+#' @param dml list of design matrices created by \code{\link{create.dm}} from
+#' formula and design data
+#' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
+#' @param accumulate if TRUE will accumulate capture histories with common
+#' value and with a common design matrix for Phi and p to speed up execution
+#' @param Phi initial value of Phi; used to set intercept parameter
+#' @param p initial value of p; used to set intercept parameter
+#' @param initial initial values for parameters if desired; if named vector
+#' from previous run it will match to columns with same name
+#' @param method method to use for optimization; see \code{optim}
+#' @param hessian if TRUE will compute and return the hessian
+#' @param debug if TRUE will print out information for each iteration
+#' @param chunk_size specifies amount of memory to use in accumulating capture
+#' histories; amount used is 8*chunk_size/1e6 MB (default 80MB)
+#' @param refit non-zero entry to refit
+#' @param itnmax maximum number of iterations
+#' @param control control string for optimization functions
+#' @param scale vector of scale values for parameters
+#' @param ... any remaining arguments are passed to additional parameters
+#' passed to \code{optim} or \code{\link{cjs.lnl}}
+#' @return The resulting value of the function is a list with the class of
+#' crm,cjs such that the generic functions print and coef can be used.
+#' \item{beta}{named vector of parameter estimates} \item{lnl}{-2*log
+#' likelihood} \item{AIC}{lnl + 2* number of parameters}
+#' \item{convergence}{result from \code{optim}; if 0 \code{optim} thinks it
+#' converged} \item{count}{\code{optim} results of number of function
+#' evaluations} \item{reals}{dataframe of data and real Phi and p estimates for
+#' each animal-occasion excluding those that occurred before release}
+#' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
+#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @examples
+#' 
+#' # fit 3 cjs models with crm
+#' data(dipper)
+#' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
+#' dipper.ddl=make.design.data(dipper.proc)
+#' mod.Phit.pt=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
+#' mod.Phit.pt
+#' mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
+#' mod.Phidot.pdot
+#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
+#' mod.Phisex.pdot
+#' # fit same 3 models with calls to mark; requires RMark
+#' # require(RMark)
+#' #mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
+#' #summary(mod0,brief=TRUE)
+#' #mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
+#' #summary(mod1,brief=TRUE)
+#' #mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
+#' #summary(mod2,brief=TRUE)
+#' 
 cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale, ...)
 ###################################################################################
@@ -126,11 +199,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 	   }else
 	   {
 		   scale.phi=scale[1:ncol(model_data$Phi.dm)]
-		   scale.p=scale[(ncol(model_data$Phi.dm)+1):length(scale)]
+		   scale.p=scale[(ncol(model_data$p.dm)+1):length(scale)]
 	   }
    }
-   model_data$Phi.dm=t(t(model_data$Phi.dm)/scale.phi)
-   model_data$p.dm=t(t(model_data$p.dm)/scale.p)
+   model_data$Phi.dm=Matrix:::t(Matrix:::t(model_data$Phi.dm)/scale.phi)
+   model_data$p.dm=Matrix:::t(Matrix:::t(model_data$p.dm)/scale.p)
    par=par*c(scale.phi,scale.p)
 #  Call optimx to find mles with cjs.lnl which gives -2 * log-likelihood
    cat("\n Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")

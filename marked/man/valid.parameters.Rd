@@ -1,19 +1,28 @@
 \name{valid.parameters}
 \alias{valid.parameters}
-\title{ Determine validity of parameters for a model (internal use)}
-\description{
-Checks to make sure specified parameters are valid for a particular type of model. 
-}
+\title{Determine validity of parameters for a model (internal use)}
 \usage{
-valid.parameters(model, parameters)
+  valid.parameters(model, parameters)
 }
 \arguments{
   \item{model}{type of c-r model ("CJS", "Burnham" etc)}
-  \item{parameters}{vector of parameter names (for example "Phi" or "p" or "S")}
+
+  \item{parameters}{vector of parameter names (for example
+  "Phi" or "p" or "S")}
 }
 \value{
-  Logical; TRUE if all parameters are acceptable and FALSE otherwise
+  Logical; TRUE if all parameters are acceptable and FALSE
+  otherwise
 }
-\author{Jeff Laake}
-\seealso{ \code{\link{setup.parameters}}, \code{\link{setup.model}} }
+\description{
+  Checks to make sure specified parameters are valid for a
+  particular type of model.
+}
+\author{
+  Jeff Laake
+}
+\seealso{
+  \code{\link{setup.parameters}}, \code{\link{setup.model}}
+}
 \keyword{utility}
+
