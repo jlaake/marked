@@ -1,9 +1,6 @@
 \name{valid.parameters}
 \alias{valid.parameters}
 \title{Determine validity of parameters for a model (internal use)}
-\usage{
-  valid.parameters(model, parameters)
-}
 \arguments{
   \item{model}{type of c-r model ("CJS", "Burnham" etc)}
 

@@ -3,10 +3,9 @@
 \title{Fitting function for CJS models}
 \usage{
   cjs(x, ddl, dml, model_data = NULL, parameters,
-    accumulate = TRUE, Phi = NULL, p = NULL,
-    initial = NULL, method, hessian = FALSE, debug = FALSE,
-    chunk_size = 1e+07, refit, itnmax = NULL,
-    control = NULL, scale, ...)
+  accumulate = TRUE, Phi = NULL, p = NULL, initial = NULL,
+  method, hessian = FALSE, debug = FALSE, chunk_size =
+  1e+07, refit, itnmax = NULL, control = NULL, scale, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}

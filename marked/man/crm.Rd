@@ -3,13 +3,12 @@
 \title{Capture-recapture model fitting function}
 \usage{
   crm(data, ddl = NULL, begin.time = 1, model = "cjs",
-    title = "", model.parameters = list(),
-    design.parameters = list(), initial = NULL,
-    groups = NULL, time.intervals = NULL, debug = FALSE,
-    method = "nlminb", hessian = FALSE, accumulate = TRUE,
-    chunk_size = 1e+07, control = NULL, refit = 1,
-    itnmax = 5000, scale = NULL, autoscale = 0, run = TRUE,
-    ...)
+  title = "", model.parameters = list(), design.parameters
+  = list(), initial = NULL, groups = NULL, time.intervals =
+  NULL, debug = FALSE, method = "nlminb", hessian = FALSE,
+  accumulate = TRUE, chunk_size = 1e+07, control = NULL,
+  refit = 1, itnmax = 5000, scale = NULL, autoscale = 0,
+  run = TRUE, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
