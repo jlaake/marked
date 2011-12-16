@@ -3,8 +3,7 @@
 \alias{print.crm}
 \title{Print model results or extract coefficients}
 \usage{
-  \method{coef}{crm}(object,...)
-    \method{print}{crm}(x,...)
+  \method{coef}{crm}(object,...) \method{print}{crm}(x,...)
 }
 \arguments{
   \item{x}{crm model result}

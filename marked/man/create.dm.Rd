@@ -2,9 +2,9 @@
 \alias{create.dm}
 \title{Creates a design matrix for a parameter}
 \usage{
-  create.dm(x, formula, time.bins = NULL,
-    cohort.bins = NULL, age.bins = NULL,
-    chunk_size = 1e+07, remove.intercept = NULL)
+  create.dm(x, formula, time.bins = NULL, cohort.bins =
+  NULL, age.bins = NULL, chunk_size = 1e+07,
+  remove.intercept = NULL)
 }
 \arguments{
   \item{x}{design dataframe created by
