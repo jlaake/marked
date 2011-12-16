@@ -3,11 +3,12 @@ Version: 1.0.3
 Date: 2011-05-18
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>
-Description: This package provides a framework for handling data and
-    analysis models for mark-recapture problems. Currently it is
-    limited to Cormack-Jolly-Seber and Jolly-Seber type models but
-    the idea is to create an open package where researchers can add
-    models into a common framework.
+Description: This package provides a framework for handling data and analysis
+    models for mark-recapture problems. Currently it is limited to
+    Cormack-Jolly-Seber and Jolly-Seber type models but the idea is to create
+    an open package where researchers can add models into a common framework.
+    Note Jolly-Seber functionality is limited and not well tested at this
+    point.
 Depends:
     R (>= 2.12.0),
     Matrix,
@@ -37,5 +38,6 @@ Collate:
     'process.data.R'
     'setup.model.R'
     'setup.parameters.R'
+    'utility.R'
     'valid.parameters.R'
     'zzz.R'
