@@ -65,5 +65,6 @@ each bird} \item{sex}{the sex of the bird: a factor with levels
   \preformatted{
   dipper$numeric.sex=as.numeric(dipper$sex)-1 }
 }
+\keyword{dataset}
 \keyword{datasets}
 

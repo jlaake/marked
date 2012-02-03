@@ -1,6 +1,9 @@
 \name{make.design.data}
 \alias{make.design.data}
 \title{Create design dataframes for MARK model specification}
+\usage{
+  make.design.data(data, parameters = list())
+}
 \arguments{
   \item{data}{Processed data list; resulting value from
   process.data}

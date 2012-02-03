@@ -3,7 +3,7 @@
 \title{Create release-recapture history data for MCMC}
 \usage{
   make.probitCJS.data(data, id.col, ch.cols,
-  covariate.cols)
+    covariate.cols)
 }
 \arguments{
   \item{data}{A data frame where each row contains the

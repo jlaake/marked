@@ -258,20 +258,5 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    class(res)=c("crm","cjs")
    return(res)
 }
-cjs.hessian=function(model,Phi.links=NULL, p.links=NULL,all=FALSE)
-{
-	scale=c(model$scale$phi,model$scale$p)
-	cat("\n Computing hessian\n")
-	vcv=hessian(cjs.lnl,model$beta*scale,model_data=model$model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
-	vcv=try(solvecov(vcv))
-	if(class(vcv)[1]=="try-error")
-	{
-		cat("\nUnable to invert hessian\n")
-		return(NULL)
-	}
-	vcv=vcv$inv/outer(scale,scale,"*")
-	colnames(vcv)=names(model$beta)
-	rownames(vcv)=names(model$beta)
-	return(vcv)
-}
+
 

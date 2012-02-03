@@ -2,6 +2,10 @@
 \alias{merge.design.covariates}
 \alias{merge_design.covariates}
 \title{Merge time (occasion) and/or group specific covariates into design data}
+\usage{
+  merge_design.covariates(ddl, df, bygroup = FALSE,
+    bytime = TRUE)
+}
 \arguments{
   \item{ddl}{current design dataframe for a specific
   parameter and not the entire design data list (ddl)}
@@ -91,7 +95,7 @@ summary(ddl$p)
 dipper.proc=process.data(dipper,groups="sex")
 ddl=make.design.data(dipper.proc)
 df=data.frame(group=c(rep("Female",6),rep("Male",6)),time=rep(c(2:7),2),
-effort=c(10,5,2,8,1,2,3,20,10,4,16,2))
+		effort=c(10,5,2,8,1,2,3,20,10,4,16,2))
 merge_design.covariates(ddl$p,df,bygroup=TRUE)
 }
 \author{

@@ -3,9 +3,9 @@
 \title{Likelihood function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-  js.lnl(par, imat, Phi.dm, p.dm, pent.dm, N.dm, Phi.fixed
-  = NULL, p.fixed = NULL, pent.fixed = NULL, debug = FALSE,
-  time.intervals = NULL, nobstot)
+  js.lnl(par, imat, Phi.dm, p.dm, pent.dm, N.dm,
+    Phi.fixed = NULL, p.fixed = NULL, pent.fixed = NULL,
+    debug = FALSE, time.intervals = NULL, nobstot)
 }
 \arguments{
   \item{par}{vector of parameter values}

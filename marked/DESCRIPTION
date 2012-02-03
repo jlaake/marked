@@ -44,4 +44,4 @@ Collate:
     'make.probitCJS.data.R'
     'probitCJS.R'
     'splitCH.R'
-    
+    'cjs.hessian.r'

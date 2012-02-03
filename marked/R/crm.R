@@ -142,7 +142,6 @@
 #' @author Jeff Laake
 #' @export crm
 #' @export create.model.list
-#' @export aic.wrapper
 #' @export crm.wrapper
 #' @useDynLib marked
 #' @seealso \code{\link{cjs}}, \code{\link{js}},
@@ -306,55 +305,34 @@ runmodel$model.parameters=model.parameters
 cat(paste("\n Elapsed time in minutes: ",(proc.time()[3]-ptm[3])/60),"\n")
 return(runmodel)
 }
-crm.wrapper <- function(model.list,data,ddl=NULL,...)
+crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",...)
 {
 	for (i in 1:nrow(model.list))
 	{
-		model.parameters=list()
-		for(j in 1:ncol(model.list))
+		model.parameters=list()		
+		if(is.null(models))
 		{
-			if(!is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-				model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame())
-		}
-		for(j in 1:ncol(model.list))
+			for(j in 1:ncol(model.list))
+			{
+				if(!is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
+					model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame())
+			}
+			for(j in 1:ncol(model.list))
+			{
+				if(is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
+					model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame()))
+			}	
+		} else
 		{
-			if(is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-				model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame()))
+			model.parameters=models(model.list[i,])$model.parameters
 		}
 		model.name=paste(model.list[i,],collapse=".")
 		cat("\n",model.name,"\n")
 		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,...)
 		assign(as.character(as.name(model.name)),mymodel)
-		eval(parse(text=paste("save(",model.name,', file="',model.name,'.rda")',sep="")))
+		eval(parse(text=paste("save(",model.name,', file="',base,model.name,'.rda")',sep="")))
 	}	
 }
-
-aic.wrapper <- function(model.list,data,ddl=NULL,chat=1,...)
-{
-	aic=vector("numeric",length=nrow(model.list))
-	for (i in 1:nrow(model.list))
-	{
-		model.parameters=list()
-		for(j in 1:ncol(model.list))
-		{
-			if(!is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-				model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame())
-		}
-		for(j in 1:ncol(model.list))
-		{
-			if(is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-				model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame()))
-		}
-		model.name=paste(model.list[i,],collapse=".")
-		eval(parse(text=paste('load(file="',model.name,'.rda")',sep="")))
-		eval(parse(text=paste("aic[",i,"]=",model.name,"$neg2lnl/chat + 2*length(",model.name,"$beta)",sep="")))	
-		eval(parse(text=paste('rm(',model.name,')',sep="")))	
-		gc()
-	}
-	model.list$aic=aic	
-	return(model.list)
-}
-
 create.model.list<-function(parameters)
 {
 	model.list=list()
@@ -385,7 +363,6 @@ create.model.list<-function(parameters)
 		model.list=as.data.frame(model.list)
 	return(model.list)
 }
-
 #
 #
 # solvecov code was taken from package fpc: Christian

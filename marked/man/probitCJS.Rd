@@ -3,7 +3,7 @@
 \title{Perform MCMC analysis of a CJS model}
 \usage{
   probitCJS(p.model = ~1, phi.model = ~1, data, prior.list,
-  burnin, iter, init.list)
+    burnin, iter, init.list)
 }
 \arguments{
   \item{p.model}{A formula for the detection portion of the

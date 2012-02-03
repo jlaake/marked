@@ -3,8 +3,8 @@
 \title{Creates a dataframe with all the design data for a particular parameter in a
 crm model}
 \usage{
-  create.dmdf(x, parameter, time.varying = NULL, fields =
-  NULL)
+  create.dmdf(x, parameter, time.varying = NULL,
+    fields = NULL)
 }
 \arguments{
   \item{x}{processed dataframe from function
