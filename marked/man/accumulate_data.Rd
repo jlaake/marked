@@ -1,12 +1,12 @@
-\name{process.data}
+\name{accumulate_data}
+\alias{accumulate_data}
 \alias{process.data}
 \title{Process encounter history dataframe for MARK analysis}
 \usage{
-  process.data(data, begin.time = 1, model = "CJS",
-    mixtures = 1, groups = NULL, allgroups = FALSE,
-    age.var = NULL, initial.ages = c(0), age.unit = 1,
-    time.intervals = NULL, nocc = NULL,
-    strata.labels = NULL)
+  process.data(data,begin.time=1,model="cjs",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
+    initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=FALSE)
+
+  accumulate_data(data)
 }
 \arguments{
   \item{data}{A data frame with at least one field named
@@ -44,25 +44,20 @@
   contains a value for each level of the age variable
   \code{groups[age.var]}}
 
-  \item{age.unit}{Increment of age for each increment of
-  time as defined by \code{time.intervals}}
-
   \item{time.intervals}{Vector of lengths of time between
   capture occasions}
 
   \item{nocc}{number of occasions for Nest type; either
   nocc or time.intervals must be specified}
 
-  \item{strata.labels}{vector of single character values
-  used in capture history(ch) for ORDMS models; it can
-  contain one more value beyond what is in ch for an
-  unobservable state}
+  \item{accumulate}{if TRUE, aggregates data with same
+  values and creates freq field for count of records}
 }
 \value{
-  processed.data (a list with the following elements)
-  \item{data}{original raw dataframe with group factor
-  variable added if groups were defined} \item{model}{type
-  of analysis model (eg, "CJS", "Burnham", "Barker")}
+  from \code{process.data} processed.data (a list with the
+  following elements) \item{data}{original raw dataframe
+  with group factor variable added if groups were defined}
+  \item{model}{type of analysis model (eg, "cjs" or "js")}
   \item{freq}{a dataframe of frequencies (same # of rows as
   data, number of columns is the number of groups in the
   data. The column names are the group labels representing
@@ -70,18 +65,17 @@
   histories.} \item{nocc}{number of capture occasions}
   \item{time.intervals}{length of time intervals between
   capture occasions} \item{begin.time}{time of first
-  capture occasion} \item{age.unit}{increment of age for
-  each increment of time} \item{initial.ages}{an initial
-  age for each group in the data; Note that this is not the
+  capture occasion} \item{initial.ages}{an initial age for
+  each group in the data; Note that this is not the
   original argument but is a vector with the initial age
   for each group. In the first example below
   \code{proc.example.data$initial.ages} is a vector with 16
   elements as follows 0 1 1 2 0 1 1 2 0 1 1 2 0 1 1 2}
-  \item{nstrata}{number of strata in Multistrata models}
-  \item{strata.labels}{vector of alphabetic characters used
-  to identify strata in Multistrata models}
   \item{group.covariates}{factor covariates used to define
-  groups}
+  groups} from accumulate_data a dataframe with same column
+  structure as argument with addition of freq (if not any)
+  and reduced to unique rows with freq accumulating number
+  of records.
 }
 \description{
   Prior to analyzing the data, this function initializes
@@ -103,38 +97,23 @@
   the relevant values. For example, number of capture
   occasions (\code{nocc}) is automatically computed based
   on the length of the encounter history (\code{ch}) in
-  \code{data}; however, this is dependent on the type of
-  analysis model.  For models such as "CJS", "Pradel" and
-  others, it is simply the length of \code{ch}.  Whereas,
-  for "Burnham" and "Barker" models,the encounter history
-  contains both capture and resight/recovery values so
-  \code{nocc} is one-half the length of \code{ch}.
-  Likewise, the number of \code{time.intervals} depends on
-  the model.  For models, such as "CJS", "Pradel" and
-  others, the number of \code{time.intervals} is
-  \code{nocc-1}; whereas, for capture&recovery(resight)
-  models the number of \code{time.intervals} is
-  \code{nocc}. The default time interval is unit time (1)
-  and if this is adequate, the function will assign the
-  appropriate length.  A processed data frame can only be
-  analyzed using the model that was specified.  The
-  \code{model} value is used by the functions
-  \code{\link{make.design.data}} and \code{\link{crm}} to
-  define the model structure as it relates to the data.
-  Thus, if the data are going to be analysed with different
-  underlying models, create different processed data sets
-  with the model name as an extension.  For example,
+  \code{data}. Currently, only 2 types of models are
+  accepted in marked: cjs and js. The default time interval
+  is unit time (1) and if this is adequate, the function
+  will assign the appropriate length.  A processed data
+  frame can only be analyzed using the model that was
+  specified.  The \code{model} value is used by the
+  functions \code{\link{make.design.data}} and
+  \code{\link{crm}} to define the model structure as it
+  relates to the data. Thus, if the data are going to be
+  analysed with different underlying models, create
+  different processed data sets with the model name as an
+  extension.  For example,
   \code{dipper.cjs=process.data(dipper)}.
 
   This function will report inconsistencies in the lengths
   of the capture history values and when invalid entries
-  are given in the capture history. For example, with the
-  "CJS" model, the capture history should only contain 0
-  and 1 whereas for "Barker" it can contain 0,1,2.  For
-  "Multistrata" models, the code will automatically
-  identify the number of strata and strata labels based on
-  the unique alphabetic codes used in the capture
-  histories.
+  are given in the capture history.
 
   The argument \code{begin.time} specifies the time for the
   first capture occasion.  This is used in creating the
@@ -175,15 +154,20 @@
   the age classes do not have to be sequential or ordered,
   but ordering will cause less confusion.  Thus levels
   1,2,3 could represent initial ages of 0,4,6 or 6,0,4. The
-  argument age.unit is the amount an animal ages for each
-  unit of time and the default is 1.  The default for
-  \code{initial.age} is 0 for each group, in which case,
-  \code{age} represents time since marking (first capture)
-  rather than the actual age of the animal.
+  default for \code{initial.age} is 0 for each group, in
+  which case, \code{age} represents time since marking
+  (first capture) rather than the actual age of the animal.
+
+  The following variable names are reserved and should be
+  used as follows: id (animal id) ch(capture history) freq
+  (number of animals with that ch/data) The following
+  variable names are reserved and should not be used in the
+  data: age,time,cohort,Age,Time,Cohort,Y,Z
 }
 \examples{
 data(dipper)
 dipper.process=process.data(dipper)
+accumulate_data(dipper)
 }
 \author{
   Jeff Laake

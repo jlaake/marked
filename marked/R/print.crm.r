@@ -21,21 +21,31 @@
 print.crm=function(x,...)
 {
    cat("\ncrm Model Summary\n")
-   cat("\nNpar : ",length(x$beta))
-   cat("\n-2lnL: ",x$neg2lnl)
-   cat("\nAIC  : ",x$AIC)
+   if(class(x)[2]=="probitCJS")
+	   cat("\nNpar : ",ncol(x$beta.mcmc$Phi)+ncol(x$beta.mcmc$p))   
+   else
+   {
+	   cat("\nNpar : ",length(x$beta))
+	   cat("\n-2lnL: ",x$neg2lnl)
+	   cat("\nAIC  : ",x$AIC)
+   }
    cat("\n\nBeta\n")
    print(coef(x))
    return(NULL)
 }
 coef.crm=function(object,...)
 {
-   beta=data.frame(Estimate=object$beta)
-   if(!is.null(object$vcv))
+   if(class(object)[2]=="probitCJS")
+	   return(object$beta)
+   else
    {
-      beta$se=sqrt(diag(object$vcv))
-      beta$lcl=beta$Estimate - 1.96*beta$se
-      beta$ucl=beta$Estimate + 1.96*beta$se
+	   beta=data.frame(Estimate=object$beta)
+	   if(!is.null(object$vcv))
+	   {
+		   beta$se=sqrt(diag(object$vcv))
+		   beta$lcl=beta$Estimate - 1.96*beta$se
+		   beta$ucl=beta$Estimate + 1.96*beta$se
+	   }
+	   return(beta)
    }
-   return(beta)
 }

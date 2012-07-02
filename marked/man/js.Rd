@@ -3,10 +3,11 @@
 \title{Fitting function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-  js(x, ddl, dml, parameters, accumulate = TRUE,
-    Phi = NULL, p = NULL, initial = NULL, method = "BFGS",
-    hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
-    refit, itnmax = NULL, control = NULL, scale, ...)
+  js(x, ddl, dml, model_data = NULL, parameters,
+    accumulate = TRUE, Phi = NULL, p = NULL,
+    initial = NULL, method = "BFGS", hessian = FALSE,
+    debug = FALSE, chunk_size = 1e+07, refit,
+    itnmax = NULL, control = NULL, scale, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -16,6 +17,14 @@ formulation}
 
   \item{dml}{list of design matrices created by
   \code{\link{create.dm}} from formula and design data}
+
+  \item{model_data}{a list of all the relevant data for
+  fitting the model including imat,
+  Phi.dm,p.dm,Phi.fixed,p.fixed, and time.intervals. It is
+  used to save values and avoid accumulation again if the
+  model was re-rerun with an additional call to cjs when
+  using autoscale or re-starting with initial values.  It
+  is stored with returned model object.}
 
   \item{parameters}{equivalent to \code{model.parameters}
   in \code{\link{crm}}}
@@ -35,7 +44,7 @@ formulation}
   columns with same name}
 
   \item{method}{method to use for optimization; see
-  \code{optim}}
+  \code{optimx}}
 
   \item{hessian}{if TRUE will compute and return the
   hessian}
@@ -56,7 +65,7 @@ formulation}
   \item{scale}{vector of scale values for parameters}
 
   \item{...}{any remaining arguments are passed to
-  additional parameters passed to \code{optim} or
+  additional parameters passed to \code{optimx} or
   \code{\link{js.lnl}}}
 }
 \value{
@@ -65,8 +74,8 @@ formulation}
   coef can be used. \item{beta}{named vector of parameter
   estimates} \item{lnl}{-2*log likelihood} \item{AIC}{lnl +
   2* number of parameters} \item{convergence}{result from
-  \code{optim}; if 0 \code{optim} thinks it converged}
-  \item{count}{\code{optim} results of number of function
+  \code{optimx}; if 0 \code{optimx} thinks it converged}
+  \item{count}{\code{optimx} results of number of function
   evaluations} \item{reals}{dataframe of data and real Phi
   and p estimates for each animal-occasion excluding those
   that occurred before release} \item{vcv}{var-cov matrix
@@ -94,11 +103,6 @@ formulation}
   bounds, it will cause R to terminate.  So make sure to
   save your workspace frequently if you use this function
   in its current implementation.
-}
-\examples{
-data(dipper)
-crm(dipper,model="js",groups="sex",accumulate=FALSE)
-#mark(dipper,model="POPAN",groups="sex")
 }
 \author{
   Jeff Laake <jeff.laake@noaa.gov>

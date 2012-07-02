@@ -61,30 +61,19 @@ function(model,nocc,mixtures=1)
 #   3 Mar 10; added Brownie; note ORDMS added year earlier
 #   Aug 10; added CRDMS; MsLiveDead done in between
 #
-  valid.models=c("CJS","Recovery","Burnham","Barker","POPAN","Pradel","Pradrec","LinkBarker","Pradsen","Pradlambda",
-                 "Closed","HetClosed","FullHet","Huggins","HugHet","HugFullHet","Known","Multistrata","Robust",
-                 "RDHet","RDFullHet","RDHuggins","RDHHet","RDHFHet","Nest","Occupancy","OccupHet",
-                 "RDOccupEG","RDOccupPE","RDOccupPG","RDOccupHetEG","RDOccupHetPE","RDOccupHetPG",
-                 "OccupRPoisson","OccupRNegBin","OccupRNPoisson","OccupRNNegBin","MSOccupancy","Jolly",
-                 "cjs","js","ORDMS","Brownie","MSLiveDead","CRDMS")
-  stype=c(rep("mark",39),"crm","crm","mark","mark","mark","mark")
-  num=c(-1,0,0,0,rep(-1,12),0,-1,rep(0,9),rep(-1,6),0,0,0,0,-1,-1,-1,-1,0,0,0,0) # of intervals relative to nocc
-  divisor=c(1,2,2,2,rep(1,12),2,rep(1,16),2,2,1,1,1,1,1,1,1,2,2,1) # to compute nocc from length of ch
-  default.mixtures=c(rep(1,11),2,2,1,2,2,1,1,1,2,2,1,2,2,1,1,2,1,1,1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1)
-  valid.types=c("Live","Dead","Both","Barker","POPAN","Pradel","Pradrec","LinkBarker","Pradsen","Pradlambda",
-                "Closed","HetClosed","FullHet","Huggins","HugHet","HugFullHet","Known","Multistrata","Robust",
-                 "RDHet","RDFullHet","RDHuggins","RDHHet","RDHFHet","Nest","Occupancy","OccupHet",
-                 "RDOccupEG","RDOccupPE","RDOccupPG","RDOccupHetEG","RDOccupHetPE","RDOccupHetPG",
-                 "OccupRPoisson","OccupRNegBin","OccupRNPoisson","OccupRNNegBin","MSOccupancy","Jolly",
-                 "cjs","js","ORDMS","Brownie","MSLiveDead","CRDMS")
+  valid.models=c("cjs","js","probitCJS")
+  num=c(-1,-1,-1) # of intervals relative to nocc
+  divisor=c(1,1,1) # to compute nocc from length of ch
+  default.mixtures=c(1,1,1)
+  valid.types=c("cjs","js","probitCJS")
   etype= match(model,valid.models)
-  derived=c(rep(FALSE,13),rep(TRUE,3),TRUE,FALSE,rep(TRUE,7),FALSE,FALSE, rep(TRUE,11),FALSE,FALSE,FALSE,TRUE,FALSE,FALSE,TRUE)
-  robust=c(rep(FALSE,18),rep(TRUE,6),rep(FALSE,3),rep(TRUE,6),rep(FALSE,8),TRUE,FALSE,FALSE,TRUE)
-  closed=c(rep(FALSE,10),rep(TRUE,6),rep(FALSE,28),TRUE)
-  occupancy=c(rep(FALSE,25),rep(TRUE,13),FALSE,FALSE,FALSE,FALSE,FALSE,FALSE,FALSE)
+  derived=rep(FALSE,3)
+  robust=rep(FALSE,3)
+  closed=rep(FALSE,3)
+  occupancy=rep(FALSE,3)
   if(is.na(etype))
      stop("Invalid type of model = ",model," Valid types are\n", paste(valid.models,collapse=" "))
   if(mixtures==1) mixtures=default.mixtures[etype]
   return(list(etype=valid.types[etype],nocc=nocc/divisor[etype],num=num[etype],mixtures=mixtures,
-               derived=derived[etype],robust=robust[etype],closed=closed[etype],occupancy=occupancy[etype],stype=stype[etype]))
+               derived=derived[etype],robust=robust[etype],closed=closed[etype],occupancy=occupancy[etype]))
 }

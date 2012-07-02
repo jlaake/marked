@@ -2,25 +2,18 @@
 \alias{probitCJS}
 \title{Perform MCMC analysis of a CJS model}
 \usage{
-  probitCJS(p.model = ~1, phi.model = ~1, data, prior.list,
-    burnin, iter, init.list)
+  probitCJS(data,
+    parameters = list(Phi = list(formula = ~1), p = list(formula = ~1)),
+    burnin, iter, init.list = NULL)
 }
 \arguments{
-  \item{p.model}{A formula for the detection portion of the
-  CJS model}
+  \item{data}{A list of design data from make.design.data
+  for model="probitCJS"}
 
-  \item{phi.model}{A formula for the survival portion of
-  the CJS model}
-
-  \item{data}{A probitCJS.data object containg the data for
-  the model}
-
-  \item{prior.list}{A named list containing \item{phi}{A
-  named list containg 'mu', the prior mean and 'Q' the
-  prior precison matrix for the survival parameters}
-  \item{p}{A named list containg 'mu', the prior mean and
-  'Q' the prior precison matrix for the survival
-  parameters}}
+  \item{parameters}{A model specification list with a list
+  for Phi and p containing a formula and optionally a prior
+  specification which is a named list containing 'mu', the
+  prior mean and 'Q' the prior precision matrix}
 
   \item{burnin}{number of iteration to initially discard
   for MCMC burnin}
@@ -32,22 +25,30 @@
   on this later]}
 }
 \value{
-  A list with MCMC output [I'll add to this later]
+  A list with MCMC iterations and summarized output:
+  \item{beta.mcmc}{list with elements Phi and p which
+  contain MCMC iterations for each beta parameter}
+  \item{real.mcmc}{list with elements Phi and p which
+  contain MCMC iterations for each real parameter}
+  \item{beta}{list with elements Phi and p which contain
+  summary of MCMC iterations for each beta parameter}
+  \item{reals}{list with elements Phi and p which contain
+  summary of MCMC iterations for each real parameter}
 }
 \description{
-  Takes an object of class probitCJS.data created with the
-  function \link{make.probitCJS.data} and draws a sample
-  from the posterior distribution using a Gibbs sampler
+  Takes design data list created with the function
+  \link{make.design.data} for model "probitCJS" and draws a
+  sample from the posterior distribution using a Gibbs
+  sampler.
 }
 \examples{
 # Analysis of the dipper data
 data(dipper)
-dipper <- splitCH(data=dipper)
-dipper.mcmc <- make.probitCJS.data(dipper, ch.cols=3:9, covariate.cols=2)
-fit1 <- probitCJS(p.model=~time*sex, phi.model=~time*sex, data=dipper.mcmc, burnin=100, iter=1000)
-# Real parameter values
-fit1$reals.phi
-fit1$reals.p
+# following example uses unrealistically low values for burnin and iteration to reduce package testing time
+fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),p=list(formula=~time+sex)), burnin=50, iter=250)
+fit1
+# Real parameter summary
+fit1$reals
 }
 \author{
   Devin Johnson

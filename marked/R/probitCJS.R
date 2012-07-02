@@ -1,40 +1,32 @@
 #' Perform MCMC analysis of a CJS model
 #' 
-#' Takes an object of class probitCJS.data created with the function \link{make.probitCJS.data} and draws a sample from the posterior distribution using a Gibbs sampler
+#' Takes design data list created with the function \link{make.design.data} for model "probitCJS" 
+#' and draws a sample from the posterior distribution using a Gibbs sampler.
 #' 
 #' 
-#' @param p.model A formula for the detection portion of the CJS model
-#' @param phi.model A formula for the survival portion of the CJS model
-#' @param data A probitCJS.data object containg the data for the model
-#' @param prior.list A named list containing 
-#' \item{phi}{A named list containg 'mu', the prior mean and 'Q' the prior precison matrix for the survival parameters}
-#' \item{p}{A named list containg 'mu', the prior mean and 'Q' the prior precison matrix for the survival parameters}
+#' @param data A list of design data from make.design.data for model="probitCJS"
+#' @param parameters A model specification list with a list for Phi and p containing a formula and optionally a prior specification which is a named list
+#'        containing 'mu', the prior mean and 'Q' the prior precision matrix 
 #' @param burnin number of iteration to initially discard for MCMC burnin
 #' @param iter number of iteration to run the Gibbs sampler for following burnin
 #' @param init.list A named list with initial values [more on this later]
-#' @return A list with MCMC output [I'll add to this later] 
+#' @return A list with MCMC iterations and summarized output:
+#' \item{beta.mcmc}{list with elements Phi and p which contain MCMC iterations for each beta parameter} 
+#' \item{real.mcmc}{list with elements Phi and p which contain MCMC iterations for each real parameter} 
+#' \item{beta}{list with elements Phi and p which contain summary of MCMC iterations for each beta parameter} 
+#' \item{reals}{list with elements Phi and p which contain summary of MCMC iterations for each real parameter} 
 #' @export
 #' @author Devin Johnson
 #' @examples
 #'
 #' # Analysis of the dipper data
 #' data(dipper)
-#' dipper <- splitCH(data=dipper)
-#' dipper.mcmc <- make.probitCJS.data(dipper, ch.cols=3:9, covariate.cols=2)
-#' fit1 <- probitCJS(p.model=~time*sex, phi.model=~time*sex, data=dipper.mcmc, burnin=100, iter=1000)
-#' # Real parameter values
-#' fit1$reals.phi
-#' fit1$reals.p
-probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, iter, init.list){
-  
-  ### CHECK THE DATA ###
-  if(!inherits(data,"probitCJS.data")) stop("The data is not of class 'probitCJS.data'\n
-                                           Please see the 'make.probitCJS.data' function.")
-### LOAD SOME PACKAGES ###
-  #require(Rcpp)
-  #require(inline)
-  require(truncnorm)
-  require(coda)
+#' # following example uses unrealistically low values for burnin and iteration to reduce package testing time
+#' fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),p=list(formula=~time+sex)), burnin=50, iter=250)
+#' fit1
+#' # Real parameter summary
+#' fit1$reals
+probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=~1)), burnin, iter, init.list=NULL){
   
   ### DEFINE SOME FUNCTIONS ###
   
@@ -50,7 +42,13 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
   }
   
   ### DATA MANIPULATION ###
-  
+  #### added by jll 2 July 2012 so it uses design data (ie make.design.data)
+  data <- data$p
+  data <- data[as.numeric(data$time)>=as.numeric(data$Cohort),]
+  data <- data[order(data$id,data$time),]
+  phi.model <- parameters$Phi$formula
+  p.model <- parameters$p$formula
+  ###   
   yvec <- data$Y
   n <- length(yvec)
   zvec.master <- data$Z
@@ -61,7 +59,7 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
   pn.p <- colnames(Xy)
   Xz <- model.matrix(phi.model, data)
   pn.phi <- colnames(Xz)
-  id <- factor(data[,attr(data,"id")])
+  id <- data$id              # jll 2 July 2012 - hardcoded to id
   id.num <- as.numeric(id)
   id.z <- id[idx.z]
   Xz.z <- matrix(Xz[idx.z,],ncol=ncol(Xz))
@@ -71,8 +69,8 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
   uXz <- unique(Xz)
   colnames(uXz) <- pn.phi
   
-  ### INITIAL VALUES ###
-  if(missing(init.list)){
+  ### INITIAL VALUES ### changed to NULL from missing
+  if(is.null(init.list)){
     beta.z <- rep(0,ncol(Xz))
     beta.y <- rep(0,ncol(Xy))
   }
@@ -81,20 +79,22 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
     beta.y <- init.list$beta.y
   }
   
-  ###  PRIOR DISTRIBUTIONS ###
-  if(missing(prior.list)){
-    Q.b.z <- diag(rep(1,ncol(Xz)))
-    mu.b.z <- rep(0,ncol(Xz))
-    Q.b.y <- diag(rep(1,ncol(Xy)))
-    mu.b.y <- rep(0,ncol(Xy))	
+  ###  PRIOR DISTRIBUTIONS ### - changed jll 2 July 2012
+  if(is.null(parameters$Phi$prior)){
+	  Q.b.z <- diag(rep(1,ncol(Xz)))
+	  mu.b.z <- rep(0,ncol(Xz))
+  }else{
+	  Q.b.z <- parameters$Phi$prior$Q
+	  mu.b.z <- parameters$Phi$prior$mu
+  }		
+  if(is.null(parameters$p$prior)){
+	  Q.b.y <- diag(rep(1,ncol(Xy)))
+	  mu.b.y <- rep(0,ncol(Xy))	
+  }else{
+	  Q.b.y <- parameters$p$prior$Q
+	  mu.b.y <- parameters$p$prior$mu
   }
-  else{
-    Q.b.z <- prior.list$phi$Q
-    mu.b.z <- prior.list$phi$mu
-    Q.b.y <- prior.list$p$Q
-    mu.b.y <- prior.list$p$mu
-  }
-  
+	  
   ### STORAGE ###
   beta.z.stor <- matrix(NA, iter, ncol(Xz))
   beta.y.stor <- matrix(NA, iter, ncol(Xy))
@@ -108,6 +108,7 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
   cat("\nprobitCJS MCMC beginning...\n")
   cat("p model = ", as.character(p.model),"\n")
   cat("phi model = ", as.character(phi.model),"\n\n")
+  flush.console()
   
   tot.iter <- burnin + iter
   st <- Sys.time()
@@ -154,33 +155,45 @@ probitCJS <- function(p.model = ~1, phi.model = ~1, data, prior.list, burnin, it
       if(ttc>=1) cat("\nApproximate time till completion: ", ttc, " hours\n")
       else cat("\nApproximate time till completion: ", ttc*60, " minutes\n")
     }
-    if(100*(m/tot.iter) >= 10 & (100*(m/tot.iter))%%10==0) cat("\n", 100*(m/tot.iter), "% completed\n")
-    
+    if(100*(m/tot.iter) >= 10 & (100*(m/tot.iter))%%10==0) 
+	{
+		cat("\n", 100*(m/tot.iter), "% completed\n")
+		flush.console()
+	}
   }
   
-  ### MAKE SOME OUTPUT ###
+  ### MAKE SOME OUTPUT ### jll 2 July changed to summarize betas as well 
+  
   fitted.phi <- mcmc(fitted.z.stor)
   summ.phi <- summary(fitted.phi)
   hpd.phi <- HPDinterval(fitted.phi)
   reals.phi <- data.frame(uXz, 
-                          posterior.mean=apply(fitted.z.stor, 2, mean), 
-                          CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])
+		  posterior.mean=apply(fitted.z.stor, 2, mean), 
+		  CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])
+
   fitted.p <- mcmc(fitted.y.stor)
   summ.p <- summary(fitted.p)
   hpd.p <- HPDinterval(fitted.p)
   reals.p <- data.frame(uXy, 
-                        posterior.mean=apply(fitted.y.stor,2,mean), 
-                        CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])
+		  posterior.mean=apply(fitted.y.stor,2,mean), 
+		  CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])
   
+  phibeta.mcmc <- mcmc(beta.z.stor)
+  summ.phi <- summary(phibeta.mcmc)
+  hpd.phi <- HPDinterval(phibeta.mcmc)
+  beta.phi <- data.frame(posterior.mean=apply(beta.z.stor, 2, mean), 
+		  CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])
   
-  return(
-    list(
-      beta.phi=mcmc(beta.z.stor), 
-      beta.p=mcmc(beta.y.stor), 
-      fitted.p=fitted.p, 
-      fitted.phi=fitted.phi,
-      reals.phi=reals.phi,
-      reals.p=reals.p
-      )
-    )
+  pbeta.mcmc <- mcmc(beta.y.stor)
+  summ.p <- summary(pbeta.mcmc)
+  hpd.p <- HPDinterval(pbeta.mcmc)
+  beta.p <- data.frame(  posterior.mean=apply(beta.y.stor, 2, mean), 
+		  CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])
+  
+  res=list(beta.mcmc=list(Phi= phibeta.mcmc,p= pbeta.mcmc), 
+		   reals.mcmc=list(Phi=fitted.phi,p=fitted.p),
+           beta=list(Phi=beta.phi,p=beta.p),
+		   reals=list(Phi=reals.phi,p=reals.p))
+  class(res)=c("crm","probitCJS")
+  return(res)
 }	### END OF FUNCTION ###

@@ -71,18 +71,16 @@
 #' sum(imat$freq*log(cumPhi))) if(debug)cat("\nlnl = ",lnl) return(lnl) } }
 #' 
 #' @param par vector of parameter values
-#' @param imat list of vectors and matrices constructed by
-#' \code{\link{process.ch}} from the capture history data.
-#' @param Phi.dm design matrix for Phi constructed by \code{\link{create.dm}}
-#' @param p.dm design matrix for p constructed by \code{\link{create.dm}}
-#' @param Phi.fixed matrix with 3 columns: ch number(i), occasion number(j),
-#' fixed value(f) to fix phi(i,j)=f
-#' @param p.fixed matrix with 3 columns: ch number(i), occasion number(j),
+#' @param model_data a list that contains: 1)imat-list of vectors and matrices constructed by
+#' \code{\link{process.ch}} from the capture history data, 2)Phi.dm design matrix for Phi constructed by \code{\link{create.dm}},
+#' 3)p.dm design matrix for p constructed by \code{\link{create.dm}},
+#' 4)Phi.fixed matrix with 3 columns: ch number(i), occasion number(j),
+#' fixed value(f) to fix phi(i,j)=f, 5)p.fixed matrix with 3 columns: ch number(i), occasion number(j), and
+#' 6) time.intervals intervals of time between occasions if not all 1
 #' fixed value(f) to fix p(i,j)=f
 #' @param Phi.links vector of links for each parameter
 #' @param p.links vector of links for each parameter
 #' @param debug if TRUE will printout values of \code{par} and function value
-#' @param time.intervals intervals of time between occasions if not all 1
 #' @param all if TRUE, returns entire list rather than just lnl; can be used to
 #' extract reals
 #' @return either -2*log likelihood value if \code{all=FALSE} or the entire
@@ -94,25 +92,6 @@
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
 cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE)
-###################################################################################
-# cjs.lnl - computes -2*log likelihood value of cjs model using call to FORTRAN
-#            subroutine
-#
-# Arguments:
-#    par             - vector of parameter values to evaluate likelihood
-#    imat            - list of indicator vectors, frequency etc from process.ch
-#    Phi.dm          - Phi design matrix created by call to create.dm
-#    p.dm            - p design matrix created by call to create.dm
-#    Phi.fixed       - matrix with 3 columns: ch number(i), occasion number(j), fixed value(f)
-#                       to fix phi(i,j)=f 
-#    p.fixed         - matrix with 3 columns: ch number(i), occasion number(j), fixed value(f)
-#                       to fix p(i,j)=f 
-#    debug           - if TRUE show iterations with par and -2lnl
-#    time.intervals  - intervals of time between occasions
-#    all             - if TRUE, returns entire lnl computation list
-#
-# Value: -2*log likelihood
-##################################################################################
 {
 	f_eval=get(".markedfunc_eval",envir=.GlobalEnv)+1
 	assign(".markedfunc_eval", f_eval, envir = .GlobalEnv)

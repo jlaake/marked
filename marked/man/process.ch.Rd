@@ -12,8 +12,10 @@
   missing assumed to be a; if <0 indicates a loss on
   capture}
 
-  \item{all}{Not necessary unless R code used to compute
-  lnl instead of FORTRAN}
+  \item{all}{FALSE is okay for cjs unless R code used to
+  compute lnl instead of FORTRAN; must be true for js
+  becaus it returns additional quantities needed for entry
+  prob.}
 }
 \value{
   \item{nocc}{number of capture occasions}

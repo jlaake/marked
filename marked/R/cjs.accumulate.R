@@ -87,7 +87,7 @@ cjs.accumulate=function(x,model_data,nocc,freq,chunk_size)
 	ch=x$ch[sort(indices)]
 	model_data$time.intervals=model_data$time.intervals[sort(indices),]
 	model_data$imat=process.ch(ch,freq) 
-	if(sum(freq)!=nrow(x))stop(paste("Error in accumulation. Number of accumulated",sum(freq),"not equal to original number",nrow(x)))
+	if(sum(freq)!=sum(x$freq))stop(paste("Error in accumulation. Number of accumulated",sum(freq),"not equal to original number",sum(x$freq)))
 	cat(" ",nrow(x)," capture histories collapsed into ",length(ch),"\n")
     return(model_data)
 }

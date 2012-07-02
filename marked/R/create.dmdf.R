@@ -18,7 +18,11 @@
 #' information matrices) link the parameters to the specific animals.  For
 #' example, if for a particular group the \code{Phi} PIM is
 #' 
-#' \preformatted{ 1 2 3 4 5 6 }
+#' \preformatted{ 
+#'   1 2 3 
+#'     4 5 
+#'       6 
+#' }
 #' 
 #' Then animals in that group that were first caught/released on occasion 1
 #' have the parameters 1,2,3 for the 3 occasions.  Those first caught/released
@@ -77,7 +81,10 @@
 #' 
 #' \preformatted{
 #' 
-#' 1 2 3 4 5 6 7 8 9 }
+#'  1 2 3 
+#'  4 5 6 
+#'  7 8 9 
+#' }
 #' 
 #' If you think of these as \code{Phi} parameter indices, then 1 to 3 are
 #' survivals for the intervals 1-2,2-3,3-4 for animal 1, and 4-6 and 7-9 are
@@ -93,9 +100,17 @@
 #' with the example above, depending on how the arguments are set the following
 #' dataframe could be constructed:
 #' 
-#' \preformatted{ row time Time cohort Cohort age Age initial.age 1 1 0 1 0 0 0
-#' 0 2 2 1 1 0 1 1 0 3 3 2 1 0 2 2 0 4 1 0 2 1 0 0 0 5 2 1 2 1 1 1 0 6 3 2 2 1
-#' 2 2 0 7 1 0 3 2 0 0 0 8 2 1 3 2 1 1 0 9 3 2 3 2 2 2 0 }
+#' \preformatted{ row time Time cohort Cohort age Age initial.age 
+#'                 1    1    0     1     0     0     0    0
+#'                 2    2    1     1     0     1     1    0 
+#'                 3    3    2     1     0     2     2    0 
+#'                 4    1    0     2     1     0     0    0 
+#'                 5    2    1     2     1     1     1    0 
+#'                 6    3    2     2     1     2     2    0 
+#'                 7    1    0     3     2     0     0    0
+#'                 8    2    1     3     2     1     1    0 
+#'                 9    3    2     3     2     2     2    0 
+#' }
 #' 
 #' The fields starting with a lowercase character (time,cohort,age) are created
 #' as factor variables and those with an uppercase are created as numeric
@@ -116,11 +131,14 @@
 #' \code{beta=c(1,1,1)} that are structured like the square PIM matrix without
 #' the use of PIMs.
 #' 
-#' \preformatted{ nocc=4
+#' \preformatted{ 
+#' nocc=4
 #' x=data.frame(ch=c("1001","0111","0011"),stringsAsFactors=FALSE)
-#' beta=c(1,1,1) x.proc=process.data(x,model="cjs")
+#' beta=c(1,1,1) 
+#' x.proc=process.data(x,model="cjs")
 #' Phi.dmdf=make.design.data(x.proc)$Phi Phi.dm=create.dm(Phi.dmdf,~time)
-#' Phimat=matrix(plogis(Phi.dm%*%beta),nrow=nrow(x),ncol=nocc-1,byrow=TRUE) }
+#' Phimat=matrix(plogis(Phi.dm%*%beta),nrow=nrow(x),ncol=nocc-1,byrow=TRUE) 
+#' }
 #' 
 #' Note that the order of the columns for \code{Phi.dmdf} differs slightly from
 #' what is shown above. Also, \code{plogis} is an R function that computes the
@@ -143,7 +161,12 @@
 #' \code{Phi}, then the variables would be named \code{cov1,cov2,cov3} in
 #' \code{x}. Let's say that x was structured as follows:
 #' 
-#' \preformatted{ ch cov1 cov2 cov3 1001 1 0 1 0111 0 2 1 0011 0 0 0 }
+#' \preformatted{ 
+#' ch   cov1 cov2 cov3 
+#' 1001   1   0     1 
+#' 0111   0   2     1 
+#' 0011   0   0     0 
+#' }
 #' 
 #' If you specified the argument \code{time.varying=c("cov")} then in the
 #' design dataframe a field named \code{cov} would be created and the values
@@ -197,27 +220,13 @@
 #' Pledger, S., K. H. Pollock, et al. (2003). Open capture-recapture models
 #' with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
 create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
-##############################################################################
-# create.dmdf - create design matrix dataframe with nch*(nocc-1) rows
-#             where nch is number of capture histories and nocc is number of
-#             occasions. 
-#
-# Arguments:
-#
-#    x              - processed dataframe
-#    parameter      - list with fields defining parameter
-#    time.varying   - character vector containing base names for variables in x
-#                     to be used to construct time-varying covariates
-#    fields         - character vector containing field names for variables in x
-#                     to be included in design matrix dataframe; if NULL all other than
-#                     ch are included
-#
-# Value:      - design matrix dataframe for model.matrix application (create.dm)
-##############################################################################
 {
    last= -parameter$num
    begin.num=parameter$begin+1
-   first=process.ch(x$data$ch)$first
+   chp = process.ch(x$data$ch)
+   firstseen=chp$first
+   lastseen=chp$last
+   chmat = chp$chmat
 #  requires field in each record called initial.age; if missing set to 0 for a
 #  time since marked field
    if(is.null(x$data$initial.age)) x$data$initial.age=0
@@ -254,23 +263,26 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 #  Cohort, age and Age are created automatically.  Any time-invariant data in x are
 #  repeated in each row of the data.  There is one row for each modelled occasion.            
    fx=function(.row){
-        cohort=times[first[.row]]
+        cohort=times[firstseen[.row]]
         Times=times[begin.num:(ntimes+begin.num-1)]-min(times[begin.num:(ntimes+begin.num-1)])
-        if(first[.row]>1)
-           ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-sum(time.intervals[1:(first[.row]-1)])-times[1]
+        if(firstseen[.row]>1)
+           ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-sum(time.intervals[1:(firstseen[.row]-1)])-times[1]
         else
            ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
         ages[ages<min.age]=min.age
+		Y=chmat[.row,begin.num:(ntimes+begin.num-1)]
+		Z = rep(NA,nocc)
+		Z[firstseen[.row]:lastseen[.row]]=1
+		Z = Z[begin.num:(ntimes+begin.num-1)]
         newdm.df=data.frame(time=factor.times,
                              cohort=rep(factor(cohort,levels=cohort.levels),ntimes),
-                             Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages)     
+                             Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages,Y=Y,Z=Z)     
    }
-#   if(parameter=="Phi" | js)
    if(begin.num==1)
       min.age=min(x$data$initial.age,na.rm=TRUE )
    else
-      min.age=min(x$data$initial.age+c(time.intervals,max(time.intervals))[first],na.rm=TRUE)   
-   dm.df=sapply(1:dim(x$data)[1],fx,simplify=FALSE)  
+      min.age=min(x$data$initial.age+c(time.intervals,max(time.intervals))[firstseen],na.rm=TRUE)   
+   dm.df=sapply(1:nrow(x$data),fx,simplify=FALSE)  
 #  Bind all the data into a single dataframe and attach time-varying covariates if any.
 #  return dataframe.
    res=do.call("rbind",dm.df)

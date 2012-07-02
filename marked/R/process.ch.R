@@ -6,8 +6,8 @@
 #' @param ch Vector of character strings containing 0/1 capture-history
 #' @param freq Optional vector of frequencies for ch; if missing assumed to be
 #' a; if <0 indicates a loss on capture
-#' @param all Not necessary unless R code used to compute lnl instead of
-#' FORTRAN
+#' @param all FALSE is okay for cjs unless R code used to compute lnl instead of
+#' FORTRAN; must be true for js becaus it returns additional quantities needed for entry prob.
 #' @return \item{nocc}{number of capture occasions} \item{freq}{absolute value
 #' of frequency for each ch} \item{first}{vector of occasion numbers for first
 #' 1} \item{last}{vector of occasion numbers for last 1} \item{loc}{vector of

@@ -22,6 +22,10 @@
 #' \code{\link{make.design.data}}
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
+#' @param model_data a list of all the relevant data for fitting the model including
+#' imat, Phi.dm,p.dm,Phi.fixed,p.fixed, and time.intervals. It is used to save values
+#' and avoid accumulation again if the model was re-rerun with an additional call to cjs when
+#' using autoscale or re-starting with initial values.  It is stored with returned model object.
 #' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
 #' @param accumulate if TRUE will accumulate capture histories with common
 #' value and with a common design matrix for Phi and p to speed up execution
@@ -50,56 +54,8 @@
 #' each animal-occasion excluding those that occurred before release}
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
-#' @examples
-#' 
-#' # fit 3 cjs models with crm
-#' data(dipper)
-#' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
-#' dipper.ddl=make.design.data(dipper.proc)
-#' mod.Phit.pt=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
-#' mod.Phit.pt
-#' mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
-#' mod.Phidot.pdot
-#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
-#' mod.Phisex.pdot
-#' # fit same 3 models with calls to mark; requires RMark
-#' # require(RMark)
-#' #mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
-#' #summary(mod0,brief=TRUE)
-#' #mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
-#' #summary(mod1,brief=TRUE)
-#' #mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
-#' #summary(mod2,brief=TRUE)
-#' 
 cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale, ...)
-###################################################################################
-# cjs - convenience function for optim to optimize the cjs likelihood (cjs.lnl) for
-#       a given model specified by the Phi.dm and p.dm design matrices and
-#       the data x.
-#
-# Arguments:
-#    x               - processed dataframe created by process.data
-#    ddl             - list of dataframes for design data
-#    dml             - list of design matrices
-#    parameters      - list of parameter model specifications
-#    accumulate     - if TRUE will accumulate capture histories with common value
-#                      and with a common design matrix and fixed values for Phi and p
-#    Phi             - initial value for intercept 
-#    p               - initial value for intercept
-#    initial         - initial values for parameters if desired; if it is a
-#                      named vector it will match with column names of design matrices
-#    method          - method used in optim
-#    hessian         - if TRUE, computes and returns hessian
-#    debug           - if TRUE show iterations with par and -2lnl
-#    chunk_size      - specifies amount of memory to use in accumulating capture histories
-#                             use is 8*chunk_size/1e6 MB (default 80MB)
-#    refit           - number of times to refit the model if it fails to converge
-#    ...             - additional arguments passed to cjs.lnl or optim
-#
-# Value: list of results
-#
-###################################################################################
 {
 #
 #  Setup values from arguments
@@ -199,7 +155,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 	   }else
 	   {
 		   scale.phi=scale[1:ncol(model_data$Phi.dm)]
-		   scale.p=scale[(ncol(model_data$p.dm)+1):length(scale)]
+		   scale.p=scale[(ncol(model_data$Phi.dm)+1):length(scale)]
 	   }
    }
    model_data$Phi.dm=Matrix:::t(Matrix:::t(model_data$Phi.dm)/scale.phi)
@@ -219,8 +175,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 		   method="Nelder-Mead"
            itnmax=2*itnmax
 	   }
-	   mod=optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
-			         debug=debug,control=control,itnmax=itnmax,...)
+	   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
+			         debug=debug,control=control,itnmax=itnmax,...))
 	  par=mod$par$par
 	  convergence=mod$conv$conv
 	  i=i+1
@@ -252,7 +208,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("\n Computing hessian\n")
-	   res$vcv=cjs.hessian(res,Phi.links=NULL, p.links=NULL,all=FALSE)
+	   res$vcv=cjs.hessian(res, Phi.links=NULL, p.links=NULL)
    }   
 #  Assign S3 class and return
    class(res)=c("crm","cjs")

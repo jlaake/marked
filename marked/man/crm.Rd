@@ -9,7 +9,7 @@
     method = "nlminb", hessian = FALSE, accumulate = TRUE,
     chunk_size = 1e+07, control = NULL, refit = 1,
     itnmax = 5000, scale = NULL, autoscale = 0, run = TRUE,
-    ...)
+    burnin = 100, iter = 1000, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -44,7 +44,7 @@
   capture occasions}
 
   \item{method}{optimization method for function
-  \code{optim}}
+  \code{optimx}}
 
   \item{debug}{if TRUE, shows optimization output}
 
@@ -62,9 +62,23 @@
 
   \item{refit}{non-zero entry to refit}
 
-  \item{itnmax}{maximum number of iterations}
+  \item{itnmax}{maximum number of iterations for
+  optimization}
 
   \item{scale}{vector of scale values for parameters}
+
+  \item{autoscale}{if non-zero, it specifies number of
+  iterations of optimization that will be used to construct
+  initial values to construct parameter scales}
+
+  \item{run}{if TRUE, it runs model; otherwise if FALSE can
+  be used to test model build components}
+
+  \item{burnin}{number of iterations for mcmc burnin;
+  specified default not realistic for actual use}
+
+  \item{iter}{number of iterations after burnin for mcmc
+  (not realistic default)}
 
   \item{...}{optional arguments passed to js or cjs and
   optimx}
@@ -107,14 +121,14 @@
   There are some optional arguments that can be used to set
   initial values and control other aspects of the
   optimization.  The optimization is done with the R
-  function \code{optim} and the arguments \code{method} and
-  \code{hessian} are described with the help for that
-  function.  In addition, any arguments not matching those
-  for \code{cjs} (the ...) are passed to \code{optim}
-  allowing any of the other parameters to be set.  If you
-  set \code{debug=TRUE}, then at each function evaluation
-  (\code{\link{cjs.lnl}} the current values of the
-  parameters and -2*log-likelihood value are output.
+  package/function \code{optimx} and the arguments
+  \code{method} and \code{hessian} are described with the
+  help for that function.  In addition, any arguments not
+  matching those for \code{cjs} (the ...) are passed to
+  \code{optimx} allowing any of the other parameters to be
+  set.  If you set \code{debug=TRUE}, then at each function
+  evaluation (\code{\link{cjs.lnl}} the current values of
+  the parameters and -2*log-likelihood value are output.
 
   In the current implementation, a logit link is used to
   constrain the parameters in the unit interval (0,1)
@@ -231,17 +245,20 @@ mod.Phidot.pdot
 mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
 mod.Phisex.pdot
 # fit same 3 models with calls to mark
-#require(RMark)
-#mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
-#summary(mod0,brief=TRUE)
-#mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
-#summary(mod1,brief=TRUE)
-#mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
-#summary(mod2,brief=TRUE)
+\donttest{
+require(RMark)
+mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
+summary(mod0,brief=TRUE)
+mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
+summary(mod1,brief=TRUE)
+mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
+summary(mod2,brief=TRUE)
+}
 # jolly seber model
 crm(dipper,model="js",groups="sex",accumulate=FALSE)
-#require(RMark)
-#mark(dipper,model="POPAN",groups="sex")
+\donttest{
+mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
+}
 }
 \author{
   Jeff Laake

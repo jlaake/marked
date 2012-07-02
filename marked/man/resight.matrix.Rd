@@ -1,17 +1,15 @@
 \name{resight.matrix}
+\alias{naive.survival}
 \alias{resight.matrix}
 \title{Various utility functions}
 \usage{
-  resight.matrix(x) naive.survival(x,...)
+  resight.matrix(x)
+
+  naive.survival(x)
 }
 \arguments{
   \item{x}{processed data list - result from process.data
   in marked or real estimates from fitted model}
-
-  \item{age}{at which Phi or p should be shown across time}
-
-  \item{time}{at which Phi or p should be shown across
-  ages}
 }
 \value{
   matrix of values with cohort and year labels

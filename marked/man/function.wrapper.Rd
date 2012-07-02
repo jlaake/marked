@@ -1,0 +1,41 @@
+\name{function.wrapper}
+\alias{function.wrapper}
+\alias{fx.aic}
+\alias{fx.par.count}
+\title{Utility extract functions}
+\usage{
+  function.wrapper(x,fx,base="",...)
+
+  fx.aic(x)
+
+  fx.par.count(x)
+}
+\arguments{
+  \item{x}{character string for the model stored as
+  external object (.rda)}
+
+  \item{fx}{function to be called for each model}
+
+  \item{base}{base name for models}
+
+  \item{...}{additional values that are added to
+  environment of fx (eg chat for fx.aic)}
+}
+\value{
+  extracted value defined by function
+}
+\description{
+  Several functions have been added to extract components
+  from externally saved crm models function.wrapper accepts
+  a character string for a model, loads it and then runs
+  the specified function on it. Currently, only 2 functions
+  have been defined: fx.aic to compute aic and fx.par.count
+  to extract parameter count. Currently parameters other
+  than x (eg chat) are passed through the environment.
+  Possibly could have used ...
+}
+\author{
+  Jeff Laake
+}
+\keyword{utility}
+

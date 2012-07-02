@@ -1,6 +1,6 @@
 Package: marked
-Version: 1.0.3
-Date: 2011-05-18
+Version: 1.0.4
+Date: 2012-07-02
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>
 Description: This package provides a framework for handling
@@ -11,12 +11,14 @@ Description: This package provides a framework for handling
     common framework.
 Depends:
     R (>= 2.12.0),
-    Matrix,
-    optimx
+    optimx,
+    coda,
+    truncnorm,
+    Matrix
 Suggests:
     RMark
 LazyLoad: yes
-License: GPL version 2 or later
+License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
 Collate:
     'cjs.accumulate.R'
@@ -41,7 +43,11 @@ Collate:
     'utility.R'
     'valid.parameters.R'
     'zzz.R'
-    'make.probitCJS.data.R'
     'probitCJS.R'
     'splitCH.R'
     'cjs.hessian.r'
+    'extract.fcts.r'
+    'summary.fcts.R'
+    'crm.wrapper.R'
+    'js.hessian.R'
+    'js.accumulate.R'

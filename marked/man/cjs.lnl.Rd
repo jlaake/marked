@@ -8,20 +8,17 @@
 \arguments{
   \item{par}{vector of parameter values}
 
-  \item{imat}{list of vectors and matrices constructed by
-  \code{\link{process.ch}} from the capture history data.}
-
-  \item{Phi.dm}{design matrix for Phi constructed by
-  \code{\link{create.dm}}}
-
-  \item{p.dm}{design matrix for p constructed by
-  \code{\link{create.dm}}}
-
-  \item{Phi.fixed}{matrix with 3 columns: ch number(i),
-  occasion number(j), fixed value(f) to fix phi(i,j)=f}
-
-  \item{p.fixed}{matrix with 3 columns: ch number(i),
-  occasion number(j), fixed value(f) to fix p(i,j)=f}
+  \item{model_data}{a list that contains: 1)imat-list of
+  vectors and matrices constructed by
+  \code{\link{process.ch}} from the capture history data,
+  2)Phi.dm design matrix for Phi constructed by
+  \code{\link{create.dm}}, 3)p.dm design matrix for p
+  constructed by \code{\link{create.dm}}, 4)Phi.fixed
+  matrix with 3 columns: ch number(i), occasion number(j),
+  fixed value(f) to fix phi(i,j)=f, 5)p.fixed matrix with 3
+  columns: ch number(i), occasion number(j), and 6)
+  time.intervals intervals of time between occasions if not
+  all 1 fixed value(f) to fix p(i,j)=f}
 
   \item{Phi.links}{vector of links for each parameter}
 
@@ -29,9 +26,6 @@
 
   \item{debug}{if TRUE will printout values of \code{par}
   and function value}
-
-  \item{time.intervals}{intervals of time between occasions
-  if not all 1}
 
   \item{all}{if TRUE, returns entire list rather than just
   lnl; can be used to extract reals}

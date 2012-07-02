@@ -17,6 +17,14 @@
   \item{dml}{list of design matrices created by
   \code{\link{create.dm}} from formula and design data}
 
+  \item{model_data}{a list of all the relevant data for
+  fitting the model including imat,
+  Phi.dm,p.dm,Phi.fixed,p.fixed, and time.intervals. It is
+  used to save values and avoid accumulation again if the
+  model was re-rerun with an additional call to cjs when
+  using autoscale or re-starting with initial values.  It
+  is stored with returned model object.}
+
   \item{parameters}{equivalent to \code{model.parameters}
   in \code{\link{crm}}}
 
@@ -95,26 +103,6 @@
   cause R to terminate.  So make sure to save your
   workspace frequently if you use this function in its
   current implementation.
-}
-\examples{
-# fit 3 cjs models with crm
-data(dipper)
-dipper.proc=process.data(dipper,model="cjs",begin.time=1)
-dipper.ddl=make.design.data(dipper.proc)
-mod.Phit.pt=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
-mod.Phit.pt
-mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
-mod.Phidot.pdot
-mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
-mod.Phisex.pdot
-# fit same 3 models with calls to mark; requires RMark
-# require(RMark)
-#mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
-#summary(mod0,brief=TRUE)
-#mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
-#summary(mod1,brief=TRUE)
-#mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
-#summary(mod2,brief=TRUE)
 }
 \author{
   Jeff Laake <jeff.laake@noaa.gov>
