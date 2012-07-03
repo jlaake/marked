@@ -130,6 +130,7 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	    cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(lnl$lnl,digits=10))
 		flush.console()
 	}	
+	lnl$lnl=lnl$lnl/2
 	if(all)
 		return(lnl)
 	else

@@ -109,5 +109,5 @@ if(debug)
 		cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(lnl,digits=10))
 		flush.console()
     }	
-return(lnl)
+return(lnl/2)
 }

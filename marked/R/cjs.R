@@ -186,7 +186,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    cjs.beta=par/c(scale.phi,scale.p)
    names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
 #  Create results list 
-   lnl=mod$fvalues$fvalues
+   lnl=2*mod$fvalues$fvalues
    res=list(beta=cjs.beta,neg2lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
 #  Restore complete non-accumulated model_data with unscaled design matrices and call cjs to compute all values including reals
    if(!is.null(model_data.save)) model_data=model_data.save

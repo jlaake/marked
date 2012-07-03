@@ -217,7 +217,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
       else
 	      ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
    }
-   lnl=mod$fvalues$fvalues+ 2*sum(lfactorial(ui))
+   lnl=2*(mod$fvalues$fvalues+ sum(lfactorial(ui)))
    res=list(beta=js.beta,neg2lnl=lnl,AIC=lnl+2*length(js.beta),
 		   convergence=mod$conv,count=mod$itns,
 		   scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),
