@@ -1,0 +1,1159 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\usepackage{amsthm}\usepackage{epsfig}\usepackage{psfrag}\usepackage{lineno}
+
+\bibliographystyle{apalike}
+
+%\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
+%\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
+%\setlength{\textheight}{9in} \setlength{\topskip}{0in}
+%\setlength{\headheight}{0in} \setlength{\headsep}{0in}
+\end_preamble
+\use_default_options false
+\maintain_unincluded_children false
+\language english
+\language_package none
+\inputencoding auto
+\fontencoding default
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 2
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine natbib_authoryear
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%% TITLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\baselinestretch}{1.8}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\family typewriter
+\size largest
+marked
+\family default
+: An R package for maximum-likelihood and MCMC analysis of capture-recapture
+ data
+\size normal
+
+\begin_inset VSpace 0.5in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+Devin S.
+ Johnson
+\begin_inset Formula $^{1}$
+\end_inset
+
+, Jeff L.
+ Laake, and Paul B.
+ Conn
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size normal
+\begin_inset space \hrulefill{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size normal
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.25}
+\end_inset
+
+
+\size large
+National Marine Mammal Laboratory, Alaska Fisheries Science Center
+\begin_inset Newline newline
+\end_inset
+
+ NOAA National Marine Fisheries Service,
+\begin_inset Newline newline
+\end_inset
+
+ Seattle, Washington, U.S.A.
+\begin_inset Newline newline
+\end_inset
+
+ 
+\begin_inset Formula $^{1}$
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Email:
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ devin.johnson@noaa.gov
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+\begin_inset space \hrulefill{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\shape smallcaps
+\size normal
+Running Head
+\shape default
+: Running header 
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size normal
+December 8, 2011 
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%% ABSTRACT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%{
+\backslash
+sc Summary.}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\series bold
+Summary
+\end_layout
+
+\begin_layout Enumerate
+
+\end_layout
+
+\begin_layout Enumerate
+
+\end_layout
+
+\begin_layout Enumerate
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\size normal
+\begin_inset space \hrulefill{}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\shape smallcaps
+\size normal
+Key words
+\shape default
+ Words here
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+linenumbers
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.8}
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Currently the most comprehensive software for analysis of capture-recapture
+ data is MARK (reference to White and Burnham and url).
+ MARK is a FORTRAN program for fitting models that are manually constructed
+ with graphical user interface software.
+ RMark(ref) is an R package that constructs models for MARK with user-specified
+ formulas to replace the manual model creation in the MARK interface.
+ With RMark and MARK most currently available mark-recapture models can
+ be fitted and manipulated in R.
+ Yet, additional R packages have been made available for capture-recapture
+ analysis including Rcapture (ref), mra(ref), secr(ref), BTSPAS(ref), SPACECAP(r
+ef).
+ Rcapture fits closed and open models in a log-linear framework.
+ The mra package fits Cormack-Jolly-Seber(CJS) and the Huggins closed model
+ with a regression approach to model specification.
+ The secr package provides spatially explicit modelling of closed capture-recapt
+ure data and both BTSPAS and SPACECAP also fit models for closed populations.
+ Each package is designed for a unique niche or structure.
+ We believe these alternative packages in R are useful because they expand
+ the analyst's toolbox and the code is open source which enables the savy
+ user to understand fully what the software is doing.
+ Also, this independent innovation provides testing for existing software
+ and potential gains in developer knowledge to improve existing software.
+\end_layout
+
+\begin_layout Standard
+We developed an R package we named marked with a focus on an analysis of
+ marked animals in contrast to the R package unmarked (ref) that focuses
+ primarily but not exclusively on analysis based on observations of unmarked
+ animals.
+ The original impetus was to write code for the CJS model using the hierarchical
+ likelihood construction described by Pledger et al.
+ (2003) with the added capability of variation in time intervals between
+ initial capture and recapture which was not possible in MARK.
+ Also, we wanted to improve on execution times with RMark/MARK for analysis
+ of our own large data sets with many time-varying individual (animal-specific)
+ covariates using the data structure idea in the mra package.
+ Subsequently, we implemented the Jolly-Seber model with the Schwarz and
+ Arnason (1996) POPAN parameter structure with the hierarchical likelihood
+ construction idea extended to the entry of animals into the population
+ and an MCMC implementation of the CJS model based on the 
+\size normal
+approach used by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "ALBERT:1993fk"
+
+\end_inset
+
+ for analyzing binary data with a probit regression model.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+Seems to be no section header for the introduction.
+ So, put all the intro text here.
+ Above is a start.
+ Should we base all the following discussion of the dipper data set, or
+ do you guys have a better one? 
+\series bold
+\size default
+Jeff votes for the dipper data.
+ Not too large and well-known
+\series default
+\size normal
+.
+ We have to do this in 
+\begin_inset Formula $\le3,000$
+\end_inset
+
+ words.
+\end_layout
+
+\begin_layout Section*
+Data structure
+\end_layout
+
+\begin_layout Standard
+To get the real parameters for EACH animal, you need to create a design
+ matrix for each animal by filling in the weight value into the weight column,
+ multiplying by the betas, computing the inverse link and then selecting
+ the correct real parameters based on the indices 1,2 or 3,4.
+ Clearly if there is no individual covariate, then it only requires a single
+ multiplication by the betas, computation of the inverse link, but for each
+ animal you still need to use the indices to extract the appropriate real
+ parameters.
+ The data are replicated k-1 times with a different time value for each.
+ The real parameters can be constructed by creating a design matrix using
+ a formula much like in regression, multiplying by the beta parameters and
+ inverting the link function.
+ In R this is done with the model.matrix function as shown below:
+\end_layout
+
+\begin_layout Standard
+There is no indexing necessary because the n*(k-1) vector is easily partitioned
+ to a matrix with n rows and k-1 columns which is the real parameter matrix
+ needed for the Phis.
+ Below is an example using a beta vector of c(1,-.5,.2,.1) and a logit link
+ where plogis is the inverse logit link and %*% is matrix multiplication:
+\end_layout
+
+\begin_layout Standard
+The same can be done to compute the real parameter matrix for p.
+ With those 2 matrices it is straightforward to calculate the probability
+ for each capture history.
+ All of this easily extends to multi-strata and other models by just changing
+ the data that are included.
+ The key point is to create a data record for each animal-occasion.
+ There is no need for PIMS because there is a real parameter for each animal-occ
+asion for each type of parameter (e.g., Phi,p,etc).
+ In general the design matrix (DM) will be larger with this approach in
+ comparison to the MARK PIM approach but it can be smaller if the number
+ of unique capture histories is less than G*(k-1)/2 where G is the number
+ of groups.
+ So because the DM could easily get huge you would never want to create
+ the DM by hand.
+ Presumably that was the reason for PIMS because it reduced the possible
+ DM size.
+ But I’d argue that we should not be creating DMs by hand except when folks
+ are learning the concepts behind DMs.
+ Once you understand the concepts, creating DMs by hand is a waste of time
+ and prone to error.
+ What other statistical software makes you create DMs by hand other than
+ MARK and PRESENCE which was modeled after MARK? None that I know of! However,
+ if you automate the DM construction like in most statistical software then
+ this approach is much more intuitive than the PIM approach.
+ Let me make it abundantly clear that this was not my idea! It was proposed
+ by Trent McDonald and he developed his mra package based on the idea.
+ Although, personally I find his implementation of the idea very clunky
+ and in some ways it is worse than PIMS.
+ But the idea and the implementation are two very different things.
+ There are ways to make the implementation quite transparent to the user
+ who would only need to supply the original data with covariates and would
+ not have to construct the expanded set of data.
+ That is easily done programmatically and RMark already contains code to
+ do it and it is open source and available to anyone who wants it.
+ Also, I want to make it clear that I’m not arguing that we should stop
+ the presses and replace MARK with a re-creation of the same with this new
+ data structure.
+ What Trent has in mra is largely redundant with the “Recaptures only” portion
+ of MARK.
+ He is adding different models to his package but it will not catch or surpass
+ MARK anywhere in the near future.
+ Without adding functionality, I think he is wasting his time.
+ What I do suggest is that future software development should abandon the
+ PIM approach to creating models for capture-recapture or similar data.
+ I think that software developed with Trent’s idea will be easier for users
+ to understand and for teachers to teach because it will be much more like
+ standard statistical software.
+ The user will have a single data file and would only need to devise a formula
+ for each parameter (e.g., Phi, p) that represents their conceptual model.
+ While RMark does that to some extent by forcing PIMs to the background,
+ the PIMS are still there and the PIM approach forces an artificial separation
+ between individual covariate data (e.g., weight) and what I term “design
+ data” (e.g., time, age, group factor variables) in RMark.
+ I have done some limited development in RMark to implement this alternative
+ approach with the CJS and JS (POPAN) class of models solely in R.
+ My goal was to see if the alternative approach would be faster with many
+ individual covariates which all have to be replaced for each animal in
+ the DM in MARK.
+ It ends up being comparable to MARK and was not an improvement for my problem
+ size.
+ The other reason I chose to do the development was to create additional
+ modeling flexibility and incorporate tag loss estimation and other features.
+ I have no intention or desire to recreate MARK! I’ll leave that responsibility
+ and headache with Gary.
+ Development with RMark takes enough of my time and it only creates model
+ structures for MARK.
+ Again my message here is that any future software development should consider
+ abandoning the current PIM approach and creating DMs by hand and consider
+ this alternative approach.
+ 
+\end_layout
+
+\begin_layout Standard
+Individual specific time.interval values
+\end_layout
+
+\begin_layout Section*
+Getting initial parameter values
+\end_layout
+
+\begin_layout Standard
+logit link for Phi,p
+\end_layout
+
+\begin_layout Standard
+mlogit link for pent
+\end_layout
+
+\begin_layout Standard
+initial Phi and p values for intercept or initial=vector from other model
+ matched by name
+\end_layout
+
+\begin_layout Standard
+if initial,Phi,p are all NULL - then compute using cjs.initial
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+#   Create initial values for p using bernoulli glm with Manley-Parr approach
+\end_layout
+
+\begin_layout Plain Layout
+
+cjs.initial=function(dml,imat)
+\end_layout
+
+\begin_layout Plain Layout
+
+	cat("
+\backslash
+n Computing initial parameter estimates
+\backslash
+n")
+\end_layout
+
+\begin_layout Plain Layout
+
+	num=nrow(imat$chmat)
+\end_layout
+
+\begin_layout Plain Layout
+
+	ind=matrix(c(1:num,imat$first+1,imat$last-1),ncol=3,nrow=num)
+\end_layout
+
+\begin_layout Plain Layout
+
+	ind=ind[ind[,2]<=ind[,3],]
+\end_layout
+
+\begin_layout Plain Layout
+
+	dep.values=unlist(apply(ind,1,function(x,z)z[x[1],x[2]:x[3]],z=imat$chmat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3
+]))-1
+\end_layout
+
+\begin_layout Plain Layout
+
+	x=dml[["p"]][dd.indices,]
+\end_layout
+
+\begin_layout Plain Layout
+
+    initial.p=coef(glm.fit(x,dep.values,family=binomial()))
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial.p[is.na(initial.p)]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial.p[initial.p < -5 | initial.p > 5]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+	#   Create initial values for S using bernoulli glm assuming p=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	last=imat$last+1
+\end_layout
+
+\begin_layout Plain Layout
+
+	last[last>ncol(imat$chmat)]=ncol(imat$chmat)
+\end_layout
+
+\begin_layout Plain Layout
+
+	ind=matrix(c(1:num,imat$first+1,last),ncol=3,nrow=num)
+\end_layout
+
+\begin_layout Plain Layout
+
+	ind=ind[ind[,2]<=ncol(imat$chmat),]
+\end_layout
+
+\begin_layout Plain Layout
+
+	dep.values=unlist(apply(ind,1,function(x,z)c(rep(1,(x[3]-x[2])),z[x[1],x[3]]),z=
+imat$chmat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3
+]))-1
+\end_layout
+
+\begin_layout Plain Layout
+
+	x=dml[["Phi"]][dd.indices,]
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial.Phi=coef(glm.fit(x,dep.values,family=binomial()))
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial.Phi[is.na(initial.Phi)]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial.Phi[initial.Phi < -5 | initial.Phi > 5]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(c(initial.Phi,initial.p))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Maximum-likelihood inference
+\end_layout
+
+\begin_layout Standard
+Brief description with reference to Pledger et al and hierarchical approach
+ to likelihood construction.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+get.p=function(beta,dm,nocc,Fplus)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+# compute p matrix from parameters (beta) and list of design matrices (dm)
+\end_layout
+
+\begin_layout Plain Layout
+
+# created by function create.dm
+\end_layout
+
+\begin_layout Plain Layout
+
+  ps=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(
+nocc-1),byrow=TRUE))
+\end_layout
+
+\begin_layout Plain Layout
+
+  ps[Fplus==1]=plogis(ps[Fplus==1]) return(ps)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+get.Phi=function(beta,dm,nocc,Fplus)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+# compute Phi matrix from parameters (beta) and list of design matrices
+ (dm)
+\end_layout
+
+\begin_layout Plain Layout
+
+# created by function create.dm
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phis=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)
+/(nocc-1),byrow=TRUE))
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phis[Fplus==1]=plogis(Phis[Fplus==1]) return(Phis)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+#
+\end_layout
+
+\begin_layout Plain Layout
+
+# cjs.lnl - computes likelihood for CJS using Pledger et al (2003)
+\end_layout
+
+\begin_layout Plain Layout
+
+# formulation for the likelihood.
+ This code does not cope with fixed parameters or
+\end_layout
+
+\begin_layout Plain Layout
+
+# loss on capture but could be modified to do so.
+\end_layout
+
+\begin_layout Plain Layout
+
+# Arguments:
+\end_layout
+
+\begin_layout Plain Layout
+
+# par             - vector of beta parameters
+\end_layout
+
+\begin_layout Plain Layout
+
+# imat           - list of freq, indicator vector and matrices for ch data
+ created by process.ch
+\end_layout
+
+\begin_layout Plain Layout
+
+# Phi.dm         - list of design matrices; a dm for each capture history
+\end_layout
+
+\begin_layout Plain Layout
+
+# p.dm           - list of design matrices; a dm for each capture history
+\end_layout
+
+\begin_layout Plain Layout
+
+# debug          - if TRUE show iterations with par and -2lnl
+\end_layout
+
+\begin_layout Plain Layout
+
+# time.intervals - intervals of time between occasions # # Value: -2LnL using
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+#
+\end_layout
+
+\begin_layout Plain Layout
+
+cjs.lnl=function(par,imat,Phi.dm,p.dm,debug=FALSE,time.intervals=NULL) {
+\end_layout
+
+\begin_layout Plain Layout
+
+if(debug)cat("
+\backslash
+npar = ",par)
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# compute Phi and p matrices (a value for each occasion for each unique
+ ch (or animal))
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+#extract Phi and p parameters from par vector
+\end_layout
+
+\begin_layout Plain Layout
+
+nphi=ncol(Phi.dm)
+\end_layout
+
+\begin_layout Plain Layout
+
+np=ncol(p.dm)
+\end_layout
+
+\begin_layout Plain Layout
+
+beta.phi=par[1:nphi]
+\end_layout
+
+\begin_layout Plain Layout
+
+beta.p=par[(nphi+1):(nphi+np)]
+\end_layout
+
+\begin_layout Plain Layout
+
+#construct parameter matrices (1 row for each capture history and a column
+ for each occasion)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phis=get.Phi(beta.phi,Phi.dm,nocc=ncol(imat$chmat),imat$Fplus)
+\end_layout
+
+\begin_layout Plain Layout
+
+if(!is.null(time.intervals))
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+   exponent=matrix(c(1,time.intervals),nrow=nrow(Phis),ncol=ncol(Phis),byrow=TRUE
+)
+\end_layout
+
+\begin_layout Plain Layout
+
+   Phis=Phis^exponent
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+ps=get.p(beta.p,p.dm,nocc=ncol(imat$chmat),imat$Fplus)
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# construct cumphi and cump for known portion of ch from release to last
+ recapture
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# compute cummulative survival from release across each subsequent time
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.cumprod=cumprod.matrix(1-imat$Fplus + Phis*imat$Fplus)
+\end_layout
+
+\begin_layout Plain Layout
+
+# extract the cummulative Phi for each individual (value on last occasion)
+\end_layout
+
+\begin_layout Plain Layout
+
+cumPhi=Phi.cumprod[cbind(1:nrow(imat$chmat),imat$last)]
+\end_layout
+
+\begin_layout Plain Layout
+
+# compute the cummulative probability for detection (capture)
+\end_layout
+
+\begin_layout Plain Layout
+
+cump=prod.matrix((1-imat$FtoL)+imat$FtoL*(imat$chmat*ps+(1-imat$chmat)*(1-ps)))
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# construct likelihood portion for 0...0 tail (chi in typical formulation)
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# first construct a matrix with potential mortality in each column after
+ last occasion seen
+\end_layout
+
+\begin_layout Plain Layout
+
+# the last column is all 1's for case where animal survived to end of study
+\end_layout
+
+\begin_layout Plain Layout
+
+mort.last=cbind((1-imat$Lplus+imat$Lplus*(1-Phis))[,-1],rep(1,nrow(Phis)))
+\end_layout
+
+\begin_layout Plain Layout
+
+# next construct the cummulative product of 1-p for each occasion alive
+ and
+\end_layout
+
+\begin_layout Plain Layout
+
+# not seen in tail given alive
+\end_layout
+
+\begin_layout Plain Layout
+
+p.last=cumprod.matrix(1-imat$Lplus + imat$Lplus*(1-ps))*imat$L
+\end_layout
+
+\begin_layout Plain Layout
+
+# next compute the sum over all possible times of death after last occasion
+ seen;
+\end_layout
+
+\begin_layout Plain Layout
+
+# this includes the case where the animal is still alive at last occasion
+\end_layout
+
+\begin_layout Plain Layout
+
+p0=rowSums(Phi.cumprod/cumPhi*p.last*mort.last)
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+# return -2LnL which is the sum of the logarithm of the 3 components
+\end_layout
+
+\begin_layout Plain Layout
+
+################################################################################
+###
+\end_layout
+
+\begin_layout Plain Layout
+
+lnl=-2*(sum(imat$freq*log(p0)) + sum(imat$freq*log(cump)) +
+\end_layout
+
+\begin_layout Plain Layout
+
+sum(imat$freq*log(cumPhi)))
+\end_layout
+
+\begin_layout Plain Layout
+
+if(debug)cat("
+\backslash
+nlnl = ",lnl)
+\end_layout
+
+\begin_layout Plain Layout
+
+return(lnl)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Bayesian MCMC inference
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+To implement a fairly "black box" MCMC algorithm that is accessible to end
+ users we took the approach used by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "ALBERT:1993fk"
+
+\end_inset
+
+ for analyzing binary data with a probit regression model.
+\end_layout
+
+\begin_layout Section*
+Acknowledgments
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "markedWriteUpBib"
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document

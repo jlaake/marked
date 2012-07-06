@@ -5,7 +5,6 @@
 #' first and last vectors. If any values are missing (NA) or abs(par)>5, they are
 #' set to 0.
 #' 
-#' 
 #' @param dml design matrix list for Phi and p
 #' @param imat list containing chmat, first and last
 #' @return vector of initial parameter estimates

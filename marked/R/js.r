@@ -25,7 +25,7 @@
 #' formula and design data
 #' @param model_data a list of all the relevant data for fitting the model including
 #' imat, Phi.dm,p.dm,Phi.fixed,p.fixed, and time.intervals. It is used to save values
-#' and avoid accumulation again if the model was re-rerun with an additional call to cjs when
+#' and avoid accumulation again if the model was re-rerun with an additional call to js when
 #' using autoscale or re-starting with initial values.  It is stored with returned model object.
 #' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
 #' @param accumulate if TRUE will accumulate capture histories with common
@@ -55,6 +55,9 @@
 #' each animal-occasion excluding those that occurred before release}
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @references Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
+#' for the analysis of capture-recapture experiments in open populations.
+#' Biometrics 52:860-873.
 js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method="BFGS",
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
 {

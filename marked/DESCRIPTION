@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.0.4
-Date: 2012-07-02
+Date: 2012-07-06
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>
 Description: This package provides a framework for handling
