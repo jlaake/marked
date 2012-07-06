@@ -1,4 +1,4 @@
-marked 1.0.4 (2 July 2012)
+marked 1.0.4 (6 July 2012)
 ------------
 NEW FEATURES
 
@@ -9,6 +9,8 @@ NEW FEATURES
 * Added automatic data accumulation and creation of freq field where all data fields are the same. See argument accumulate in crm.
 
 * added autoscaling of parameters; see autoscale argument
+
+* added simcjs and simpopan and related functions for simulating data for cjs and js models
 
 marked 1.0.3 (4 October 2011)
 ------------
