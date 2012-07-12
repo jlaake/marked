@@ -107,4 +107,9 @@
 \author{
   Jeff Laake <jeff.laake@noaa.gov>
 }
+\references{
+  Pledger, S., K. H. Pollock, et al. (2003). Open
+  capture-recapture models with heterogeneity: I.
+  Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
+}
 

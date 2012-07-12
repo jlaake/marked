@@ -194,9 +194,14 @@ if(is.null(data$data))
    }
    cat("\n Processing data\n")
    flush.console()
-   data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
+   if(model=="probitCJS")
+      data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
                           groups = groups, age.var = NULL, initial.ages = NULL, 
                           time.intervals = time.intervals,nocc=NULL)
+   else
+	   data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
+			   groups = groups, age.var = NULL, initial.ages = NULL, 
+			   time.intervals = time.intervals,nocc=NULL,accumulate=FALSE)
 }   
 else
    data.proc=data
@@ -253,8 +258,14 @@ if(autoscale==0)
 	   if(model=="js")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	   else
-		   runmodel=probitCJS(ddl,parameters=model.parameters,init.list=initial,iter=iter,burnin=burnin)
+	   else {
+		   if(is.null(initial)){
+			   imat=process.ch(data$ch,data$freq,all=FALSE)
+			   runmodel=probitCJS(ddl,parameters=model.parameters,imat=imat,iter=iter,burnin=burnin)
+		   }else
+			   runmodel=probitCJS(ddl,parameters=model.parameters,init.list=initial,iter=iter,burnin=burnin)
+	   }
+	   
 }else
 {
 	cat("\n Run to compute scale:")

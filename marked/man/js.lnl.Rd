@@ -33,7 +33,8 @@ formulation}
   group if applicable}
 }
 \value{
-  -2*log likelihood value (excluding data factorials)
+  -log likelihood value, excluding data (ui) factorials
+  which are added in js after optimization to match MARK
 }
 \description{
   For a given set of parameters and data, it computes

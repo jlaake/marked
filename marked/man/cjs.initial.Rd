@@ -2,12 +2,15 @@
 \alias{cjs.initial}
 \title{Computes starting values for CJS p and Phi parameters}
 \usage{
-  cjs.initial(dml, imat)
+  cjs.initial(dml, imat, link = "logit")
 }
 \arguments{
   \item{dml}{design matrix list for Phi and p}
 
   \item{imat}{list containing chmat, first and last}
+
+  \item{link}{either "logit" (for cjs) or "probit" (for
+  probitCJS)}
 }
 \value{
   vector of initial parameter estimates

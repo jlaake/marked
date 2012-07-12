@@ -1,3 +1,16 @@
+marked 1.0.5 (12 July 2012)
+------------
+NEW FEATURES
+
+* Modified cjs.initial to use either logit or probit and added initial value calculation to probitCJS 
+
+* Simplified code in cjs.f but no obvious payoff in speed
+
+BUG FIXES
+
+* Fixed bug in js.lnl which was not getting lnl correct when there were no groups; cosmetic and did affect estimates because was constant part (ui)  
+
+
 marked 1.0.4 (6 July 2012)
 ------------
 NEW FEATURES

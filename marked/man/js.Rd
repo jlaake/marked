@@ -22,7 +22,7 @@ formulation}
   fitting the model including imat,
   Phi.dm,p.dm,Phi.fixed,p.fixed, and time.intervals. It is
   used to save values and avoid accumulation again if the
-  model was re-rerun with an additional call to cjs when
+  model was re-rerun with an additional call to js when
   using autoscale or re-starting with initial values.  It
   is stored with returned model object.}
 
@@ -106,5 +106,10 @@ formulation}
 }
 \author{
   Jeff Laake <jeff.laake@noaa.gov>
+}
+\references{
+  Schwarz, C. J., and A. N. Arnason. 1996. A general
+  methodology for the analysis of capture-recapture
+  experiments in open populations. Biometrics 52:860-873.
 }
 

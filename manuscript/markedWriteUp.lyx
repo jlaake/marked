@@ -15,6 +15,9 @@
 %\setlength{\headheight}{0in} \setlength{\headsep}{0in}
 \end_preamble
 \use_default_options false
+\begin_modules
+sweave
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package none
@@ -354,45 +357,145 @@ linenumbers
 
 \begin_layout Standard
 Currently the most comprehensive software for analysis of capture-recapture
- data is MARK (reference to White and Burnham and url).
- MARK is a FORTRAN program for fitting models that are manually constructed
- with graphical user interface software.
- RMark(ref) is an R package that constructs models for MARK with user-specified
- formulas to replace the manual model creation in the MARK interface.
- With RMark and MARK most currently available mark-recapture models can
+ data is MARK (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "White1999"
+
+\end_inset
+
+).
+ MARK is a FORTRAN program for fitting capture-recapture models that are
+ manually constructed with a graphical user interface.
+ RMark (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Laake2008"
+
+\end_inset
+
+) is an R package that constructs models for MARK with user-specified formulas
+ to replace the manual model creation.
+ With RMark and MARK most currently available capture-recapture models can
  be fitted and manipulated in R.
- Yet, additional R packages have been made available for capture-recapture
- analysis including Rcapture (ref), mra(ref), secr(ref), BTSPAS(ref), SPACECAP(r
-ef).
+ Yet, additional R packages have been made available including Rcapture
+ (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Baillargeon2007"
+
+\end_inset
+
+), mra (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "McDonald2005"
+
+\end_inset
+
+), secr (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Borchers2008"
+
+\end_inset
+
+), BTSPAS (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Schwarz2009"
+
+\end_inset
+
+), SPACECAP (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Royle2009"
+
+\end_inset
+
+), and BaSTA (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Colchero2012"
+
+\end_inset
+
+).
  Rcapture fits closed and open models in a log-linear framework.
- The mra package fits Cormack-Jolly-Seber(CJS) and the Huggins closed model
- with a regression approach to model specification.
- The secr package provides spatially explicit modelling of closed capture-recapt
-ure data and both BTSPAS and SPACECAP also fit models for closed populations.
+ The mra package fits Cormack-Jolly-Seber (CJS) and the Huggins closed model
+ with a 
+\begin_inset Quotes eld
+\end_inset
+
+regression approach
+\begin_inset Quotes erd
+\end_inset
+
+ to model specification.
+ The secr and SPACECAP packages provide spatially explicit modelling of
+ closed capture-recapture data and BTSPAS fits time-stratified Petersen
+ models in a Bayesian framework.
+ BaSTA estimates survival with covariates from capture-recapture/recovery
+ data in a Bayesian framework when many individuals are of unknown age.
  Each package is designed for a unique niche or structure.
  We believe these alternative packages in R are useful because they expand
- the analyst's toolbox and the code is open source which enables the savy
- user to understand fully what the software is doing.
+ the analyst's toolbox and the code is open source which enables the knowledgeab
+le user to understand fully what the software is doing.
  Also, this independent innovation provides testing for existing software
  and potential gains in developer knowledge to improve existing software.
 \end_layout
 
 \begin_layout Standard
-We developed an R package we named marked with a focus on an analysis of
- marked animals in contrast to the R package unmarked (ref) that focuses
- primarily but not exclusively on analysis based on observations of unmarked
- animals.
- The original impetus was to write code for the CJS model using the hierarchical
- likelihood construction described by Pledger et al.
- (2003) with the added capability of variation in time intervals between
- initial capture and recapture which was not possible in MARK.
+We developed an R package we named 
+\begin_inset Quotes eld
+\end_inset
+
+marked
+\begin_inset Quotes erd
+\end_inset
+
+ based on our focus of analysis with marked animals in contrast to the R
+ package unmarked (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "Fiske2011"
+
+\end_inset
+
+) that focuses on observations of unmarked animals.
+ The original impetus for the code was to implement the CJS model using
+ the hierarchical likelihood construction described by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Pledger2003"
+
+\end_inset
+
+ with the added capability of variable time intervals for different groups
+ of animals or when initial capture/release is done between recapture occasions.
+ The latter are not easily accomplished in MARK.
  Also, we wanted to improve on execution times with RMark/MARK for analysis
  of our own large data sets with many time-varying individual (animal-specific)
- covariates using the data structure idea in the mra package.
- Subsequently, we implemented the Jolly-Seber model with the Schwarz and
- Arnason (1996) POPAN parameter structure with the hierarchical likelihood
- construction idea extended to the entry of animals into the population
- and an MCMC implementation of the CJS model based on the 
+ covariates using the data structure idea in the mra package (
+\begin_inset CommandInset citation
+LatexCommand citealt
+key "McDonald2005"
+
+\end_inset
+
+).
+ Subsequently, we implemented the Jolly-Seber model with the 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Schwarz1996"
+
+\end_inset
+
+ POPAN parameter structure with the hierarchical likelihood construction
+ idea extended to the entry of animals into the population.
+ We also added a Bayesian Markov Chain Monte Carlo (MCMC) implementation
+ of the CJS model based on the 
 \size normal
 approach used by 
 \begin_inset CommandInset citation
@@ -405,302 +508,1047 @@ key "ALBERT:1993fk"
  
 \end_layout
 
-\begin_layout Standard
-
-\size normal
-Seems to be no section header for the introduction.
- So, put all the intro text here.
- Above is a start.
- Should we base all the following discussion of the dipper data set, or
- do you guys have a better one? 
-\series bold
-\size default
-Jeff votes for the dipper data.
- Not too large and well-known
-\series default
-\size normal
-.
- We have to do this in 
-\begin_inset Formula $\le3,000$
-\end_inset
-
- words.
-\end_layout
-
 \begin_layout Section*
 Data structure
 \end_layout
 
 \begin_layout Standard
-To get the real parameters for EACH animal, you need to create a design
- matrix for each animal by filling in the weight value into the weight column,
- multiplying by the betas, computing the inverse link and then selecting
- the correct real parameters based on the indices 1,2 or 3,4.
- Clearly if there is no individual covariate, then it only requires a single
- multiplication by the betas, computation of the inverse link, but for each
- animal you still need to use the indices to extract the appropriate real
- parameters.
- The data are replicated k-1 times with a different time value for each.
- The real parameters can be constructed by creating a design matrix using
- a formula much like in regression, multiplying by the beta parameters and
- inverting the link function.
- In R this is done with the model.matrix function as shown below:
+The likelihood for CJS/JS is a product multinomial and the cell probabilities
+ are functions of the parameters.
+ We will focus on CJS which has parameters 
+\begin_inset Formula $p$
+\end_inset
+
+ (capture/recapture probability) and 
+\begin_inset Formula $\phi$
+\end_inset
+
+ (apparent survival).
+ If the parameters depend only on time, cohort or group (e.g., sex) variables,
+ the MARK approach using parameter index matrices (PIMs) is very efficient
+ because it assigns a potentially unique index for each parameter type and
+ position.
+ The design matrix for the parameters has a row for each unique parameter
+ and the index is the row number.
+ The PIM approach minimizes the work of manual model creation by reducing
+ the set of potential parameters.
+ As a very simple example, we will consider a CJS model for a single group
+ with k=4 occasions.
+ For this structure the PIMS are triangular with a row for each cohort released
+ at each occasion (time) and the column representing the occasions (times)
+ following the release.
+ Using an unique index for each potential parameter, the PIMS would be:
 \end_layout
 
 \begin_layout Standard
-There is no indexing necessary because the n*(k-1) vector is easily partitioned
- to a matrix with n rows and k-1 columns which is the real parameter matrix
- needed for the Phis.
- Below is an example using a beta vector of c(1,-.5,.2,.1) and a logit link
- where plogis is the inverse logit link and %*% is matrix multiplication:
-\end_layout
-
-\begin_layout Standard
-The same can be done to compute the real parameter matrix for p.
- With those 2 matrices it is straightforward to calculate the probability
- for each capture history.
- All of this easily extends to multi-strata and other models by just changing
- the data that are included.
- The key point is to create a data record for each animal-occasion.
- There is no need for PIMS because there is a real parameter for each animal-occ
-asion for each type of parameter (e.g., Phi,p,etc).
- In general the design matrix (DM) will be larger with this approach in
- comparison to the MARK PIM approach but it can be smaller if the number
- of unique capture histories is less than G*(k-1)/2 where G is the number
- of groups.
- So because the DM could easily get huge you would never want to create
- the DM by hand.
- Presumably that was the reason for PIMS because it reduced the possible
- DM size.
- But I’d argue that we should not be creating DMs by hand except when folks
- are learning the concepts behind DMs.
- Once you understand the concepts, creating DMs by hand is a waste of time
- and prone to error.
- What other statistical software makes you create DMs by hand other than
- MARK and PRESENCE which was modeled after MARK? None that I know of! However,
- if you automate the DM construction like in most statistical software then
- this approach is much more intuitive than the PIM approach.
- Let me make it abundantly clear that this was not my idea! It was proposed
- by Trent McDonald and he developed his mra package based on the idea.
- Although, personally I find his implementation of the idea very clunky
- and in some ways it is worse than PIMS.
- But the idea and the implementation are two very different things.
- There are ways to make the implementation quite transparent to the user
- who would only need to supply the original data with covariates and would
- not have to construct the expanded set of data.
- That is easily done programmatically and RMark already contains code to
- do it and it is open source and available to anyone who wants it.
- Also, I want to make it clear that I’m not arguing that we should stop
- the presses and replace MARK with a re-creation of the same with this new
- data structure.
- What Trent has in mra is largely redundant with the “Recaptures only” portion
- of MARK.
- He is adding different models to his package but it will not catch or surpass
- MARK anywhere in the near future.
- Without adding functionality, I think he is wasting his time.
- What I do suggest is that future software development should abandon the
- PIM approach to creating models for capture-recapture or similar data.
- I think that software developed with Trent’s idea will be easier for users
- to understand and for teachers to teach because it will be much more like
- standard statistical software.
- The user will have a single data file and would only need to devise a formula
- for each parameter (e.g., Phi, p) that represents their conceptual model.
- While RMark does that to some extent by forcing PIMs to the background,
- the PIMS are still there and the PIM approach forces an artificial separation
- between individual covariate data (e.g., weight) and what I term “design
- data” (e.g., time, age, group factor variables) in RMark.
- I have done some limited development in RMark to implement this alternative
- approach with the CJS and JS (POPAN) class of models solely in R.
- My goal was to see if the alternative approach would be faster with many
- individual covariates which all have to be replaced for each animal in
- the DM in MARK.
- It ends up being comparable to MARK and was not an improvement for my problem
- size.
- The other reason I chose to do the development was to create additional
- modeling flexibility and incorporate tag loss estimation and other features.
- I have no intention or desire to recreate MARK! I’ll leave that responsibility
- and headache with Gary.
- Development with RMark takes enough of my time and it only creates model
- structures for MARK.
- Again my message here is that any future software development should consider
- abandoning the current PIM approach and creating DMs by hand and consider
- this alternative approach.
- 
-\end_layout
-
-\begin_layout Standard
-Individual specific time.interval values
-\end_layout
-
-\begin_layout Section*
-Getting initial parameter values
-\end_layout
-
-\begin_layout Standard
-logit link for Phi,p
-\end_layout
-
-\begin_layout Standard
-mlogit link for pent
-\end_layout
-
-\begin_layout Standard
-initial Phi and p values for intercept or initial=vector from other model
- matched by name
-\end_layout
-
-\begin_layout Standard
-if initial,Phi,p are all NULL - then compute using cjs.initial
-\end_layout
-
-\begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-#   Create initial values for p using bernoulli glm with Manley-Parr approach
-\end_layout
-
-\begin_layout Plain Layout
-
-cjs.initial=function(dml,imat)
-\end_layout
-
-\begin_layout Plain Layout
-
-	cat("
-\backslash
-n Computing initial parameter estimates
-\backslash
-n")
-\end_layout
-
-\begin_layout Plain Layout
-
-	num=nrow(imat$chmat)
-\end_layout
-
-\begin_layout Plain Layout
-
-	ind=matrix(c(1:num,imat$first+1,imat$last-1),ncol=3,nrow=num)
-\end_layout
-
-\begin_layout Plain Layout
-
-	ind=ind[ind[,2]<=ind[,3],]
-\end_layout
-
-\begin_layout Plain Layout
-
-	dep.values=unlist(apply(ind,1,function(x,z)z[x[1],x[2]:x[3]],z=imat$chmat))
-\end_layout
-
-\begin_layout Plain Layout
-
-	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3
-]))-1
-\end_layout
-
-\begin_layout Plain Layout
-
-	x=dml[["p"]][dd.indices,]
-\end_layout
-
-\begin_layout Plain Layout
-
-    initial.p=coef(glm.fit(x,dep.values,family=binomial()))
-\end_layout
-
-\begin_layout Plain Layout
-
-	initial.p[is.na(initial.p)]=0
-\end_layout
-
-\begin_layout Plain Layout
-
-	initial.p[initial.p < -5 | initial.p > 5]=0
-\end_layout
-
-\begin_layout Plain Layout
-
-	#   Create initial values for S using bernoulli glm assuming p=1
-\end_layout
-
-\begin_layout Plain Layout
-
-	last=imat$last+1
-\end_layout
-
-\begin_layout Plain Layout
-
-	last[last>ncol(imat$chmat)]=ncol(imat$chmat)
-\end_layout
-
-\begin_layout Plain Layout
-
-	ind=matrix(c(1:num,imat$first+1,last),ncol=3,nrow=num)
-\end_layout
-
-\begin_layout Plain Layout
-
-	ind=ind[ind[,2]<=ncol(imat$chmat),]
-\end_layout
-
-\begin_layout Plain Layout
-
-	dep.values=unlist(apply(ind,1,function(x,z)c(rep(1,(x[3]-x[2])),z[x[1],x[3]]),z=
-imat$chmat))
-\end_layout
-
-\begin_layout Plain Layout
-
-	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3
-]))-1
-\end_layout
-
-\begin_layout Plain Layout
-
-	x=dml[["Phi"]][dd.indices,]
-\end_layout
-
-\begin_layout Plain Layout
-
-	initial.Phi=coef(glm.fit(x,dep.values,family=binomial()))
-\end_layout
-
-\begin_layout Plain Layout
-
-	initial.Phi[is.na(initial.Phi)]=0
-\end_layout
-
-\begin_layout Plain Layout
-
-	initial.Phi[initial.Phi < -5 | initial.Phi > 5]=0
-\end_layout
-
-\begin_layout Plain Layout
-
-	return(c(initial.Phi,initial.p))
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
+\begin_inset Tabular
+<lyxtabular version="3" rows="8" columns="9">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
 
 \begin_layout Plain Layout
 
 \end_layout
 
 \end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p$
+\end_inset
 
 
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="1" alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Time
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell multicolumn="2" alignment="center" valignment="top" topline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cohort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Cohort
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+7
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+8
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+9
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+5
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+10
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+11
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+6
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+12
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The index 5 represents survival of the second release cohort between occasions
+ 3 and 4 and index 8 represents recapture probability of the first release
+ cohort on the third occasion.
+ Some constraints on parameters (e.g., constant 
+\begin_inset Formula $\phi$
+\end_inset
+
+) can be constructed by modifying the PIMS but more generally models are
+ constructed with a design matrix which is a set of linear constraints.
+ For our example, there would be 12 rows in the design matrix and each column
+ in the design matrix (
+\begin_inset Formula $X$
+\end_inset
+
+) is one of the model parameters 
+\begin_inset Formula $\beta$
+\end_inset
+
+ which for a logit link are related to real parameters 
+\begin_inset Formula $\theta$
+\end_inset
+
+ (e.g., 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ in CJS) by:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Formula 
+\begin{equation}
+\theta=\frac{1}{1+\exp(-X\beta)}\label{eq:link}
+\end{equation}
+
+\end_inset
+
+RMark creates design matrices for MARK by applying formula to 
+\begin_inset Quotes eld
+\end_inset
+
+design data
+\begin_inset Quotes erd
+\end_inset
+
+ which are data about the parameters like cohort, time and group and any
+ related variables.
+ However, having a single 
+\begin_inset Formula $X$
+\end_inset
+
+ becomes problematic with individual covariates (variables that differ for
+ animals in the same group/cohort).
+ In MARK, these individual covariates are handled by entering the name of
+ the individual covariate in the design matrix.
+ When the real parmeters are computed, the name of the covariate is replaced
+ with the value for an animal.
+ If there are only a few individual covariates and small number of aninals,
+ the replacement and computation is not too costly but when the individual
+ covariates differ in time, there is a different covariate name for each
+ time and the computation cost can become quite extreme for large models.
+ 
+\end_layout
+
+\begin_layout Standard
+Even if computation time is not limiting, we agree with 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "McDonald2005"
+
+\end_inset
+
+ that the PIM structure used in MARK can be quite confusing to the novice
+ user.
+ While PIMS are useful for manual model creation, they become an unnecessary
+ nuisance when models and design matrices are created by formula.
+ The solution of 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "McDonald2005"
+
+\end_inset
+
+ (implemented in mra) is to create covariate matrices with a row for each
+ animal and a column for each occasion and each covariate matrix is a prediction
+ variable as in regression.
+ This is equivalent to creating a real parameter for each animal for each
+ occasion regardless of the release cohort.
+\end_layout
+
+\begin_layout Standard
+We use an alternative approach that we believe is simpler for the user.
+ From the raw data and specified model structure, the code creates a list
+ containing a dataframe for each parameter in the model (e.g., 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+).
+ Each dataframe contains a record for each animal-occasion and the columns
+ are the covariates.
+ For 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ in the CJS model, there are 
+\begin_inset Formula $n(k-1)$
+\end_inset
+
+ rows for 
+\begin_inset Formula $n$
+\end_inset
+
+ animals and 
+\begin_inset Formula $k-1$
+\end_inset
+
+ occasions that are modelled.
+ For the JS model, there are 
+\begin_inset Formula $n(k-1)$
+\end_inset
+
+ records for survival and probability of entry parameters and 
+\begin_inset Formula $nk$
+\end_inset
+
+ for 
+\begin_inset Formula $p$
+\end_inset
+
+ because the initial capture event is modelled.
+ We create a separate dataframe for each parameter to enable different data
+ (e.g., time values for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+) and different structures and number of occasions (e.g., 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ in JS).
+ With model.matrix, a formula is applied to the dataframe to create the design
+ matrix for each parameter (e.g, 
+\begin_inset Formula $X_{\phi}$
+\end_inset
+
+,
+\begin_inset Formula $X_{p}$
+\end_inset
+
+).
+ They are equivalent to a portion of the design matrix in MARK for each
+ animal which are then stacked on top of one another to make a matrix for
+ all animals.
+ With maximum likelihood estimation (MLE), for each type of parameter, equation
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:link"
+
+\end_inset
+
+ (or similar inverse link function) is applied and the resulting vector
+ is converted to a matrix with 
+\begin_inset Formula $n$
+\end_inset
+
+ rows and a column for each required occasion (
+\begin_inset Formula $k-1$
+\end_inset
+
+ or 
+\begin_inset Formula $k$
+\end_inset
+
+).
+ For Bayesian MCMC inference, only
+\begin_inset Formula $X\beta$
+\end_inset
+
+ are needed for updating.
+\end_layout
+
+\begin_layout Standard
+The parameter-specific animal-occasion dataframes are automatically created
+ from the typical user's dataframe containing a single record per animal
+ containing the capture history and covariates.
+ For the particular model structure, fields like cohort, age, and time are
+ generated for each record.
+ Other static and time-varying covariates specified in the user's data are
+ added.
+ Static variables (e.g., sex) are repeated for each occasion for the animal.
+ Time-varying variables (e.g., age) vary across rows for each animal.
+ They are specified in the data using a naming convention of 
+\begin_inset Quotes eld
+\end_inset
+
+vt
+\begin_inset Quotes erd
+\end_inset
+
+ where 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ is the covariate name and 
+\begin_inset Quotes eld
+\end_inset
+
+t
+\begin_inset Quotes erd
+\end_inset
+
+ is a numeric value for the time (occasion) (e.g., td19).
+ They are collapsed in the animal-occasion dataframes to a single column
+ with the name identified by 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ and each record contains the appropriate value for the occasion.
+ All of this is transparent to the user who only needs to specify their
+ dataframe, the type of model (e.g., cjs), the variables that should be treated
+ as time-varying, and the formula for each parameter.
+\end_layout
+
+\begin_layout Standard
+With this structure, the design matrices can become quite large and available
+ memory could become limiting.
+ For MLE analyis, we use the following to reduce the required memory:
+\end_layout
+
+\begin_layout Enumerate
+We reduce the data to 
+\begin_inset Formula $n^{*}\leq n$
+\end_inset
+
+ individuals by aggregating records with identical data and using the frequencie
+s (
+\begin_inset Formula $f_{1},...,f_{n^{*}};n=\sum_{i=1\:}^{n^{*}}f_{i}$
+\end_inset
+
+) in the likelihood.
+ 
+\end_layout
+
+\begin_layout Enumerate
+For 
+\begin_inset Formula $X$
+\end_inset
+
+ we use sparse matrices which only store non-zero elements and construct
+ 
+\begin_inset Formula $X$
+\end_inset
+
+ incrementally with a user-specified size of data chunks.
+\end_layout
+
+\begin_layout Enumerate
+We retain only the rows of 
+\begin_inset Formula $X$
+\end_inset
+
+ which are unique for the design and including any fixed parameters which
+ can be animal-specific.
+ 
+\end_layout
+
+\begin_layout Standard
+For Bayesian MCMC inference, we cannot aggregate records but we reduce the
+ required memory by:
+\end_layout
+
+\begin_layout Enumerate
+Eliminating the unused animal-occasion data for occasions prior to and including
+ the release occasion for the animal, and
+\end_layout
+
+\begin_layout Enumerate
+Storing only the unique values of the real parameters which are unique rows
+ of 
+\begin_inset Formula $X_{\phi}$
+\end_inset
+
+and 
+\begin_inset Formula $X_{p}$
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Section*
@@ -708,8 +1556,409 @@ Maximum-likelihood inference
 \end_layout
 
 \begin_layout Standard
-Brief description with reference to Pledger et al and hierarchical approach
- to likelihood construction.
+Although it was not explicitly stated, the CJS likelihood was developed
+ hierarchically by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Pledger2003"
+
+\end_inset
+
+.
+ Considering a single release cohort for simplicity, the probability of
+ capture history 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+(
+\begin_inset Formula $\omega$
+\end_inset
+
+)
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ was computed by multiplying the conditional probability (
+\begin_inset Formula $Pr(\omega|d)$
+\end_inset
+
+) for a given departure occasion (i.e., death or end of study) and the probability
+ of departing on that occasion (
+\begin_inset Formula $Pr(d)$
+\end_inset
+
+) and summing across all possible departure occasions (
+\begin_inset Formula $Pr(\omega)=\sum_{d}Pr(\omega|d)Pr(d)$
+\end_inset
+
+).
+ Viewed in this way, it is possible to construct the likekihood values for
+ all of the observations with matrices.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\phi$
+\end_inset
+
+,
+\begin_inset Formula $M$
+\end_inset
+
+ 
+\begin_inset Formula $p$
+\end_inset
+
+ be 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrices where
+\begin_inset Formula $\phi_{ij}$
+\end_inset
+
+ is the survival probability for animal 
+\begin_inset Formula $i$
+\end_inset
+
+ from occasion 
+\begin_inset Formula $j-1$
+\end_inset
+
+ to 
+\begin_inset Formula $j$
+\end_inset
+
+ (
+\begin_inset Formula $\phi_{i1}=1$
+\end_inset
+
+ ), 
+\begin_inset Formula $m_{ij}$
+\end_inset
+
+ is the probability of dying in the interval 
+\begin_inset Formula $j$
+\end_inset
+
+ to 
+\begin_inset Formula $j+1$
+\end_inset
+
+ (
+\begin_inset Formula $m_{ik}=1)$
+\end_inset
+
+ and 
+\begin_inset Formula $p_{ij}$
+\end_inset
+
+ is the capture probability for animal 
+\begin_inset Formula $i$
+\end_inset
+
+ on occasion 
+\begin_inset Formula $j$
+\end_inset
+
+ (
+\begin_inset Formula $p_{i1}=0$
+\end_inset
+
+).
+ Let 
+\begin_inset Formula $C$
+\end_inset
+
+ be an 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix of the capture history values and 
+\begin_inset Formula $f_{i}$
+\end_inset
+
+and 
+\begin_inset Formula $l_{i}$
+\end_inset
+
+ are the first and last occasions the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ animal was seen.
+ Derived from those values are 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrices 
+\begin_inset Formula $L$
+\end_inset
+
+ and 
+\begin_inset Formula $F^{+}$
+\end_inset
+
+ which contain 0 except that 
+\begin_inset Formula $L_{ij}=1\; j\geq l_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $F_{ij}^{+}=1\; j>f_{i}$
+\end_inset
+
+.
+ The likelihood calculation has the following steps where the matrix mulitplicat
+ion is elementwise and 
+\begin_inset Formula $1$
+\end_inset
+
+ and represents an 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix where each element is 1:
+\end_layout
+
+\begin_layout Enumerate
+Compute the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $\phi'=1-F^{+}+\phi F^{+}$
+\end_inset
+
+which is the 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\phi$
+\end_inset
+
+ matrix modified such that 
+\begin_inset Formula $\phi_{ij}=1$
+\end_inset
+
+ for 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $j\leq f_{i}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Compute the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $\phi*$
+\end_inset
+
+from 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\phi'$
+\end_inset
+
+ where 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\phi_{ij}*=\prod_{i=1}^{j}\phi_{ij}'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Compute the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $p'=1-F^{+}+F^{+}(Cp+(1-C)(1-p))$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Compute the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $p*$
+\end_inset
+
+from 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $p'$
+\end_inset
+
+ where 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $p_{ij}*=\prod_{i=1}^{j}p_{ij}'$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Compute 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $n\times1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ vector of probabilities of observed capture histories 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $Pr(\omega_{i})\; i=1,...,n$
+\end_inset
+
+ which are the sums of the rows of 
+\begin_inset Formula $LM\phi^{*}p^{*}$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Enumerate
+Compute the log-likelihood 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\sum_{i=1}^{n}\ln(Pr(\omega_{i}))$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The R code translates from the mathematics quite literally as: 
 \end_layout
 
 \begin_layout Standard
@@ -718,407 +1967,51 @@ status open
 
 \begin_layout Plain Layout
 
-<<>>=
+<<eval=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
-get.p=function(beta,dm,nocc,Fplus)
+ Phiprime=1-Fplus + Phi*Fplus
 \end_layout
 
 \begin_layout Plain Layout
 
-{
+ Phistar=t(apply(Phiprime,1,cumprod))
 \end_layout
 
 \begin_layout Plain Layout
 
-# compute p matrix from parameters (beta) and list of design matrices (dm)
+ pprime=(1-Fplus)+Fplus*(C*p+(1-C)*(1-p))
 \end_layout
 
 \begin_layout Plain Layout
 
-# created by function create.dm
+ pstar=t(apply(pprime,1,cumprod))
 \end_layout
 
 \begin_layout Plain Layout
 
-  ps=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(
-nocc-1),byrow=TRUE))
+ pomega=rowSums(L*M*Phistar*pstar)
 \end_layout
 
 \begin_layout Plain Layout
 
-  ps[Fplus==1]=plogis(ps[Fplus==1]) return(ps)
+ lnl=sum(log(pomega))
 \end_layout
 
 \begin_layout Plain Layout
 
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-get.Phi=function(beta,dm,nocc,Fplus)
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-# compute Phi matrix from parameters (beta) and list of design matrices
- (dm)
-\end_layout
-
-\begin_layout Plain Layout
-
-# created by function create.dm
-\end_layout
-
-\begin_layout Plain Layout
-
-  Phis=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)
-/(nocc-1),byrow=TRUE))
-\end_layout
-
-\begin_layout Plain Layout
-
-  Phis[Fplus==1]=plogis(Phis[Fplus==1]) return(Phis)
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-#
-\end_layout
-
-\begin_layout Plain Layout
-
-# cjs.lnl - computes likelihood for CJS using Pledger et al (2003)
-\end_layout
-
-\begin_layout Plain Layout
-
-# formulation for the likelihood.
- This code does not cope with fixed parameters or
-\end_layout
-
-\begin_layout Plain Layout
-
-# loss on capture but could be modified to do so.
-\end_layout
-
-\begin_layout Plain Layout
-
-# Arguments:
-\end_layout
-
-\begin_layout Plain Layout
-
-# par             - vector of beta parameters
-\end_layout
-
-\begin_layout Plain Layout
-
-# imat           - list of freq, indicator vector and matrices for ch data
- created by process.ch
-\end_layout
-
-\begin_layout Plain Layout
-
-# Phi.dm         - list of design matrices; a dm for each capture history
-\end_layout
-
-\begin_layout Plain Layout
-
-# p.dm           - list of design matrices; a dm for each capture history
-\end_layout
-
-\begin_layout Plain Layout
-
-# debug          - if TRUE show iterations with par and -2lnl
-\end_layout
-
-\begin_layout Plain Layout
-
-# time.intervals - intervals of time between occasions # # Value: -2LnL using
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-#
-\end_layout
-
-\begin_layout Plain Layout
-
-cjs.lnl=function(par,imat,Phi.dm,p.dm,debug=FALSE,time.intervals=NULL) {
-\end_layout
-
-\begin_layout Plain Layout
-
-if(debug)cat("
-\backslash
-npar = ",par)
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# compute Phi and p matrices (a value for each occasion for each unique
- ch (or animal))
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-#extract Phi and p parameters from par vector
-\end_layout
-
-\begin_layout Plain Layout
-
-nphi=ncol(Phi.dm)
-\end_layout
-
-\begin_layout Plain Layout
-
-np=ncol(p.dm)
-\end_layout
-
-\begin_layout Plain Layout
-
-beta.phi=par[1:nphi]
-\end_layout
-
-\begin_layout Plain Layout
-
-beta.p=par[(nphi+1):(nphi+np)]
-\end_layout
-
-\begin_layout Plain Layout
-
-#construct parameter matrices (1 row for each capture history and a column
- for each occasion)
-\end_layout
-
-\begin_layout Plain Layout
-
-Phis=get.Phi(beta.phi,Phi.dm,nocc=ncol(imat$chmat),imat$Fplus)
-\end_layout
-
-\begin_layout Plain Layout
-
-if(!is.null(time.intervals))
-\end_layout
-
-\begin_layout Plain Layout
-
-{
-\end_layout
-
-\begin_layout Plain Layout
-
-   exponent=matrix(c(1,time.intervals),nrow=nrow(Phis),ncol=ncol(Phis),byrow=TRUE
-)
-\end_layout
-
-\begin_layout Plain Layout
-
-   Phis=Phis^exponent
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
-ps=get.p(beta.p,p.dm,nocc=ncol(imat$chmat),imat$Fplus)
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# construct cumphi and cump for known portion of ch from release to last
- recapture
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# compute cummulative survival from release across each subsequent time
-\end_layout
-
-\begin_layout Plain Layout
-
-Phi.cumprod=cumprod.matrix(1-imat$Fplus + Phis*imat$Fplus)
-\end_layout
-
-\begin_layout Plain Layout
-
-# extract the cummulative Phi for each individual (value on last occasion)
-\end_layout
-
-\begin_layout Plain Layout
-
-cumPhi=Phi.cumprod[cbind(1:nrow(imat$chmat),imat$last)]
-\end_layout
-
-\begin_layout Plain Layout
-
-# compute the cummulative probability for detection (capture)
-\end_layout
-
-\begin_layout Plain Layout
-
-cump=prod.matrix((1-imat$FtoL)+imat$FtoL*(imat$chmat*ps+(1-imat$chmat)*(1-ps)))
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# construct likelihood portion for 0...0 tail (chi in typical formulation)
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# first construct a matrix with potential mortality in each column after
- last occasion seen
-\end_layout
-
-\begin_layout Plain Layout
-
-# the last column is all 1's for case where animal survived to end of study
-\end_layout
-
-\begin_layout Plain Layout
-
-mort.last=cbind((1-imat$Lplus+imat$Lplus*(1-Phis))[,-1],rep(1,nrow(Phis)))
-\end_layout
-
-\begin_layout Plain Layout
-
-# next construct the cummulative product of 1-p for each occasion alive
- and
-\end_layout
-
-\begin_layout Plain Layout
-
-# not seen in tail given alive
-\end_layout
-
-\begin_layout Plain Layout
-
-p.last=cumprod.matrix(1-imat$Lplus + imat$Lplus*(1-ps))*imat$L
-\end_layout
-
-\begin_layout Plain Layout
-
-# next compute the sum over all possible times of death after last occasion
- seen;
-\end_layout
-
-\begin_layout Plain Layout
-
-# this includes the case where the animal is still alive at last occasion
-\end_layout
-
-\begin_layout Plain Layout
-
-p0=rowSums(Phi.cumprod/cumPhi*p.last*mort.last)
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-# return -2LnL which is the sum of the logarithm of the 3 components
-\end_layout
-
-\begin_layout Plain Layout
-
-################################################################################
-###
-\end_layout
-
-\begin_layout Plain Layout
-
-lnl=-2*(sum(imat$freq*log(p0)) + sum(imat$freq*log(cump)) +
-\end_layout
-
-\begin_layout Plain Layout
-
-sum(imat$freq*log(cumPhi)))
-\end_layout
-
-\begin_layout Plain Layout
-
-if(debug)cat("
-\backslash
-nlnl = ",lnl)
-\end_layout
-
-\begin_layout Plain Layout
-
-return(lnl)
-\end_layout
-
-\begin_layout Plain Layout
-
-}
-\end_layout
-
-\begin_layout Plain Layout
-
+@
 \end_layout
 
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+JS model 
 \end_layout
 
 \begin_layout Section*
@@ -1137,6 +2030,143 @@ key "ALBERT:1993fk"
 \end_inset
 
  for analyzing binary data with a probit regression model.
+\end_layout
+
+\begin_layout Section*
+Getting initial parameter values
+\end_layout
+
+\begin_layout Standard
+Initial values for parameters can either be provided from the results of
+ a previously fitted similar model or they are computed using general linear
+ models (GLM) that provide approximations.
+ Using the underlying idea in 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Manly1968"
+
+\end_inset
+
+ we compute initial estimates for capture-probability 
+\begin_inset Formula $p$
+\end_inset
+
+ for occasions 2 to 
+\begin_inset Formula $k-1$
+\end_inset
+
+ using a binomial GLM with the formula for 
+\begin_inset Formula $p$
+\end_inset
+
+ which is fitted to a sequence of bernoulli random variables that are a
+ subset of the capture history values 
+\begin_inset Formula $y_{ij}$
+\end_inset
+
+ 
+\begin_inset Formula $i=1,...,n$
+\end_inset
+
+ and 
+\begin_inset Formula $j=f_{i}+1,...,l_{i}-1$
+\end_inset
+
+ where 
+\begin_inset Formula $f_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $l_{i}$
+\end_inset
+
+ are the first and last occasions the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ animal was seen.
+ A similar but more ad-hoc idea is used for 
+\begin_inset Formula $\phi$
+\end_inset
+
+.
+ We know the animal is alive between 
+\begin_inset Formula $f_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $l_{i}$
+\end_inset
+
+ and assume that the animal dies at occasion 
+\begin_inset Formula $l_{i}+1\leq k$
+\end_inset
+
+.
+ We use a binomial GLM with the formula for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ fitted to the 
+\begin_inset Formula $y_{ij}^{*}$
+\end_inset
+
+ 
+\begin_inset Formula $i=1,...,n$
+\end_inset
+
+ and 
+\begin_inset Formula $j=f_{i}+1,...,l_{i}+1\leq k$
+\end_inset
+
+ where 
+\begin_inset Formula $y_{ij}^{*}$
+\end_inset
+
+=1 for 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $j=f_{i}+1,...,l_{i}$
+\end_inset
+
+ and 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $y_{ij}^{*}$
+\end_inset
+
+=0 for 
+\begin_inset Formula $j=l_{i}+1\leq k$
+\end_inset
+
+.
+ A logit link is used for MLE and a probit link for MCMC.
+ Any non-estimable or missing 
+\begin_inset Formula $\beta$
+\end_inset
+
+ are set to 0.
+ 
 \end_layout
 
 \begin_layout Section*

@@ -4,7 +4,7 @@
 \usage{
   probitCJS(data,
     parameters = list(Phi = list(formula = ~1), p = list(formula = ~1)),
-    burnin, iter, init.list = NULL)
+    burnin, iter, init.list = NULL, imat = NULL)
 }
 \arguments{
   \item{data}{A list of design data from make.design.data
@@ -21,8 +21,12 @@
   \item{iter}{number of iteration to run the Gibbs sampler
   for following burnin}
 
-  \item{init.list}{A named list with initial values [more
-  on this later]}
+  \item{init.list}{A named list (beta.z, beta.y). If null
+  and imat is not null, uses cjs.initial to create initial
+  values; otherwise assigns 0}
+
+  \item{imat}{A list of vectors and matrices constructed by
+  \code{\link{process.ch}} from the capture history data}
 }
 \value{
   A list with MCMC iterations and summarized output:

@@ -9,7 +9,8 @@
 #'        containing 'mu', the prior mean and 'Q' the prior precision matrix 
 #' @param burnin number of iteration to initially discard for MCMC burnin
 #' @param iter number of iteration to run the Gibbs sampler for following burnin
-#' @param init.list A named list with initial values [more on this later]
+#' @param init.list A named list (beta.z, beta.y). If null and imat is not null, uses cjs.initial to create initial values; otherwise assigns 0
+#' @param imat A list of vectors and matrices constructed by \code{\link{process.ch}} from the capture history data
 #' @return A list with MCMC iterations and summarized output:
 #' \item{beta.mcmc}{list with elements Phi and p which contain MCMC iterations for each beta parameter} 
 #' \item{real.mcmc}{list with elements Phi and p which contain MCMC iterations for each real parameter} 
@@ -26,7 +27,7 @@
 #' fit1
 #' # Real parameter summary
 #' fit1$reals
-probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=~1)), burnin, iter, init.list=NULL){
+probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=~1)), burnin, iter, init.list=NULL, imat=NULL){
   
   ### DEFINE SOME FUNCTIONS ###
   
@@ -40,14 +41,34 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     d <- sample.int(length(pr.z),1, prob=pr.z)-1
     c(rep(1,d), rep(0, length(pr.z)-1-d))
   }
+
+  #### changed 12 July 2012 to use cjs.initial if init.list is null and imat available
+  ### INITIAL VALUES ### changed to NULL from missing
+  phi.model <- parameters$Phi$formula
+  p.model <- parameters$p$formula
+  if(is.null(init.list)){
+	  Xy <- model.matrix(p.model, data$p)
+	  Xz <- model.matrix(phi.model, data$Phi)	  
+	  if(is.null(imat)){
+		  beta.z <- rep(0,ncol(Xz))
+		  beta.y <- rep(0,ncol(Xy))	
+	  }else
+	  {
+		  beta <- cjs.initial(list(Phi=Xz,p=Xy),imat=imat,link="probit")
+		  beta.z <- beta[1:ncol(Xz)]	
+		  beta.y <- beta[(ncol(Xz)+1):length(beta)]
+	  }
+  }
+  else{
+	  beta.z <- init.list$beta.z
+	  beta.y <- init.list$beta.y
+  }
   
   ### DATA MANIPULATION ###
   #### added by jll 2 July 2012 so it uses design data (ie make.design.data)
   data <- data$p
   data <- data[as.numeric(data$time)>=as.numeric(data$Cohort),]
   data <- data[order(data$id,data$time),]
-  phi.model <- parameters$Phi$formula
-  p.model <- parameters$p$formula
   ###   
   yvec <- data$Y
   n <- length(yvec)
@@ -68,16 +89,6 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   colnames(uXy) <- pn.p
   uXz <- unique(Xz)
   colnames(uXz) <- pn.phi
-  
-  ### INITIAL VALUES ### changed to NULL from missing
-  if(is.null(init.list)){
-    beta.z <- rep(0,ncol(Xz))
-    beta.y <- rep(0,ncol(Xy))
-  }
-  else{
-    beta.z <- init.list$beta.z
-    beta.y <- init.list$beta.y
-  }
   
   ###  PRIOR DISTRIBUTIONS ### - changed jll 2 July 2012
   if(is.null(parameters$Phi$prior)){

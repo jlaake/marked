@@ -92,7 +92,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
       freq=x$freq
 #  get first and last vectors, loc and chmat with process.ch and store in imat
    ch=x$ch
-   imat=process.ch(ch,freq)
+   imat=process.ch(ch,freq,all=FALSE)
 #  Use specified initial values or create if null
    if(is.null(initial))
    {
@@ -136,7 +136,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 			model_data.save=model_data   
 			model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
 		}else
-			model_data.save=NULL
+			model_data.save=model_data
 	}
 #   Create links  -- not used at present; idea here is to use sin links for parameters where you can   
 #   Phi.links=create.links(Phi.dm)
@@ -164,7 +164,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    model_data$Phi.dm=Matrix:::t(Matrix:::t(model_data$Phi.dm)/scale.phi)
    model_data$p.dm=Matrix:::t(Matrix:::t(model_data$p.dm)/scale.p)
    par=par*c(scale.phi,scale.p)
-#  Call optimx to find mles with cjs.lnl which gives -2 * log-likelihood
+#  Call optimx to find mles with cjs.lnl which gives -log-likelihood
    cat("\n Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
    flush.console()
    assign(".markedfunc_eval", 0, envir = .GlobalEnv)
@@ -189,10 +189,9 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    cjs.beta=par/c(scale.phi,scale.p)
    names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
 #  Create results list 
-   lnl=2*mod$fvalues$fvalues
-   res=list(beta=cjs.beta,neg2lnl=lnl,AIC=lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
-#  Restore complete non-accumulated model_data with unscaled design matrices and call cjs to compute all values including reals
-   if(!is.null(model_data.save)) model_data=model_data.save
+   lnl=mod$fvalues$fvalues
+   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
+#  Use non-accumulated model_data (in model_data.save) with unscaled design matrices and call cjs to compute all values including reals
    allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
 #  Create dataframe of real parameter estimates
    reals=Phi.dmdf

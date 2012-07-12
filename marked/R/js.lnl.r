@@ -23,7 +23,7 @@
 #' fixed value(f) to fix p(i,j)=f
 #' @param debug if TRUE will printout values of \code{par} and function value
 #' @param nobstot number of unique caught at least once by group if applicable
-#' @return -2*log likelihood value (excluding data factorials)
+#' @return -log likelihood value, excluding data (ui) factorials which are added in js after optimization to match MARK
 #' @author Jeff Laake
 #' @references Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
 #' for the analysis of capture-recapture experiments in open populations.
@@ -86,7 +86,7 @@ Phis=cbind(Phis[,2:nocc],rep(1,nrow(Phis)))
 entry.p=(1-ps)*Phis*(1-model_data$imat$First)+model_data$imat$First
 entry.p=(t(apply(entry.p,1,function(x) rev(cumprod(rev(x)))))*pents*(1-model_data$imat$Fplus))
 entry.p=apply(entry.p,1,sum)*p.occ
-lnl=cjslnl$lnl-2*sum(model_data$imat$freq*log(entry.p))
+lnl=cjslnl$lnl-sum(model_data$imat$freq*log(entry.p))
 # next add on likelihood component for those not caught from dummy 1000000,0100000,...data 
 # return complete likelihood value except that calling function js adds the ui factorials to match
 # POPAN output from MARK
@@ -97,17 +97,17 @@ for (i in 1:length(Ns))
   index1=i*nocc
   ps=ps.dummy[index0:index1,]
   pents=pents.dummy[index0:index1,]
-  lnl=lnl-2*sum(Ns[i]*log(sum(diag(pents)*cjslnl$p0[model_data$imat$freq==0][index0:index1]*(1-diag(ps)))))
-  lnl=lnl-2*lfactorial(nobstot[i]+Ns[i])+2*lfactorial(Ns[i])
+  lnl=lnl-sum(Ns[i]*log(sum(diag(pents)*cjslnl$p0[model_data$imat$freq==0][index0:index1]*(1-diag(ps)))))
+  lnl=lnl-lfactorial(nobstot[i]+Ns[i])+lfactorial(Ns[i])
 }
 if(debug)
 {
-	cat("\nlnl = ",lnl)
+	cat("\n-2lnl = ",2*lnl)
 } else
     if((f_eval-100*floor(f_eval/100))==0)
     {
-		cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(lnl,digits=10))
+		cat("\r Number of evaluations: ",f_eval," -2lnl:",formatC(2*lnl,digits=10))
 		flush.console()
     }	
-return(lnl/2)
+return(lnl)
 }

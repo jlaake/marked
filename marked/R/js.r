@@ -185,7 +185,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
    model_data$pent.dm=Matrix:::t(Matrix:::t(model_data$pent.dm)/scale.pent)
    model_data$N.dm=Matrix:::t(Matrix:::t(model_data$N.dm)/scale.N)
    par=par*c(scale.phi,scale.p,scale.pent,scale.N)
-#  call optim to find mles with js.lnl which gives -2 * log-likelihood
+#  call optim to find mles with js.lnl which gives -log-likelihood
    assign(".markedfunc_eval", 0, envir = .GlobalEnv)
    cat("\n Starting optimization",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+ncol(model_data$pent.dm)+ncol(model_data$N.dm)," parameters\n")
    convergence=1
@@ -210,18 +210,18 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
    if(is.null(model_data.save))
    {
 	  if(is.null(x$group))
-		  ui=sum(model_data$imat$freq)
+		  ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
 	  else
 		  ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
    } else
    {
       if(is.null(x$group))
-	      ui=sum(model_data.save$imat$freq)
+	      ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
       else
 	      ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
    }
-   lnl=2*(mod$fvalues$fvalues+ sum(lfactorial(ui)))
-   res=list(beta=js.beta,neg2lnl=lnl,AIC=lnl+2*length(js.beta),
+   lnl=mod$fvalues$fvalues+sum(lfactorial(ui))
+   res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(js.beta),
 		   convergence=mod$conv,count=mod$itns,
 		   scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),
 		   model_data=model_data)
