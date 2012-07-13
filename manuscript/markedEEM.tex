@@ -1,0 +1,455 @@
+\batchmode
+\makeatletter
+\def\input@path{{C:/Users/JLaake/git/marked/manuscript//}}
+\makeatother
+\documentclass[12pt]{article}
+\usepackage[latin9]{inputenc}
+\usepackage{geometry}
+\geometry{verbose}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[authoryear]{natbib}
+
+\makeatletter
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
+%% Because html converters don't know tabularnewline
+\providecommand{\tabularnewline}{\\}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Textclass specific LaTeX commands.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% User specified LaTeX commands.
+
+\usepackage{amsthm}\usepackage{epsfig}\usepackage{psfrag}\usepackage{lineno}
+
+\bibliographystyle{apalike}
+
+%\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
+%\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
+%\setlength{\textheight}{9in} \setlength{\topskip}{0in}
+%\setlength{\headheight}{0in} \setlength{\headsep}{0in}
+
+\makeatother
+
+\usepackage{Sweave}
+\begin{document}
+%% TITLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\global\long\def\baselinestretch{1.8}
+
+
+\begin{center}
+\texttt{\LARGE marked}{\LARGE : An R package for maximum-likelihood
+and MCMC analysis of capture-recapture data}\vspace{0.5in}
+
+\par\end{center}
+
+\begin{center}
+{\large Devin S. Johnson$^{1}$, Jeff L. Laake, and Paul B. Conn}
+\par\end{center}{\large \par}
+
+\begin{center}
+\hrulefill{}
+\par\end{center}
+
+\begin{center}
+\global\long\def\baselinestretch{1.25}
+{\large National Marine Mammal Laboratory, Alaska Fisheries Science
+Center}\\
+{\large{} NOAA National Marine Fisheries Service,}\\
+{\large{} Seattle, Washington, U.S.A.}\\
+{\large{} $^{1}${\em Email:} devin.johnson@noaa.gov}
+\par\end{center}{\large \par}
+
+\begin{center}
+{\large \hrulefill{}}
+\par\end{center}{\large \par}
+
+\begin{center}
+\textsc{Running Head}: Running header \bigskip{}
+
+\par\end{center}
+
+\begin{center}
+July 13, 2012 
+\par\end{center}
+
+\clearpage{}
+
+%% ABSTRACT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%{\sc Summary.}
+\textbf{Summary}
+\begin{enumerate}
+\item 
+\item 
+\item 
+\end{enumerate}
+\noindent \hrulefill{}
+
+\noindent \textsc{Key words} Words here
+
+\clearpage{}
+
+\linenumbers
+
+\global\long\def\baselinestretch{1.8}
+
+
+Currently the most comprehensive software for analysis of capture-recapture
+data is MARK (\citealt{White1999}). MARK is a FORTRAN program for
+fitting capture-recapture models that are manually constructed with
+a graphical user interface. RMark (\citealt{Laake2008}) is an R package
+that constructs models for MARK with user-specified formulas to replace
+the manual model creation. With RMark and MARK most currently available
+capture-recapture models can be fitted and manipulated in R. Yet,
+additional R packages have been made available including Rcapture
+(\citealt{Baillargeon2007}), mra (\citealt{McDonald2005}), secr
+(\citealt{Borchers2008}), BTSPAS (\citealt{Schwarz2009}), SPACECAP
+(\citealt{Royle2009}), and BaSTA (\citealt{Colchero2012}). Rcapture
+fits closed and open models in a log-linear framework. The mra package
+fits Cormack-Jolly-Seber (CJS) and the Huggins closed model with a
+``regression approach'' to model specification. The secr and SPACECAP
+packages provide spatially explicit modelling of closed capture-recapture
+data and BTSPAS fits time-stratified Petersen models in a Bayesian
+framework. BaSTA estimates survival with covariates from capture-recapture/recovery
+data in a Bayesian framework when many individuals are of unknown
+age. Each package is designed for a unique niche or structure. We
+believe these alternative packages in R are useful because they expand
+the analyst's toolbox and the code is open source which enables the
+knowledgeable user to understand fully what the software is doing.
+Also, this independent innovation provides testing for existing software
+and potential gains in developer knowledge to improve existing software.
+
+We developed an R package we named ``marked'' based on our focus
+of analysis with marked animals in contrast to the R package unmarked
+(\citealt{Fiske2011}) that focuses on observations of unmarked animals.
+The original impetus for the code was to implement the CJS model using
+the hierarchical likelihood construction described by \citet{Pledger2003}
+with the added capability of variable time intervals for different
+groups of animals or when initial capture/release is done between
+recapture occasions. The latter are not easily accomplished in MARK.
+Also, we wanted to improve on execution times with RMark/MARK for
+analysis of our own large data sets with many time-varying individual
+(animal-specific) covariates using the data structure idea in the
+mra package (\citealt{McDonald2005}). Subsequently, we implemented
+the Jolly-Seber model with the \citet{Schwarz1996} POPAN parameter
+structure with the hierarchical likelihood construction idea extended
+to the entry of animals into the population. We also added a Bayesian
+Markov Chain Monte Carlo (MCMC) implementation of the CJS model based
+on the approach used by \citet{ALBERT:1993fk} for analyzing binary
+data with a probit regression model. 
+
+
+\section*{Data structure}
+
+The likelihood for CJS/JS is a product multinomial and the cell probabilities
+are functions of the parameters. We will focus on CJS which has parameters
+$p$ (capture/recapture probability) and $\phi$ (apparent survival).
+If the parameters depend only on time, cohort or group (e.g., sex)
+variables, the MARK approach using parameter index matrices (PIMs)
+is very efficient because it assigns a potentially unique index for
+each parameter type and position. The design matrix for the parameters
+has a row for each unique parameter and the index is the row number.
+The PIM approach minimizes the work of manual model creation by reducing
+the set of potential parameters. As a very simple example, we will
+consider a CJS model for a single group with k=4 occasions. For this
+structure the PIMS are triangular with a row for each cohort released
+at each occasion (time) and the column representing the occasions
+(times) following the release. Using an unique index for each potential
+parameter, the PIMS would be:
+
+\begin{tabular}{ccccccccc}
+ &
+\multicolumn{3}{c}{} &
+ &
+ &
+\multicolumn{3}{c}{}\tabularnewline
+\hline 
+ &
+\multicolumn{3}{c}{$\phi$ } &
+ &
+ &
+\multicolumn{3}{c}{$p$}\tabularnewline
+\hline 
+ &
+\multicolumn{3}{c}{Time} &
+ &
+ &
+\multicolumn{3}{c}{Time}\tabularnewline
+\cline{2-5} \cline{7-9} 
+Cohort &
+2 &
+3 &
+4 &
+ &
+Cohort &
+2 &
+3 &
+4\tabularnewline
+\cline{2-4} \cline{7-9} 
+1 &
+1 &
+2 &
+3 &
+ &
+1 &
+7 &
+8 &
+9\tabularnewline
+2 &
+ &
+4 &
+5 &
+ &
+2 &
+ &
+10 &
+11\tabularnewline
+3 &
+ &
+ &
+6 &
+ &
+3 &
+ &
+ &
+12\tabularnewline
+\hline 
+ &
+ &
+ &
+ &
+ &
+ &
+ &
+ &
+\tabularnewline
+\end{tabular}
+
+\noindent The index 5 represents survival of the second release cohort
+between occasions 3 and 4 and index 8 represents recapture probability
+of the first release cohort on the third occasion. Some constraints
+on parameters (e.g., constant $\phi$) can be constructed by modifying
+the PIMS but more generally models are constructed with a design matrix
+which is a set of linear constraints. For our example, there would
+be 12 rows in the design matrix and each column in the design matrix
+($X$) is one of the model parameters $\beta$ which for a logit link
+are related to real parameters $\theta$ (e.g., $\phi$ and $p$ in
+CJS) by:
+
+\noindent 
+\begin{equation}
+\theta=\frac{1}{1+\exp(-X\beta)}\label{eq:link}
+\end{equation}
+RMark creates design matrices for MARK by applying formula to ``design
+data'' which are data about the parameters like cohort, time and
+group and any related variables. However, having a single $X$ becomes
+problematic with individual covariates (variables that differ for
+animals in the same group/cohort). In MARK, these individual covariates
+are handled by entering the name of the individual covariate in the
+design matrix. When the real parmeters are computed, the name of the
+covariate is replaced with the value for an animal. If there are only
+a few individual covariates and small number of aninals, the replacement
+and computation is not too costly but when the individual covariates
+differ in time, there is a different covariate name for each time
+and the computation cost can become quite extreme for large models. 
+
+Even if computation time is not limiting, we agree with \citet{McDonald2005}
+that the PIM structure used in MARK can be quite confusing to the
+novice user. While PIMS are useful for manual model creation, they
+become an unnecessary nuisance when models and design matrices are
+created by formula. The solution of \citet{McDonald2005} (implemented
+in mra) is to create covariate matrices with a row for each animal
+and a column for each occasion and each covariate matrix is a prediction
+variable as in regression. This is equivalent to creating a real parameter
+for each animal for each occasion regardless of the release cohort.
+
+We use an alternative approach that we believe is simpler for the
+user. From the raw data and specified model structure, the code creates
+a list containing a dataframe for each parameter in the model (e.g.,
+$\phi$ and $p$). Each dataframe contains a record for each animal-occasion
+and the columns are the covariates. For $\phi$ and $p$ in the CJS
+model, there are $n(k-1)$ rows for $n$ animals and $k-1$ occasions
+that are modelled. For the JS model, there are $n(k-1)$ records for
+survival and probability of entry parameters and $nk$ for $p$ because
+the initial capture event is modelled. We create a separate dataframe
+for each parameter to enable different data (e.g., time values for
+$\phi$ and $p$) and different structures and number of occasions
+(e.g., $\phi$ and $p$ in JS). With model.matrix, a formula is applied
+to the dataframe to create the design matrix for each parameter (e.g,
+$X_{\phi}$,$X_{p}$). They are equivalent to a portion of the design
+matrix in MARK for each animal which are then stacked on top of one
+another to make a matrix for all animals. With maximum likelihood
+estimation (MLE), for each type of parameter, equation \ref{eq:link}
+(or similar inverse link function) is applied and the resulting vector
+is converted to a matrix with $n$ rows and a column for each required
+occasion ($k-1$ or $k$). For Bayesian MCMC inference, only$X\beta$
+are needed for updating.
+
+The parameter-specific animal-occasion dataframes are automatically
+created from the typical user's dataframe containing a single record
+per animal containing the capture history and covariates. For the
+particular model structure, fields like cohort, age, and time are
+generated for each record. Other static and time-varying covariates
+specified in the user's data are added. Static variables (e.g., sex)
+are repeated for each occasion for the animal. Time-varying variables
+(e.g., age) vary across rows for each animal. They are specified in
+the data using a naming convention of ``vt'' where ``v'' is the
+covariate name and ``t'' is a numeric value for the time (occasion)
+(e.g., td19). They are collapsed in the animal-occasion dataframes
+to a single column with the name identified by ``v'' and each record
+contains the appropriate value for the occasion. All of this is transparent
+to the user who only needs to specify their dataframe, the type of
+model (e.g., cjs), the variables that should be treated as time-varying,
+and the formula for each parameter.
+
+With this structure, the design matrices can become quite large and
+available memory could become limiting. For MLE analyis, we use the
+following to reduce the required memory:
+\begin{enumerate}
+\item We reduce the data to $n^{*}\leq n$ individuals by aggregating records
+with identical data and using the frequencies ($f_{1},...,f_{n^{*}};n=\sum_{i=1\:}^{n^{*}}f_{i}$)
+in the likelihood. 
+\item For $X$ we use sparse matrices which only store non-zero elements
+and construct $X$ incrementally with a user-specified size of data
+chunks.
+\item We retain only the rows of $X$ which are unique for the design and
+including any fixed parameters which can be animal-specific. 
+\end{enumerate}
+For Bayesian MCMC inference, we cannot aggregate records but we reduce
+the required memory by:
+\begin{enumerate}
+\item Eliminating the unused animal-occasion data for occasions prior to
+and including the release occasion for the animal, and
+\item Storing only the unique values of the real parameters which are unique
+rows of $X_{\phi}$and $X_{p}$.
+\end{enumerate}
+
+\section*{Maximum-likelihood inference}
+
+Although it was not explicitly stated, the CJS likelihood was developed
+hierarchically by \citet{Pledger2003}. Considering a single release
+cohort for simplicity, the probability of capture history ($\omega$
+a sequence of 0 and 1 values) was computed by multiplying the conditional
+probability ($Pr(\omega|d)$) for a given departure occasion (i.e.,
+death or end of study) and the probability of departing on that occasion
+($Pr(d)$) and summing across all possible departure occasions ($Pr(\omega)=\sum_{d}Pr(\omega|d)Pr(d)$).
+Viewed in this way, it is possible to construct the likekihood values
+for all of the observations with matrices. 
+
+Let $\phi$,$M$ $p$ be $n\times k$ matrices where$\phi_{ij}$ is
+the survival probability for animal $i$ from occasion $j-1$ to $j$
+($\phi_{i1}=1$ ), $m_{ij}$ is the probability of dying in the interval
+$j$ to $j+1$ ($m_{ik}=1)$ and $p_{ij}$ is the capture probability
+for animal $i$ on occasion $j$ ($p_{i1}=0$). Let $C$ be an $n\times k$
+matrix of the capture history values and $f_{i}$and $l_{i}$ are
+the first and last occasions the $i^{th}$ animal was seen. Derived
+from those values are $n\times k$ matrices $L$, $F$ and $F^{+}$
+which contain 0 except that $L_{ij}=1\; j\geq l_{i}$,$F_{ij}=1\; j\geq f_{i}$
+and $F_{ij}^{+}=1\; j>f_{i}$. The likelihood calculation has the
+following steps where the matrix mulitplication is elementwise and
+$1$ and represents an $n\times k$ matrix where each element is 1:
+\begin{enumerate}
+\item Construct the $n\times k$ matrix $\phi'=1-F^{+}+\phi F^{+}$which
+is the $\phi$ matrix modified such that $\phi_{ij}=1$ for $j\leq f_{i}$.
+\item Construct the $n\times k$ matrix $\phi*$from $\phi'$ where $\phi_{ij}*=\prod_{i=1}^{j}\phi_{ij}'$.
+\item Construct the $n\times k$ matrix $p'=1-F^{+}+F^{+}(Cp+(1-C)(1-p))$.
+\item Construct the $n\times k$ matrix $p*$from $p'$ where $p_{ij}*=\prod_{i=1}^{j}p_{ij}'$.
+\item Compute $n\times1$ vector of probabilities of observed capture histories
+$Pr(\omega_{i})\; i=1,...,n$ which are the sums of the rows of $LM\phi^{*}p^{*}$.
+\item Compute the log-likelihood $\sum_{i=1}^{n}\ln(Pr(\omega_{i}))$
+\end{enumerate}
+The R code translates from the mathematics quite literally as: 
+
+\begin{Schunk}
+\begin{Sinput}
+>  Phiprime=1-Fplus + Phi*Fplus
+>  Phistar=t(apply(Phiprime,1,cumprod))
+>  pprime=(1-Fplus)+Fplus*(C*p+(1-C)*(1-p))
+>  pstar=t(apply(pprime,1,cumprod))
+>  pomega=rowSums(L*M*Phistar*pstar)
+>  lnl=sum(log(pomega))
+\end{Sinput}
+\end{Schunk}
+
+\noindent While this code is simple it is faster if the apply is replaced
+with a loop because there are far more rows than occasions or replaced
+with compiled code which we did with a FORTRAN subroutine.
+
+The Jolly-Seber likelihood can be simplified by defining $\omega'$
+to be the portion of $\omega$ up through the (e.g., $\omega=(001010)$
+$\omega'=(001)$). The likelihood can be partitioned into 3 components:
+1) CJS likelihood for $\omega$ treating the first ``1'' as a release,
+2) a likelihood component for $\omega'$; entry and first observation,
+3) a component for those that entered before each occasion but were
+never seen. We define an additional $n\times k$ matrix $\pi$ which
+are the entry probabilities into the population (specified as $\beta$
+by \citet{Schwarz1996}) with the obvious constraint that $\sum_{j=1}^{k}\pi_{ij}=1$
+and $N_{g}\: g=1,...,G$ is the abundance of animals in each of the
+defined $G$ groups (e.g., male/female) that were in the population
+at some time. $N_{g}=n_{g}+f_{g}^{0}$ where $n_{g}$ is the number
+observed in the group and $f_{g}^{0}$ are the estimated number of
+animals in the group that were never seen.
+
+The same hierarchical approach used for CJS can be used for the second
+component. Construct the capture history probability for a given entry
+time and then sum over all possible entry times. . The second component
+is constructed with the following steps:
+\begin{enumerate}
+\item Construct the $n\times k$ matrix $E=(1-p)\phi(1-F)+F$,
+\item Construct the $n\times k$ matrix $E*$where $E_{ij}*=\prod_{l=j}^{k}E_{il}$,
+\item Compute $n\times1$ vector of probabilities $Pr(\omega')$ which are
+the sums of the rows of $E*(1-F^{+})\pi$ multiplied by the vector
+$p_{if_{i}}\: i=1,...,n$, 
+\item Compute the log-likelihood $\sum_{i=1}^{n}\ln(Pr(\omega_{i}'))$.
+\end{enumerate}
+For the third likelihood component for missed animals, we constructed
+$G\times k$ dummy capture histories of all 0's except for a ``1''
+at the occasion the animals entered. From the CJS portion of the code,
+we obtained $p_{gj}^{0}$ the probability that an animal released
+in group $g$ on occasion $j$ would never be sighted. The final log-likelihood
+component is:
+\[
+\sum_{g=1}^{G}f_{g}^{0}\ln\left[\sum_{j=1}^{k}\pi_{gj}(1-p_{gj})p_{gj}^{0}\right]+\ln(N_{g}!)+\ln(f_{g}^{0}!)
+\]
+
+
+The JS log-likelihood is the total of the 3 components plus $\sum_{g=1}^{G}\sum_{j=1}^{k}\ln(n_{gj}!)$
+which do not depend on the parameters but is added after optimization
+to be consistent with the output from MARK.
+
+
+\section*{Bayesian MCMC inference}
+
+To implement a fairly \textquotedbl{}black box\textquotedbl{} MCMC
+algorithm that is accessible to end users we took the approach used
+by \citet{ALBERT:1993fk} for analyzing binary data with a probit
+regression model.
+
+
+\section*{Getting initial parameter values}
+
+Initial values for parameters can either be provided from the results
+of a previously fitted similar model or they are computed using general
+linear models (GLM) that provide approximations. Using the underlying
+idea in \citet{Manly1968} we compute initial estimates for capture-probability
+$p$ for occasions 2 to $k-1$ using a binomial GLM with the formula
+for $p$ which is fitted to a sequence of bernoulli random variables
+that are a subset of the capture history values $y_{ij}$ $i=1,...,n$
+and $j=f_{i}+1,...,l_{i}-1$ where $f_{i}$ and $l_{i}$ are the first
+and last occasions the $i^{th}$ animal was seen. A similar but more
+ad-hoc idea is used for $\phi$. We know the animal is alive between
+$f_{i}$ and $l_{i}$ and assume that the animal dies at occasion
+$l_{i}+1\leq k$. We use a binomial GLM with the formula for $\phi$
+fitted to the $y_{ij}^{*}$ $i=1,...,n$ and $j=f_{i}+1,...,l_{i}+1\leq k$
+where $y_{ij}^{*}$=1 for $j=f_{i}+1,...,l_{i}$ and $y_{ij}^{*}$=0
+for $j=l_{i}+1\leq k$. A logit link is used for MLE and a probit
+link for MCMC. Any non-estimable or missing $\beta$ are set to 0. 
+
+
+\section*{Acknowledgments}
+
+\bibliography{0C__Users_JLaake_git_marked_manuscript_markedWriteUpBib}
+
+\end{document}

@@ -84,8 +84,13 @@ p.occ=ps[cbind(1:nrow(pents),model_data$imat$first)]
 ps[,nocc]=0
 Phis=cbind(Phis[,2:nocc],rep(1,nrow(Phis)))
 entry.p=(1-ps)*Phis*(1-model_data$imat$First)+model_data$imat$First
-entry.p=(t(apply(entry.p,1,function(x) rev(cumprod(rev(x)))))*pents*(1-model_data$imat$Fplus))
-entry.p=apply(entry.p,1,sum)*p.occ
+# Looping faster because k<<<n
+#Estar=t(apply(entry.p,1,function(x) rev(cumprod(rev(x)))))
+Estar=matrix(0,ncol=nocc,nrow=nrow(ps))
+Estar[,nocc]=entry.p[,nocc]
+for(j in (nocc-1):1)
+	Estar[,j]=Estar[,j+1]*entry.p[,j]
+entry.p=rowSums(Estar*pents*(1-model_data$imat$Fplus))*p.occ
 lnl=cjslnl$lnl-sum(model_data$imat$freq*log(entry.p))
 # next add on likelihood component for those not caught from dummy 1000000,0100000,...data 
 # return complete likelihood value except that calling function js adds the ui factorials to match
@@ -97,7 +102,7 @@ for (i in 1:length(Ns))
   index1=i*nocc
   ps=ps.dummy[index0:index1,]
   pents=pents.dummy[index0:index1,]
-  lnl=lnl-sum(Ns[i]*log(sum(diag(pents)*cjslnl$p0[model_data$imat$freq==0][index0:index1]*(1-diag(ps)))))
+  lnl=lnl-Ns[i]*log(sum(diag(pents)*cjslnl$p0[model_data$imat$freq==0][index0:index1]*(1-diag(ps))))
   lnl=lnl-lfactorial(nobstot[i]+Ns[i])+lfactorial(Ns[i])
 }
 if(debug)

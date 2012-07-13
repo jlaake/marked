@@ -230,7 +230,7 @@ Running Head
 \align center
 
 \size normal
-December 8, 2011 
+July 13, 2012 
 \end_layout
 
 \begin_layout Standard
@@ -1582,7 +1582,7 @@ key "Pledger2003"
 \begin_inset Formula $\omega$
 \end_inset
 
-)
+ a sequence of 0 and 1 values)
 \family default
 \series default
 \shape default
@@ -1712,12 +1712,20 @@ and
 \begin_inset Formula $L$
 \end_inset
 
+, 
+\begin_inset Formula $F$
+\end_inset
+
  and 
 \begin_inset Formula $F^{+}$
 \end_inset
 
  which contain 0 except that 
 \begin_inset Formula $L_{ij}=1\; j\geq l_{i}$
+\end_inset
+
+,
+\begin_inset Formula $F_{ij}=1\; j\geq f_{i}$
 \end_inset
 
  and 
@@ -1738,7 +1746,7 @@ ion is elementwise and
 \end_layout
 
 \begin_layout Enumerate
-Compute the 
+Construct the 
 \begin_inset Formula $n\times k$
 \end_inset
 
@@ -1786,7 +1794,7 @@ which is the
 \end_layout
 
 \begin_layout Enumerate
-Compute the 
+Construct the 
 \begin_inset Formula $n\times k$
 \end_inset
 
@@ -1830,7 +1838,7 @@ from
 \end_layout
 
 \begin_layout Enumerate
-Compute the 
+Construct the 
 \begin_inset Formula $n\times k$
 \end_inset
 
@@ -1842,7 +1850,7 @@ Compute the
 \end_layout
 
 \begin_layout Enumerate
-Compute the 
+Construct the 
 \begin_inset Formula $n\times k$
 \end_inset
 
@@ -2011,7 +2019,289 @@ status open
 \end_layout
 
 \begin_layout Standard
-JS model 
+\noindent
+While this code is simple it is faster if the apply is replaced with a loop
+ because there are far more rows than occasions or replaced with compiled
+ code which we did with a FORTRAN subroutine.
+\end_layout
+
+\begin_layout Standard
+The Jolly-Seber likelihood can be simplified by defining 
+\begin_inset Formula $\omega'$
+\end_inset
+
+ to be the portion of 
+\begin_inset Formula $\omega$
+\end_inset
+
+ up through the (e.g., 
+\begin_inset Formula $\omega=(001010)$
+\end_inset
+
+ 
+\begin_inset Formula $\omega'=(001)$
+\end_inset
+
+).
+ The likelihood can be partitioned into 3 components: 1) CJS likelihood
+ for 
+\begin_inset Formula $\omega$
+\end_inset
+
+ treating the first 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ as a release, 2) a likelihood component for 
+\begin_inset Formula $\omega'$
+\end_inset
+
+; entry and first observation, 3) a component for those that entered before
+ each occasion but were never seen.
+ We define an additional 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $\pi$
+\end_inset
+
+ which are the entry probabilities into the population (specified as 
+\begin_inset Formula $\beta$
+\end_inset
+
+ by 
+\begin_inset CommandInset citation
+LatexCommand citet
+key "Schwarz1996"
+
+\end_inset
+
+) with the obvious constraint that 
+\begin_inset Formula $\sum_{j=1}^{k}\pi_{ij}=1$
+\end_inset
+
+ and 
+\begin_inset Formula $N_{g}\: g=1,...,G$
+\end_inset
+
+ is the abundance of animals in each of the defined 
+\begin_inset Formula $G$
+\end_inset
+
+ groups (e.g., male/female) that were in the population at some time.
+ 
+\begin_inset Formula $N_{g}=n_{g}+f_{g}^{0}$
+\end_inset
+
+ where 
+\begin_inset Formula $n_{g}$
+\end_inset
+
+ is the number observed in the group and 
+\begin_inset Formula $f_{g}^{0}$
+\end_inset
+
+ are the estimated number of animals in the group that were never seen.
+\end_layout
+
+\begin_layout Standard
+The same hierarchical approach used for CJS can be used for the second component.
+ Construct the capture history probability for a given entry time and then
+ sum over all possible entry times.
+ .
+ The second component is constructed with the following steps:
+\end_layout
+
+\begin_layout Enumerate
+Construct the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $E=(1-p)\phi(1-F)+F$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+Construct the 
+\begin_inset Formula $n\times k$
+\end_inset
+
+ matrix 
+\begin_inset Formula $E*$
+\end_inset
+
+where 
+\begin_inset Formula $E_{ij}*=\prod_{l=j}^{k}E_{il}$
+\end_inset
+
+,
+\end_layout
+
+\begin_layout Enumerate
+Compute 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $n\times1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ vector of probabilities 
+\begin_inset Formula $Pr(\omega')$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ which are the sums of the rows of 
+\begin_inset Formula $E*(1-F^{+})\pi$
+\end_inset
+
+ multiplied by the vector 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $p_{if_{i}}\: i=1,...,n$
+\end_inset
+
+, 
+\end_layout
+
+\begin_layout Enumerate
+Compute the log-likelihood 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\sum_{i=1}^{n}\ln(Pr(\omega_{i}'))$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+For the third likelihood component for missed animals, we constructed 
+\begin_inset Formula $G\times k$
+\end_inset
+
+ dummy capture histories of all 0's except for a 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ at the occasion the animals entered.
+ From the CJS portion of the code, we obtained 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $p_{gj}^{0}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ the probability that an animal released in group 
+\begin_inset Formula $g$
+\end_inset
+
+ on occasion 
+\begin_inset Formula $j$
+\end_inset
+
+ would never be sighted.
+ The final log-likelihood component is:
+\begin_inset Formula 
+\[
+\sum_{g=1}^{G}f_{g}^{0}\ln\left[\sum_{j=1}^{k}\pi_{gj}(1-p_{gj})p_{gj}^{0}\right]+\ln(N_{g}!)+\ln(f_{g}^{0}!)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The JS log-likelihood is the total of the 3 components plus 
+\begin_inset Formula $\sum_{g=1}^{G}\sum_{j=1}^{k}\ln(n_{gj}!)$
+\end_inset
+
+ which do not depend on the parameters but is added after optimization to
+ be consistent with the output from MARK.
 \end_layout
 
 \begin_layout Section*
