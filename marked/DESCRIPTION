@@ -14,7 +14,8 @@ Depends:
     optimx,
     coda,
     truncnorm,
-    Matrix
+    Matrix,
+    Rcpp (>= 0.9.13)LinkingTo: Rcpp
 Suggests:
     RMark
 LazyLoad: yes
