@@ -96,7 +96,7 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 {
 	f_eval=get(".markedfunc_eval",envir=.GlobalEnv)+1
 	assign(".markedfunc_eval", f_eval, envir = .GlobalEnv)
-	if(debug)cat("\npar = ",par)
+	if(debug)cat("par = ",par,"\n")
 	nocc=model_data$imat$nocc
 	nphi=ncol(model_data$Phi.dm)
 	np=ncol(model_data$p.dm)
@@ -124,7 +124,7 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 			as.integer(nrow(model_data$p.fixed)),lnl=double(1),p0=double(nrow(model_data$imat$chmat)),PACKAGE="marked")
 	if(debug)
 	{
-		cat("\n-2lnl = ",2*lnl$lnl)
+		cat("-2lnl = ",2*lnl$lnl,"\n")
 	} else
 	if((f_eval-100*floor(f_eval/100))==0)
 	{
@@ -136,72 +136,6 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	else
 		return(lnl$lnl)
 }
-get.p=function(beta,dm,nocc,Fplus) 
-{
-	# compute p matrix from parameters (beta) and list of design matrices (dm) 
-	# created by function create.dm
-	ps=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
-	ps[Fplus==1]=plogis(ps[Fplus==1]) 
-	return(ps) 
-}
-get.Phi=function(beta,dm,nocc,Fplus) 
-{
-	# compute Phi matrix from parameters (beta) and list of design matrices (dm)
-	# created by function create.dm 
-	Phis=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
-	Phis[Fplus==1]=plogis(Phis[Fplus==1]) 
-	return(Phis) 
-}
-#################################################################################
-# cjs.lnl - computes likelihood for CJS using Pledger et al (2003)
-# formulation for the likelihood. This code does not cope with fixed parameters or 
-# loss on capture but could be modified to do so. 
-# Arguments: 
-# par             - vector of beta parameters 
-# imat           - list of freq, indicator vector and matrices for ch data created by process.ch 
-# Phi.dm         - list of design matrices; a dm for each capture history 
-# p.dm           - list of design matrices; a dm for each capture history 
-# debug          - if TRUE show iterations with par and -2lnl 
-# time.intervals - intervals of time between occasions # # Value: -2LnL using
-#################################################################################
-xcjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE) {
-	if(debug)cat("\npar = ",par)
-	###################################################################################
-	# compute Phi and p matrices (a value for each occasion for each unique ch (or animal))
-	###################################################################################
-	#extract Phi and p parameters from par vector 
-	nphi=ncol(model_data$Phi.dm)
-	np=ncol(model_data$p.dm) 
-	beta.phi=par[1:nphi]
-	beta.p=par[(nphi+1):(nphi+np)] 
-	#construct parameter matrices (1 row for each capture history and a column for each occasion)
-	Phis=get.Phi(beta.phi,model_data$Phi.dm,nocc=ncol(model_data$imat$chmat),model_data$imat$Fplus)
-	if(!is.null(model_data$time.intervals)) 
-	{
-		exponent=cbind(rep(1,nrow(Phis)),model_data$time.intervals)
-		Phis=Phis^exponent 
-	} 
-	ps=get.p(beta.p,model_data$p.dm,nocc=ncol(model_data$imat$chmat),model_data$imat$Fplus)
-	if(debug)cat("\npar = ",par)
-	# Compute probability of dying in interval from Phis
-	M=cbind((1-Phis)[,-1],rep(1,nrow(Phis)))
-	# compute cummulative survival from release across each subsequent time
-	# and the cummulative probability for detection (capture) across each time
-	Phi.cumprod=1-model_data$imat$Fplus + Phis*model_data$imat$Fplus 
-	cump=(1-model_data$imat$Fplus)+model_data$imat$Fplus*(model_data$imat$chmat*ps+(1-model_data$imat$chmat)*(1-ps))
-	for (i in 2:ncol(cump))
-	{
-		Phi.cumprod[,i]=Phi.cumprod[,i-1]*Phi.cumprod[,i] 
-		cump[,i]=cump[,i-1]*cump[,i] 
-	}
-	# compute prob of capture-history
-	pch=rowSums(model_data$imat$L*M*Phi.cumprod*cump)
-	lnl=-sum(model_data$imat$freq*log(pch))
-	if(debug)cat("\nlnl = ",lnl) 
-	return(lnl) 
-} 
-
-
 
 
 

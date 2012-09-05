@@ -140,6 +140,12 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
+	  if(data$model!="probitCJS")
+		  if("Y" %in% names(full.design.data[[i]]))
+		  {
+			  full.design.data[[i]]$Y=NULL
+			  full.design.data[[i]]$Z=NULL
+		  }
    }
    names(full.design.data)=names(parameters)
    return(full.design.data)

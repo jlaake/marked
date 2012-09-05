@@ -61,11 +61,11 @@ function(model,nocc,mixtures=1)
 #   3 Mar 10; added Brownie; note ORDMS added year earlier
 #   Aug 10; added CRDMS; MsLiveDead done in between
 #
-  valid.models=c("cjs","js","probitCJS")
+  valid.models=c("CJS","JS","probitCJS")
   num=c(-1,-1,-1) # of intervals relative to nocc
   divisor=c(1,1,1) # to compute nocc from length of ch
   default.mixtures=c(1,1,1)
-  valid.types=c("cjs","js","probitCJS")
+  valid.types=c("CJS","JS","probitCJS")
   etype= match(model,valid.models)
   derived=rep(FALSE,3)
   robust=rep(FALSE,3)

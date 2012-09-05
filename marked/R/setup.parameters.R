@@ -70,8 +70,8 @@ function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
 #
 #  Create valid parameter list depending on model.
 #
-   if(model=="probitCJS" | model=="cjs")par.list=c("Phi","p")
-   if(model=="js") par.list=c("Phi","p","pent","N")
+   if(model=="probitCJS" | model=="CJS")par.list=c("Phi","p")
+   if(model=="JS") par.list=c("Phi","p","pent","N")
 #
 #  If this is just a parameter check, return par.list
 #
@@ -90,7 +90,7 @@ function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
 #
 #  Next depending on model type, assign non-specified default values
 #
-   if(model=="probitCJS" | model=="cjs")
+   if(model=="probitCJS" | model=="CJS")
    {
       parameters$Phi$num=-1
       parameters$Phi$begin=0
@@ -106,7 +106,7 @@ function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
       if(is.null(parameters$p$link))parameters$p$link="logit"
    }
    else
-   if(model=="js")
+   if(model=="JS")
    {
       parameters$Phi$begin=0
       parameters$Phi$num=-1

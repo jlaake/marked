@@ -17,6 +17,7 @@
 #' occasion); only if all==TRUE} \item{Lplus}{1's from occasion after last (1)
 #' to nocc; only if all==TRUE} \item{L}{1's from last (1) to nocc; only if
 #' all==TRUE}
+#' @export
 #' @author Jeff Laake
 process.ch=function(ch,freq=NULL,all=FALSE)
 #################################################################################

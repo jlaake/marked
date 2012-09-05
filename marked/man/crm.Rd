@@ -2,7 +2,7 @@
 \alias{crm}
 \title{Capture-recapture model fitting function}
 \usage{
-  crm(data, ddl = NULL, begin.time = 1, model = "cjs",
+  crm(data, ddl = NULL, begin.time = 1, model = "CJS",
     title = "", model.parameters = list(),
     design.parameters = list(), initial = NULL,
     groups = NULL, time.intervals = NULL, debug = FALSE,
@@ -85,7 +85,7 @@
 }
 \value{
   crm model object with class=("crm",submodel) where
-  submodel is either "cjs" or "js" at present.
+  submodel is either "CJS" or "JS" at present.
 }
 \description{
   Fits user specified models to some types of

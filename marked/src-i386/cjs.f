@@ -8,6 +8,7 @@
        DOUBLE PRECISION FRQ(N), TINT(N,M-1), PHIF(K,3), PF(L,3)
        DOUBLE PRECISION X,Y
        LNL=0D0
+       IFLAG=0
        DO 2 I=1,N
        DO 2 J=INT(FRST(I))+1,M
          P(I,J-1)=1/(1+EXP(-P(I,J-1)))
@@ -52,6 +53,7 @@
 	          ELSE
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)*(1-PHI(I,J))
 	          ENDIF
+	          IF(PCH(I)<1E-15.AND.FRQ(I).GT.0) PCH(I)=1D-307
   30        CONTINUE
             P0(I)=PCH(I)/(CUMP( INT(LST(I)))*PHICUMPROD(INT(LST(I))))
          ENDIF

@@ -1,14 +1,28 @@
-marked 1.0.5 (12 July 2012)
+marked 1.0.5 (22 Aug 2012)
 ------------
 NEW FEATURES
 
+* crm.wrapper now returns a list like mark.wrapper in RMark with a model.table.  The model list elements are the filenames of the externally saved model results. A default print method is included to print out model selection table.
+
 * Modified cjs.initial to use either logit or probit and added initial value calculation to probitCJS 
 
-* Simplified code in cjs.f but no obvious payoff in speed
+* Simplified code in cjs.f but no obvious payoff in speed. Set p=1e-307 if p=0 and freq>0 to avoid log(0) issue. This is close to value used in MARK.
+
+* Allows initial=value and all parameters given that initial value
+
+* Can now handle specification of more than one method for optimization within optimx; setting control=list(follow.on=TRUE) in the arguments will let it use par estimates as starting values as it proceeds through list of methods.
+
+* Added SANN as a stand alone method with optim. Default of itnmax should be increased substantially for this method.
+
+* Modified cjs.initial to use freq as weight in glm to properly weight estimation when freq>1.
+
+* Removed simulation code and put in a separate package - simcr.
 
 BUG FIXES
 
-* Fixed bug in js.lnl which was not getting lnl correct when there were no groups; cosmetic and did affect estimates because was constant part (ui)  
+* Fixed bug in js.lnl which was not getting lnl correct when there were no groups; cosmetic and did not affect estimates because was constant part (ui)
+
+* Fixed bug in which accumulate argument was not passed to process.data from crm  
 
 
 marked 1.0.4 (6 July 2012)
