@@ -105,6 +105,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    {
 	   if(is.null(names(initial)))
 	   {
+		   if(length(initial)==1)initial=rep(initial,ncol(dml$Phi)+ncol(dml$p))
 		   if(length(initial)!=(ncol(dml$Phi)+ncol(dml$p)))
 			   stop("Length of initial vector does not match number of parameters.")
 		   else
@@ -131,7 +132,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 #       If data are to be accumulated based on ch and design matrices do so here;
 		if(accumulate)
 		{
-			cat("\n Accumulating capture frequencies based on design. This can take awhile.\n")
+			cat("Accumulating capture histories based on design. This can take awhile.\n")
 			flush.console()
 			model_data.save=model_data   
 			model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
@@ -147,6 +148,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 #  Scale the design matrices and parameters with either input scale or computed scale
    if(is.null(scale))
    {
+#     Possibly scale with initial values; that and autoscale not great
+#	  scale=abs(par)
+#	  scale[scale==0]=1
+#	  scale.phi=1/scale[1:ncol(model_data$Phi.dm)]
+#	  scale.p=1/scale[(ncol(model_data$Phi.dm)+1):length(scale)]
       scale.phi=apply(model_data$Phi.dm,2,function(x) mean(x[x!=0]))
 	  scale.p=apply(model_data$p.dm,2,function(x) mean(x[x!=0]))
    } else
@@ -161,36 +167,37 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 		   scale.p=scale[(ncol(model_data$Phi.dm)+1):length(scale)]
 	   }
    }
-   model_data$Phi.dm=Matrix:::t(Matrix:::t(model_data$Phi.dm)/scale.phi)
-   model_data$p.dm=Matrix:::t(Matrix:::t(model_data$p.dm)/scale.p)
+   model_data$Phi.dm=t(t(as.matrix(model_data$Phi.dm))/scale.phi)
+   model_data$p.dm=t(t(as.matrix(model_data$p.dm))/scale.p)
    par=par*c(scale.phi,scale.p)
 #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
-   cat("\n Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
+   cat("Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
    flush.console()
    assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-   convergence=1
-   i=0
-   while (convergence!=0 & i <= refit)
+   if("SANN"%in%method)
    {
-       if(i>0)
-	   {
-		   cat("\n Re-starting optimization using Nelder-Mead for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")   
-		   method="Nelder-Mead"
-           itnmax=2*itnmax
-	   }
+	   mod=optim(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
+					   debug=debug,control=control,...)
+	   par= mod$par
+	   convergence=mod$convergence
+	   lnl=mod$value
+	   counts=mod$counts
+   }else
+   {
 	   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
-			         debug=debug,control=control,itnmax=itnmax,...))
-	  par=mod$par$par
-	  convergence=mod$conv$conv
-	  i=i+1
-	  assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-  }
+					   debug=debug,control=control,itnmax=itnmax,...))
+	   objfct=unlist(mod$fvalues)
+	   bestmin=which.min(objfct)
+	   par= mod$par[[bestmin]]
+	   convergence=mod$conv[[bestmin]]
+	   counts=mod$itns[[length(mod$itns)]]
+	   lnl=mod$fvalues[[bestmin]]
+   }
 #  Rescale parameter vector, restore model_data and call cjs.lnl to compute all values and not just -2lnl
    cjs.beta=par/c(scale.phi,scale.p)
    names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
 #  Create results list 
-   lnl=mod$fvalues$fvalues
-   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(cjs.beta),convergence=mod$conv,count=mod$itns,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
+   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(cjs.beta),convergence=convergence,count=counts,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
 #  Use non-accumulated model_data (in model_data.save) with unscaled design matrices and call cjs to compute all values including reals
    allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
 #  Create dataframe of real parameter estimates
@@ -204,12 +211,13 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    reals$Phi=as.vector(t(xx))
    xx=matrix(allval[[3]],nrow=nrow(x),ncol=nocc-1)
    reals$p=as.vector(t(xx))
+   reals$rec=rep(1:nrow(x),each=nocc-1)
    res$reals=reals[reals$Time>=reals$Cohort,]
+#   res$reals$rec=res$reals$rec-min(res$reals$rec)+1
 #  If requested compute hessian and var-cov matrix 
    if(hessian) 
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-	   cat("\n Computing hessian\n")
 	   res$vcv=cjs.hessian(res, Phi.links=NULL, p.links=NULL)
    }   
 #  Assign S3 class and return

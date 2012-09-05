@@ -1,11 +1,14 @@
 \name{crm.wrapper}
 \alias{create.model.list}
 \alias{crm.wrapper}
+\alias{model.table}
 \title{Automation of model runs}
 \usage{
   crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",...)
 
   create.model.list(parameters)
+
+  model.table(model.list)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -17,8 +20,8 @@
 
   \item{model.list}{matrix of model names contained in the
   environment of models function; each row is a model and
-  each column is for a parameter and the value is the ime
-  of first capture(release) occasion}
+  each column is for a parameter and the value is formula
+  name}
 
   \item{models}{a function with a defined environment with
   model specifications as variables; values of model.list
@@ -34,7 +37,7 @@
 \value{
   create.model.list returns a matrix for crm.wrapper;
   crm.wrapper runs and stores models externally and has no
-  return value either "cjs" or "js" at present.
+  return value either for "cjs" or "js" at present.
 }
 \description{
   Some functions that help automate running a set of crm

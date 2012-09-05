@@ -68,9 +68,7 @@
 #' 
 #' @aliases process.data accumulate_data
 #' @usage 	process.data(data,begin.time=1,model="cjs",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-#'               initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=FALSE)
-#' 
-#'	        accumulate_data(data)
+#'               initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 #' 
 #' @param data A data frame with at least one field named \code{ch} which is
 #' the capture (encounter) history stored as a character string. \code{data}
@@ -128,17 +126,20 @@
 accumulate_data <- function(data)
 {
 	x <- data[,names(data)!="freq"]
+	nx <- nrow(x)
 	if(is.null(data$freq))data$freq=rep(1,nrow(data))
 	pasted.data=apply(x, 1, paste, collapse = "")
 	freq=sapply(split(data$freq, pasted.data),sum)
 	x=unique(x[order(pasted.data),])
 	x$freq=freq
+	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
 	return(x)	
 }
 process.data <-
-function(data,begin.time=1,model="cjs",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=FALSE)
+function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
+initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 {
+   if(model%in%c("cjs","js"))model=toupper(model)
    dataname=substitute(data)
 #
 #  Compute number of occasions and check validity of model

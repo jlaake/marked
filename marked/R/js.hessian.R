@@ -11,12 +11,12 @@
 js.hessian=function(model,nobstot)
 {
 	scale=c(model$scale$phi,model$scale$p,model$scale$pent,model$scale$N)
-	cat("\n Computing hessian\n")
+	cat("Computing hessian\n")
 	vcv=hessian(js.lnl,model$beta*scale,model_data=model$model_data,nobstot=nobstot)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{
-		cat("\nUnable to invert hessian\n")
+		warning("Unable to invert hessian")
 		return(NULL)
 	}
 	vcv=vcv$inv/outer(scale,scale,"*")

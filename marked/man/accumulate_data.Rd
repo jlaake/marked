@@ -4,9 +4,7 @@
 \title{Process encounter history dataframe for MARK analysis}
 \usage{
   process.data(data,begin.time=1,model="cjs",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-    initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=FALSE)
-
-  accumulate_data(data)
+    initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 }
 \arguments{
   \item{data}{A data frame with at least one field named

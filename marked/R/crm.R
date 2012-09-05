@@ -142,7 +142,7 @@
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
-#' either "cjs" or "js" at present.
+#' either "CJS" or "JS" at present.
 #' @author Jeff Laake
 #' @export crm
 #' @useDynLib marked
@@ -177,31 +177,33 @@
 #' \donttest{
 #' mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
 #' }
-crm <- function(data,ddl=NULL,begin.time=1,model="cjs",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
+crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="nlminb", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=NULL,refit=1,itnmax=5000,scale=NULL,autoscale=0,run=TRUE,burnin=100,iter=1000,...)
 {
+if(model%in%c("cjs","js"))model=toupper(model)
 ptm=proc.time()	
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments
 # 
+cat("Model: ",model,"\n")
 if(is.null(data$data))
 {
    if(!is.null(ddl))
    {
-      cat("Warning: specification of ddl ignored, as data have not been processed\n")
+      warning("Warning: specification of ddl ignored, as data have not been processed")
       ddl=NULL
    }
-   cat("\n Processing data\n")
+   cat("Processing data\n")
    flush.console()
    if(model=="probitCJS")
       data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
                           groups = groups, age.var = NULL, initial.ages = NULL, 
-                          time.intervals = time.intervals,nocc=NULL)
+                          time.intervals = time.intervals,nocc=NULL, accumulate=FALSE)
    else
 	   data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 			   groups = groups, age.var = NULL, initial.ages = NULL, 
-			   time.intervals = time.intervals,nocc=NULL,accumulate=FALSE)
+			   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate)
 }   
 else
    data.proc=data
@@ -210,7 +212,7 @@ else
 #
 if(is.null(ddl)) 
 {
-	cat("\n Creating design data. This can take awhile.\n")
+	cat("Creating design data. This can take awhile.\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 }
@@ -234,7 +236,7 @@ if(model!="probitCJS")
 	for (i in 1:length(parameters))
 	{
 		pn=names(parameters)[i]
-		cat("\n Creating design matrix for parameter ",pn," with formula ",paste(as.character(parameters[[i]]$formula),sep=""),"\n")
+		cat("Creating design matrix for parameter ",pn," with formula ",paste(as.character(parameters[[i]]$formula),sep=""),"\n")
 		flush.console()
 		dml[[i]]=create.dm(ddl[[pn]],parameters[[i]]$formula,design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,parameters[[i]]$remove.intercept)
@@ -248,14 +250,20 @@ if(model!="probitCJS")
 #
 # Call estimation function
 #
+if("SANN"%in%method)
+{
+	if(length(method)>1)
+		warning("***SANN can only used by itself; other methods ignored.")
+    control$maxit=itnmax
+}
 if(autoscale==0)
 {
-	control$eval.max=itnmax
-    if(model=="cjs")
+	if("nlminb"%in%method)control$eval.max=itnmax
+    if(model=="CJS")
        runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
     else
-	   if(model=="js")
+	   if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 	   else {
@@ -268,10 +276,10 @@ if(autoscale==0)
 	   
 }else
 {
-	cat("\n Run to compute scale:")
+	cat("Run to compute scale:\n")
 	scale=1
-	control$eval.max=autoscale
-	if(model=="cjs")
+	if("nlminb"%in%method)control$eval.max=autoscale
+	if(model=="CJS")
 		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=FALSE,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=0,control=control,itnmax=autoscale,scale=scale,...)
 	else
@@ -279,9 +287,9 @@ if(autoscale==0)
 				refit=0,control=control,itnmax=autoscale,scale=scale,...)
 	scale=abs(1/runmodel$beta)
 	initial=runmodel$beta
-	control$eval.max=itnmax
-	cat("\n\n Fitting model:")
-	if(model=="cjs")
+	if("nlminb"%in%method)control$eval.max=itnmax
+	cat("Fitting model:\n")
+	if(model=="CJS")
 		runmodel=cjs(data.proc,ddl,dml,model_data=runmodel$model_data,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 	else
@@ -293,13 +301,13 @@ if(autoscale==0)
 #
 if(!is.null(runmodel$convergence) && runmodel$convergence!=0)
 {
-	cat("\n ******Model did not converge******\n")
+	warning("******Model did not converge******")
     msg=attr(runmodel$mod,"details")[[1]]$message
 	if(is.null(msg)) msg="Exceeded maximum number of iterations"
-    cat(paste(msg,"\n"))
+    warning(msg)
 }
 runmodel$model.parameters=model.parameters
-cat(paste("\n Elapsed time in minutes: ",(proc.time()[3]-ptm[3])/60),"\n")
+cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(runmodel)
 }
 #

@@ -49,7 +49,7 @@ js.lnl=function(par,model_data,debug=FALSE,nobstot)
 		return(Phis)
 	}
 	
-if(debug)cat("\npar = ",par)
+if(debug)cat("par = ",par,"\n")
 f_eval=get(".markedfunc_eval",envir=.GlobalEnv)+1
 assign(".markedfunc_eval", f_eval, envir = .GlobalEnv)
 # initialize constants and parameter vectors
@@ -107,7 +107,7 @@ for (i in 1:length(Ns))
 }
 if(debug)
 {
-	cat("\n-2lnl = ",2*lnl)
+	cat("-2lnl = ",2*lnl,"\n")
 } else
     if((f_eval-100*floor(f_eval/100))==0)
     {

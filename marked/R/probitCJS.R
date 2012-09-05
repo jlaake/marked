@@ -118,9 +118,9 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   colnames(beta.y.stor) <- pn.p
   
   ### BEGIN MCMC ###
-  cat("\nprobitCJS MCMC beginning...\n")
+  cat("probitCJS MCMC beginning...\n")
   cat("p model = ", as.character(p.model),"\n")
-  cat("phi model = ", as.character(phi.model),"\n\n")
+  cat("phi model = ", as.character(phi.model),"\n")
   flush.console()
   
   tot.iter <- burnin + iter
@@ -164,12 +164,12 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     if(m==30){
       tpi <- as.numeric(difftime(Sys.time(), st, units="secs"))/30
       ttc <- round((tot.iter-30)*tpi/3600, 2)
-      if(ttc>=1) cat("\nApproximate time till completion: ", ttc, " hours\n")
-      else cat("\nApproximate time till completion: ", ttc*60, " minutes\n")
+      if(ttc>=1) cat("Approximate time till completion: ", ttc, " hours\n")
+      else cat("Approximate time till completion: ", ttc*60, " minutes\n")
     }
     if(100*(m/tot.iter) >= 10 & (100*(m/tot.iter))%%10==0) 
 	{
-		cat("\n", 100*(m/tot.iter), "% completed\n")
+		cat(100*(m/tot.iter), "% completed\n")
 		flush.console()
 	}
   }

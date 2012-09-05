@@ -12,12 +12,12 @@
 cjs.hessian=function(model,Phi.links=NULL, p.links=NULL)
 {
 	scale=c(model$scale$phi,model$scale$p)
-	cat("\n Computing hessian\n")
+	cat("Computing hessian\n")
 	vcv=hessian(cjs.lnl,model$beta*scale,model_data=model$model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{
-		cat("\nUnable to invert hessian\n")
+		warning("Unable to invert hessian")
 		return(NULL)
 	}
 	vcv=vcv$inv/outer(scale,scale,"*")
