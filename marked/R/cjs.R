@@ -42,6 +42,7 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
+#' @param run if FALSE, does not call optimization routine but uses initial values for model
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @return The resulting value of the function is a list with the class of
@@ -58,7 +59,7 @@
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
 cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale, ...)
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,run=TRUE, ...)
 {
 #
 #  Setup values from arguments
@@ -118,27 +119,18 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 		   par[beta.names%in%names(initial)]=initial[which(names(initial)%in%beta.names)]
 	   }
    }
-#  Create list of model data for optimization; if passed as an argument create model_data.save 
-#  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
-#  if requested.
-    if(!is.null(model_data)) 
+#  Create list of model data for optimization
+	model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
+			p.fixed=parameters$p$fixed,time.intervals=time.intervals)
+#   If data are to be accumulated based on ch and design matrices do so here;
+	if(accumulate)
 	{
-		model_data.save=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
-				p.fixed=parameters$p$fixed,time.intervals=time.intervals)
+		cat("Accumulating capture histories based on design. This can take awhile.\n")
+		flush.console()
+		model_data.save=model_data   
+		model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
 	}else
-	{
-		model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
-				p.fixed=parameters$p$fixed,time.intervals=time.intervals)
-#       If data are to be accumulated based on ch and design matrices do so here;
-		if(accumulate)
-		{
-			cat("Accumulating capture histories based on design. This can take awhile.\n")
-			flush.console()
-			model_data.save=model_data   
-			model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
-		}else
-			model_data.save=model_data
-	}
+		model_data.save=model_data
 #   Create links  -- not used at present; idea here is to use sin links for parameters where you can   
 #   Phi.links=create.links(Phi.dm)
 #   Phi.links=which(Phi.links==1)
@@ -171,37 +163,50 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    model_data$p.dm=t(t(as.matrix(model_data$p.dm))/scale.p)
    par=par*c(scale.phi,scale.p)
 #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
-   cat("Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
-   flush.console()
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-   if("SANN"%in%method)
+   if(run)
    {
-	   mod=optim(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
-					   debug=debug,control=control,...)
-	   par= mod$par
-	   convergence=mod$convergence
-	   lnl=mod$value
-	   counts=mod$counts
-   }else
+	   cat("Starting optimization for ",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)," parameters\n")
+	   flush.console()
+	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	   if("SANN"%in%method)
+	   {
+		   mod=optim(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
+				   debug=debug,control=control,...)
+		   par= mod$par
+		   convergence=mod$convergence
+		   lnl=mod$value
+		   counts=mod$counts
+	   }else
+	   {
+		   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
+						   debug=debug,control=control,itnmax=itnmax,...))
+		   objfct=unlist(mod$fvalues)
+		   bestmin=which.min(objfct)
+		   par= mod$par[[bestmin]]
+		   convergence=mod$conv[[bestmin]]
+		   counts=mod$itns[[length(mod$itns)]]
+		   lnl=mod$fvalues[[bestmin]]
+	   }
+#      Rescale parameter vector, restore model_data and call cjs.lnl to compute all values and not just -2lnl
+	   cjs.beta=par/c(scale.phi,scale.p)
+	   names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
+#      Create results list 
+	   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(cjs.beta),convergence=convergence,count=counts,optim.details=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
+#      Use non-accumulated model_data (in model_data.save) with unscaled design matrices and call cjs to compute all values including reals
+	   allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
+   } else
    {
-	   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method=method,hessian=FALSE,
-					   debug=debug,control=control,itnmax=itnmax,...))
-	   objfct=unlist(mod$fvalues)
-	   bestmin=which.min(objfct)
-	   par= mod$par[[bestmin]]
-	   convergence=mod$conv[[bestmin]]
-	   counts=mod$itns[[length(mod$itns)]]
-	   lnl=mod$fvalues[[bestmin]]
+	   cjs.beta=par/c(scale.phi,scale.p)
+	   names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
+	   allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
+	   res=list(beta=cjs.beta,neg2lnl=NA,AIC=NA,convergence=0,count=0,optim.details=NA,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
    }
-#  Rescale parameter vector, restore model_data and call cjs.lnl to compute all values and not just -2lnl
-   cjs.beta=par/c(scale.phi,scale.p)
-   names(cjs.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""))
-#  Create results list 
-   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(cjs.beta),convergence=convergence,count=counts,mod=mod,scale=list(phi=scale.phi,p=scale.p),model_data=model_data)
-#  Use non-accumulated model_data (in model_data.save) with unscaled design matrices and call cjs to compute all values including reals
-   allval=cjs.lnl(cjs.beta,model_data.save,Phi.links=NULL,p.links=NULL,all=TRUE)
 #  Create dataframe of real parameter estimates
    reals=Phi.dmdf
+   if(accumulate)
+	   reals$rec=as.vector(sapply(model_data$acc.index,function(x)seq((x-1)*(nocc-1)+1,x*(nocc-1))))
+   else
+	   reals$rec=1:nrow(reals)
    names(reals)[names(reals)=="time"]="Phi.time"
    names(reals)[names(reals)=="age"]="Phi.age"
    reals=cbind(reals,p.dmdf[,!colnames(p.dmdf)%in%colnames(reals)])
@@ -211,15 +216,17 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
    reals$Phi=as.vector(t(xx))
    xx=matrix(allval[[3]],nrow=nrow(x),ncol=nocc-1)
    reals$p=as.vector(t(xx))
-   reals$rec=rep(1:nrow(x),each=nocc-1)
+#   reals$rec=rep(1:nrow(x),each=nocc-1)
    res$reals=reals[reals$Time>=reals$Cohort,]
 #   res$reals$rec=res$reals$rec-min(res$reals$rec)+1
 #  If requested compute hessian and var-cov matrix 
    if(hessian) 
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-	   res$vcv=cjs.hessian(res, Phi.links=NULL, p.links=NULL)
+	   cat("Computing hessian\n")
+	   res$beta.vcv=cjs.hessian(res,Phi.links=NULL, p.links=NULL)
    }   
+   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 #  Assign S3 class and return
    class(res)=c("crm","cjs")
    return(res)

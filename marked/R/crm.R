@@ -136,7 +136,6 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations for optimization 
 #' @param scale vector of scale values for parameters
-#' @param autoscale if non-zero, it specifies number of iterations of optimization that will be used to construct initial values to construct parameter scales
 #' @param run if TRUE, it runs model; otherwise if FALSE can be used to test model build components 
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
@@ -178,8 +177,8 @@
 #' mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
- groups = NULL, time.intervals = NULL,debug=FALSE, method="nlminb", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=5000,scale=NULL,autoscale=0,run=TRUE,burnin=100,iter=1000,...)
+ groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
+ control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,...)
 {
 if(model%in%c("cjs","js"))model=toupper(model)
 ptm=proc.time()	
@@ -215,7 +214,8 @@ if(is.null(ddl))
 	cat("Creating design data. This can take awhile.\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
-}
+} else
+	design.parameters=ddl$design.parameters
 #
 # Setup parameter list
 #
@@ -229,7 +229,10 @@ for (i in 1:length(parameters))
 #
 # Create design matrices for each parameter
 #
-if(model!="probitCJS")
+if(model=="probitCJS")
+{
+	if(!run) return(ddl)
+} else
 {
 	dml=vector("list",length=length(parameters))
 	names(dml)=names(parameters)
@@ -241,11 +244,6 @@ if(model!="probitCJS")
 		dml[[i]]=create.dm(ddl[[pn]],parameters[[i]]$formula,design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,parameters[[i]]$remove.intercept)
 	}
-	if(!run) return(dml)
-}else
-{
-	autoscale=0
-	if(!run) return(ddl)
 }
 #
 # Call estimation function
@@ -256,59 +254,35 @@ if("SANN"%in%method)
 		warning("***SANN can only used by itself; other methods ignored.")
     control$maxit=itnmax
 }
-if(autoscale==0)
-{
-	if("nlminb"%in%method)control$eval.max=itnmax
-    if(model=="CJS")
-       runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-    else
-	   if(model=="JS")
+if("nlminb"%in%method)control$eval.max=itnmax
+if(model=="CJS")
+    runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,run=run,...)
+else
+    if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	   else {
-		   if(is.null(initial)){
-			   imat=process.ch(data$ch,data$freq,all=FALSE)
-			   runmodel=probitCJS(ddl,parameters=model.parameters,imat=imat,iter=iter,burnin=burnin)
-		   }else
-			   runmodel=probitCJS(ddl,parameters=model.parameters,init.list=initial,iter=iter,burnin=burnin)
-	   }
-	   
-}else
-{
-	cat("Run to compute scale:\n")
-	scale=1
-	if("nlminb"%in%method)control$eval.max=autoscale
-	if(model=="CJS")
-		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=FALSE,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=0,control=control,itnmax=autoscale,scale=scale,...)
-	else
-		runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=FALSE,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=0,control=control,itnmax=autoscale,scale=scale,...)
-	scale=abs(1/runmodel$beta)
-	initial=runmodel$beta
-	if("nlminb"%in%method)control$eval.max=itnmax
-	cat("Fitting model:\n")
-	if(model=="CJS")
-		runmodel=cjs(data.proc,ddl,dml,model_data=runmodel$model_data,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	else
-		runmodel=js(data.proc,ddl,dml,model_data=runmodel$model_data,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-}
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,run=run,...)
+	else {
+	   if(is.null(initial)){
+		   imat=process.ch(data$ch,data$freq,all=FALSE)
+		   runmodel=probitCJS(ddl,parameters=model.parameters,imat=imat,iter=iter,burnin=burnin)
+	   }else
+		   runmodel=probitCJS(ddl,parameters=model.parameters,init.list=initial,iter=iter,burnin=burnin)
+	}
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
 #
 if(!is.null(runmodel$convergence) && runmodel$convergence!=0)
 {
 	warning("******Model did not converge******")
-    msg=attr(runmodel$mod,"details")[[1]]$message
+    msg=attr(runmodel$optim.details,"details")[[1]]$message
 	if(is.null(msg)) msg="Exceeded maximum number of iterations"
     warning(msg)
 }
-runmodel$model.parameters=model.parameters
+object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
+class(object)=class(runmodel)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
-return(runmodel)
+return(object)
 }
 #
 #
