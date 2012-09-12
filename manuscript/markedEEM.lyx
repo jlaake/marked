@@ -2991,8 +2991,11 @@ model
 \begin_layout Standard
 To make the analysis more interesting, we will add some covariates for Phi
  and p.
- For Phi, we will add a static covariate weight and a time-varying covariate
- Flood which varies by time but is the same for all dippers.
+ For Phi, we will add a static covariate weight which is a random value
+ between 1 and 10.
+ For Phi, we also add a time-varying covariate Flood which is the same for
+ all dippers but varies by time with a 0 value for times 1,4,5,6 and a value
+ of 1 for times 2 and 3.
  For p, we will add a time-varying individual covariate td (trap dependence)
  which is the 0/1 value of the capture from the previous occasion.
  Static covariates are entered in the dataframe in a single column and time-vary
@@ -3001,7 +3004,8 @@ ing covariates have a column and name for each occasion with the appropriate
  In this case, Flood will be Flood1,...,Flood6 and for td it will be td2,...,td7
  because time for Phi is based on the time at the beginning of the interval
  and for p it is the time for the capture occasion.
- Below we show how these variables are created and used in a model:
+ Below the names of the covariates in the dataframe are shown after they
+ are created:
 \end_layout
 
 \begin_layout Standard
@@ -3010,7 +3014,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
+<<comment="",prompt=TRUE,tidy=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3020,7 +3024,47 @@ data(dipper)
 
 \begin_layout Plain Layout
 
+# Add a dummy weight field which are random values from 1 to 10
+\end_layout
+
+\begin_layout Plain Layout
+
+set.seed(12345)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$weight=round(runif(nrow(dipper),0,9),0)+1
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add Flood covariate
+\end_layout
+
+\begin_layout Plain Layout
+
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(Flood)=paste("Flood",1:6,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,Flood)
+\end_layout
+
+\begin_layout Plain Layout
+
 # Add td covariate, but exclude first release as a capture
+\end_layout
+
+\begin_layout Plain Layout
+
+# splitCH and process.ch are functions in the marked package
 \end_layout
 
 \begin_layout Plain Layout
@@ -3065,42 +3109,50 @@ dipper=cbind(dipper,td)
 
 \begin_layout Plain Layout
 
-# Add Flood covariate
-\end_layout
-
-\begin_layout Plain Layout
-
-Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
-\end_layout
-
-\begin_layout Plain Layout
-
-colnames(Flood)=paste("Flood",1:6,sep="")
-\end_layout
-
-\begin_layout Plain Layout
-
-dipper=cbind(dipper,Flood)
-\end_layout
-
-\begin_layout Plain Layout
-
-# Add a dummy weight field which are random values from 1 to 10
-\end_layout
-
-\begin_layout Plain Layout
-
-set.seed(12345)
-\end_layout
-
-\begin_layout Plain Layout
-
-dipper$weight=round(runif(nrow(dipper),0,9),0)+1
+# show names
 \end_layout
 
 \begin_layout Plain Layout
 
 names(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we process the data with the default CJS model and make the design
+ data with parameters that identify which covariates to use for each parameter.
+ By default, each covariate in the dataframe is added to the design data
+ of each parameter but the argument static can be used to limit the variables
+ appended and the time-varying argument is needed to identify which covariates
+ vary by time and should be collapsed into a single column.
+ If we did not include the static argument for Phi, then weight and each
+ of the td columns would also be included and for p, weight and each of
+ the Flood columns would be included.
+ If td was added to the time-varying argument for Phi and Flood was added
+ for p, then we would have also needed to add td1 and Flood7 due to the
+ different time labels for Phi and p.
+ We have no intention to use those variables so it is best to specify what
+ is needed.
+ After specifying the design lists for Phi and p, they are used in the call
+ to make.design.data and the resulting dataframe names are shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3155,7 +3207,25 @@ names(ddl$p)
 
 \begin_layout Plain Layout
 
-# fit a model
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we define the models for Phi and p that we want to fit and call crm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3189,6 +3259,10 @@ model=crm(dipper.proc,ddl,hessian=TRUE,
 \end_layout
 
 \begin_layout Standard
+Create data to compute prediCreate data to compute predicted values
+\end_layout
+
+\begin_layout Standard
 \begin_inset ERT
 status open
 
@@ -3219,59 +3293,31 @@ reals=predict(model,newdata=newdipper,se=TRUE)
 
 \begin_layout Plain Layout
 
-with(reals$Phi[reals$Phi$Flood==0,],plot(weight,estimate,
+library(ggplot2)
 \end_layout
 
 \begin_layout Plain Layout
 
-     ylab="Survival",xlab="Weight",type="b",ylim=c(0,1)))
+reals$Phi$Flood=factor(reals$Phi$Flood,labels=c("Non-flood","Flood"))
 \end_layout
 
 \begin_layout Plain Layout
 
-with(reals$Phi[reals$Phi$Flood==0,],lines(weight,lcl,lty=2))
+ggplot(reals$Phi,aes(weight,estimate,ymin=lcl,ymax=ucl))+
 \end_layout
 
 \begin_layout Plain Layout
 
-with(reals$Phi[reals$Phi$Flood==0,],lines(weight,ucl,lty=2))
+       geom_errorbar(width=0.2)+geom_point()+geom_line()+
 \end_layout
 
 \begin_layout Plain Layout
 
-\end_layout
-
-\begin_layout Plain Layout
-
-with(reals$Phi[reals$Phi$Flood==1,],points(weight,estimate,
-\end_layout
-
-\begin_layout Plain Layout
-
-     ylab="Survival",xlab="Weight",type="b",pch=2))
-\end_layout
-
-\begin_layout Plain Layout
-
-with(reals$Phi[reals$Phi$Flood==1,],lines(weight,lcl,lty=3))
-\end_layout
-
-\begin_layout Plain Layout
-
-with(reals$Phi[reals$Phi$Flood==1,],lines(weight,ucl,lty=3))
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-legend(x=2,y=.2,legend=c("Flood=0","Flood=1"),pch=1:2)
-\end_layout
-
-\begin_layout Plain Layout
-
+       xlab("
+\backslash
+nWeight")+ylab("Survival
+\backslash
+n")+facet_grid(Flood~.) 
 \end_layout
 
 \begin_layout Plain Layout
