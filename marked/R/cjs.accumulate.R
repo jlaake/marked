@@ -61,7 +61,7 @@ cjs.accumulate=function(x,model_data,nocc,freq,chunk_size)
 	if(length(occ.int)!=(nocc-1))
 		chdesign=paste(chdesign,apply(model_data$time.intervals,1,paste,collapse=""),sep="")
 	chsplit=split(1:nrow(x),chdesign)
-	model_data$dmrec=do.call("rbind",(sapply(1:length(chsplit),function(x,z) cbind(x,z[[x]]),z=chsplit)))[,1]
+	model_data$acc.index=do.call("rbind",(lapply(1:length(chsplit),function(x,z) cbind(x,z[[x]]),z=chsplit)))[,1]
 	indices=as.vector(sapply(chsplit,min))
 	if(is.null(freq))
 		counts=as.vector(sapply(chsplit,length))

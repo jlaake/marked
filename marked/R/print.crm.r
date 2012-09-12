@@ -5,10 +5,12 @@
 #' 
 #' @usage \method{coef}{crm}(object,...)
 #'        \method{print}{crm}(x,...)
+#'        \method{print}{crmlist}(x,...)
 #' @S3method coef crm
 #' @S3method print crm
-#' @aliases print.crm coef.crm
-#' @param x crm model result
+#' @S3method print crmlist
+#' @aliases print.crm coef.crm print.crmlist
+#' @param x crm model result or list of model results
 #' @param object crm model result
 #' @param ... generic arguments not used here
 #' @return \code{print} prints a simple summary of the model to the screen and
@@ -20,6 +22,7 @@
 #' @keywords utility
 print.crm=function(x,...)
 {
+   if(!is.null(x$results))x=x$results
    cat("\ncrm Model Summary\n")
    if(class(x)[2]=="probitCJS")
 	   cat("\nNpar : ",ncol(x$beta.mcmc$Phi)+ncol(x$beta.mcmc$p))   
@@ -40,12 +43,19 @@ coef.crm=function(object,...)
    else
    {
 	   beta=data.frame(Estimate=object$beta)
-	   if(!is.null(object$vcv))
+	   if(!is.null(object$beta.vcv))
 	   {
-		   beta$se=sqrt(diag(object$vcv))
+		   beta$se=sqrt(diag(object$beta.vcv))
 		   beta$lcl=beta$Estimate - 1.96*beta$se
 		   beta$ucl=beta$Estimate + 1.96*beta$se
 	   }
 	   return(beta)
    }
+}
+print.crmlist<-function(x,...)
+{
+	if(!is.null(x$model.table))
+		print(x$model.table)
+	else 
+		cat("No model.table is available")
 }

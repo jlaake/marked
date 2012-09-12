@@ -6,7 +6,7 @@
     accumulate = TRUE, Phi = NULL, p = NULL,
     initial = NULL, method, hessian = FALSE, debug = FALSE,
     chunk_size = 1e+07, refit, itnmax = NULL,
-    control = NULL, scale, ...)
+    control = NULL, scale, run = TRUE, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -62,6 +62,9 @@
   \item{control}{control string for optimization functions}
 
   \item{scale}{vector of scale values for parameters}
+
+  \item{run}{if FALSE, does not call optimization routine
+  but uses initial values for model}
 
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or

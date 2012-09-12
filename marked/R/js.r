@@ -43,6 +43,7 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
+#' @param run if FALSE, does not call optimization routine but uses initial values for model
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optimx} or \code{\link{js.lnl}}
 #' @return The resulting value of the function is a list with the class of
@@ -59,7 +60,7 @@
 #' for the analysis of capture-recapture experiments in open populations.
 #' Biometrics 52:860-873.
 js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method="BFGS",
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,run=TRUE,...)
 {
 #
 #  Setup values from arguments
@@ -136,25 +137,17 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
 #  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
-   if(!is.null(model_data)) 
+   model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,pent.dm=dml$pent,N.dm=dml$N,imat=imat,Phi.fixed=parameters$Phi.fixed,
+		   p.fixed=parameters$p.fixed,pent.fixed=parameters$pent.fixed,time.intervals=time.intervals)
+#  If data are to be accumulated based on ch and design matrices do so here;
+   if(accumulate)
    {
-	   model_data.save=list(Phi.dm=dml$Phi,p.dm=dml$p,pent.dm=dml$pent,N.dm=dml$N,imat=imat,Phi.fixed=parameters$Phi.fixed,
-			   p.fixed=parameters$p.fixed,pent.fixed=parameters$pent.fixed,time.intervals=time.intervals)
+ 	   cat("Accumulating capture histories based on design. This can take awhile.\n")
+	   flush.console()
+	   model_data.save=model_data   
+	   model_data=js.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
    }else
-   {
-	   model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,pent.dm=dml$pent,N.dm=dml$N,imat=imat,Phi.fixed=parameters$Phi.fixed,
-			   p.fixed=parameters$p.fixed,pent.fixed=parameters$pent.fixed,time.intervals=time.intervals)
-#       If data are to be accumulated based on ch and design matrices do so here;
-	   if(accumulate)
-	   {
-		   cat("Accumulating capture histories based on design. This can take awhile.\n")
-		   flush.console()
-		   model_data.save=model_data   
-		   model_data=js.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
-	   }else
-		   model_data.save=NULL
-   }
-   
+	   model_data.save=NULL
    #  Scale the design matrices and parameters with either input scale or computed scale
    if(is.null(scale))
    {
@@ -186,48 +179,55 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
    model_data$pent.dm=t(t(as.matrix(model_data$pent.dm))/scale.pent)
    model_data$N.dm=t(t(as.matrix(model_data$N.dm))/scale.N)
    par=par*c(scale.phi,scale.p,scale.pent,scale.N)
+   if(run)
+   {
 #  call optim to find mles with js.lnl which gives -log-likelihood
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-  cat("Starting optimization",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+ncol(model_data$pent.dm)+ncol(model_data$N.dm)," parameters\n")
-   if("SANN"%in%method)
-   {
-	   mod=optim(par,cjs.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
-			   debug=debug,control=control,...)
-	   par= mod$par
-	   convergence=mod$convergence
-	   lnl=mod$value
-	   counts=mod$counts
-   }else
-   {
-       mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
-					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,...))
-       objfct=unlist(mod$fvalues)
-       bestmin=which.min(objfct)
-       par= mod$par[[bestmin]]
-       convergence=mod$conv[[bestmin]]
-	   counts=mod$itns[[length(mod$itns)]]
-       lnl=mod$fvalues[[bestmin]]
-   }
-   js.beta=mod$par$par/c(scale.phi,scale.p,scale.pent,scale.N)
-   names(js.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""),paste("pent:",colnames(model_data$pent.dm),sep=""),paste("N:",colnames(model_data$N.dm),sep=""))
-   if(is.null(model_data.save))
-   {
-	  if(is.null(x$group))
-		  ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
-	  else
-		  ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
+	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	   cat("Starting optimization",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+ncol(model_data$pent.dm)+ncol(model_data$N.dm)," parameters\n")
+	   if("SANN"%in%method)
+	   {
+		   mod=optim(par,js.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
+				   debug=debug,control=control,...)
+		   par= mod$par
+		   convergence=mod$convergence
+		   lnl=mod$value
+		   counts=mod$counts
+	   }else
+	   {
+		   mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
+						   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,...))
+		   objfct=unlist(mod$fvalues)
+		   bestmin=which.min(objfct)
+		   par= mod$par[[bestmin]]
+		   convergence=mod$conv[[bestmin]]
+		   counts=mod$itns[[length(mod$itns)]]
+		   lnl=mod$fvalues[[bestmin]]
+	   }
+	   js.beta=mod$par$par/c(scale.phi,scale.p,scale.pent,scale.N)
+	   names(js.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""),paste("pent:",colnames(model_data$pent.dm),sep=""),paste("N:",colnames(model_data$N.dm),sep=""))
+	   if(is.null(model_data.save))
+	   {
+		   if(is.null(x$group))
+			   ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
+		   else
+			   ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
+	   } else
+	   {
+		   if(is.null(x$group))
+			   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
+		   else
+			   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
+	   }
+	   lnl=lnl+sum(lfactorial(ui))
+	   res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(js.beta),
+			   convergence=convergence,count=counts,optim.details=mod,
+			   scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),model_data=model_data,ns=nobstot)
    } else
    {
-      if(is.null(x$group))
-	      ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
-      else
-	      ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
+	   js.beta=par/c(scale.phi,scale.p,scale.pent,scale.N)
+	   names(js.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""),paste("pent:",colnames(model_data$pent.dm),sep=""),paste("N:",colnames(model_data$N.dm),sep=""))
+	   res=list(beta=js.beta,neg2lnl=NA,AIC=NA,convergence=0,count=0,optim.details=NA,scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),model_data=model_data,ns=nobstot)
    }
-   lnl=lnl+sum(lfactorial(ui))
-   res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(js.beta),
-		   convergence=convergence,count=counts,
-		   scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),
-		   model_data=model_data)
 #  Restore complete non-accumulated model_data with unscaled design matrices and compte reals
    if(!is.null(model_data.save)) model_data=model_data.save
 #  compute reals
@@ -247,6 +247,10 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
    Ns=exp(as.vector(model_data$N.dm%*%beta.N))
 #  
    reals=p.dmdf
+   if(accumulate)
+	   reals$rec=as.vector(sapply(model_data$acc.index,function(x)seq((x-1)*(nocc)+1,x*(nocc))))
+   else
+	   reals$rec=1:nrow(reals)
    names(reals)[names(reals)=="time"]="p.time"
    names(reals)[names(reals)=="age"]="p.age"
    Phirecs=Phi.dmdf[,!colnames(Phi.dmdf)%in%colnames(reals),drop=FALSE]
@@ -260,8 +264,9 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("Computing hessian\n")
-	   res$vcv=js.hessian(res, nobstot)
+	   res$beta.vcv=js.hessian(res)
    }   
+   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
    class(res)=c("crm","js")
    return(res)
 }

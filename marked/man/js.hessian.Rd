@@ -2,16 +2,15 @@
 \alias{js.hessian}
 \title{Compute variance-covariance matrix for fitted JS model}
 \usage{
-  js.hessian(model, nobstot)
+  js.hessian(model)
 }
 \arguments{
   \item{model}{fitted JS model from function crm}
-
-  \item{nobstot}{number of unique caught at least once by
-  group if applicable}
 }
 \value{
-  variance-covariance matrix for specified model
+  variance-covariance matrix for specified model or the
+  model object with the stored vcv depending on whether the
+  model has already been run
 }
 \description{
   A wrapper function that sets up call to hessian function

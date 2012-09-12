@@ -1,12 +1,24 @@
-marked 1.0.5 (22 Aug 2012)
+marked 1.0.6 (6 Sept 2012)
 ------------
+CHANGES
+
+* removed autoscale feature which complicated code and was not very effective
+
+* Removed simulation code and put in a separate package - simcr.
+
+* run=FALSE in crm for mle methods now returns, complete model object with reals for use in predict with newdata
+
+* restructured the model object that is returned from crm
+
 NEW FEATURES
 
-* crm.wrapper now returns a list like mark.wrapper in RMark with a model.table.  The model list elements are the filenames of the externally saved model results. A default print method is included to print out model selection table.
+* Function load.model will return externally stored model. Most useful with crm.wrapper and external=TRUE 
+
+* Generic function predict will provide estimates of real parameters and optionally std errors, conf intervals and vcv matrix for the existing or newdata.
+
+* crm.wrapper now returns a list like mark.wrapper in RMark with a model.table.  The model list elements are the filenames of the externally saved model results. A default print method is included to print out model selection table. Also, an external argument was added.
 
 * Modified cjs.initial to use either logit or probit and added initial value calculation to probitCJS 
-
-* Simplified code in cjs.f but no obvious payoff in speed. Set p=1e-307 if p=0 and freq>0 to avoid log(0) issue. This is close to value used in MARK.
 
 * Allows initial=value and all parameters given that initial value
 
@@ -16,13 +28,22 @@ NEW FEATURES
 
 * Modified cjs.initial to use freq as weight in glm to properly weight estimation when freq>1.
 
-* Removed simulation code and put in a separate package - simcr.
-
 BUG FIXES
 
 * Fixed bug in js.lnl which was not getting lnl correct when there were no groups; cosmetic and did not affect estimates because was constant part (ui)
 
 * Fixed bug in which accumulate argument was not passed to process.data from crm  
+
+
+marked 1.0.5 (12 July 2012)
+------------
+NEW FEATURES
+
+* Simplified code in cjs.f but no obvious payoff in speed. Set p=1e-307 if p=0 and freq>0 to avoid log(0) issue. This is close to value used in MARK.
+
+BUG FIXES
+
+* Fixed bug in hessian calculation which was using 2*lnl instead of lnl
 
 
 marked 1.0.4 (6 July 2012)

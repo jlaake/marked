@@ -1,13 +1,15 @@
 \name{print.crm}
 \alias{coef.crm}
 \alias{print.crm}
+\alias{print.crmlist}
 \title{Print model results or extract coefficients}
 \usage{
   \method{coef}{crm}(object,...)
     \method{print}{crm}(x,...)
+    \method{print}{crmlist}(x,...)
 }
 \arguments{
-  \item{x}{crm model result}
+  \item{x}{crm model result or list of model results}
 
   \item{object}{crm model result}
 

@@ -7,13 +7,21 @@
 #' @param Phi.links vector of link function names for Phi parameters (currently unused)
 #' @param p.links vector of link function names for p parameters (currently unused)
 #' @export
-#' @return variance-covariance matrix for specified model
+#' @return variance-covariance matrix for specified model or the model
+#' object with the stored vcv depending on whether the model has already been run
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 cjs.hessian=function(model,Phi.links=NULL, p.links=NULL)
 {
+	object=NULL
+	if(!is.null(model$results))
+	{
+		object=model
+		model=model$results
+	}	
 	scale=c(model$scale$phi,model$scale$p)
-	cat("Computing hessian\n")
+	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	vcv=hessian(cjs.lnl,model$beta*scale,model_data=model$model_data,Phi.links=NULL, p.links=NULL,all=FALSE)
+	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{
@@ -23,5 +31,12 @@ cjs.hessian=function(model,Phi.links=NULL, p.links=NULL)
 	vcv=vcv$inv/outer(scale,scale,"*")
 	colnames(vcv)=names(model$beta)
 	rownames(vcv)=names(model$beta)
-	return(vcv)
+	if(is.null(object))
+	   return(vcv)
+    else
+	{
+		model$beta.vcv=vcv
+		object$results=model
+		return(object)
+	}
 }
