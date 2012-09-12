@@ -67,7 +67,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   ### DATA MANIPULATION ###
   #### added by jll 2 July 2012 so it uses design data (ie make.design.data)
   data <- data$p
-  data <- data[as.numeric(data$time)>=as.numeric(data$Cohort),]
+  data <- data[data$Time>=data$Cohort,]
   data <- data[order(data$id,data$time),]
   ###   
   yvec <- data$Y
