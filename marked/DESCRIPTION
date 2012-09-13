@@ -13,7 +13,8 @@ Depends:
     coda,
     truncnorm,
     Matrix,
-    Rcpp (>= 0.9.13)LinkingTo: Rcpp
+    Rcpp (>= 0.9.13)
+LinkingTo: Rcpp
 Suggests:
     RMark
 LazyLoad: yes

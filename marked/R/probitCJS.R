@@ -6,7 +6,7 @@
 #' 
 #' @param data A list of design data from make.design.data for model="probitCJS"
 #' @param parameters A model specification list with a list for Phi and p containing a formula and optionally a prior specification which is a named list
-#'        containing 'mu', the prior mean and 'Q' the prior precision matrix 
+#'        containing 'mu', the prior mean and 'tau' the scale for the conjugate prior precision matrix X'X. 
 #' @param burnin number of iteration to initially discard for MCMC burnin
 #' @param iter number of iteration to run the Gibbs sampler for following burnin
 #' @param init.list A named list (beta.z, beta.y). If null and imat is not null, uses cjs.initial to create initial values; otherwise assigns 0
@@ -80,17 +80,17 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   
   ###  PRIOR DISTRIBUTIONS ### - changed jll 2 July 2012
   if(is.null(parameters$Phi$prior)){
-	  Q.b.z <- matrix(0,ncol(Xz), ncol(Xz))
+	  tau.b.z <- 0.01
 	  mu.b.z <- rep(0,ncol(Xz))
   }else{
-	  Q.b.z <- parameters$Phi$prior$Q
+	  tau.b.z <- parameters$Phi$prior$tau
 	  mu.b.z <- parameters$Phi$prior$mu
   }		
   if(is.null(parameters$p$prior)){
-	  Q.b.y <- matrix(0,ncol(Xy), ncol(Xy))
+	  tau.b.y <- 0.01
 	  mu.b.y <- rep(0,ncol(Xy))	
   }else{
-	  Q.b.y <- parameters$p$prior$Q
+	  tau.b.y <- parameters$p$prior$tau
 	  mu.b.y <- parameters$p$prior$mu
   }
 	  
@@ -123,6 +123,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     
     ### BETA.Z UPDATE ###
     idx.z.tilde <- make.ztilde.idx(id, zvec)
+    Q.b.z <- tau.b.z*crossprod(Xz[idx.z.tilde,])
     V.beta.z.inv <- crossprod(Xz[idx.z.tilde,]) + Q.b.z
     m.beta.z <- solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]) + crossprod(Q.b.z,mu.b.z))
     beta.z <- m.beta.z + solve(chol(V.beta.z.inv), rnorm(ncol(Xz),0,1))
@@ -137,6 +138,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     y.tilde <- rtruncnorm(n, a=a, b=b, mean=Xy%*%beta.y, sd=1)
     
     ### BETA.Y UPDATE ###
+    Q.b.y <- tau.b.y*crossprod(Xy[zvec==1,])
     V.beta.y.inv <- crossprod(Xy[zvec==1,]) + Q.b.y
     m.beta.y <- solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1])+crossprod(Q.b.y,mu.b.y))
     beta.y <- m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))

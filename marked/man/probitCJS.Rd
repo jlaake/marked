@@ -13,7 +13,8 @@
   \item{parameters}{A model specification list with a list
   for Phi and p containing a formula and optionally a prior
   specification which is a named list containing 'mu', the
-  prior mean and 'Q' the prior precision matrix}
+  prior mean and 'tau' the scale for the conjugate prior
+  precision matrix X'X.}
 
   \item{burnin}{number of iteration to initially discard
   for MCMC burnin}
