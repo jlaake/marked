@@ -16,12 +16,14 @@
 #' with the former the set must be identified via a script and any in the environment will
 #' be used which requires removing/recreating the set to be used.
 #'  
-#' @aliases  crm.wrapper create.model.list model.table
+#' @aliases  crm.wrapper create.model.list model.table load.model
 #' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",...)
 #' 
 #' create.model.list(parameters)
 #' 
 #' model.table(model.list)
+#' 
+#' load.model(x)
 #' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a
@@ -31,17 +33,20 @@
 #' @param model.list matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name
 #' @param models a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables
 #' @param base base value for model names
-#' @param parameters character vector containing parameters in the model
+#' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
 #' @param ... aditional arguments passed to crm
+#' @param parameters character vector of parameter names
+#' @param x filename of externally stored model
 #' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and has no return value
-#' either for "cjs" or "js" at present.
+#' either for "CJS" or "JS" at present; load.model returns model object that is stored externally
 #' @author Jeff Laake
 #' @export create.model.list
 #' @export crm.wrapper
 #' @export model.table
+#' @export load.model
 #' @seealso \code{\link{crm}}
 #' @keywords models
-crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",...)
+crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,...)
 {
 	results=vector("list",length=nrow(model.list)+1)
 	results.names=NULL
@@ -68,15 +73,20 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",...)
 		model.name=paste(model.list[i,],collapse=".")
 		cat(model.name,"\n")
 		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,...)
-		assign(as.character(as.name(model.name)),mymodel)
-		eval(parse(text=paste("save(",model.name,', file="',base,model.name,'.rda")',sep="")))
-		results[[i]]=paste(model.name,".rda",sep="")
+		if(external)
+		{
+			assign(as.character(as.name(model.name)),mymodel)
+			eval(parse(text=paste("save(",model.name,', file="',base,model.name,'.rda")',sep="")))
+			results[[i]]=paste(model.name,".rda",sep="")
+		} else
+			results[[i]]=mymodel
 		results.names=c(results.names,paste(model.list[i,],collapse="."))
 		formulae=sapply(model.parameters,function(x){return(paste(x$formula,collapse=""))})
 		formulae=paste(paste(names(formulae),"(",formulae,")",sep=""),collapse="")
-		df=data.frame(model=formulae,npar=length(mymodel$beta),AIC=mymodel$AIC,neg2lnl=mymodel$neg2lnl,convergence=mymodel$convergence)
+		df=data.frame(model=formulae,npar=length(mymodel$results$beta),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
 		model.table=rbind(model.table,df)
 	}
+	names(results)=results.names
 	model.table$DeltaAIC=model.table$AIC-min(model.table$AIC)
 	model.table$weight=exp(-.5*model.table$DeltaAIC)
 	model.table$weight=model.table$weight/sum(model.table$weight)
@@ -138,4 +148,13 @@ create.model.list<-function(parameters)
 		model.list=as.data.frame(model.list)
 	model.list=model.list[ do.call(order, model.list) ,]
 	return(model.list)
+}
+load.model=function(x)
+{
+	if(!is.character(x)) stop("argument should be a character filename")
+	if(!file.exists(x))stop(x,"does not exist in the working directory")
+	load(x)
+	model.name=strsplit(x,"\\.rda")[[1]][1]
+	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
+	return(model)
 }

@@ -1,6 +1,7 @@
 \name{crm.wrapper}
 \alias{create.model.list}
 \alias{crm.wrapper}
+\alias{load.model}
 \alias{model.table}
 \title{Automation of model runs}
 \usage{
@@ -9,6 +10,8 @@
   create.model.list(parameters)
 
   model.table(model.list)
+
+  load.model(x)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -29,15 +32,20 @@
 
   \item{base}{base value for model names}
 
-  \item{parameters}{character vector containing parameters
-  in the model}
+  \item{external}{if TRUE, model results are stored
+  externally; otherwise they are stored in crmlist}
 
   \item{...}{aditional arguments passed to crm}
+
+  \item{parameters}{character vector of parameter names}
+
+  \item{x}{filename of externally stored model}
 }
 \value{
   create.model.list returns a matrix for crm.wrapper;
   crm.wrapper runs and stores models externally and has no
-  return value either for "cjs" or "js" at present.
+  return value either for "CJS" or "JS" at present;
+  load.model returns model object that is stored externally
 }
 \description{
   Some functions that help automate running a set of crm

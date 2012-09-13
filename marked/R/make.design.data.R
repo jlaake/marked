@@ -15,23 +15,24 @@
 #' for the animal(s) (eg weight), unless they are defined as time.varying in which case the fields should be named
 #' with the convention xn where x is the base name for the variable and n is the time value (eg, td1999, td2000,...).
 #' For time varying fields the variable name in the design data is the base name and the value for the record is
-#' the one for that occasion(time).
+#' the one for that occasion(time). The variables can be refined for each parameter by including argument static with the
+#' character vector of static fields to include.
 #' 
 #' @param data Processed data list; resulting value from process.data
 #' @param parameters Optional list containing a list for each type of parameter
 #' (list of lists); each parameter list is named with the parameter name (eg
 #' Phi); each parameter list can contain vectors named age.bins,time.bins and
-#' cohort.bins, time.varying, fields \tabular{ll}{ \code{age.bins} \tab bins
+#' cohort.bins, time.varying, and static \tabular{ll}{ \code{age.bins} \tab bins
 #' for binning ages\cr \code{time.bins} \tab bins for binning times\cr
 #' \code{cohort.bins} \tab bins for binning cohorts\cr \code{time.varying} \tab
 #' vector of field names that are time varying for this parameter\cr
-#' \code{fields} \tab vector of field names that are to be included that are
+#' \code{static} \tab vector of field names that are to be included that are
 #' not time varying for this parameter\cr }
 #' @return The function value is a list of data frames. The list contains a
 #' data frame for each type of parameter in the model (e.g., Phi and p for
 #' CJS).  The names of the list elements are the parameter names (e.g., Phi).
 #' The structure of the dataframe depends on the calling arguments and the
-#' model & data structure.
+#' model & data structure. In addition the value of parameters argument is saved as design.parameters.
 #' @author Jeff Laake
 #' @export
 #' @seealso \code{\link{process.data}},\code{\link{merge_design.covariates}}
@@ -77,10 +78,10 @@ full.design.data=vector("list",length=length(parameters))
 			 time.varying=NULL
 		 else
 			 time.varying=parameters[[i]]$time.varying
-		 if(is.null(parameters[[i]]$fields))
+		 if(is.null(parameters[[i]]$static))
 			 fields=NULL
 		 else
-			 fields=parameters[[i]]$fields   
+			 fields=parameters[[i]]$static   
 		 full.design.data[[i]]=create.dmdf(data,parameters[[i]],time.varying=time.varying,fields=fields)
 	 }else
 #    Compute design data for N
@@ -148,6 +149,7 @@ full.design.data=vector("list",length=length(parameters))
 		  }
    }
    names(full.design.data)=names(parameters)
+   full.design.data[["design.parameters"]]=parameters
    return(full.design.data)
 }
 

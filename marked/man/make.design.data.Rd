@@ -12,14 +12,14 @@
   each type of parameter (list of lists); each parameter
   list is named with the parameter name (eg Phi); each
   parameter list can contain vectors named
-  age.bins,time.bins and cohort.bins, time.varying, fields
-  \tabular{ll}{ \code{age.bins} \tab bins for binning
-  ages\cr \code{time.bins} \tab bins for binning times\cr
-  \code{cohort.bins} \tab bins for binning cohorts\cr
-  \code{time.varying} \tab vector of field names that are
-  time varying for this parameter\cr \code{fields} \tab
-  vector of field names that are to be included that are
-  not time varying for this parameter\cr }}
+  age.bins,time.bins and cohort.bins, time.varying, and
+  static \tabular{ll}{ \code{age.bins} \tab bins for
+  binning ages\cr \code{time.bins} \tab bins for binning
+  times\cr \code{cohort.bins} \tab bins for binning
+  cohorts\cr \code{time.varying} \tab vector of field names
+  that are time varying for this parameter\cr \code{static}
+  \tab vector of field names that are to be included that
+  are not time varying for this parameter\cr }}
 }
 \value{
   The function value is a list of data frames. The list
@@ -27,7 +27,9 @@
   model (e.g., Phi and p for CJS).  The names of the list
   elements are the parameter names (e.g., Phi). The
   structure of the dataframe depends on the calling
-  arguments and the model & data structure.
+  arguments and the model & data structure. In addition the
+  value of parameters argument is saved as
+  design.parameters.
 }
 \description{
   For each type of parameter in the analysis model (e.g, p,
@@ -56,7 +58,10 @@
   base name for the variable and n is the time value (eg,
   td1999, td2000,...). For time varying fields the variable
   name in the design data is the base name and the value
-  for the record is the one for that occasion(time).
+  for the record is the one for that occasion(time). The
+  variables can be refined for each parameter by including
+  argument static with the character vector of static
+  fields to include.
 }
 \examples{
 \donttest{

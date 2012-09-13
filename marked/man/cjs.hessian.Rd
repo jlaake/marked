@@ -14,7 +14,9 @@
   parameters (currently unused)}
 }
 \value{
-  variance-covariance matrix for specified model
+  variance-covariance matrix for specified model or the
+  model object with the stored vcv depending on whether the
+  model has already been run
 }
 \description{
   A wrapper function that sets up call to hessian function

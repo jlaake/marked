@@ -214,7 +214,7 @@ number.of.ch=nrow(data)
 #
 if(number.of.factors==0)
 {
-    if(model=="js")
+    if(model=="JS")
     {
        data=add.dummy.data(data,nocc=nocc,group.covariates=NULL)     
        number.of.ch=nrow(data)
@@ -341,7 +341,7 @@ else
 #
 # Return data as a list with original dataframe and frequency matrix
 #
-  if(model=="js")
+  if(model=="JS")
      data=add.dummy.data(data,nocc,group.covariates)     
   data$initial.age=init.ages[data$group]
   return(list(data=data,model=model,mixtures=mixtures,freq=freqmat,

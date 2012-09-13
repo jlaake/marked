@@ -6,10 +6,10 @@
     title = "", model.parameters = list(),
     design.parameters = list(), initial = NULL,
     groups = NULL, time.intervals = NULL, debug = FALSE,
-    method = "nlminb", hessian = FALSE, accumulate = TRUE,
+    method = "BFGS", hessian = FALSE, accumulate = TRUE,
     chunk_size = 1e+07, control = NULL, refit = 1,
-    itnmax = 5000, scale = NULL, autoscale = 0, run = TRUE,
-    burnin = 100, iter = 1000, ...)
+    itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
+    iter = 1000, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -66,10 +66,6 @@
   optimization}
 
   \item{scale}{vector of scale values for parameters}
-
-  \item{autoscale}{if non-zero, it specifies number of
-  iterations of optimization that will be used to construct
-  initial values to construct parameter scales}
 
   \item{run}{if TRUE, it runs model; otherwise if FALSE can
   be used to test model build components}

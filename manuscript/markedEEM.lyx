@@ -349,45 +349,6 @@ linenumbers
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo=2:4,message=TRUE>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-if(length(grep("RMark",.packages()))!=0)detach("package:RMark") 
-\end_layout
-
-\begin_layout Plain Layout
-
-library(marked) 
-\end_layout
-
-\begin_layout Plain Layout
-
-data(dipper)
-\end_layout
-
-\begin_layout Plain Layout
-
-model=crm(dipper)
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
 Currently the most comprehensive software for analysis of capture-recapture
  data is MARK (
 \begin_inset CommandInset citation
@@ -2434,7 +2395,7 @@ Dipper data example
 
 \begin_layout Standard
 Anyone who has used RMark will find it easy to use marked because it has
- nearly identical syntax and structure, but there are some minor differences.
+ nearly identical syntax and structure with a few minor differences.
  The structure of the input dataframe for marked is also identical to RMark.
  Any dataframe with a character field named 
 \begin_inset Quotes eld
@@ -2456,7 +2417,7 @@ freq
 
 , which is the number of animals represented by that capture history.
  However, it is not necessary to accumulate capture histories in that matter
- for the input data because the process.data step will accumulate non-uniqe
+ for the input data because the process.data step will accumulate duplicated
  records by default.
  There can be any number of additional fields, some of which can be used
  as covariates in the analysis.
@@ -2474,9 +2435,10 @@ We will start by fitting the simplest CJS model with constant
 \begin_inset Formula $p$
 \end_inset
 
- to the dipper data which contains 294 records with fields ch and a factor
- variable sex (Female or Male).
- A model can be fitted with a call to the function crm (
+.
+ The dipper data contain 294 records with the capture history (ch) and a
+ factor variable sex with values Female or Male.
+ Models are fitted with the function crm (
 \series bold
 c
 \series default
@@ -2488,7 +2450,10 @@ ecapture
 \series bold
 m
 \series default
-odel) after a call to library to attach the package and data as shown below:
+odel).
+ After a call to library to attach the package, and data to retrieve the
+ dipper data from the package, the model is fitted with crm and assigned
+ to the object named model:
 \end_layout
 
 \begin_layout Standard
@@ -2497,12 +2462,17 @@ status open
 
 \begin_layout Plain Layout
 
-<<echo=2:4,message=FALSE,comment="",prompt=TRUE>>=
+<<echo=3:5,comment="",prompt=TRUE,message=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
 if(length(grep("RMark",.packages()))!=0)detach("package:RMark") 
+\end_layout
+
+\begin_layout Plain Layout
+
+options(width=70)
 \end_layout
 
 \begin_layout Plain Layout
@@ -2532,28 +2502,36 @@ model=crm(dipper)
 
 \begin_layout Standard
 \noindent
-For this example, we are using the defaults of CJS and a formula of ~1 (constant
-) for each parameter.
- In this example, crm calls three functions in turn: 1) process.data to process
+For this example, we are using the default CJS model and a default formula
+ of ~1 (constant) for each parameter.
+ The function crm calls three functions in turn: 1) process.data to process
  the data, 2) make.design.data to create the list of parameter-specific dataframes
- for the formula, and 3) cjs, to fit the CJS model with the defined formulas.
+, and 3) cjs, to fit the CJS model with the defined formulas.
  The code reports progress and some results as it executes.
  We'll suppress these messages in later examples but show them here to explain
  some of the messages.
  When it processes the data, it collapses the 294 rows into 55 which are
  the unique number of rows in the data including ch and sex.
- After processing it creates the design data and the design matrices for
+ After processing, it creates the design data and the design matrices for
  each parameter.
  Prior to the optimization, it also collapses the histories further from
  55 to 32 which it can do here because sex is not used in either formula.
- The final step is the optimization.
+ The final steps are to compute initial values for the parameters and find
+ the MLEs with the selected optimization method(s).
  As it progresses, the value of -2log-likelihood is reported every 100 evaluatio
 ns of the objective function.
  It is not shown above because there were fewer than 100 function evaluations
  for this example.
- The results above were assigned to model.
- A a brief listing of the results can be obtained by simply typing model
- which invokes the function print.crm.
+ A brief listing of the model results is obtained by typing model which
+ invokes the function print.crm because class(model)=
+\begin_inset Quotes erd
+\end_inset
+
+crm
+\begin_inset Quotes erd
+\end_inset
+
+.
 \end_layout
 
 \begin_layout Standard
@@ -2562,7 +2540,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<message=FALSE,comment="",prompt=TRUE>>=
+<<comment="",prompt=TRUE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2582,8 +2560,8 @@ model
 
 \begin_layout Standard
 \noindent
-The output includes the number of parameters (npar), the -2log-likelihood,
- Akaike's Information Criterion (AIC), and the estimates for 
+The output includes the number of parameters (npar), -2log-likelihood, Akaike's
+ Information Criterion (AIC), and the estimates for 
 \begin_inset Formula $\phi$
 \end_inset
 
@@ -2592,7 +2570,11 @@ The output includes the number of parameters (npar), the -2log-likelihood,
 \end_inset
 
 .
- Estimates of precision were not shown because the default is hessian=FALSE
+ 
+\end_layout
+
+\begin_layout Standard
+Estimates of precision are not shown because the default is hessian=FALSE
  and it must be set to TRUE to get estimates of precision.
  This default was chosen because the marked package does not count parameters
  from the hessian, so there is no need to compute it for each model as with
@@ -2600,10 +2582,56 @@ The output includes the number of parameters (npar), the -2log-likelihood,
  The hessian may never be needed if the model is clearly inferior.
  Also, this allows the model to be fitted again from the final or different
  estimates to check for convergence without the penalty of computing the
- hessian each time.
- Separate functions (cjs.hessian and js.hessian) are provided to compute the
- variance-covariance matrix from the hessian at the final estimates for
- the models you select or hessian can be set to TRUE in the call to crm.
+ hessian at the final values each time.
+ Separate functions (cjs.hessian and js.hessian) are provided to compute and
+ store in the model the variance-covariance matrix from the hessian at the
+ final estimates as shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+model=cjs.hessian(model)
+\end_layout
+
+\begin_layout Plain Layout
+
+model
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Once the hessian as been computed, printing the model will display the standard
+ errors and 95% normal confidence intervals for the parameter estimates
+ on the link scale (e.g., logit for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+).
+ You can set hessian=TRUE in the call to crm if you want to compute it when
+ the model is fitted.
  
 \end_layout
 
@@ -2619,7 +2647,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<comment="",prompt=TRUE,tidy=FALSE>>=
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2649,7 +2677,300 @@ model=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=Phi.sex),
 
 \begin_layout Plain Layout
 
-model$vcv=cjs.hessian(model)
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Collapsing capture history records is controlled by the accumulate arguments
+ in process.data and crm.
+ In the above example, accumulate was TRUE for the process.data step but
+ it was turned off for the model fit because it would have not resulted
+ in any accumulation with the sex term in the model.
+ Typically the default values are optimal but if you are fitting many models
+ and most are complex models, then it may save time to accumulate in the
+ process data step but not for the model fitting step.
+ 
+\end_layout
+
+\begin_layout Standard
+If you fit more than a few models, use crm.wrapper rather than crm.
+ It fits a set of models and returns a list with a model selection table
+ that summarizes the fit of all the models.
+ By default, crm.wrapper stores the model results externally and in the list
+ it only stores the names of the files containing the models.
+ If you set external=FALSE, then it will store the model results in the
+ list as shown in the example below.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.proc=process.data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.ddl=make.design.data(dipper.proc)
+\end_layout
+
+\begin_layout Plain Layout
+
+fit.models=function()
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phi.sex=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phi.time=list(formula=~time)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p.sex=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p.dot=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+  cml=create.model.list(c("Phi","p"))
+\end_layout
+
+\begin_layout Plain Layout
+
+  results=crm.wrapper(cml,data=dipper.proc, ddl=dipper.ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+                      external=FALSE,accumulate=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return(results)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.models=fit.models()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The model selection table is displayed with:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.models
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+A non-zero value for convergence means the model did not converge.
+ If the models are not stored externally, an individual model can be extracted
+ from the list with either the model number which is listed in the model
+ table or with the model name which is the model formula specifications
+ pasted together as shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.models[[1]]
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.models[["Phi.sex.p.dot"]]
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+If the models are stored externally, they can be retrieved with the function
+ load.model as shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide",echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.proc=process.data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.ddl=make.design.data(dipper.proc)
+\end_layout
+
+\begin_layout Plain Layout
+
+fit.models=function()
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phi.sex=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+  Phi.time=list(formula=~time)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p.sex=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+  p.dot=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+  cml=create.model.list(c("Phi","p"))
+\end_layout
+
+\begin_layout Plain Layout
+
+  results=crm.wrapper(cml,data=dipper.proc, ddl=dipper.ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+                      external=TRUE,accumulate=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+  return(results)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.models=fit.models()
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+model=load.model(dipper.models[[1]])
 \end_layout
 
 \begin_layout Plain Layout
@@ -2668,23 +2989,831 @@ model
 \end_layout
 
 \begin_layout Standard
-\noindent
-The collapsing of capture history records is controlled by the accumulate
- arguments in process.data and crm.
- In the above example, accumulate was TRUE for the process.data step but
- it was turned off for the model fit because it would have not resulted
- in any accumulation with sex in the model.
- Typically using the default values is best but if you are fitting many
- models and most are complex then it may save time to accumulate in the
- process data step but not for the model fitting as shown above.
+To make the analysis more interesting, we will add some covariates for Phi
+ and p.
+ For Phi, we will add a static covariate weight which is a random value
+ between 1 and 10.
+ For Phi, we also add a time-varying covariate Flood which is the same for
+ all dippers but varies by time with a 0 value for times 1,4,5,6 and a value
+ of 1 for times 2 and 3.
+ For p, we will add a time-varying individual covariate td (trap dependence)
+ which is the 0/1 value of the capture from the previous occasion.
+ Static covariates are entered in the dataframe in a single column and time-vary
+ing covariates have a column and name for each occasion with the appropriate
+ time appended at the end of each name.
+ In this case, Flood will be Flood1,...,Flood6 and for td it will be td2,...,td7
+ because time for Phi is based on the time at the beginning of the interval
+ and for p it is the time for the capture occasion.
+ Below the names of the covariates in the dataframe are shown after they
+ are created:
 \end_layout
 
 \begin_layout Standard
-Fitting many models.
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add a dummy weight field which are random values from 1 to 10
+\end_layout
+
+\begin_layout Plain Layout
+
+set.seed(12345)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$weight=round(runif(nrow(dipper),0,9),0)+1
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add Flood covariate
+\end_layout
+
+\begin_layout Plain Layout
+
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(Flood)=paste("Flood",1:6,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,Flood)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add td covariate, but exclude first release as a capture
+\end_layout
+
+\begin_layout Plain Layout
+
+# splitCH and process.ch are functions in the marked package
+\end_layout
+
+\begin_layout Plain Layout
+
+td=splitCH(dipper$ch)
+\end_layout
+
+\begin_layout Plain Layout
+
+td=td[,1:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+releaseocc=process.ch(dipper$ch)$first
+\end_layout
+
+\begin_layout Plain Layout
+
+releaseocc=cbind(1:length(releaseocc),releaseocc)
+\end_layout
+
+\begin_layout Plain Layout
+
+releaseocc=releaseocc[releaseocc[,2]<nchar(dipper$ch[1]),]
+\end_layout
+
+\begin_layout Plain Layout
+
+td[releaseocc]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(td)=paste("td",2:7,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,td)
+\end_layout
+
+\begin_layout Plain Layout
+
+# show names
+\end_layout
+
+\begin_layout Plain Layout
+
+names(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we process the data with the default CJS model and make the design
+ data with parameters that identify which covariates to use for each parameter.
+ By default, each covariate in the dataframe is added to the design data
+ of each parameter but the argument static can be used to limit the variables
+ appended and the time-varying argument is needed to identify which covariates
+ vary by time and should be collapsed into a single column.
+ If we did not include the static argument for Phi, then weight and each
+ of the td columns would also be included and for p, weight and each of
+ the Flood columns would be included.
+ If td was added to the time-varying argument for Phi and Flood was added
+ for p, then we would have also needed to add td1 and Flood7 due to the
+ different time labels for Phi and p.
+ We have no intention to use those variables so it is best to specify what
+ is needed.
+ After specifying the design lists for Phi and p, they are used in the call
+ to make.design.data and the resulting dataframe names are shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# Process data 
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.proc=process.data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Create design data with static and time varying covariates
+\end_layout
+
+\begin_layout Plain Layout
+
+design.Phi=list(static=c("weight"),time.varying=c("Flood"))
+\end_layout
+
+\begin_layout Plain Layout
+
+design.p=list(static=c("sex"),time.varying=c("td"),
+\end_layout
+
+\begin_layout Plain Layout
+
+                        age.bins=c(0,1,20))
+\end_layout
+
+\begin_layout Plain Layout
+
+design.parameters=list(Phi=design.Phi,p=design.p)
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(dipper.proc,parameters=design.parameters)
+\end_layout
+
+\begin_layout Plain Layout
+
+names(ddl$Phi) 
+\end_layout
+
+\begin_layout Plain Layout
+
+names(ddl$p) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Next we define the models for Phi and p that we want to fit and call crm.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.sfw=list(formula=~Flood+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.ast=list(formula=~age+sex+td)
+\end_layout
+
+\begin_layout Plain Layout
+
+model=crm(dipper.proc,ddl,hessian=TRUE,
+\end_layout
+
+\begin_layout Plain Layout
+
+           model.parameters=list(Phi=Phi.sfw,p=p.ast))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Create data to compute prediCreate data to compute predicted values
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<fig=TRUE,comment="",prompt=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+newdipper=expand.grid(sex=c("Male","Female"),weight=1:10,Flood1=0,
+\end_layout
+
+\begin_layout Plain Layout
+
+      Flood2=1,Flood3=1,Flood4=0,Flood5=0,Flood6=0,td2=0,td3=c(0,1),
+\end_layout
+
+\begin_layout Plain Layout
+
+      td4=c(0,1),td5=c(0,1),td6=c(0,1),td7=c(0,1)) 
+\end_layout
+
+\begin_layout Plain Layout
+
+reals=predict(model,newdata=newdipper,se=TRUE) 
+\end_layout
+
+\begin_layout Plain Layout
+
+library(ggplot2)
+\end_layout
+
+\begin_layout Plain Layout
+
+reals$Phi$Flood=factor(reals$Phi$Flood,labels=c("Non-flood","Flood"))
+\end_layout
+
+\begin_layout Plain Layout
+
+ggplot(reals$Phi,aes(weight,estimate,ymin=lcl,ymax=ucl))+
+\end_layout
+
+\begin_layout Plain Layout
+
+       geom_errorbar(width=0.2)+geom_point()+geom_line()+
+\end_layout
+
+\begin_layout Plain Layout
+
+       xlab("
+\backslash
+nWeight")+ylab("Survival
+\backslash
+n")+facet_grid(Flood~.) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+probitCJS example.
 \end_layout
 
 \begin_layout Section*
 Validation and timing
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval=FALSE,echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.2=list(formula=~weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.3=list(formula=~time+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.4=list(formula=~sex+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.5=list(formula=~sex+weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.6=list(formula=~region+weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.7=list(formula=~region+time+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.8=list(formula=~region+sex+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.2=list(formula=~time)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.3=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.4=list(formula=~td)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.5=list(formula=~td+sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.6=list(formula=~td+sex+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.7=list(formula=~region+sex+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=dipper[rep(1:nrow(dipper),each=20),]
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$weight=round(runif(nrow(dipper),0,10),0)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$region=factor(floor(runif(nrow(dipper),1,10.99)))
+\end_layout
+
+\begin_layout Plain Layout
+
+td=splitCH(dipper$ch)
+\end_layout
+
+\begin_layout Plain Layout
+
+td=td[,1:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(td)=paste("td",2:7,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,td)
+\end_layout
+
+\begin_layout Plain Layout
+
+age=t(apply(marked:::process.ch(dipper$ch,all=TRUE)$Fplus,1,cumsum))
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(age)=paste("age",1:7,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,age)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+if(length(grep("RMark",.packages()))!=0)detach("package:RMark")
+\end_layout
+
+\begin_layout Plain Layout
+
+library(marked)
+\end_layout
+
+\begin_layout Plain Layout
+
+hessian=FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+crmodel.list=create.model.list(c("Phi","p"))
+\end_layout
+
+\begin_layout Plain Layout
+
+t1=system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+	dipper.proc=process.data(dipper,model="cjs",begin.time=1)
+\end_layout
+
+\begin_layout Plain Layout
+
+    dipper.ddl=make.design.data(dipper.proc,parameters=list(Phi=list(time.varying="ag
+e"),p=list(time.varying=c("td","age"))))
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+t2=system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+crm.list=crm.wrapper(crmodel.list,data=dipper.proc,ddl=dipper.ddl,method="BFGS",hessi
+an=hessian)
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# fit same models with calls to mark
+\end_layout
+
+\begin_layout Plain Layout
+
+if(length(grep("marked",.packages()))!=0)detach("package:marked")
+\end_layout
+
+\begin_layout Plain Layout
+
+library(RMark)
+\end_layout
+
+\begin_layout Plain Layout
+
+model.list=create.model.list("CJS")
+\end_layout
+
+\begin_layout Plain Layout
+
+t3=system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+	dipper.proc=process.data(dipper,model="CJS",begin.time=1,groups=c("sex","region"))
+\end_layout
+
+\begin_layout Plain Layout
+
+    dipper.ddl=make.design.data(dipper.proc)
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+t4=system.time({
+\end_layout
+
+\begin_layout Plain Layout
+
+mark.list=mark.wrapper(model.list,data=dipper.proc,ddl=dipper.ddl,output=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+})
+\end_layout
+
+\begin_layout Plain Layout
+
+mark.list$model.table=model.table(mark.list,use.AIC=TRUE,use.lnl=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+crm.table=crm.list$model.table[,2:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+mark.table=mark.list$model.table[,4:8]
+\end_layout
+
+\begin_layout Plain Layout
+
+compare=crm.table[order(as.numeric(row.names(crm.table))),]-mark.table[order(as.numeri
+c(row.names(mark.table))),]
+\end_layout
+
+\begin_layout Plain Layout
+
+compare[abs(compare[,2])>.05,]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# refit mark models with crm initial values
+\end_layout
+
+\begin_layout Plain Layout
+
+rerun.mark.list=mark.list
+\end_layout
+
+\begin_layout Plain Layout
+
+model.list=model.list[ do.call(order, model.list) ,]
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:nrow(model.list))
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	load(paste(paste(model.list[i,],collapse="."),".rda",sep=""))
+\end_layout
+
+\begin_layout Plain Layout
+
+    initial=eval(parse(text=paste(paste(model.list[i,],collapse="."),"$beta",sep="
+")))
+\end_layout
+
+\begin_layout Plain Layout
+
+    rerun.mark.list[[i]]=eval(parse(text=paste("mark(dipper.proc,dipper.ddl,model.par
+ameters=list(Phi=",model.list[i,"Phi"],",p=",model.list[i,"p"],"),initial=initial,
+output=FALSE)",sep="")))
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\begin_layout Plain Layout
+
+rerun.mark.list$model.table=model.table(rerun.mark.list,use.AIC=TRUE,use.lnl=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+crm.table=crm.list$model.table[,2:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+mark.table=rerun.mark.list$model.table[,4:8]
+\end_layout
+
+\begin_layout Plain Layout
+
+compare2=crm.table[order(as.numeric(row.names(crm.table))),]-mark.table[order(as.numer
+ic(row.names(mark.table))),]
+\end_layout
+
+\begin_layout Plain Layout
+
+compare2[abs(compare2[,2])>.05,]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+# refit crm models with mark initial values
+\end_layout
+
+\begin_layout Plain Layout
+
+if(length(grep("RMark",.packages()))!=0)detach("package:RMark")
+\end_layout
+
+\begin_layout Plain Layout
+
+library(marked)
+\end_layout
+
+\begin_layout Plain Layout
+
+hessian=FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+rerun.crm.list=crm.list
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.proc=process.data(dipper,model="cjs",begin.time=1)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper.ddl=make.design.data(dipper.proc,parameters=list(Phi=list(time.varying="age"),
+p=list(time.varying=c("td","age"))))
+\end_layout
+
+\begin_layout Plain Layout
+
+for(i in 1:nrow(crmodel.list))
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	model=paste(crmodel.list[i,"Phi"],crmodel.list[i,"p"],sep=".")
+\end_layout
+
+\begin_layout Plain Layout
+
+	initial=rerun.mark.list[[model]]$results$beta$estimate
+\end_layout
+
+\begin_layout Plain Layout
+
+	rerun.crm.list[[i]]=eval(parse(text=paste("crm(dipper.proc,dipper.ddl,model.paramete
+rs=list(Phi=",crmodel.list[i,"Phi"],",p=",crmodel.list[i,"p"],"),initial=initial)"
+,sep="")))
+\end_layout
+
+\begin_layout Plain Layout
+
+} 
+\end_layout
+
+\begin_layout Plain Layout
+
+compare3=mark.table-model.table(rerun.crm.list)[,2:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section*
@@ -2723,6 +3852,18 @@ with the added capability of allowing time intervals between occasions to
 \begin_layout Standard
 Dis: Code infrastructure not as complete as with MARK - median chat; parameter
  counting; fixed link functions logit/mlogit
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset CommandInset bibtex
+LatexCommand bibtex
+bibfiles "markedWriteUpBib"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section*
@@ -3471,22 +4612,6 @@ and
 \end_inset
 
 .
-\end_layout
-
-\begin_layout Section*
-Acknowledgments
-\end_layout
-
-\begin_layout Standard
-
-\size normal
-\begin_inset CommandInset bibtex
-LatexCommand bibtex
-bibfiles "markedWriteUpBib"
-
-\end_inset
-
-
 \end_layout
 
 \end_body

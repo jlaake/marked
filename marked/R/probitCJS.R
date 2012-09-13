@@ -34,12 +34,12 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   ln.Phi.1 <- function(mu){pnorm(0, mu, 1, lower.tail=FALSE, log.p=TRUE)}
   ln.Phi.0 <- function(mu){pnorm(0, mu, 1, log.p=TRUE)}
   sample.z <- function(idx, mu.y, mu.z){
-    q.y <- ln.Phi.0(mu.y[idx])
-    q1.z <- ln.Phi.1(mu.z[idx])
-    q0.z <- ln.Phi.0(mu.z[idx])
-    pr.z <- exp(c(0,cumsum(q.y)) + c(0,cumsum(q1.z)) + c(q0.z,0))
-    d <- sample.int(length(pr.z),1, prob=pr.z)-1
-    c(rep(1,d), rep(0, length(pr.z)-1-d))
+    #q.y <- ln.Phi.0(mu.y[idx])
+    #q1.z <- ln.Phi.1(mu.z[idx])
+    #q0.z <- ln.Phi.0(mu.z[idx])
+    #pr.z <- exp(c(0,cumsum(q.y)) + c(0,cumsum(q1.z)) + c(q0.z,0))
+    #d <- sample.int(length(pr.z),1, prob=pr.z)-1
+    #c(rep(1,d), rep(0, length(pr.z)-1-d))
   }
 
   #### changed 12 July 2012 to use cjs.initial if init.list is null and imat available
@@ -68,7 +68,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   #### added by jll 2 July 2012 so it uses design data (ie make.design.data)
   data <- data$p
   data <- data[data$Time>=data$Cohort,]
-  data <- data[order(data$id,data$Time),]
+  data <- data[order(data$id,data$time),]
   ###   
   yvec <- data$Y
   n <- length(yvec)
@@ -116,9 +116,9 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   colnames(beta.y.stor) <- pn.p
   
   ### BEGIN MCMC ###
-  cat("\nprobitCJS MCMC beginning...\n")
+  cat("probitCJS MCMC beginning...\n")
   cat("p model = ", as.character(p.model),"\n")
-  cat("phi model = ", as.character(phi.model),"\n\n")
+  cat("phi model = ", as.character(phi.model),"\n")
   flush.console()
   
   tot.iter <- burnin + iter
@@ -127,7 +127,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     
     ### UPDATE Z ###
     zvec[idx.z] <- unlist(tapply(1:n.unk.z, id.z, FUN=sample.z, 
-                                 mu.y=Xy.z%*%beta.y, mu.z=Xz.z%*%beta.z))
+    zvec <- sample.z(id=id.num, mu.y=Xy.z%*%beta.y, mu.z=Xz.z%*%beta.z, yvec=yvec)
     
     ### UPDATE Z.TILDE ### 
     a <- ifelse(zvec==0, -Inf, 0)
@@ -163,12 +163,12 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     if(m==30){
       tpi <- as.numeric(difftime(Sys.time(), st, units="secs"))/30
       ttc <- round((tot.iter-30)*tpi/3600, 2)
-      if(ttc>=1) cat("\nApproximate time till completion: ", ttc, " hours\n")
-      else cat("\nApproximate time till completion: ", ttc*60, " minutes\n")
+      if(ttc>=1) cat("Approximate time till completion: ", ttc, " hours\n")
+      else cat("Approximate time till completion: ", ttc*60, " minutes\n")
     }
     if(100*(m/tot.iter) >= 10 & (100*(m/tot.iter))%%10==0) 
 	{
-		cat("\n", 100*(m/tot.iter), "% completed\n")
+		cat(100*(m/tot.iter), "% completed\n")
 		flush.console()
 	}
   }
