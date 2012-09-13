@@ -31,16 +31,12 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   
   ### DEFINE SOME FUNCTIONS ###
   
-  ln.Phi.1 <- function(mu){pnorm(0, mu, 1, lower.tail=FALSE, log.p=TRUE)}
-  ln.Phi.0 <- function(mu){pnorm(0, mu, 1, log.p=TRUE)}
-  sample.z <- function(idx, mu.y, mu.z){
-    #q.y <- ln.Phi.0(mu.y[idx])
-    #q1.z <- ln.Phi.1(mu.z[idx])
-    #q0.z <- ln.Phi.0(mu.z[idx])
-    #pr.z <- exp(c(0,cumsum(q.y)) + c(0,cumsum(q1.z)) + c(q0.z,0))
-    #d <- sample.int(length(pr.z),1, prob=pr.z)-1
-    #c(rep(1,d), rep(0, length(pr.z)-1-d))
-  }
+  sample.z <- function(id, mu.y, mu.z, yvec){
+  	.Call("sampleZ", ID=id, PVec=pnorm(mu.y), PhiVec=pnorm(mu.z), yVec=yvec, PACKAGE="marked")
+  	}
+  make.ztilde.idx <- function(id, zvec){
+  	.Call("makeZtildeIdx", ID=id, zvec=zvec, PACKAGE="marked")
+  	}
 
   #### changed 12 July 2012 to use cjs.initial if init.list is null and imat available
   ### INITIAL VALUES ### changed to NULL from missing
@@ -66,40 +62,32 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   
   ### DATA MANIPULATION ###
   #### added by jll 2 July 2012 so it uses design data (ie make.design.data)
-  data <- data$p
-  data <- data[data$Time>=data$Cohort,]
-  data <- data[order(data$id,data$time),]
-  ###   
-  yvec <- data$Y
-  n <- length(yvec)
-  zvec.master <- data$Z
-  zvec <- zvec.master
-  idx.z <- is.na(zvec.master)
-  n.unk.z <- sum(idx.z)
-  Xy <- model.matrix(p.model, data)
-  pn.p <- colnames(Xy)
-  Xz <- model.matrix(phi.model, data)
-  pn.phi <- colnames(Xz)
-  id <- data$id              # jll 2 July 2012 - hardcoded to id
-  id.num <- as.numeric(id)
-  id.z <- id[idx.z]
-  Xz.z <- matrix(Xz[idx.z,],ncol=ncol(Xz))
-  Xy.z <- matrix(Xy[idx.z,],ncol=ncol(Xy))
-  uXy <- unique(Xy)
-  colnames(uXy) <- pn.p
-  uXz <- unique(Xz)
-  colnames(uXz) <- pn.phi
+	p.data <- data$p[data$p$Time>=data$p$Cohort,]
+  p.data <- p.data[order(p.data$id, p.data$Time),]
+	phi.data <- data$Phi[data$Phi$Time>=data$Phi$Cohort,]
+  phi.data <- phi.data[order(phi.data$id, phi.data$Time),]
+	yvec <- p.data$Y
+	n <- length(yvec)
+	Xy <- model.matrix(p.model, p.data)
+	pn.p <- colnames(Xy)
+	Xz <- model.matrix(phi.model, phi.data)
+	pn.phi <- colnames(Xz)
+	id <- p.data$id
+	uXy <- unique(Xy)
+	colnames(uXy) <- pn.p
+	uXz <- unique(Xz)
+	colnames(uXz) <- pn.phi
   
   ###  PRIOR DISTRIBUTIONS ### - changed jll 2 July 2012
   if(is.null(parameters$Phi$prior)){
-	  Q.b.z <- diag(rep(1,ncol(Xz)))
+	  Q.b.z <- matrix(0,ncol(Xz), ncol(Xz))
 	  mu.b.z <- rep(0,ncol(Xz))
   }else{
 	  Q.b.z <- parameters$Phi$prior$Q
 	  mu.b.z <- parameters$Phi$prior$mu
   }		
   if(is.null(parameters$p$prior)){
-	  Q.b.y <- diag(rep(1,ncol(Xy)))
+	  Q.b.y <- matrix(0,ncol(Xy), ncol(Xy))
 	  mu.b.y <- rep(0,ncol(Xy))	
   }else{
 	  Q.b.y <- parameters$p$prior$Q
@@ -126,8 +114,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   for(m in 1:tot.iter){
     
     ### UPDATE Z ###
-    zvec[idx.z] <- unlist(tapply(1:n.unk.z, id.z, FUN=sample.z, 
-    zvec <- sample.z(id=id.num, mu.y=Xy.z%*%beta.y, mu.z=Xz.z%*%beta.z, yvec=yvec)
+   zvec <- sample.z(id=id, mu.y=Xy%*%beta.y, mu.z=Xz%*%beta.z, yvec)
     
     ### UPDATE Z.TILDE ### 
     a <- ifelse(zvec==0, -Inf, 0)
@@ -135,14 +122,13 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     z.tilde <- rtruncnorm(n, a=a, b=b, mean=Xz%*%beta.z, sd=1)
     
     ### BETA.Z UPDATE ###
-    idx.z.tilde <- as.logical(ave(zvec, id, FUN=function(x){x + ifelse(diff(c(1,x))==-1, 1, 0)}))
-    #idx.z.tilde <- zvec + ifelse(diff(c(1,zvec))==-1 & diff(c(1,id.num))==0, 1, 0)
+    idx.z.tilde <- make.ztilde.idx(id, zvec)
     V.beta.z.inv <- crossprod(Xz[idx.z.tilde,]) + Q.b.z
     m.beta.z <- solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]) + crossprod(Q.b.z,mu.b.z))
     beta.z <- m.beta.z + solve(chol(V.beta.z.inv), rnorm(ncol(Xz),0,1))
     if(m>burnin){
       beta.z.stor[m-burnin,] <- beta.z
-      fitted.z.stor[m-burnin,] <- exp(ln.Phi.1(uXz%*%beta.z))
+      fitted.z.stor[m-burnin,] <- pnorm(uXz%*%beta.z)
     }
     
     ### UPDATE Y.TILDE ### 
@@ -156,7 +142,7 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
     beta.y <- m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))
     if(m>burnin) {
       beta.y.stor[m-burnin,] <- beta.y
-      fitted.y.stor[m-burnin,] <- exp(ln.Phi.1(uXy%*%beta.y))
+      fitted.y.stor[m-burnin,] <- pnorm(uXy%*%beta.y)
     }
     
     ### TIMING OF SAMPLER ###
@@ -175,20 +161,35 @@ probitCJS <- function(data, parameters=list(Phi=list(formula=~1),p=list(formula=
   
   ### MAKE SOME OUTPUT ### jll 2 July changed to summarize betas as well 
   
+  mode <- function(x){
+  	dx <- density(x)
+  	dx$x[dx$y==max(dx$y)]
+  	}
+  
   fitted.phi <- mcmc(fitted.z.stor)
   summ.phi <- summary(fitted.phi)
   hpd.phi <- HPDinterval(fitted.phi)
-  reals.phi <- data.frame(uXz, 
-		  posterior.mean=apply(fitted.z.stor, 2, mean), 
+  uphimf <- unique(model.frame(phi.model, phi.data))
+  if(phi.model==as.formula(~1)) uphimf <- data.frame(Intercept=1)
+  reals.phi <- data.frame(uphimf, 
+		  mode = apply(fitted.z.stor, 2, mode), 
+		  mean=apply(fitted.z.stor, 2, mean), 
+      sd = apply(fitted.z.stor, 2, sd),
 		  CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])
-
+  reals.phi <- reals.phi[do.call(order, reals.phi),]
+  rownames(reals.phi) <- NULL
   fitted.p <- mcmc(fitted.y.stor)
   summ.p <- summary(fitted.p)
   hpd.p <- HPDinterval(fitted.p)
-  reals.p <- data.frame(uXy, 
-		  posterior.mean=apply(fitted.y.stor,2,mean), 
+  upmf <- unique(model.frame(p.model, p.data))
+  if(p.model==as.formula(~1)) upmf <- data.frame(Intercept=1)
+  reals.p <- data.frame(upmf, 
+		  mode = apply(fitted.y.stor, 2, mode), 
+		  mean=apply(fitted.y.stor,2,mean), 
+      sd=apply(fitted.y.stor,2,sd),
 		  CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])
-  
+  reals.p <- reals.p[do.call(order, reals.p),]
+  rownames(reals.p) <- NULL
   phibeta.mcmc <- mcmc(beta.z.stor)
   summ.phi <- summary(phibeta.mcmc)
   hpd.phi <- HPDinterval(phibeta.mcmc)
