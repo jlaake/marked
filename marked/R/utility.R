@@ -12,9 +12,12 @@
 #' @aliases resight.matrix naive.survival
 #' @export resight.matrix
 #' @export naive.survival
+#' @export mcmc_mode
 #' @usage resight.matrix(x)
 #' 
 #'        naive.survival(x)
+#'       
+#'        mcmc_mode(x)
 #' 
 #' @param x processed data list - result from process.data in marked or real estimates from fitted model
 #' @return matrix of values with cohort and year labels
@@ -39,6 +42,10 @@ naive.survival=function(x)
 	rownames(naive.S)=levels(x$data$cohort)
 	colnames(naive.S)=x$begin.time+ c(0,cumsum(x$time.intervals[-length(x$time.intervals)]))
 	return(naive.S)	
+}
+mcmc_mode <- function(x){
+	dx <- density(x)
+	dx$x[dx$y==max(dx$y)]
 }
 
 

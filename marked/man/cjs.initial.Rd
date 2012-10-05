@@ -13,7 +13,7 @@
   probitCJS)}
 }
 \value{
-  vector of initial parameter estimates
+  list of initial parameter estimates
 }
 \description{
   Computes starting values for Phi and p parameters from

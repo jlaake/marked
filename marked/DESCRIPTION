@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.0.6
-Date: 2012-09-07
+Date: 2012-10-05
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>
 Description: This package provides a framework for handling
@@ -56,3 +56,5 @@ Collate:
     'deriv.inverse.link.R'
     'inverse.link.R'
     'predict.crm.r'
+    'scale.r'
+    'set.initial.r'

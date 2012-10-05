@@ -2,14 +2,17 @@
 \alias{compute.real}
 \title{Compute estimates of real parameters}
 \usage{
-  compute.real(model, parameter, unique = TRUE,
-    vcv = FALSE, se = FALSE, chat = 1, subset, select)
+  compute.real(model, parameter, ddl = NULL, unique = TRUE,
+    vcv = FALSE, se = FALSE, chat = 1, subset, select,
+    showDesign = FALSE)
 }
 \arguments{
   \item{model}{model object}
 
   \item{parameter}{name of real parameter to be computed
   (eg "Phi" or "p")}
+
+  \item{ddl}{list of design data}
 
   \item{unique}{TRUE if only unique values should be
   returned}
@@ -27,6 +30,9 @@
 
   \item{select}{character vector of field names in real
   that you want to include}
+
+  \item{showDesign}{if TRUE, show design matrix instead of
+  data}
 }
 \value{
   A data frame (\code{real}) is returned if

@@ -4,7 +4,7 @@
 #' parameters.
 #' 
 #' @param object model object
-#' @param newdata either a dataframe for crm or a list containing elements data and ddl which are the processed data and the design data list respectively
+#' @param newdata a dataframe for crm 
 #' @param parameter name of real parameter to be computed (eg "Phi" or "p")
 #' @param unique TRUE if only unique values should be returned
 #' @param vcv logical; if TRUE, computes and returns v-c matrix of real estimates
@@ -25,41 +25,37 @@
 #' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 #' dipper.ddl=make.design.data(dipper.proc)
 #' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=T)
-#' xx=predict(mod.Phisex.pdot,vcv=TRUE)
-#' xx=predict(mod.Phisex.pdot,newdata=dipper[1:2,],vcv=TRUE)
-#' dipper=dipper[1:2,]
-#' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
-#' dipper.ddl=make.design.data(dipper.proc)
-#' xx=predict(mod.Phisex.pdot,newdata=list(data=dipper.proc,ddl=dipper.ddl),vcv=TRUE)
+#' xx=predict(mod.Phisex.pdot)
+#' xx
+#' xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
+#' xx
 #' @keywords utility
-predict.crm <-function(object,newdata=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select)
+predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select)
 {
-	if(!object$model%in%c("CJS","JS"))stop("Currently only works for CJS and JS models")
 	if(!is.null(newdata))
 	{
 		if(is.data.frame(newdata))
 		{
-			if(is.null(newdata$ch)) newdata$ch=paste(rep("1",object$data$nocc),collapse="")
+			newdata$ch=paste(rep("1",object$data$nocc),collapse="")
 			newdata.proc=process.data(newdata,model=object$model,begin.time=object$data$begin.time,groups=names(object$data$group.covariates),accumulate=FALSE)
-			newdata.ddl=make.design.data(newdata.proc,parameters=object$design.parameters)
-			capture.output(newobject<-crm(newdata.proc,ddl=newdata.ddl,model=object$model,model.parameters=object$model.parameters,run=FALSE,initial=object$results$beta,accumulate=FALSE))
+			ddl=make.design.data(newdata.proc,parameters=object$design.parameters)
+			dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=object$design.parameters)
+		    object$results$model_data$Phi.dm=dml$Phi
+			object$results$model_data$p.dm=dml$p		
 		}else
-		{
-			if(is.list(newdata)&all(c("data","ddl")%in%names(newdata)))
-			{
-				capture.output(newobject<-crm(newdata$data,ddl=newdata$ddl,model=object$model,model.parameters=object$model.parameters,run=FALSE,initial=object$results$beta,accumulate=FALSE))
-			} else
-				stop("Invalid newdata")
-		}
-		newobject$results$beta.vcv=object$results$beta.vcv
-		object=newobject
+			stop("Invalid newdata")
 	}
-    if(is.null(parameter) )
+	if(is.null(ddl))
+		return(object$results$reals)
+	else
 	{
-		results=NULL
-		for (parameter in names(object$model.parameters))
-			results[[parameter]]=compute.real(object,parameter,unique,vcv,se,chat,subset,select)
-		return(results)
-	} else
-		return(compute.real(object,parameter,unique,vcv,se,chat,subset,select))		
+		if(is.null(parameter) )
+		{
+			results=NULL
+			for (parameter in names(object$model.parameters))
+				results[[parameter]]=compute.real(object,parameter,ddl,unique,vcv,se,chat,subset=substitute(subset),select)
+			return(results)
+		} else
+			return(compute.real(object,parameter,ddl,unique,vcv,se,chat,subset=substitute(subset),select))		
+	}
 }

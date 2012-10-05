@@ -30,8 +30,6 @@
 #' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
 #' @param accumulate if TRUE will accumulate capture histories with common
 #' value and with a common design matrix for Phi and p to speed up execution
-#' @param Phi initial value of Phi; used to set intercept parameter
-#' @param p initial value of p; used to set intercept parameter
 #' @param initial initial values for parameters if desired; if named vector
 #' from previous run it will match to columns with same name
 #' @param method method to use for optimization; see \code{optimx}
@@ -43,7 +41,6 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
-#' @param run if FALSE, does not call optimization routine but uses initial values for model
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optimx} or \code{\link{js.lnl}}
 #' @return The resulting value of the function is a list with the class of
@@ -59,33 +56,15 @@
 #' @references Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
 #' for the analysis of capture-recapture experiments in open populations.
 #' Biometrics 52:860-873.
-js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method="BFGS",
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,run=TRUE,...)
+js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method="BFGS",
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
 {
-#
-#  Setup values from arguments
-#    Phi.dm          - Phi design matrix created by call to create.dm
-#    p.dm            - p design matrix created by call to create.dm
-#    pent.dm         - pent design matrix created by call to create.dm
-#    N.dm            - N design matrix created by call to create.dm
-#    Phi.dmdf        - Phi design dataframe created by call to create.dmdf
-#    p.dmdf          - p design dataframe created by call to create.dmdf
-#    pent.dmdf       - pent design dataframe created by call to create.dmdf
-#    N.dmdf          - N design dataframe created by call to create.dmdf
-#    Phi.fixed       - matrix with 3 columns: ch number(i), occasion number(j), fixed value(f)
-#                       to fix phi(i,j)=f 
-#    p.fixed         - matrix with 3 columns: ch number(i), occasion number(j), fixed value(f)
-#                       to fix p(i,j)=f 
-#    pent.fixed      - matrix with 3 columns: ch number(i), occasion number(j), fixed value(f)
-#                       to fix pent(i,j)=f 
-   Phi.dmdf=ddl$Phi
-   p.dmdf=ddl$p
-   nocc=x$nocc
+    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal
    time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
-   if(!is.null(Phi.dmdf$time.interval))
-	   time.intervals=matrix(Phi.dmdf$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
+   if(!is.null(ddl$Phi$time.interval))
+	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
 # Compute nobstot - total unique critters
    if(nrow(dml$N)==1) 
       nobstot=sum(x$data$freq)    
@@ -101,39 +80,15 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
 #  Store data from x into x
    x=x$data
 #  set default frequencies if not used
-   if(is.null(x$freq))
-	   freq=NULL
-   else
-	   freq=x$freq
- #  get first and last vectors, loc and chmat
+   freq=NULL
+   if(!is.null(x$freq))freq=x$freq
+ # get first and last vectors, loc and chmat
    ch=x$ch
    imat=process.ch(ch,freq,all=TRUE)
 #  Use specified initial values or create if null
-   if(is.null(initial))
-   {
-	   if(is.null(Phi)|is.null(p)) 
-		   par=cjs.initial(dml,imat)
-	   else  
-		   par=c(log(Phi/(1-Phi)),rep(0,ncol(dml$Phi)-1),log(p/(1-p)),rep(0,ncol(dml$p)-1))
-	   par=c(par,0,rep(0,ncol(dml$pent)-1),1,rep(0,ncol(dml$N)-1))
-   } 
-   else
-   {
-	   if(is.null(names(initial)))
-	   {
-		   if(length(initial)==1)initial=rep(initial,ncol(dml$Phi)+ncol(dml$p)+ncol(dml$pent)+ncol(dml$N))
-		   if(length(initial)!=(ncol(dml$Phi)+ncol(dml$p)+ncol(dml$pent)+ncol(dml$N)))
-			   stop("Length of initial vector does not match number of parameters.")
-		   else
-			   par=initial
-	   }
-	   else
-	   {
-		   beta.names=c(paste("Phi:",colnames(dml$Phi),sep="") ,paste("p:",colnames(dml$p),sep=""),paste("pent:",colnames(dml$pent),sep=""),paste("N:",colnames(dml$N),sep=""))
-		   par=rep(0,length(beta.names))
-		   par[beta.names%in%names(initial)]=initial[which(names(initial)%in%beta.names)]
-	   }
-   }
+	if(is.null(initial))
+		initial=cjs.initial(dml,imat)
+	par=set.initial(names(dml),dml,initial)
 #  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
@@ -148,118 +103,55 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
 	   model_data=js.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
    }else
 	   model_data.save=NULL
-   #  Scale the design matrices and parameters with either input scale or computed scale
-   if(is.null(scale))
-   {
-	   scale.phi=apply(model_data$Phi.dm,2,function(x) mean(x[x!=0]))
-	   scale.p=apply(model_data$p.dm,2,function(x) mean(x[x!=0]))
-	   scale.pent=apply(model_data$pent.dm,2,function(x) mean(x[x!=0]))
-	   scale.N=apply(model_data$N.dm,2,function(x) mean(x[x!=0]))
-   } else
-   {
-	   if(all(scale==1))
-	   {
-		   scale.phi=rep(1,ncol(model_data$Phi.dm))
-		   scale.p=rep(1,ncol(model_data$p.dm))
-		   scale.pent=rep(1,ncol(model_data$pent.dm))
-		   scale.N=rep(1,ncol(model_data$N.dm))
-	   }else
-	   {
-		   len=ncol(model_data$Phi.dm)
-		   scale.phi=scale[1:len]
-		   scale.p=scale[(len+1):(len+ncol(model_data$p.dm))]
-		   len=len+ncol(model_data$p.dm)
-		   scale.pent=scale[(len+1):(len+ncol(model_data$pent.dm))]
-		   len=len+ncol(model_data$pent.dm)
-		   scale.N=scale[(len+1):length(scale)]
-	   }
-   }
-   model_data$Phi.dm=t(t(as.matrix(model_data$Phi.dm))/scale.phi)
-   model_data$p.dm=t(t(as.matrix(model_data$p.dm))/scale.p)
-   model_data$pent.dm=t(t(as.matrix(model_data$pent.dm))/scale.pent)
-   model_data$N.dm=t(t(as.matrix(model_data$N.dm))/scale.N)
-   par=par*c(scale.phi,scale.p,scale.pent,scale.N)
-   if(run)
-   {
+#  Scale the design matrices and parameters with either input scale or computed scale
+   scale=set.scale(names(dml),model_data,scale)
+   model_data=scale.dm(model_data,scale)
+   par=scale.par(par,scale)
 #  call optim to find mles with js.lnl which gives -log-likelihood
-	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-	   cat("Starting optimization",ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+ncol(model_data$pent.dm)+ncol(model_data$N.dm)," parameters\n")
-	   if("SANN"%in%method)
-	   {
-		   mod=optim(par,js.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
-				   debug=debug,control=control,...)
-		   par= mod$par
-		   convergence=mod$convergence
-		   lnl=mod$value
-		   counts=mod$counts
-	   }else
-	   {
-		   mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
-						   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,...))
-		   objfct=unlist(mod$fvalues)
-		   bestmin=which.min(objfct)
-		   par= mod$par[[bestmin]]
-		   convergence=mod$conv[[bestmin]]
-		   counts=mod$itns[[length(mod$itns)]]
-		   lnl=mod$fvalues[[bestmin]]
-	   }
-	   js.beta=mod$par$par/c(scale.phi,scale.p,scale.pent,scale.N)
-	   names(js.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""),paste("pent:",colnames(model_data$pent.dm),sep=""),paste("N:",colnames(model_data$N.dm),sep=""))
-	   if(is.null(model_data.save))
-	   {
-		   if(is.null(x$group))
-			   ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
-		   else
-			   ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
-	   } else
-	   {
-		   if(is.null(x$group))
-			   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
-		   else
-			   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
-	   }
-	   lnl=lnl+sum(lfactorial(ui))
-	   res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*length(js.beta),
-			   convergence=convergence,count=counts,optim.details=mod,
-			   scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),model_data=model_data,ns=nobstot)
+   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+   cat("Starting optimization",length(par)," parameters\n")
+   if("SANN"%in%method)
+   {
+	   mod=optim(par,js.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
+			   debug=debug,control=control,...)
+	   par= mod$par
+	   convergence=mod$convergence
+	   lnl=mod$value
+	   counts=mod$counts
+   }else
+   {
+	   mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
+					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,...))
+	   objfct=unlist(mod$fvalues)
+	   bestmin=which.min(objfct)
+	   par= mod$par[[bestmin]]
+	   convergence=mod$conv[[bestmin]]
+	   counts=mod$itns[[length(mod$itns)]]
+	   lnl=mod$fvalues[[bestmin]]
+   }
+   js.beta=unscale.par(par,scale)
+#  Compute additional likelihood component so lnl matches output for MARK; not needed for optimization
+   if(is.null(model_data.save))
+   {
+	   if(is.null(x$group))
+		   ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
+	   else
+		   ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
    } else
    {
-	   js.beta=par/c(scale.phi,scale.p,scale.pent,scale.N)
-	   names(js.beta)=c(paste("Phi:",colnames(model_data$Phi.dm),sep="") ,paste("p:",colnames(model_data$p.dm),sep=""),paste("pent:",colnames(model_data$pent.dm),sep=""),paste("N:",colnames(model_data$N.dm),sep=""))
-	   res=list(beta=js.beta,neg2lnl=NA,AIC=NA,convergence=0,count=0,optim.details=NA,scale=list(phi=scale.phi,p=scale.p,pent=scale.pent,N=scale.N),model_data=model_data,ns=nobstot)
+	   if(is.null(x$group))
+		   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
+	   else
+		   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
    }
-#  Restore complete non-accumulated model_data with unscaled design matrices and compte reals
-   if(!is.null(model_data.save)) model_data=model_data.save
-#  compute reals
-   nphi=ncol(model_data$Phi.dm)
-   np=ncol(model_data$p.dm)
-   npent=ncol(model_data$pent.dm)
-   nN=ncol(model_data$N.dm)
-   beta.phi=js.beta[1:nphi]
-   beta.p=js.beta[(nphi+1):(nphi+np)]
-   beta.pent=js.beta[(nphi+np+1):(nphi+np+npent)]
-   beta.N=js.beta[(nphi+np+npent+1):(nphi+np+npent+nN)]
-# create Phi and p beta matrices excluding first occasion on p
-   Phis=plogis(as.vector(model_data$Phi.dm%*%beta.phi))
-   ps=plogis(as.vector(model_data$p.dm%*%beta.p))
-   pents=cbind(rep(1,nrow(model_data$pent.dm)),exp(as.vector(model_data$pent.dm%*%beta.pent)))
-   pents=pents/apply(pents,1,sum)
-   Ns=exp(as.vector(model_data$N.dm%*%beta.N))
-#  
-   reals=p.dmdf
-   if(accumulate)
-	   reals$rec=as.vector(sapply(model_data$acc.index,function(x)seq((x-1)*(nocc)+1,x*(nocc))))
-   else
-	   reals$rec=1:nrow(reals)
-   names(reals)[names(reals)=="time"]="p.time"
-   names(reals)[names(reals)=="age"]="p.age"
-   Phirecs=Phi.dmdf[,!colnames(Phi.dmdf)%in%colnames(reals),drop=FALSE]
-   Phirecs[(rep(1:nrow(x),each=nocc)-1)*(nocc-1)+c(1:(nocc-1),nocc-1),]
-   Phirecs[seq(nocc,nrow(x)*nocc,by=nocc),]=NA
-   names(reals)[names(reals)=="time"]="Phi.time"
-   names(reals)[names(reals)=="age"]="Phi.age"
-   res$reals=reals
-# replace with call to js.hessian#  If requested compute hessian and var-cov matrix 
+   lnl=lnl+sum(lfactorial(ui))
+#  create results list
+   res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(js.beta,length)),
+		   convergence=convergence,count=counts,optim.details=mod,
+		   scale=scale,model_data=model_data,ns=nobstot,
+		   options=list(accumulate=accumulate,initial=initial,method=method,
+		   chunk_size=chunk_size,itnmax=itnmax,control=control))
+#  Compute hessian if specified   
    if(hessian) 
    {
 	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
@@ -267,7 +159,10 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL
 	   res$beta.vcv=js.hessian(res)
    }   
    assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-   class(res)=c("crm","js")
+#  Restore complete non-accumulated model_data with unscaled design matrices 
+   if(!is.null(model_data.save)) res$model_data=model_data.save
+#  Assign class and return
+   class(res)=c("crm","mle","js")
    return(res)
 }
 

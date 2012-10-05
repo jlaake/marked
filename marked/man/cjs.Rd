@@ -6,7 +6,7 @@
     accumulate = TRUE, Phi = NULL, p = NULL,
     initial = NULL, method, hessian = FALSE, debug = FALSE,
     chunk_size = 1e+07, refit, itnmax = NULL,
-    control = NULL, scale, run = TRUE, ...)
+    control = NULL, scale, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -32,15 +32,9 @@
   histories with common value and with a common design
   matrix for Phi and p to speed up execution}
 
-  \item{Phi}{initial value of Phi; used to set intercept
-  parameter}
-
-  \item{p}{initial value of p; used to set intercept
-  parameter}
-
-  \item{initial}{initial values for parameters if desired;
-  if named vector from previous run it will match to
-  columns with same name}
+  \item{initial}{list of initial values for parameters if
+  desired; if each is a named vector from previous run it
+  will match to columns with same name}
 
   \item{method}{method to use for optimization; see
   \code{optim}}
@@ -62,9 +56,6 @@
   \item{control}{control string for optimization functions}
 
   \item{scale}{vector of scale values for parameters}
-
-  \item{run}{if FALSE, does not call optimization routine
-  but uses initial values for model}
 
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or

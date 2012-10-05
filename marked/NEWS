@@ -1,4 +1,4 @@
-marked 1.0.6 (6 Sept 2012)
+marked 1.0.6 (5 Oct 2012)
 ------------
 CHANGES
 
@@ -6,15 +6,13 @@ CHANGES
 
 * Removed simulation code and put in a separate package - simcr.
 
-* run=FALSE in crm for mle methods now returns, complete model object with reals for use in predict with newdata
-
 * restructured the model object that is returned from crm
 
 NEW FEATURES
 
 * Function load.model will return externally stored model. Most useful with crm.wrapper and external=TRUE 
 
-* Generic function predict will provide estimates of real parameters and optionally std errors, conf intervals and vcv matrix for the existing or newdata.
+* Generic function predict will provide estimates of real parameters and optionally std errors, conf intervals and vcv matrix for the existing or newdata. Does not handle fixed parameters at present.
 
 * crm.wrapper now returns a list like mark.wrapper in RMark with a model.table.  The model list elements are the filenames of the externally saved model results. A default print method is included to print out model selection table. Also, an external argument was added.
 

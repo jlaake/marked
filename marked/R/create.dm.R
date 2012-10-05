@@ -3,6 +3,9 @@
 #' Creates a design matrix using the design dataframe, a formula and any
 #' intervals defined for time, cohort and age.
 #' 
+#' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
+#'        
+#'        create.dml(ddl,model.parameters,design.parameters,chunk_size=1e7)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format
@@ -13,6 +16,11 @@
 #' matrices; amount used is 8*chunk_size/1e6 MB (default 80MB)
 #' @param remove.intercept if TRUE, forces removal of intercept in design
 #' matrix
+#' @param ddl Design data list which contains a list element for each parameter
+#' type; if NULL it is created
+#' @param design.parameters Specification of any grouping variables for design
+#' data for each parameter
+#' @param model.parameters List of model parameter specifications 
 #' @return A design matrix constructed with the design dataframe and the
 #' formula.  It contains a row for each animal-occasion and a column for each
 #' beta parameter in the model. It excludes any columns that are all 0.
@@ -95,5 +103,18 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
    colnames(dm)=colnames(mm)
    return(dm[,select,drop=FALSE])
 }
-
+create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
+{
+	dml=vector("list",length=length(model.parameters))
+	names(dml)=names(model.parameters)
+	for (i in 1:length(model.parameters))
+	{
+		pn=names(model.parameters)[i]
+		dd=ddl[[pn]]
+		if(restrict)dd=dd[dd$Time>=dd$Cohort,]
+		dml[[i]]=create.dm(dd,model.parameters[[i]]$formula,design.parameters[[pn]]$time.bins,
+				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept)
+	}
+	return(dml)
+}
 

@@ -271,12 +271,13 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
            ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
         ages[ages<min.age]=min.age
 		Y=chmat[.row,begin.num:(ntimes+begin.num-1)]
-		Z = rep(NA,nocc)
-		Z[firstseen[.row]:lastseen[.row]]=1
-		Z = Z[begin.num:(ntimes+begin.num-1)]
+#		Z = rep(NA,nocc)
+#		Z[firstseen[.row]:lastseen[.row]]=1
+#		Z = Z[begin.num:(ntimes+begin.num-1)]
         newdm.df=data.frame(time=factor.times,
                              cohort=rep(factor(cohort,levels=cohort.levels),ntimes),
-                             Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages,Y=Y,Z=Z)     
+							 Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages,Y=Y)     
+#					         Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages,Y=Y,Z=Z)     
    }
    if(begin.num==1)
       min.age=min(x$data$initial.age,na.rm=TRUE )

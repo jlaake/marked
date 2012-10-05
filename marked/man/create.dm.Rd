@@ -2,9 +2,10 @@
 \alias{create.dm}
 \title{Creates a design matrix for a parameter}
 \usage{
-  create.dm(x, formula, time.bins = NULL,
-    cohort.bins = NULL, age.bins = NULL,
-    chunk_size = 1e+07, remove.intercept = NULL)
+  create.dm(x, formula, time.bins=NULL, cohort.bins=NULL,
+    age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
+
+  create.dml(ddl,model.parameters,design.parameters,chunk_size=1e7)
 }
 \arguments{
   \item{x}{design dataframe created by
@@ -24,6 +25,15 @@
 
   \item{remove.intercept}{if TRUE, forces removal of
   intercept in design matrix}
+
+  \item{ddl}{Design data list which contains a list element
+  for each parameter type; if NULL it is created}
+
+  \item{design.parameters}{Specification of any grouping
+  variables for design data for each parameter}
+
+  \item{model.parameters}{List of model parameter
+  specifications}
 }
 \value{
   A design matrix constructed with the design dataframe and

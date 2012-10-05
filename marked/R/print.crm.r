@@ -24,11 +24,11 @@ print.crm=function(x,...)
 {
    if(!is.null(x$results))x=x$results
    cat("\ncrm Model Summary\n")
-   if(class(x)[2]=="probitCJS")
-	   cat("\nNpar : ",ncol(x$beta.mcmc$Phi)+ncol(x$beta.mcmc$p))   
+   if(class(x)[2]=="mcmc")
+	   cat("\nNpar : ",sum(sapply(x$beta,nrow)))   
    else
    {
-	   cat("\nNpar : ",length(x$beta))
+	   cat("\nNpar : ",sum(sapply(x$beta,length)))
 	   cat("\n-2lnL: ",x$neg2lnl)
 	   cat("\nAIC  : ",x$AIC)
    }
@@ -38,19 +38,23 @@ print.crm=function(x,...)
 }
 coef.crm=function(object,...)
 {
-   if(class(object)[2]=="probitCJS")
-	   return(object$beta)
+   if(class(object)[2]=="mcmc")
+   {
+	   beta=do.call(rbind,object$beta)
+	   indices=grep("\\.",rownames(beta))
+	   rownames(beta)[-indices]=paste(rownames(beta)[-indices],"(Intercept)",sep=".")
+   }
    else
    {
-	   beta=data.frame(Estimate=object$beta)
+	   beta=data.frame(Estimate=unlist(object$beta))
 	   if(!is.null(object$beta.vcv))
 	   {
 		   beta$se=sqrt(diag(object$beta.vcv))
 		   beta$lcl=beta$Estimate - 1.96*beta$se
 		   beta$ucl=beta$Estimate + 1.96*beta$se
 	   }
-	   return(beta)
    }
+   return(beta)
 }
 print.crmlist<-function(x,...)
 {

@@ -8,7 +8,7 @@
 #' @param dml design matrix list for Phi and p
 #' @param imat list containing chmat, first and last
 #' @param link either "logit" (for cjs) or "probit" (for probitCJS)
-#' @return vector of initial parameter estimates
+#' @return list of initial parameter estimates
 #' @author Jeff Laake
 #' @keywords utility
 cjs.initial=function(dml,imat,link="logit")
@@ -22,7 +22,7 @@ cjs.initial=function(dml,imat,link="logit")
 	dep.values=unlist(apply(ind,1,function(x,z)z[x[1],x[2]:x[3]],z=imat$chmat))
 	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3]))-1
 	x=dml[["p"]][dd.indices,]
-    initial.p=coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
+    initial.p<-coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
 	initial.p[is.na(initial.p)]=0
 	initial.p[initial.p < -5 | initial.p > 5]=0
 	#   Create initial values for S using bernoulli glm assuming p=1
@@ -34,8 +34,8 @@ cjs.initial=function(dml,imat,link="logit")
 	dep.values=unlist(apply(ind,1,function(x,z)c(rep(1,(x[3]-x[2])),z[x[1],x[3]]),z=imat$chmat))
 	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3]))-1
 	x=dml[["Phi"]][dd.indices,]
-	initial.Phi=coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
+	initial.Phi<-coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
 	initial.Phi[is.na(initial.Phi)]=0
 	initial.Phi[initial.Phi < -5 | initial.Phi > 5]=0
-	return(c(initial.Phi,initial.p))
+	return(list(Phi=initial.Phi,p=initial.p))
 }

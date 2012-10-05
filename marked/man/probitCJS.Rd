@@ -2,9 +2,8 @@
 \alias{probitCJS}
 \title{Perform MCMC analysis of a CJS model}
 \usage{
-  probitCJS(data,
-    parameters = list(Phi = list(formula = ~1), p = list(formula = ~1)),
-    burnin, iter, init.list = NULL, imat = NULL)
+  probitCJS(ddl, dml, parameters, design.parameters,
+    burnin, iter, initial = NULL, imat = NULL)
 }
 \arguments{
   \item{data}{A list of design data from make.design.data
@@ -22,9 +21,9 @@
   \item{iter}{number of iteration to run the Gibbs sampler
   for following burnin}
 
-  \item{init.list}{A named list (beta.z, beta.y). If null
-  and imat is not null, uses cjs.initial to create initial
-  values; otherwise assigns 0}
+  \item{initial}{A named list (Phi,p). If null and imat is
+  not null, uses cjs.initial to create initial values;
+  otherwise assigns 0}
 
   \item{imat}{A list of vectors and matrices constructed by
   \code{\link{process.ch}} from the capture history data}
@@ -53,7 +52,7 @@ data(dipper)
 fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),p=list(formula=~time+sex)), burnin=50, iter=250)
 fit1
 # Real parameter summary
-fit1$reals
+fit1$results$reals
 }
 \author{
   Devin Johnson

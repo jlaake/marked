@@ -251,7 +251,7 @@ mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=li
 summary(mod2,brief=TRUE)
 }
 # jolly seber model
-crm(dipper,model="js",groups="sex",accumulate=FALSE)
+crm(dipper,model="js",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
 \donttest{
 mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
 }

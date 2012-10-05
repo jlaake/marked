@@ -98,12 +98,14 @@ function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
       parameters$Phi$type="Triang"
       if(is.null(parameters$Phi$pim.type))parameters$Phi$pim.type="all"
       if(is.null(parameters$Phi$link))parameters$Phi$link="logit"
-      parameters$p$num=-1
+	  if(model=="probitCJS") parameters$Phi$link="probit"
+	  parameters$p$num=-1
       parameters$p$begin=1
       parameters$p$type="Triang"
       if(is.null(parameters$p$default))parameters$p$default=0
       if(is.null(parameters$p$pim.type))parameters$p$pim.type="all"
       if(is.null(parameters$p$link))parameters$p$link="logit"
+	  if(model=="probitCJS") parameters$p$link="probit"
    }
    else
    if(model=="JS")

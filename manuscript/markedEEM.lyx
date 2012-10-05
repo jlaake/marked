@@ -3029,7 +3029,7 @@ data(dipper)
 
 \begin_layout Plain Layout
 
-set.seed(12345)
+set.seed(123)
 \end_layout
 
 \begin_layout Plain Layout

@@ -172,7 +172,7 @@
 #' summary(mod2,brief=TRUE)
 #' }
 #' # jolly seber model
-#' crm(dipper,model="js",groups="sex",accumulate=FALSE)
+#' crm(dipper,model="js",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
 #' \donttest{
 #' mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
 #' }
@@ -181,11 +181,10 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,...)
 {
 if(model%in%c("cjs","js"))model=toupper(model)
-ptm=proc.time()	
+ptm=proc.time()
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments
 # 
-cat("Model: ",model,"\n")
 if(is.null(data$data))
 {
    if(!is.null(ddl))
@@ -193,19 +192,19 @@ if(is.null(data$data))
       warning("Warning: specification of ddl ignored, as data have not been processed")
       ddl=NULL
    }
+   cat("Model: ",model,"\n")
    cat("Processing data\n")
    flush.console()
-   if(model=="probitCJS")
-      data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
-                          groups = groups, age.var = NULL, initial.ages = NULL, 
-                          time.intervals = time.intervals,nocc=NULL, accumulate=FALSE)
-   else
-	   data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
-			   groups = groups, age.var = NULL, initial.ages = NULL, 
-			   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate)
+   if(model=="probitCJS")accumulate=FALSE
+   data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
+	   groups = groups, age.var = NULL, initial.ages = NULL, 
+	   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate)
 }   
 else
-   data.proc=data
+{
+	data.proc=data
+	model=data$model
+}
 #
 # If the design data have not been constructed, do so now
 #
@@ -229,22 +228,9 @@ for (i in 1:length(parameters))
 #
 # Create design matrices for each parameter
 #
-if(model=="probitCJS")
-{
-	if(!run) return(ddl)
-} else
-{
-	dml=vector("list",length=length(parameters))
-	names(dml)=names(parameters)
-	for (i in 1:length(parameters))
-	{
-		pn=names(parameters)[i]
-		cat("Creating design matrix for parameter ",pn," with formula ",paste(as.character(parameters[[i]]$formula),sep=""),"\n")
-		flush.console()
-		dml[[i]]=create.dm(ddl[[pn]],parameters[[i]]$formula,design.parameters[[pn]]$time.bins,
-				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,parameters[[i]]$remove.intercept)
-	}
-}
+dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
+# if not running, return dml
+if(!run) return(dml)
 #
 # Call estimation function
 #
@@ -257,17 +243,19 @@ if("SANN"%in%method)
 if("nlminb"%in%method)control$eval.max=itnmax
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,run=run,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 else
     if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,run=run,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 	else {
 	   if(is.null(initial)){
 		   imat=process.ch(data$ch,data$freq,all=FALSE)
-		   runmodel=probitCJS(ddl,parameters=model.parameters,imat=imat,iter=iter,burnin=burnin)
+		   runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+				               imat=imat,iter=iter,burnin=burnin)
 	   }else
-		   runmodel=probitCJS(ddl,parameters=model.parameters,init.list=initial,iter=iter,burnin=burnin)
+		   runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+				               initial=initial,iter=iter,burnin=burnin)
 	}
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
@@ -281,6 +269,8 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0)
 }
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
+for(parx in names(parameters))
+  object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }

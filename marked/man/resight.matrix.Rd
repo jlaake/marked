@@ -6,6 +6,8 @@
   resight.matrix(x)
 
   naive.survival(x)
+
+  mcmc_mode(x)
 }
 \arguments{
   \item{x}{processed data list - result from process.data

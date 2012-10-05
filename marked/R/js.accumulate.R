@@ -87,7 +87,6 @@ for(i in iseq[-1])
 }
 #     Split data based on paste of all dms, fixed values
 chsplit=split(1:nrow(x),paste(chdesign,chdesignp,as.numeric(freq==0),sep=""))
-model_data$acc.index=do.call("rbind",(lapply(1:length(chsplit),function(x,z) cbind(x,z[[x]]),z=chsplit)))[,1]
 #     Get new set of indices
 indices=as.vector(sapply(chsplit,min))
 #     Accumulate frequencies

@@ -197,11 +197,11 @@ else
 		data=data[rep(1:nrow(data),times=data$freq),]
 		data$freq=1
 	}
-	if(is.null(data$id))
-		data$id=1:nrow(data)
-	else
-		data=data[order(data$id),]
 }
+if(is.null(data$id))
+	data$id=1:nrow(data)
+else
+	data=data[order(data$id),]
 #
 #  Get number of records in data set
 #
