@@ -41,7 +41,7 @@ compute.real <-function(model,parameter,ddl=NULL,unique=TRUE,vcv=FALSE,se=FALSE,
 	  data=data[indices,,drop=FALSE]
 	  design=design[indices,,drop=FALSE]
   }
-  if(parameter!="N")
+  if(parameter!="N" &!is.null(data$freq))
   {
 	  indices=which(data$freq!=0)
 	  data=data[indices,,drop=FALSE]
@@ -113,16 +113,16 @@ if(mcmc)
           sd = apply(real, 2, sd),
 		  CI.lower=hpd[,1], CI.upper=hpd[,2])
 } else
-#  If no vcv requested, return result
-   if(vcv|se)
+#  If no vcv requested only create reals dataframe
+   if(!vcv&!se)
    {
 	   reals=data.frame(estimate=real)
 	   rownames(reals)=NULL
    } else
    {
 	   if(is.null(results$beta.vcv))stop("vcv matrix not available in model")
-# Compute vc matrix for real parameters which needs to be modified for
-# any mlogit parameters
+#      Compute vc matrix for real parameters which needs to be modified for
+#      any mlogit parameters
 	   indices=grep(paste(parameter,"\\.",sep=""),colnames(results$beta.vcv))
 	   if(any(substr(link,1,6)!="mlogit"))
 	   {
