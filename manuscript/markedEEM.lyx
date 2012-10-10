@@ -3259,7 +3259,14 @@ model=crm(dipper.proc,ddl,hessian=TRUE,
 \end_layout
 
 \begin_layout Standard
-Create data to compute prediCreate data to compute predicted values
+Below we create a range of data values to compute predicted 
+\begin_inset Formula $\phi$
+\end_inset
+
+ values and then plot the results for Flood and non-Flood years for a range
+ of weights.
+ Not surprising that the slope for weight is nearly 0 because the weight
+ values were generated randomly.
 \end_layout
 
 \begin_layout Standard
@@ -3340,7 +3347,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<eval=FALSE,echo=FALSE>>=
+<<cache=TRUE,echo=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -3784,22 +3791,6 @@ rs=list(Phi=",crmodel.list[i,"Phi"],",p=",crmodel.list[i,"p"],"),initial=initial
 \begin_layout Plain Layout
 
 compare3=mark.table-model.table(rerun.crm.list)[,2:6]
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
 \end_layout
 
 \begin_layout Plain Layout
