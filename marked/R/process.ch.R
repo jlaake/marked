@@ -48,12 +48,16 @@ process.ch=function(ch,freq=NULL,all=FALSE)
    nch=length(ch)
    if(is.null(freq))freq=rep(1,nch)
    nocc=nchar(ch[1])
+# in case MS data passed, change all non-zero to 1
+   chmat=matrix((unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
+   ch=apply(t(apply(splitCH(ch),1,function(x){ 
+							   x[x!="0"]=1 
+							   return(x)
+						   })),1,paste,collapse="")
 #  create a matrix with 1:nocc in each row and one row for each ch
    nums=matrix(1:nocc,nrow=nch,ncol=nocc,byrow=TRUE)
-#  create the chmat by splitting the ch string into individual elements
-   chmat=matrix(as.numeric(unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
 #  store in a temp matrix and assign any 0 value to NA
-   ymat=chmat
+   ymat=matrix(as.numeric(unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
    ymat[ymat==0]=NA
 #  multiply nums matrix times the chmat
    nums=nums*ymat

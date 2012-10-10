@@ -2,17 +2,37 @@
 #' 
 #' Defines list of parameters used in the specified type of model
 #' (\code{model}) and adds default values for each parameter to the list of
-#' user specified values (eg formula, link etc). \code{parameters} is a list of lists.
+#' user specified values (eg formula, link etc) defined in the call to
+#' \code{\link{make.mark.model}}
 #' 
-#' @param model type of model (e.g., "cjs")
+#' The primary difference in setting up models for MARK is the number and types
+#' of parameters that are included in the model.  This function sets up the
+#' list of parameters used in the model and defines values for each parameter
+#' that affect how the PIM and design data are structured in the input file for
+#' program MARK.  Some of the values of the parameter list are user specified
+#' such as \code{formula}, \code{link},\code{fixed} so this function only adds
+#' to the list of values that are not specified by the user.  That is, it takes
+#' the input argument \code{parameters} and adds list elements for parameters
+#' not specified by the user and adds default values for each type of parameter
+#' and then returns the modified list. The structure of the argument
+#' \code{parameters} and the return value of this function are the same as the
+#' structure of the argument \code{parameters} in \code{\link{make.mark.model}}
+#' and argument \code{model.parameters} in \code{\link{mark}}.  They are lists
+#' with an element for each type of parameter in the model and the name of each
+#' list element is the parameter name (e.g., "p", "Phi","S", etc).  For each
+#' parameter there are a list of values (e.g., formula, link, num etc as
+#' defined below).  Thus \code{parameters} is a list of lists.
+#' 
+#' @param model type of model ("CJS", "Burnham" etc)
 #' @param parameters list of model parameter specifications
 #' @param nocc number of occasions (value only specified if needed)
 #' @param check if TRUE only the vector of parameter names is returned
 #' \code{par.list}
 #' @param number.of.groups number of groups defined for data
+#' @export
 #' @return The return value depends on the argument \code{check}. If it is TRUE
 #' then the return value is a vector of the names of the parameters used in the
-#' specified type of model. For example, if \code{model="cjs"} then the return
+#' specified type of model. For example, if \code{model="CJS"} then the return
 #' value is \code{c("Phi","p")}.  This is used by the function
 #' \code{\link{valid.parameters}} to make sure that parameter specifications
 #' are valid for the model (i.e., specifying recovery rate r for "CJS" would
@@ -30,24 +50,24 @@
 #' \code{pk} \tab List of specifications for parameter k \cr }
 #' 
 #' The elements for each parameter list all include: \tabular{ll}{ \code{begin}
-#' \tab 0 or 1; beginning time for the first parameter relative to first
-#' occasion \cr \code{num} \tab 0 or -1; number of parameters relative to
-#' number of occassions \cr \code{type} \tab type of PIM structure; either
-#' "Triang" or "Square" \cr \code{formula} \tab formula for parameter model
-#' (e.g., \code{~time}) \cr \code{link} \tab link function for parameter (e.g.,
-#' \code{"logit"}) \cr }
+#' \tab 0 or 1; beginning time for the first \cr \tab parameter relative to
+#' first occasion \cr \code{num} \tab 0 or -1; number of parameters relative to
+#' \cr \tab number of occassions \cr \code{type} \tab type of PIM structure;
+#' either "Triang" or "Square" \cr \code{formula} \tab formula for parameter
+#' model (e.g., \code{~time}) \cr \code{link} \tab link function for parameter
+#' (e.g., \code{"logit"}) \cr }
 #' 
 #' and may include: \tabular{ll}{ \code{share} \tab only valid for p in closed
-#' capture models; if TRUE p and c models shared \cr \code{mix} \tab only valid
-#' for closed capture heterogeneity models; if TRUE mixtures are used \cr
-#' \code{rows} \tab only valid for closed capture heterogeneity models \cr
-#' \code{fixed} \tab fixed values specified by user and not used modified in
-#' this function \cr }
+#' capture models; \cr \tab if TRUE p and c models shared \cr \code{mix} \tab
+#' only valid for closed capture heterogeneity \cr \tab models; if TRUE
+#' mixtures are used \cr \code{rows} \tab only valid for closed capture
+#' heterogeneity models \cr \code{fixed} \tab fixed values specified by user
+#' and \cr \tab not used modified in this function \cr }
 #' @author Jeff Laake
 #' @seealso \code{\link{setup.model}},\code{\link{valid.parameters}}
 #' @keywords utility
-"setup.parameters" <-
-function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
+setup.parameters <-
+		function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
 # ----------------------------------------------------------------------------------------
 #  setup.parameters  - fills in value for begin and num for each parameter type depending
 #                      on the type of c-r model. num defines number of parameters relative to
@@ -64,80 +84,46 @@ function(model,parameters=list(),nocc=NULL,check=FALSE,number.of.groups=1)
 #    parameters - updated list of model parameter specifications with new fields added
 #
 #
-#  10 Jan 06; added pim.type to list for triang structured parameters
 # ----------------------------------------------------------------------------------------
 {
+# Read in parameter definitions
+	fdir=system.file(package="marked")	
+	fdir=file.path(fdir,"parameters.txt")	
+	parameter_definitions=read.delim(fdir,header=TRUE,
+			colClasses=c("character","character",rep("numeric",3),rep("character",4),
+					"logical","character","logical","numeric",rep("logical",3),"numeric","logical","logical"))
 #
 #  Create valid parameter list depending on model.
 #
-   if(model=="probitCJS" | model=="CJS")par.list=c("Phi","p")
-   if(model=="JS") par.list=c("Phi","p","pent","N")
+	parameter_definitions=parameter_definitions[parameter_definitions$model==model,]
+	par.list=parameter_definitions$parname
 #
 #  If this is just a parameter check, return par.list
 #
-   if(check)return(par.list)
+	if(check)return(par.list)
 #
 #  For each parameter create an empty list if none specified in input
 #   
-   if(length(parameters)>0)
-   {
-      for (i in 1:length(par.list))
-      {
-         if(is.na(names(parameters[par.list[i]])))
-            parameters[[par.list[i]]]=list()
-      }
-   }
+	pars=vector("list",length(par.list))
+	names(pars)=par.list
+	for (i in 1:length(par.list))
+	{
+		if(par.list[i]%in%names(parameters))
+			pars[[i]]=parameters[[par.list[i]]]
+	}
 #
 #  Next depending on model type, assign non-specified default values
 #
-   if(model=="probitCJS" | model=="CJS")
-   {
-      parameters$Phi$num=-1
-      parameters$Phi$begin=0
-      if(is.null(parameters$Phi$default))parameters$Phi$default=1
-      parameters$Phi$type="Triang"
-      if(is.null(parameters$Phi$pim.type))parameters$Phi$pim.type="all"
-      if(is.null(parameters$Phi$link))parameters$Phi$link="logit"
-	  if(model=="probitCJS") parameters$Phi$link="probit"
-	  parameters$p$num=-1
-      parameters$p$begin=1
-      parameters$p$type="Triang"
-      if(is.null(parameters$p$default))parameters$p$default=0
-      if(is.null(parameters$p$pim.type))parameters$p$pim.type="all"
-      if(is.null(parameters$p$link))parameters$p$link="logit"
-	  if(model=="probitCJS") parameters$p$link="probit"
-   }
-   else
-   if(model=="JS")
-   {
-      parameters$Phi$begin=0
-      parameters$Phi$num=-1
-      parameters$Phi$type="Square"
-      if(is.null(parameters$Phi$default))parameters$Phi$default=1
-      if(is.null(parameters$Phi$link))parameters$Phi$link="logit"
-      parameters$p$num=0
-      parameters$p$begin=0
-      parameters$p$type="Square"
-      if(is.null(parameters$p$default))parameters$p$default=0
-      if(is.null(parameters$p$link))parameters$p$link="logit"
-      parameters$pent$num=-1
-      parameters$pent$begin=1
-      parameters$pent$type="Square"
-      if(is.null(parameters$pent$default))parameters$pent$default=0
-      if(number.of.groups>1)
-         if(is.null(parameters$pent$formula))parameters$pent$formula=~group
-      else
-         if(is.null(parameters$pent$formula))parameters$pent$formula=~1
-      if(is.null(parameters$pent$link))parameters$pent$link="mlogit"
-      parameters$N$num=-(nocc-1)
-      parameters$N$begin=0
-      parameters$N$type="Square"
-      parameters$N$leave.unused=TRUE
-      if(number.of.groups>1)
-         if(is.null(parameters$N$formula))parameters$N$formula=~group
-      else
-         if(is.null(parameters$N$formula))parameters$N$formula=~1
-      if(is.null(parameters$N$link))parameters$N$link="log"
-   } 
-   return(parameters)
+	for(i in 1:length(par.list))
+	{
+		for(j in 3:ncol(parameter_definitions))		
+			if(!is.na(parameter_definitions[i,j]) & parameter_definitions[i,j]!="" & !names(parameter_definitions)[j]%in%names(parameters[[par.list[i]]]))
+				pars[[par.list[i]]][names(parameter_definitions)[j]]=list(parameter_definitions[i,j])
+		if(pars[[par.list[i]]]$formula!=" " && is.character(pars[[par.list[i]]]$formula))
+			pars[[par.list[i]]]$formula=as.formula(pars[[par.list[i]]]$formula)
+		if(is.null(pars[[par.list[i]]]$num))pars[[par.list[i]]]$num=NA
+		if(!is.na(pars[[par.list[i]]]$num)&&pars[[par.list[i]]]$num==1)pars[[par.list[i]]]$num=-(nocc-1)
+		if(!is.null(pars[[par.list[i]]]$share) && pars[[par.list[i]]]$share && is.null(pars[[par.list[i]]]$pair)) pars[[par.list[i]]]$share=NULL
+	}
+	return(pars)
 }

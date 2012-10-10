@@ -125,12 +125,12 @@
 #' 
 accumulate_data <- function(data)
 {
-	x <- data[,names(data)!="freq"]
+	x <- data[,names(data)!="freq",drop=FALSE]
 	nx <- nrow(x)
 	if(is.null(data$freq))data$freq=rep(1,nrow(data))
 	pasted.data=apply(x, 1, paste, collapse = "")
 	freq=sapply(split(data$freq, pasted.data),sum)
-	x=unique(x[order(pasted.data),])
+	x=unique(x[order(pasted.data),,drop=FALSE])
 	x$freq=freq
 	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
 	return(x)	
@@ -158,8 +158,18 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 #
    model.list=setup.model(model,nocc,mixtures)
    ch.values=unique(unlist(strsplit(data$ch,"")))
-   if(any(!ch.values%in%c("0","1",".")))
-      stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
+   if(!model.list$strata)
+   {
+	   if(any(!ch.values%in%c("0","1",".")))
+		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
+   } else
+   {
+	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0","."))])
+	   nstrata = length(inp.strata.labels)                  
+	   strata.labels=inp.strata.labels
+	   nstrata=length(strata.labels)
+	   if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")		   
+   }
    nocc=model.list$nocc
    nocc.secondary=NULL
    num=model.list$num
@@ -185,7 +195,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 # if null
 # 
 if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
-if(model=="probitCJS") accumulate=F
+if(model%in%c("probitCJS","probitMsCJS")) accumulate=F
 if(accumulate)
 	data=accumulate_data(data)
 else

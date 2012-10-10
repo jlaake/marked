@@ -141,7 +141,7 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
-	  if(data$model!="probitCJS")
+	  if(!data$model%in%c("probitCJS","probitMsCJS"))
 		  if("Y" %in% names(full.design.data[[i]]))
 		  {
 			  full.design.data[[i]]$Y=NULL

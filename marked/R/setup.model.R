@@ -22,6 +22,7 @@
 #' @param model name of model type (must be in vector \code{valid.models})
 #' @param nocc length of capture history string
 #' @param mixtures number of mixtures
+#' @export
 #' @return model.list - a list with following elements \item{etype}{encounter
 #' type string for MARK input; typically same as model} \item{nocc}{number of
 #' capture occasions} \item{num}{number of time intervals relative to number of
@@ -30,8 +31,8 @@
 #' @author Jeff Laake
 #' @seealso \code{\link{setup.parameters}}, \code{\link{valid.parameters}}
 #' @keywords utility
-"setup.model" <-
-function(model,nocc,mixtures=1)
+setup.model <-
+		function(model,nocc,mixtures=1)
 {
 #
 # setup.model - defines list of acceptable models and creates some global fields for the model
@@ -51,29 +52,20 @@ function(model,nocc,mixtures=1)
 #                  mixtures - number of mixtures if any
 #                  derived - TRUE if model produces derived parameters
 #
-#  10 Jan 06; added known fate
-#  11 Jan 06; added multistrata
-#           ; robust design models
-#   5 Oct 07; added Nest
-#   9 Dec 07; added Occupancy and OccupHet and robust versions
-#   14 Feb 07; added Jolly
-#   12 Sept 08; added cjs and js R models
-#   3 Mar 10; added Brownie; note ORDMS added year earlier
-#   Aug 10; added CRDMS; MsLiveDead done in between
 #
-  valid.models=c("CJS","JS","probitCJS")
-  num=c(-1,-1,-1) # of intervals relative to nocc
-  divisor=c(1,1,1) # to compute nocc from length of ch
-  default.mixtures=c(1,1,1)
-  valid.types=c("CJS","JS","probitCJS")
-  etype= match(model,valid.models)
-  derived=rep(FALSE,3)
-  robust=rep(FALSE,3)
-  closed=rep(FALSE,3)
-  occupancy=rep(FALSE,3)
-  if(is.na(etype))
-     stop("Invalid type of model = ",model," Valid types are\n", paste(valid.models,collapse=" "))
-  if(mixtures==1) mixtures=default.mixtures[etype]
-  return(list(etype=valid.types[etype],nocc=nocc/divisor[etype],num=num[etype],mixtures=mixtures,
-               derived=derived[etype],robust=robust[etype],closed=closed[etype],occupancy=occupancy[etype]))
+# Read in parameter definitions
+	fdir=system.file(package="marked")	
+	fdir=file.path(fdir,"models.txt")	
+	model_definitions=read.delim(fdir,header=TRUE,
+			colClasses=c("character","character",rep("logical",4),rep("numeric",3),"logical"))
+	model_def=model_definitions[model_definitions$model==model,]	
+	if(nrow(model_def)==0)
+		stop("Invalid type of model = ",model," Valid types are\n", paste(model_definitions$model,collapse="\n"))
+	if(mixtures==1) 
+		model_def$mixtures=model_def$default.mixtures
+	else
+		model_def$mixtures=mixtures
+	model_def$default.mixtures=NULL
+	model_def$nocc=nocc/model_def$divisor
+	return(as.list(model_def))
 }

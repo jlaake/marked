@@ -195,7 +195,7 @@ if(is.null(data$data))
    cat("Model: ",model,"\n")
    cat("Processing data\n")
    flush.console()
-   if(model=="probitCJS")accumulate=FALSE
+   if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
 	   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate)
