@@ -30,7 +30,7 @@ set.initial=function(pars,dml,initial)
 				if(length(init)!=ncol(dml[[parx]]))
 					stop(paste("For",parx,",length of initial vector does not match number of parameters."))
 				else
-					par[[parx]]=initial
+					par[[parx]]=init
 			} else
 			{
 				beta.names=colnames(dml[[parx]])

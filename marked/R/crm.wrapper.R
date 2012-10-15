@@ -83,7 +83,7 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		results.names=c(results.names,paste(model.list[i,],collapse="."))
 		formulae=sapply(model.parameters,function(x){return(paste(x$formula,collapse=""))})
 		formulae=paste(paste(names(formulae),"(",formulae,")",sep=""),collapse="")
-		df=data.frame(model=formulae,npar=length(mymodel$results$beta),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
+		df=data.frame(model=formulae,npar=sum(sapply(mymodel$results$beta,length)),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
 		model.table=rbind(model.table,df)
 	}
 	names(results)=results.names
@@ -104,12 +104,12 @@ model.table=function(model.list=NULL)
 		if(!is.list(model.list[[i]]))
 		{
 			load(model.list[[i]])
-			eval(parse(text=paste("mymodel=",unlist(strsplit(model.list[[1]],".rda")))))
+			eval(parse(text=paste("mymodel=",unlist(strsplit(model.list[[i]],".rda")))))
 		}else
 			mymodel=model.list[[i]]
 		formulae=sapply(mymodel$model.parameters,function(x){return(paste(x$formula,collapse=""))})
 		formulae=paste(paste(names(formulae),"(",formulae,")",sep=""),collapse="")
-		df=data.frame(model=formulae,npar=length(mymodel$beta),AIC=mymodel$AIC,neg2lnl=mymodel$neg2lnl,convergence=mymodel$convergence)
+		df=data.frame(model=formulae,npar=sum(sapply(mymodel$results$beta,length)),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
 		model.table=rbind(model.table,df)
 	}
 	model.table$DeltaAIC=model.table$AIC-min(model.table$AIC)

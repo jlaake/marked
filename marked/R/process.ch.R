@@ -58,6 +58,7 @@ process.ch=function(ch,freq=NULL,all=FALSE)
    nums=matrix(1:nocc,nrow=nch,ncol=nocc,byrow=TRUE)
 #  store in a temp matrix and assign any 0 value to NA
    ymat=matrix(as.numeric(unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
+   if(suppressWarnings(all(is.numeric(as.numeric(chmat)))))chmat=ymat
    ymat[ymat==0]=NA
 #  multiply nums matrix times the chmat
    nums=nums*ymat
