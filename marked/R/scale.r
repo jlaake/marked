@@ -9,6 +9,8 @@
 #'          scale.par(par,scale)
 #'
 #'          unscale.par(par,scale)
+#' 
+#' @aliases set.scale scale.dm scale.par unscale.par
 #' @param pars character vector of parameter names
 #' @param par list of parameter vectors or vector of parameter values
 #' @param scale list or vector of parameter scales

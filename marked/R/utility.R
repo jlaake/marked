@@ -9,7 +9,7 @@
 #' year i but it is useful to identify particularly high or low survival values. Functions Phi.mean
 #' and p.mean compute average real parameter values Phi or p across time for a single age or across ages for a
 #' single time.
-#' @aliases resight.matrix naive.survival
+#' @aliases resight.matrix naive.survival mcmc_mode
 #' @export resight.matrix
 #' @export naive.survival
 #' @export mcmc_mode

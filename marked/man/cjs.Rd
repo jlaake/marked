@@ -3,10 +3,10 @@
 \title{Fitting function for CJS models}
 \usage{
   cjs(x, ddl, dml, model_data = NULL, parameters,
-    accumulate = TRUE, Phi = NULL, p = NULL,
-    initial = NULL, method, hessian = FALSE, debug = FALSE,
-    chunk_size = 1e+07, refit, itnmax = NULL,
-    control = NULL, scale, ...)
+    accumulate = TRUE, initial = NULL, method,
+    hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
+    refit, itnmax = NULL, control = NULL, scale,
+    use.admb = FALSE, compile = FALSE, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -56,6 +56,11 @@
   \item{control}{control string for optimization functions}
 
   \item{scale}{vector of scale values for parameters}
+
+  \item{use.admb}{if TRUE creates data file for cjs.tpl and
+  runs admb optimizer}
+
+  \item{compile}{if TRUE forces re-compilation of tpl file}
 
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or

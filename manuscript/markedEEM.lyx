@@ -293,7 +293,21 @@ Summary
 \begin_inset space \hrulefill{}
 \end_inset
 
-
+We describe an R package called marked for analysis of mark-recapture data.
+ Currently, the package is capable of fitting Cormack-Jolly-Seber (CJS)
+ models with maximum likelihood estimation (MLE) and Bayesian Markov Chain
+ Monte Carlo (MCMC) methods.
+ In addition, Jolly-Seber models can be fitted with MLE.
+ Additional models will be added as the package is updated.
+ We provide some example analyses with the well-known dipper data and compare
+ run timing and results with MARK.
+ For analysis with several thousand or more capture histories and several
+ time-varying covariates, the run times with marked are substantially less.
+ By providing this open source software
+\size default
+, we hope to expand the analyst's toolbox and enble the knowledgeable user
+ to understand fully the models and software.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -303,7 +317,7 @@ Summary
 \size normal
 Key words
 \shape default
- Words here
+ mark-recapture capture-recapture Cormack-Jolly-Seber MCMC
 \end_layout
 
 \begin_layout Standard
@@ -2989,21 +3003,36 @@ model
 \end_layout
 
 \begin_layout Standard
-To make the analysis more interesting, we will add some covariates for Phi
+To make the analysis more interesting, we will add some covariates for 
+\begin_inset Formula $\phi$
+\end_inset
+
  and p.
- For Phi, we will add a static covariate weight which is a random value
- between 1 and 10.
- For Phi, we also add a time-varying covariate Flood which is the same for
- all dippers but varies by time with a 0 value for times 1,4,5,6 and a value
- of 1 for times 2 and 3.
+ For 
+\begin_inset Formula $\phi$
+\end_inset
+
+, we will add a static covariate weight which is a random value between
+ 1 and 10.
+ For 
+\begin_inset Formula $\phi$
+\end_inset
+
+, we also add a time-varying covariate Flood which is the same for all dippers
+ but varies by time with a 0 value for times 1,4,5,6 and a value of 1 for
+ times 2 and 3.
  For p, we will add a time-varying individual covariate td (trap dependence)
  which is the 0/1 value of the capture from the previous occasion.
  Static covariates are entered in the dataframe in a single column and time-vary
 ing covariates have a column and name for each occasion with the appropriate
  time appended at the end of each name.
  In this case, Flood will be Flood1,...,Flood6 and for td it will be td2,...,td7
- because time for Phi is based on the time at the beginning of the interval
- and for p it is the time for the capture occasion.
+ because time for 
+\begin_inset Formula $\phi$
+\end_inset
+
+  is based on the time at the beginning of the interval and for p it is
+ the time for the capture occasion.
  Below the names of the covariates in the dataframe are shown after they
  are created:
 \end_layout
@@ -3134,16 +3163,46 @@ Next we process the data with the default CJS model and make the design
  of each parameter but the argument static can be used to limit the variables
  appended and the time-varying argument is needed to identify which covariates
  vary by time and should be collapsed into a single column.
- If we did not include the static argument for Phi, then weight and each
- of the td columns would also be included and for p, weight and each of
- the Flood columns would be included.
- If td was added to the time-varying argument for Phi and Flood was added
- for p, then we would have also needed to add td1 and Flood7 due to the
- different time labels for Phi and p.
+ If we did not include the static argument for 
+\begin_inset Formula $\phi$
+\end_inset
+
+, then weight and each of the td columns would also be included and for
+ 
+\shape italic
+p
+\shape default
+, weight and each of the Flood columns would be included.
+ If td was added to the time-varying argument for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and Flood was added for 
+\shape italic
+p
+\shape default
+, then we would have also needed to add td1 and Flood7 due to the different
+ time labels for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\shape italic
+p
+\shape default
+.
  We have no intention to use those variables so it is best to specify what
  is needed.
- After specifying the design lists for Phi and p, they are used in the call
- to make.design.data and the resulting dataframe names are shown below:
+ After specifying the design lists for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\shape italic
+p
+\shape default
+, they are used in the call to make.design.data and the resulting dataframe
+ names are shown below:
 \end_layout
 
 \begin_layout Standard
@@ -3216,7 +3275,15 @@ names(ddl$p)
 \end_layout
 
 \begin_layout Standard
-Next we define the models for Phi and p that we want to fit and call crm.
+Next we define the models for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\shape italic
+p
+\shape default
+ that we want to fit and call crm.
 \end_layout
 
 \begin_layout Standard
@@ -3334,11 +3401,17 @@ n")+facet_grid(Flood~.)
 
 \end_inset
 
-probitCJS example.
+
 \end_layout
 
-\begin_layout Section*
-Validation and timing
+\begin_layout Standard
+Fitting an MCMC CJS model (probitCJS) to the dipper data is quite similar
+ to the MLE models with the added arguments burnin and iter to control the
+ number of burnin iterations and the number of iterations to perform after
+ the burnin process.
+ The following fits Phi(~Flood)p(~sex+time) with a fairly minimal numbers
+ for burnin and iter.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -3347,11 +3420,448 @@ status open
 
 \begin_layout Plain Layout
 
-<<cache=TRUE,echo=FALSE>>=
+<<comment="",prompt=TRUE,tidy=FALSE,eval=FALSE>>=
 \end_layout
 
 \begin_layout Plain Layout
 
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add Flood covariate
+\end_layout
+
+\begin_layout Plain Layout
+
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(Flood)=paste("Flood",1:6,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,Flood)
+\end_layout
+
+\begin_layout Plain Layout
+
+design.parameters=list(Phi=list(time.varying="Flood"))
+\end_layout
+
+\begin_layout Plain Layout
+
+model.parameters=list(Phi=list(formula=~Flood),
+\end_layout
+
+\begin_layout Plain Layout
+
+                     p=list(formula=~time+sex))
+\end_layout
+
+\begin_layout Plain Layout
+
+MCMCfit=crm(dipper,model="probitCJS",
+\end_layout
+
+\begin_layout Plain Layout
+
+            model.parameters=model.parameters,
+\end_layout
+
+\begin_layout Plain Layout
+
+            design.parameters=design.parameters,
+\end_layout
+
+\begin_layout Plain Layout
+
+            burnin=1000,iter=50000) 
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,cache=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+# Add Flood covariate
+\end_layout
+
+\begin_layout Plain Layout
+
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(Flood)=paste("Flood",1:6,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,Flood)
+\end_layout
+
+\begin_layout Plain Layout
+
+design.parameters=list(Phi=list(time.varying="Flood"))
+\end_layout
+
+\begin_layout Plain Layout
+
+model.parameters=list(Phi=list(formula=~Flood),
+\end_layout
+
+\begin_layout Plain Layout
+
+                     p=list(formula=~time+sex))
+\end_layout
+
+\begin_layout Plain Layout
+
+MCMCfit=crm(dipper,model="probitCJS",
+\end_layout
+
+\begin_layout Plain Layout
+
+            model.parameters=model.parameters,
+\end_layout
+
+\begin_layout Plain Layout
+
+            design.parameters=design.parameters,
+\end_layout
+
+\begin_layout Plain Layout
+
+            burnin=1000,iter=50000) 
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The results shown are the mode,mean,standard deviation, and 95% highest
+ posterior density interval for the beta parameters and unique 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 
+\shape italic
+p
+\shape default
+ real values.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# beta estimates
+\end_layout
+
+\begin_layout Plain Layout
+
+MCMCfit
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# real estimates
+\end_layout
+
+\begin_layout Plain Layout
+
+MCMCfit$results$reals
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Validation and timing
+\end_layout
+
+\begin_layout Standard
+For a comparison of execution times and to validate the results against
+ RMark/MARK, we replicated the dipper data twenty-fold so there were roughly
+ 6,000 records, added a random weight field rounded to values 1 to 10, added
+ individual time-varying covariates td and age as shown in the following
+ code:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=dipper[rep(1:nrow(dipper),each=20),]
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$weight=round(runif(nrow(dipper),0,10),0)
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper$region=factor(floor(runif(nrow(dipper),1,10.99)))
+\end_layout
+
+\begin_layout Plain Layout
+
+td=splitCH(dipper$ch)
+\end_layout
+
+\begin_layout Plain Layout
+
+td=td[,1:6]
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(td)=paste("td",2:7,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,td)
+\end_layout
+
+\begin_layout Plain Layout
+
+age=t(apply(process.ch(dipper$ch,all=TRUE)$Fplus,1,cumsum))
+\end_layout
+
+\begin_layout Plain Layout
+
+colnames(age)=paste("age",1:7,sep="")
+\end_layout
+
+\begin_layout Plain Layout
+
+dipper=cbind(dipper,age)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+We defined the following set of 8 models for 
+\begin_inset Formula $\phi$
+\end_inset
+
+ and 7 models for 
+\shape italic
+p 
+\shape default
+and fitted all 56 models with the marked and RMark packages.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<eval=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.2=list(formula=~weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.3=list(formula=~time+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.4=list(formula=~sex+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.5=list(formula=~sex+weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.6=list(formula=~region+weight+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.7=list(formula=~region+time+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+Phi.8=list(formula=~region+sex+weight)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.2=list(formula=~time)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.3=list(formula=~sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.4=list(formula=~td)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.5=list(formula=~td+sex)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.6=list(formula=~td+sex+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+p.7=list(formula=~region+sex+age)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+run=FALSE
+\end_layout
+
+\begin_layout Plain Layout
+
+if(run)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
 \end_layout
 
 \begin_layout Plain Layout
@@ -3773,7 +4283,44 @@ for(i in 1:nrow(crmodel.list))
 
 \begin_layout Plain Layout
 
-	initial=rerun.mark.list[[model]]$results$beta$estimate
+	est=rerun.mark.list[[model]]$results$beta$estimate
+\end_layout
+
+\begin_layout Plain Layout
+
+	Phiest=est[grep("Phi:",rownames(rerun.mark.list[[model]]$results$beta))]
+\end_layout
+
+\begin_layout Plain Layout
+
+	names(Phiest)=rownames(rerun.mark.list[[model]]$results$beta)[grep("Phi:",rowname
+s(rerun.mark.list[[model]]$results$beta))]
+\end_layout
+
+\begin_layout Plain Layout
+
+    names(Phiest)=sapply(strsplit(names(Phiest),":"),function(x)x[2])
+\end_layout
+
+\begin_layout Plain Layout
+
+	pest=est[grep("p:",rownames(rerun.mark.list[[model]]$results$beta))]
+\end_layout
+
+\begin_layout Plain Layout
+
+	names(pest)=rownames(rerun.mark.list[[model]]$results$beta)[grep("p:",rownames(re
+run.mark.list[[model]]$results$beta))]
+\end_layout
+
+\begin_layout Plain Layout
+
+    names(pest)=sapply(strsplit(names(pest),":"),function(x)x[2])
+\end_layout
+
+\begin_layout Plain Layout
+
+    initial=list(Phi=Phiest,p=pest)
 \end_layout
 
 \begin_layout Plain Layout
@@ -3790,7 +4337,21 @@ rs=list(Phi=",crmodel.list[i,"Phi"],",p=",crmodel.list[i,"p"],"),initial=initial
 
 \begin_layout Plain Layout
 
-compare3=mark.table-model.table(rerun.crm.list)[,2:6]
+compare3=model.table(rerun.crm.list)[,2:6]-mark.table
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+load("C:/Users/JLaake/git/marked/manuscript/simulation/.Rdata")
 \end_layout
 
 \begin_layout Plain Layout
@@ -3807,42 +4368,166 @@ compare3=mark.table-model.table(rerun.crm.list)[,2:6]
 
 \end_layout
 
+\begin_layout Standard
+\noindent
+The models were fitted with marked in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{round((as.numeric(t1)[3]+as.numeric(t2)[3])/60,2)}
+\end_layout
+
+\end_inset
+
+ minutes and with RMark/MARK in 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{round((as.numeric(t3)[3]+as.numeric(t4)[3])/60,2)}
+\end_layout
+
+\end_inset
+
+ minutes.
+ MARK was using 7 CPUs for those timings and marked was using 1 CPU.
+ The time difference was larger prior to the recent implementation of parallel
+ processing in MARK.
+ As more group structure and time-varying individual covariates are added
+ the time difference increases substantially.
+ As a comparison of convergence performance, we subtracted the -log-likelihood
+ value of the RMark model fit from the equivalent value from marked.
+ A negative value implies a better fit (convergence) for the marked package
+ and vice-versa for a positive value.
+ With the initial runs of each package using their default starting values
+ there were 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{nrow(compare[abs(compare[,5])> 0.01,])}
+\end_layout
+
+\end_inset
+
+ models with a difference exceeding 0.01.
+ The range of -loglikelihood differences was from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{min(compare[,5])}
+\end_layout
+
+\end_inset
+
+ to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{max(compare[,5])}
+\end_layout
+
+\end_inset
+
+.
+ All of the models that differed had little model weight and either had
+ confounded parameters (e.g., Phi(time)p(time)) or had large negative or positive
+ parameters as the real parameters approached boundaries of 0 or 1.
+ With the exception of the 1 model in MARK most converged to similar values
+ in the initial run.
+ We re-ran the set of MARK models using starting values from the models
+ fit with marked, and then ran the marked models with starting values from
+ the models re-fitted with MARK.
+ After re-running models the differences in -log-likelihood values ranged
+ from 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(min(compare3[,5]),format="E",digits=4)}
+\end_layout
+
+\end_inset
+
+ to 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+Sexpr{formatC(max(compare3[,5]),format="E",digits=4)}
+\end_layout
+
+\end_inset
+
+ showing that the likelihood for both packages are the same and the initial
+ differences resulted from differences in starting values and tolerance
+ criterion.
+\end_layout
+
 \begin_layout Section*
 Summary
 \end_layout
 
 \begin_layout Standard
-Who should use marked?
+At present, marked will only be useful to analysts with large data sets
+ that contain many time-varying covariates or those interested in using
+ Bayesian MCMC methods to fit capture-recpture models.
+ Beyond faster run times for some analyses, the marked package has a few
+ advantages over MARK including:
+\end_layout
+
+\begin_layout Enumerate
+Individual-specfic time intervals between occasions except for MCMC methods
+ which must have equal time time intervals.
+\end_layout
+
+\begin_layout Enumerate
+Ability to control when hessian is calculated.
+\end_layout
+
+\begin_layout Enumerate
+Automatic parameter initialization that speeds up convergence (although
+ this could be built into RMark).
+\end_layout
+
+\begin_layout Enumerate
+Easier prediction with individual covariates with the animal-occasion data
+ structure.
 \end_layout
 
 \begin_layout Standard
-No need to run hessian for poor models
-\end_layout
-
-\begin_layout Standard
-Individual varying time intervals - marking occurs throughout the year but
- re-sighting at one time
-\end_layout
-
-\begin_layout Standard
-Faster run times with individual time varying covariates
-\end_layout
-
-\begin_layout Standard
-Parameter initialization speeds up model fitting
-\end_layout
-
-\begin_layout Standard
-with the added capability of allowing time intervals between occasions to
- vary for different groups of animals (e.g., initial capture and release timing
- varies and occurs between recapture (resighting) occasions).
- The latter are not easily accomplished in MARK.
- Also, we wanted
-\end_layout
-
-\begin_layout Standard
-Dis: Code infrastructure not as complete as with MARK - median chat; parameter
- counting; fixed link functions logit/mlogit
+However, it is nowhere as complete as the MARK software and should not be
+ considered as a replacement for MARK.
+ It is not our goal to compete or replace MARK but to develop an open-source
+ platform to provide new models particularly those based on Bayesian MCMC.
+ We are currently developing a Bayesian MCMC version of the Multi-State
+ CJS model structure and have plans to develop a model that allows simultaneous
+ estimation of survival with tag loss estimation.
+ 
 \end_layout
 
 \begin_layout Standard

@@ -12,7 +12,7 @@ print.marked.version <- function()
 
 .onUnload <- function(libpath)
 {
-  unloadNamespace("marked")
+#  unloadNamespace("marked")
   library.dynam.unload("marked", libpath)
   cat("\nBye-Bye from marked\n\n")
   return(invisible())

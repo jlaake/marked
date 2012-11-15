@@ -40,8 +40,13 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
+#' @param use.admb if TRUE creates data file for admbcjs.tpl and runs admb optimizer
+#' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
+#' @param compile if TRUE forces re-compilation of tpl file
+#' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
+#' @import R2admb
 #' @return The resulting value of the function is a list with the class of
 #' crm,cjs such that the generic functions print and coef can be used.
 #' \item{beta}{named vector of parameter estimates} \item{lnl}{-2*log
@@ -55,15 +60,17 @@
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
-cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NULL,initial=NULL,method,
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale, ...)
+cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
+			use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",...)
 {
+   if(re)accumulate=FALSE
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use default of 1 if none are in Phi.dmdf
    time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
    if(!is.null(ddl$Phi$time.interval))
-	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
+	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 #  If no fixed real parameters are specified, assign dummy unused ones with negative indices and 0 value
    if(is.null(parameters$Phi$fixed))
 	   parameters$Phi$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
@@ -100,48 +107,169 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,Phi=NULL,p=NUL
 #   p.links=create.links(p.dm)
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
+   if(use.admb)scale=1
    scale=set.scale(names(dml),model_data,scale)
    model_data=scale.dm(model_data,scale)
-   par=scale.par(par,scale)
-#  Call optimx to find mles with cjs.lnl which gives -log-likelihood
-   cat("Starting optimization for ",length(par)," parameters\n")
-   flush.console()
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-   if("SANN"%in%method)
+   if(re)use.admb=TRUE
+   if(!use.admb)
    {
-	   mod=optim(par,cjs.lnl,model_data=model_data,method="SANN",hessian=FALSE,
-			   debug=debug,control=control,...)
-	   par= mod$par
-	   convergence=mod$convergence
-	   lnl=mod$value
-	   counts=mod$counts
-   }else
+	   par=scale.par(par,scale)
+	   #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
+	   cat("Starting optimization for ",length(par)," parameters\n")
+	   flush.console()
+	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	   if("SANN"%in%method)
+	   {
+		   mod=optim(par,cjs.lnl,model_data=model_data,method="SANN",hessian=FALSE,
+				   debug=debug,control=control,...)
+		   par= mod$par
+		   convergence=mod$convergence
+		   lnl=mod$value
+		   counts=mod$counts
+	   }else
+	   {
+		   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
+						   debug=debug,control=control,itnmax=itnmax,...))
+		   objfct=unlist(mod$fvalues)
+		   bestmin=which.min(objfct)
+		   par= mod$par[[bestmin]]
+		   convergence=mod$conv[[bestmin]]
+		   counts=mod$itns[[length(mod$itns)]]
+		   lnl=mod$fvalues[[bestmin]]
+	   }
+	   #  Rescale parameter vector 
+	   cjs.beta=unscale.par(par,scale)
+       # Create results list 
+	   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
+			   convergence=convergence,count=counts,optim.details=mod,
+			   scale=scale,model_data=model_data,
+			   options=list(accumulate=accumulate,initial=initial,method=method,
+					   chunk_size=chunk_size,itnmax=itnmax,control=control))
+       # Compute hessian if requested
+	   if(hessian) 
+	   {
+		   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+		   cat("Computing hessian\n")
+		   res$beta.vcv=cjs.hessian(res)
+	   } 
+	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)	   
+   } else
    {
-	   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
-					   debug=debug,control=control,itnmax=itnmax,...))
-	   objfct=unlist(mod$fvalues)
-	   bestmin=which.min(objfct)
-	   par= mod$par[[bestmin]]
-	   convergence=mod$conv[[bestmin]]
-	   counts=mod$itns[[length(mod$itns)]]
-	   lnl=mod$fvalues[[bestmin]]
+       # see if admb can be found; this is not a complete test but should catch the novice user who has
+	   # not setup admb at all
+	   if(Sys.which("tpl2cpp.exe")=="")stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path") 
+       # cleanup any leftover admbcjs files
+	   sdir=system.file(package="marked")
+	   # if admbcjs.tpl is not available copy from the package directory
+	   if(!re)
+	      tpl="admbcjs"
+       else
+	   {
+		   tpl="admbcjsre"
+		   if(!hessian)message("ignoring hessian setting; set to TRUE")
+		   hessian=TRUE
+	   }
+	   clean_admb(tpl)
+	   if(!file.exists(paste(tpl,".tpl",sep="")))
+		   file.copy(file.path(sdir,paste(tpl,".tpl",sep="")),file.path(getwd(),paste(tpl,".tpl",sep="")),overwrite=TRUE)
+	   if(!file.exists(paste(tpl,".exe",sep=""))|compile)
+		   compile_admb(tpl,re=re)
+	   # create admbcjs.dat file to create its contents 
+	   con=file(paste(tpl,".dat",sep=""),open="wt")
+	   # Number of observations
+	   n=length(model_data$imat$freq)
+	   write(n,con,append=FALSE)
+	   # Number of occasions
+	   nocc=model_data$imat$nocc
+	   write(nocc,con,append=TRUE)
+	   # capture history matrix
+	   write(t(model_data$imat$chmat),con,ncolumns=nocc,append=TRUE)
+	   # first occasions seen 
+	   write(model_data$imat$first,con,ncolumns=n,append=TRUE)
+	   # last occasions seen 
+	   write(model_data$imat$last,con,ncolumns=n,append=TRUE)
+	   # frequency of capture history 
+	   if(!re)
+	   {
+	      write(model_data$imat$freq,con,ncolumns=n,append=TRUE)
+	   } else
+	   {
+		   if(any(model_data$imat$freq!=1))stop("\n cannot use random effects with frequency >1")
+	   }
+	   # indicator for loss on capture 
+	   write(model_data$imat$loc,con,ncolumns=n,append=TRUE)
+	   write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
+	   write(ncol(model_data$Phi.dm),con,append=TRUE)
+	   write(t(model_data$Phi.dm),con,ncolumns=ncol(model_data$Phi.dm),append=TRUE)
+	   write(ncol(model_data$p.dm),con,append=TRUE)
+	   write(t(model_data$p.dm),con,ncolumns=ncol(model_data$p.dm),append=TRUE)
+	   if(model_data$Phi.fixed[1,1]== -1)
+	   {
+		   write(0,con,append=TRUE)
+	   }else
+	   {
+		   index=(nocc-1)*(model_data$Phi.fixed[,1]-1)+model_data$Phi.fixed[,2]
+		   write(nrow(model_data$Phi.fixed),con,append=TRUE)
+		   write(rbind(index,model_data$Phi.fixed[,3]),con,ncolumns=2,append=TRUE)
+	   }  
+	   if(model_data$p.fixed[1,1]== -1)
+	   {
+		   write(0,con,append=TRUE)
+	   }else
+	   {
+		   index=(nocc-1)*(model_data$p.fixed[,1]-1)+model_data$p.fixed[,2]
+		   write(nrow(model_data$p.fixed),con,append=TRUE)
+		   write(rbind(index,model_data$p.fixed[,3]),con,ncolumns=2,append=TRUE)
+	   }  
+	   close(con)
+	   con=file(paste(tpl,".pin",sep=""),open="wt")
+	   write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
+	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
+	   if(re) 
+	   {
+		   write(c(0,0),con,ncolumns=1,append=TRUE)
+		   write(rep(0,n),con,ncolumns=n,append=TRUE)
+		   write(rep(0,n),con,ncolumns=n,append=TRUE)
+	   }
+	   close(con)   
+	   if(hessian)
+	       xx=run_admb(tpl,extra.args=extra.args)
+	   else
+		   xx=run_admb(tpl,extra.args=paste(extra.args,"-nohess"))
+	   convergence=attr(xx,"status")
+	   if(is.null(convergence))convergence=0
+	   res=read_admb(tpl)
+	   cjs.beta.fixed=unscale.par(res$coefficients[1:(ncol(model_data$Phi.dm)+ncol(model_data$p.dm))],scale)
+	   if(re)
+	   {
+		   cjs.beta.random=unscale.par(res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))],scale)
+		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
+	   }
+	   else 
+		   cjs.beta.random=NULL
+	   cjs.beta=c(cjs.beta.fixed,cjs.beta.random)
+	   beta=list(cjs.beta)
+	   if(!is.null(res$hes))
+	   {
+		   beta.vcv=solvecov(res$hes)$inv
+		   rownames(res$hes)=names(unlist(cjs.beta))
+		   colnames(res$hes)=rownames(res$hes)
+		   if(all(diag(beta.vcv>0))) 
+		      res$cor=beta.vcv/outer(sqrt(diag(beta.vcv)),sqrt(diag(beta.vcv)))
+	   }
+	   else
+		   beta.vcv=res$vcov
+	   rownames(beta.vcv)=names(unlist(cjs.beta))
+	   colnames(beta.vcv)=rownames(beta.vcv)
+	   if(!re)
+	   {
+		   rownames(res$cor)=rownames(beta.vcv)
+		   colnames(res$cor)=rownames(beta.vcv)
+	   }
+	   res$vcov=NULL
+	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,res)
+	   res$beta.vcv=beta.vcv
    }
-#  Rescale parameter vector 
-   cjs.beta=unscale.par(par,scale)
-#  Create results list 
-   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-		    convergence=convergence,count=counts,optim.details=mod,
-			scale=scale,model_data=model_data,
-			options=list(accumulate=accumulate,initial=initial,method=method,
-            chunk_size=chunk_size,itnmax=itnmax,control=control))
-#  Compute hessian if requested
-   if(hessian) 
-   {
-     assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-     cat("Computing hessian\n")
-     res$beta.vcv=cjs.hessian(res)
-   } 
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 #  Restore non-accumulated, non-scaled dm's etc
    res$model_data=model_data.save
 #  Assign S3 class values and return

@@ -1,18 +1,19 @@
-\name{compute.real}
-\alias{compute.real}
+\name{predict.crm}
+\alias{predict.crm}
 \title{Compute estimates of real parameters}
 \usage{
-  compute.real(model, parameter, ddl = NULL, unique = TRUE,
-    vcv = FALSE, se = FALSE, chat = 1, subset, select,
-    showDesign = FALSE)
+  \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select,...)
 }
 \arguments{
-  \item{model}{model object}
+  \item{object}{model object}
+
+  \item{newdata}{a dataframe for crm}
+
+  \item{ddl}{list of dataframes for design data; created by
+  call to}
 
   \item{parameter}{name of real parameter to be computed
   (eg "Phi" or "p")}
-
-  \item{ddl}{list of design data}
 
   \item{unique}{TRUE if only unique values should be
   returned}
@@ -31,8 +32,7 @@
   \item{select}{character vector of field names in real
   that you want to include}
 
-  \item{showDesign}{if TRUE, show design matrix instead of
-  data}
+  \item{...}{generic arguments not used here}
 }
 \value{
   A data frame (\code{real}) is returned if
@@ -52,7 +52,10 @@ data(dipper)
 dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 dipper.ddl=make.design.data(dipper.proc)
 mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
-xx=compute.real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
+xx=predict(mod.Phisex.pdot)
+xx
+xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
+xx
 }
 \author{
   Jeff Laake

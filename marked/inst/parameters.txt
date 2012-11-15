@@ -1,0 +1,12 @@
+model	parname	begin	num	default	type	pim.type	link	formula	share	pair	mix	rows	secondary	bystratum	tostrata	sub.stratum	leave.unused	socc
+CJS	Phi	0	-1	1	Triang	all	logit	~1										
+CJS	p	1	-1	0	Triang	all	logit	~1										
+JS	Phi	0	-1	1	Square	all	logit	~1										
+JS	p	0	0	0	Square	all	logit	~1										
+JS	pent	1	-1	0	Square	all	mlogit	~1										
+JS	N	0	1		Square	all	log	~1									TRUE	
+probitCJS	Phi	0	-1	1	Triang	all	probit	~1										
+probitCJS	p	1	-1	0	Triang	all	probit	~1										
+probitMsCJS	Phi	0	-1	1	Triang	all	probit	~1										
+probitMsCJS	p	1	-1	0	Triang	all	probit	~1										
+probitMsCJS	Psi	1	-1	0	Triang	all	mlogit	~1										

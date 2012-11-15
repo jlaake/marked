@@ -64,7 +64,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  so that the initial time interval can vary by animal
    time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
    if(!is.null(ddl$Phi$time.interval))
-	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=T)
+	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 # Compute nobstot - total unique critters
    if(nrow(dml$N)==1) 
       nobstot=sum(x$data$freq)    

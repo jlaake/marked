@@ -4,9 +4,14 @@
 #' and draws a sample from the posterior distribution using a Gibbs sampler.
 #' 
 #' 
-#' @param data A list of design data from make.design.data for model="probitCJS"
+#' @param ddl list of dataframes for design data; created by call to
+#' \code{\link{make.design.data}}
+#' @param dml list of design matrices created by \code{\link{create.dm}} from
+#' formula and design data
 #' @param parameters A model specification list with a list for Phi and p containing a formula and optionally a prior specification which is a named list
 #'        containing 'mu', the prior mean and 'tau' the scale for the conjugate prior precision matrix X'X. 
+#' @param design.parameters Specification of any grouping variables for design
+#' data for each parameter
 #' @param burnin number of iteration to initially discard for MCMC burnin
 #' @param iter number of iteration to run the Gibbs sampler for following burnin
 #' @param initial A named list (Phi,p). If null and imat is not null, uses cjs.initial to create initial values; otherwise assigns 0
@@ -23,7 +28,7 @@
 #' # Analysis of the dipper data
 #' data(dipper)
 #' # following example uses unrealistically low values for burnin and iteration to reduce package testing time
-#' fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),p=list(formula=~time+sex)), burnin=50, iter=250)
+#' fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),p=list(formula=~time+sex)), burnin=100, iter=1000)
 #' fit1
 #' # Real parameter summary
 #' fit1$results$reals

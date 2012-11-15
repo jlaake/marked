@@ -9,7 +9,7 @@
     method = "BFGS", hessian = FALSE, accumulate = TRUE,
     chunk_size = 1e+07, control = NULL, refit = 1,
     itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
-    iter = 1000, ...)
+    iter = 1000, use.admb = FALSE, compile = FALSE, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -75,6 +75,11 @@
 
   \item{iter}{number of iterations after burnin for mcmc
   (not realistic default)}
+
+  \item{use.admb}{if TRUE creates data file for cjs.tpl and
+  runs admb optimizer}
+
+  \item{compile}{if TRUE forces re-compilation of tpl file}
 
   \item{...}{optional arguments passed to js or cjs and
   optimx}

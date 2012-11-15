@@ -1,11 +1,12 @@
 \name{create.dm}
 \alias{create.dm}
+\alias{create.dml}
 \title{Creates a design matrix for a parameter}
 \usage{
   create.dm(x, formula, time.bins=NULL, cohort.bins=NULL,
     age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 
-  create.dml(ddl,model.parameters,design.parameters,chunk_size=1e7)
+  create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
 }
 \arguments{
   \item{x}{design dataframe created by
@@ -34,6 +35,9 @@
 
   \item{model.parameters}{List of model parameter
   specifications}
+
+  \item{restrict}{if TRUE, only use design data with Time
+  >= Cohort}
 }
 \value{
   A design matrix constructed with the design dataframe and

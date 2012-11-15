@@ -1,4 +1,5 @@
 \name{resight.matrix}
+\alias{mcmc_mode}
 \alias{naive.survival}
 \alias{resight.matrix}
 \title{Various utility functions}

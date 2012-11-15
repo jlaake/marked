@@ -25,7 +25,7 @@
   4      CONTINUE
        ENDIF
  	   DO 100 I=1,N
-	     IF(INT(FRST(I)).LT.M) THEN
+	     IF(INT(FRST(I)).LT.INT(M)) THEN
 	        PHICUMPROD(INT(FRST(I)))=1D0
 	        DO 10 J=INT(FRST(I))+1,INT(M)
 		    	IF(TINT(I,J-1).NE.1D0)PHI(I,J-1)=PHI(I,J-1)**TINT(I,J-1)

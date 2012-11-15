@@ -67,8 +67,10 @@
 #' age,time,cohort,Age,Time,Cohort,Y,Z
 #' 
 #' @aliases process.data accumulate_data
-#' @usage 	process.data(data,begin.time=1,model="cjs",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-#'               initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
+#' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
+#'                        initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
+#' 
+#'          accumulate_data(data)
 #' 
 #' @param data A data frame with at least one field named \code{ch} which is
 #' the capture (encounter) history stored as a character string. \code{data}
@@ -195,7 +197,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 # if null
 # 
 if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
-if(model%in%c("probitCJS","probitMsCJS")) accumulate=F
+if(model%in%c("probitCJS","probitMsCJS")) accumulate=FALSE
 if(accumulate)
 	data=accumulate_data(data)
 else
@@ -420,7 +422,7 @@ add.dummy.data=function(data,nocc,group.covariates)
 		if(number.of.groups==1)
 		{
 			data=subset(data,select=c("ch","freq",numvar,names(group.covariates)))
-			dummy.data=cbind(data.frame(ch=ch,freq=rep(0,length(ch))),matrix(t(xx),byrow=T,ncol=length(numvar),nrow=length(ch)))
+			dummy.data=cbind(data.frame(ch=ch,freq=rep(0,length(ch))),matrix(t(xx),byrow=TRUE,ncol=length(numvar),nrow=length(ch)))
 			names(dummy.data)=c("ch","freq",numvar)             
 		}else
 		{

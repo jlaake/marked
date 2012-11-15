@@ -3,9 +3,10 @@
 #' Creates a design matrix using the design dataframe, a formula and any
 #' intervals defined for time, cohort and age.
 #' 
+#' @aliases create.dm create.dml
 #' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 #'        
-#'        create.dml(ddl,model.parameters,design.parameters,chunk_size=1e7)
+#'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format
@@ -21,6 +22,7 @@
 #' @param design.parameters Specification of any grouping variables for design
 #' data for each parameter
 #' @param model.parameters List of model parameter specifications 
+#' @param restrict if TRUE, only use design data with Time >= Cohort
 #' @return A design matrix constructed with the design dataframe and the
 #' formula.  It contains a row for each animal-occasion and a column for each
 #' beta parameter in the model. It excludes any columns that are all 0.

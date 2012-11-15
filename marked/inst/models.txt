@@ -1,0 +1,5 @@
+model	etype	robust	closed	occupancy	derived	default.mixtures	num	divisor	strata
+CJS	Live	FALSE	FALSE	FALSE	FALSE	1	-1	1	FALSE
+JS	JS	FALSE	FALSE	FALSE	FALSE	1	-1	1	FALSE
+probitCJS	probitCJS	FALSE	FALSE	FALSE	FALSE	1	-1	1	FALSE
+probitMsCJS	probitMsCJS	FALSE	FALSE	FALSE	FALSE	1	-1	1	TRUE

@@ -139,6 +139,10 @@
 #' @param run if TRUE, it runs model; otherwise if FALSE can be used to test model build components 
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
+#' @param use.admb if TRUE creates data file for cjs.tpl and runs admb optimizer
+#' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
+#' @param compile if TRUE forces re-compilation of tpl file
+#' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
@@ -178,7 +182,7 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,...)
+ control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",...)
 {
 if(model%in%c("cjs","js"))model=toupper(model)
 ptm=proc.time()
@@ -243,7 +247,7 @@ if("SANN"%in%method)
 if("nlminb"%in%method)control$eval.max=itnmax
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,...)
 else
     if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
@@ -259,18 +263,20 @@ else
 	}
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
-#
-if(!is.null(runmodel$convergence) && runmodel$convergence!=0)
+if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 {
 	warning("******Model did not converge******")
-    msg=attr(runmodel$optim.details,"details")[[1]]$message
+	msg=attr(runmodel$optim.details,"details")[[1]]$message
 	if(is.null(msg)) msg="Exceeded maximum number of iterations"
-    warning(msg)
+	warning(msg)
 }
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
+if(!re)
 for(parx in names(parameters))
-  object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)
+{
+	object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)
+}
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }
@@ -300,5 +306,6 @@ solvecov=function (m, cmax = 1e+10)
 	}
 	options(show.error.messages = TRUE)
 	out <- list(inv = covinv, coll = coll)
+	out
 }
 
