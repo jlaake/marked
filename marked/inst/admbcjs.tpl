@@ -59,7 +59,10 @@ PROCEDURE_SECTION
         for(j=lst(i);j<=((1-loc(i))*m+loc(i)*lst(i));j++)  // loop over last occasion to m unless loss on capture
         {                                                  //  to compute prob of the capture history 
            i2=i1+j;                                        // index occasion
-           pch=pch+cump(j)*phicumprod(j)*(1-phi(j));       // probability of history given possible last occasion alive
+           if(loc(i)==1)
+              pch=pch+cump(j)*phicumprod(j);               // probability of history for loss on captures
+           else
+              pch=pch+cump(j)*phicumprod(j)*(1-phi(j));    // probability of history given possible last occasion alive
         }   
         if(pch < 1E-15 & frq(i)> 0) pch=1E-307;            // avoid log(0)
         f-=frq(i)*log(pch);                                // sum -log-likelihood frequency*log(pr(ch))

@@ -1,7 +1,7 @@
        SUBROUTINE CJS(CH,PHI,P,FRST,LST,FRQ,LOC,PHIF,PF,TINT,N,M,K,L,
      $                     LNL,P0)
        IMPLICIT DOUBLE PRECISION (A-H,O-Z)
-       INTEGER LOC(N), IFRST, ILST
+       INTEGER LOC(N), IFRST, ILST, KI
        DOUBLE PRECISION CH(N,M),PHI(N,M-1),P(N,M-1),FRST(N)
        DOUBLE PRECISION LNL, LST(N),PCH(N),P0(N)
        DOUBLE PRECISION PHICUMPROD(M), CUMP(M)
@@ -47,8 +47,9 @@
             PCH(I)=1D0
          ELSE
             PCH(I)=0
-	        DO 30 J=INT(LST(I)),M
-	          IF(J.EQ.M)THEN
+            KI=INT((1-LOC(I))*M+LOC(I)*LST(I))
+	        DO 30 J=INT(LST(I)),KI
+	          IF(LOC(I).EQ.1)THEN
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)
 	          ELSE
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)*(1-PHI(I,J))
