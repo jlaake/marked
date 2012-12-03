@@ -9,7 +9,8 @@
     method = "BFGS", hessian = FALSE, accumulate = TRUE,
     chunk_size = 1e+07, control = NULL, refit = 1,
     itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
-    iter = 1000, use.admb = FALSE, compile = FALSE, ...)
+    iter = 1000, use.admb = FALSE, re = FALSE,
+    compile = FALSE, extra.args = "", ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -79,7 +80,13 @@
   \item{use.admb}{if TRUE creates data file for cjs.tpl and
   runs admb optimizer}
 
+  \item{re}{if TRUE creates random effect model
+  admbcjsre.tpl and runs admb optimizer}
+
   \item{compile}{if TRUE forces re-compilation of tpl file}
+
+  \item{extra.args}{optional character string that is
+  passed to admb if use.admb==TRUE}
 
   \item{...}{optional arguments passed to js or cjs and
   optimx}

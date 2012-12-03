@@ -227,7 +227,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
 	   if(re) 
 	   {
-		   write(c(0,0),con,ncolumns=1,append=TRUE)
+		   write(c(0.1,0.1),con,ncolumns=1,append=TRUE)
 		   write(rep(0,n),con,ncolumns=n,append=TRUE)
 		   write(rep(0,n),con,ncolumns=n,append=TRUE)
 	   }
@@ -242,7 +242,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   cjs.beta.fixed=unscale.par(res$coefficients[1:(ncol(model_data$Phi.dm)+ncol(model_data$p.dm))],scale)
 	   if(re)
 	   {
-		   cjs.beta.random=unscale.par(res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))],scale)
+		   cjs.beta.random=res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))]
 		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
 	   }
 	   else 

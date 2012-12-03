@@ -14,7 +14,8 @@ Depends:
     truncnorm,
     Matrix,
     Rcpp (>= 0.9.13),
-Imports: R2admb
+Imports:
+    R2admb
 LinkingTo: Rcpp
 Suggests:
     RMark
