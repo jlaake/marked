@@ -174,10 +174,7 @@
 #' occasion specific.  Had the covariate been used for \code{p} then they would
 #' be named \code{cov2,cov3,cov4} because the covariate is for those occasions
 #' for \code{p} whereas for \code{Phi} the covariate is labelled with the
-#' occasion that begins the interval.  Note that unlike usage with \code{mark
-#' in RMark} the covariate labelling does not change based on the value of
-#' \code{time} which changes with the value of the argument \code{begin.time}.
-#' Any number of fields can be specified in \code{fields} and
+#' occasion that begins the interval.  Any number of fields can be specified in \code{fields} and
 #' \code{time.varying} that are specified in \code{x}.
 #' 
 #' The input dataframe \code{x} has a few minor requirements on its structure.

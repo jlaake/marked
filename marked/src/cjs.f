@@ -49,7 +49,7 @@
             PCH(I)=0
             KI=INT((1-LOC(I))*M+LOC(I)*LST(I))
 	        DO 30 J=INT(LST(I)),KI
-	          IF(LOC(I).EQ.1)THEN
+	          IF(LOC(I).EQ.1.OR.J.EQ.M)THEN
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)
 	          ELSE
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)*(1-PHI(I,J))

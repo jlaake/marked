@@ -24,7 +24,7 @@
 #' @export
 #' @author Devin Johnson
 #' @examples
-#'
+#' \donttest{
 #' # Analysis of the dipper data
 #' data(dipper)
 #' # following example uses unrealistically low values for burnin and iteration to reduce package testing time
@@ -32,6 +32,7 @@
 #' fit1
 #' # Real parameter summary
 #' fit1$results$reals
+#' }
 probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial=NULL, imat=NULL){
   
   ### DEFINE SOME FUNCTIONS ###

@@ -52,6 +52,7 @@
   sampler.
 }
 \examples{
+\donttest{
 # Analysis of the dipper data
 data(dipper)
 # following example uses unrealistically low values for burnin and iteration to reduce package testing time
@@ -59,6 +60,7 @@ fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~tim
 fit1
 # Real parameter summary
 fit1$results$reals
+}
 }
 \author{
   Devin Johnson

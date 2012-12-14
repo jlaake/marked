@@ -22,6 +22,7 @@ int sampleDU(NumericVector ppp){
   				return(out);
 			}
 		}
+		return(out);
 	}
 }
 
@@ -52,8 +53,8 @@ RcppExport SEXP makeZCovIdx(SEXP ID, SEXP zvec){
   else out(0) = FALSE;
   out(n-1) = FALSE;
 	for(int i=1; i<n-1; i++){
-    if(id(i) != id(i-1) & id(i)==id(i+1)) out(i) = TRUE;
-    else if(z(i) == 1 & id(i)==id(i+1)) out(i) = TRUE;
+    if((id(i) != id(i-1)) & (id(i)==id(i+1))) out(i) = TRUE;
+    else if((z(i) == 1) & (id(i)==id(i+1))) out(i) = TRUE;
     else out(i) = FALSE;
 	}
   
