@@ -109,6 +109,5 @@ for(int i=n-2; i>=0; i--)
   }
   out(i) = sampleDU(prob)-1;
 }
-return wrap(out);
-    
+return wrap(out);   
 }

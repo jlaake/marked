@@ -1,8 +1,8 @@
 \name{Phi.mean}
-\alias{Phi.boxplot}
-\alias{Phi.mean}
 \alias{p.boxplot}
 \alias{p.mean}
+\alias{Phi.boxplot}
+\alias{Phi.mean}
 \title{Various utility parameter summary functions}
 \usage{
   Phi.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)

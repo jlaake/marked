@@ -285,8 +285,10 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    res=do.call("rbind",dm.df)
    if(is.null(fields))
       res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),!names(x$data)%in%c("ch"),drop=FALSE])                             
-   else
-      res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),names(x$data)%in%fields,drop=FALSE])  
+   else{
+	   if(x$model=="probitCJS") fields=c(fields,"id")
+       res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),names(x$data)%in%fields,drop=FALSE])
+   }
    if("group"%in%names(res))
 	   levels(res$group)=apply(x$group.covariates,1,paste,collapse="")
    if(!is.null(tcv))  

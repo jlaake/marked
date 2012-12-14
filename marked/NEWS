@@ -1,3 +1,19 @@
+marked 1.0.7 14 Dec 2012)
+------------
+
+NEW FEATURES
+
+* added use of admb and random effects for CJS. Controlled through arguments use.admb=TRUE and re=TRUE respectively. Doesn't currently work with predict.
+
+BUG FIXES
+
+* fixed problem in create.dmdf which was removing id field if fields (static) specified
+
+* made change to cjs.f which was incorrectly fixed for loss on capture
+
+* made changes to bayesCR.cpp to remove compilation warnings
+
+
 marked 1.0.6 (5 Oct 2012)
 ------------
 CHANGES

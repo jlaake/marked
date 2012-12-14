@@ -254,7 +254,7 @@ else
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 	else {
 	   if(is.null(initial)){
-		   imat=process.ch(data$ch,data$freq,all=FALSE)
+		   imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
 		   runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 				               imat=imat,iter=iter,burnin=burnin)
 	   }else
