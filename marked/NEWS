@@ -1,3 +1,11 @@
+marked 1.0.8 8 Jan 2013
+------------
+
+NEW FEATURES
+
+* added multi-state model with fixed effects using admb. This is done with new function mscjs and multistate.tpl. It required changes to create.dm,create.dmdf, crm, process.ch and process.data. It is functional but currently only returns admb object and will not work with other generic functions at present.
+
+
 marked 1.0.7 14 Dec 2012)
 ------------
 

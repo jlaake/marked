@@ -162,6 +162,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
    ch.values=unique(unlist(strsplit(data$ch,"")))
    if(!model.list$strata)
    {
+	   strata.labels=NULL
+	   nstrata=0
 	   if(any(!ch.values%in%c("0","1",".")))
 		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
    } else
@@ -231,10 +233,12 @@ if(number.of.factors==0)
        data=add.dummy.data(data,nocc=nocc,group.covariates=NULL)     
        number.of.ch=nrow(data)
     }
-    return(list(data=data,model=model,mixtures=mixtures,
+    plist=list(data=data,model=model,mixtures=mixtures,
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
-                   initial.ages=initial.ages[1],group.covariates=NULL))
+                   initial.ages=initial.ages[1],group.covariates=NULL)
+    if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels))
+	return(plist)
 }
 #
 #   If there are one or more in the group factor list then
@@ -356,9 +360,12 @@ else
   if(model=="JS")
      data=add.dummy.data(data,nocc,group.covariates)     
   data$initial.age=init.ages[data$group]
-  return(list(data=data,model=model,mixtures=mixtures,freq=freqmat,
+  plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
-                   initial.ages=init.ages,group.covariates=group.covariates))
+                   initial.ages=init.ages,group.covariates=group.covariates)
+  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels))
+  return(plist)
+   
 }
 }
 add.dummy.data=function(data,nocc,group.covariates)

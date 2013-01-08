@@ -48,7 +48,7 @@ process.ch=function(ch,freq=NULL,all=FALSE)
    nch=length(ch)
    if(is.null(freq))freq=rep(1,nch)
    nocc=nchar(ch[1])
-# in case MS data passed, change all non-zero to 1
+# in case MS data passed change all non-zero to 1
    chmat=matrix((unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
    ch=apply(t(apply(splitCH(ch),1,function(x){ 
 							   x[x!="0"]=1 

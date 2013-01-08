@@ -78,7 +78,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
       x$age=facage
    }
 #  Create design matrix from formula and data; do so based on chunks of data to reduce space requirements
-   mm=model.matrix(formula,x[1,,drop=FALSE])
+   mm=model.matrix(formula,x[1:(nrow(x)/10),,drop=FALSE])
    npar=ncol(mm)
    nrows=nrow(x)
    upper=0
@@ -89,8 +89,14 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
    {
       for(i in 1:pieces)
 	  {
+		  
 		  lower=(i-1)*rows_in_piece+1
 		  upper=i*rows_in_piece
+		  if(i==1)
+		  {
+			  mm=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
+			  dm[lower:upper,]=mm
+		  }
 		  dm[lower:upper,]=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
 	  }
    }

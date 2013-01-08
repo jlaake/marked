@@ -43,7 +43,7 @@ PROCEDURE_SECTION
 
 SEPARABLE_FUNCTION void ll_i(const int i, const dvariable& phisigeps,const dvariable& psigeps,const dvariable& phiu,const dvariable& pu,const dvar_vector& phibeta, const dvar_vector& pbeta )
     dvar_vector phi(1,m);              // temp vector for Phis for each occasion for a single history
-    dvar_vector p(1,m-1);              // temp vector for Phis for each occasion for a single history
+    dvar_vector p(1,m-1);              // temp vector for ps for each occasion for a single history
     dvar_vector phicumprod(1,m);       // cummulative survival probability across occasions
     dvar_vector cump(1,m);             // cummulative probability of being seen across occasions
     dvariable pch;                     // probability of capture history

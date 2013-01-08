@@ -227,7 +227,8 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 #  requires field in each record called initial.age; if missing set to 0 for a
 #  time since marked field
    if(is.null(x$data$initial.age)) x$data$initial.age=0
-   nocc=x$nocc 
+   nocc=x$nocc
+   nstrata=length(x$strata.labels)
    time.intervals=x$time.intervals
    begin.time=x$begin.time
 #  from begin.time compute time labels which are parameter dependent; time at
@@ -268,9 +269,28 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
            ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
         ages[ages<min.age]=min.age
 		Y=chmat[.row,begin.num:(ntimes+begin.num-1)]
-        newdm.df=data.frame(time=factor.times,
-                             cohort=rep(factor(cohort,levels=cohort.levels),ntimes),
-							 Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages)
+        if(!is.null(parameter$bystratum)&&parameter$bystratum)
+		{
+			if(!is.null(parameter$tostrata)&&parameter$tostrata)
+				newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
+						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata^2),ntimes),
+						Time=rep(Times,each=nstrata^2),
+						Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
+						age=rep(factor(ages),each=nstrata^2),
+						Age=rep(ages,each=nstrata^2),
+						stratum=rep(rep(1:nstrata,each=nstrata),ntimes),
+						tostrata=rep(rep(1:nstrata,nstrata),ntimes))
+			else	
+				newdm.df=data.frame(time=rep(factor.times,each=nstrata),
+						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
+						Time=rep(Times,each=nstrata),
+						Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
+						age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
+						stratum=rep(1:nstrata,ntimes))
+		}else
+			newdm.df=data.frame(time=factor.times,
+					cohort=rep(factor(cohort,levels=cohort.levels),ntimes),
+					Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages)		
 #       done separately so it won't be turned into factor if character data
         newdm.df$Y=Y				
 		newdm.df
@@ -278,7 +298,8 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    if(begin.num==1)
       min.age=min(x$data$initial.age,na.rm=TRUE )
    else
-      min.age=min(x$data$initial.age+c(time.intervals,max(time.intervals))[firstseen],na.rm=TRUE)   
+      min.age=min(x$data$initial.age+c(time.intervals,max(time.intervals))[firstseen],na.rm=TRUE)  
+#  For each history create design data  
    dm.df=sapply(1:nrow(x$data),fx,simplify=FALSE)  
 #  Bind all the data into a single dataframe and attach time-varying covariates if any.
 #  return dataframe.

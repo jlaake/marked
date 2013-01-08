@@ -252,15 +252,19 @@ else
     if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	else {
-	   if(is.null(initial)){
-		   imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
-		   runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+	else 
+	   if(model=="MSCJS")
+		   runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,...)
+	   else{
+	      if(is.null(initial)){
+		      imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
+		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 				               imat=imat,iter=iter,burnin=burnin)
-	   }else
-		   runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+	      }else
+		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 				               initial=initial,iter=iter,burnin=burnin)
-	}
+	    }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
 if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
@@ -272,7 +276,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 }
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re)
+if(!re & model!="MSCJS")
 for(parx in names(parameters))
 {
 	object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)

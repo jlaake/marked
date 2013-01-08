@@ -10,3 +10,6 @@ probitCJS	p	1	-1	0	Triang	all	probit	~1
 probitMsCJS	Phi	0	-1	1	Triang	all	probit	~1										
 probitMsCJS	p	1	-1	0	Triang	all	probit	~1										
 probitMsCJS	Psi	1	-1	0	Triang	all	mlogit	~1										
+MSCJS	Phi	0	-1	1	Triang	all	mlogit	~1						TRUE				
+MSCJS	p	1	-1	0	Triang	all	mlogit	~1						TRUE				
+MSCJS	Psi	0	-1	0	Triang	all	mlogit	~1						TRUE	TRUE			
