@@ -1,9 +1,10 @@
-// Fixed-effect Multi-State Cormack-Jolly-Seber model 
-// Jeff Laake; 8 Jan 2013
+// Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states
+// Jeff Laake; 12 Jan 2013
 DATA_SECTION 
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
-	init_int nS	                           // number of states excluding death state
+	init_int nS;                           // number of states excluding death state
+	init_int uS;                           // number of unobserved states
     init_imatrix ch(1,n,1,m);              // capture history matrix; uses numeric values for states
     init_ivector frst(1,n);                // occasion first seen for each history
 	init_vector freq(1,n);                 // frequency of each capture history
@@ -56,7 +57,6 @@ FUNCTION void ll_i(const int i, const dvar_vector& phibeta, const dvar_vector& p
     Den.initialize();
     Num.initialize();
     Lglki.initialize();	
-	
 	bindex=(i-1)*nrows;                                 // initialize index into phi,p for ith history
     for(j=1;j<=nrows;j++)
 	   phi(j)=1/(1+exp(-phidm(bindex+j)*phibeta));      // compute phi for the interval
@@ -91,7 +91,10 @@ FUNCTION void ll_i(const int i, const dvar_vector& phibeta, const dvar_vector& p
 	    }
 	    for(k=1;k<=nS;k++)                              // loop over states creating p and tmat values
 		{
-		   pseen(k)=p(index);                           // get and assign p
+		   if(k <= (nS-uS))                             // get and assign p
+		      pseen(k)=p(index);                        // observable state
+           else
+		      pseen(k)=0;                               // unobservable state
 	       for(k2=1;k2<=nS;k2++)
 		     tmat(k,k2)=psi(k,k2)*phi(index);           // adjust psi for survival
 		   tmat(k,nS+1)=1-phi(index);                   // add death state value for each state
@@ -99,7 +102,7 @@ FUNCTION void ll_i(const int i, const dvar_vector& phibeta, const dvar_vector& p
 		}
 		tmat(nS+1,nS+1)=1;                              // death is an absorbing state
         pS(j)=S(j-1)*tmat;  	                        // probability of current states	
-        pD.initialize();                                //prob of observation
+        pD.initialize();                                // prob of observation
 		if(ch(i,j2)>0)                          
            pD(ch(i,j2))=pseen(ch(i,j2));
 		else

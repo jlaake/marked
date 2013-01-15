@@ -70,6 +70,7 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 		parameters$p$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
 #  Store data from x into x
 	strata.labels=x$strata.labels
+	uS=x$unobserved
 	x=x$data
 #  set default frequencies if not used
 	freq=NULL
@@ -138,6 +139,8 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	write(nocc,con,append=TRUE)
 	# Number of states
 	write(length(strata.labels),con,append=TRUE)
+	# Number of unobserved states
+	write(uS,con,append=TRUE)
 	# capture history matrix
 	write(t(chmat),con,ncolumns=nocc,append=TRUE)
 	# first occasions seen 
@@ -155,11 +158,20 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	write(ncol(model_data$Phi.dm),con,append=TRUE)
 	write(t(model_data$Phi.dm),con,ncolumns=ncol(model_data$Phi.dm),append=TRUE)
 	# p design matrix
-	write(ncol(model_data$p.dm),con,append=TRUE)
+    # zero out dm if any unobserved stratum; only done to remove unneeded columns
+    if(uS>0)
+	{
+		model_data$p.dm[as.numeric(ddl$p$stratum)>=(length(strata.labels)-uS),]=0
+		select=vector("logical",length=ncol(model_data$p.dm))
+		for (i in 1:ncol(model_data$p.dm))
+			select[i]=any(model_data$p.dm[,i]!=0)
+		model_data$p.dm=model_data$p.dm[,select,drop=FALSE]
+	}
+    write(ncol(model_data$p.dm),con,append=TRUE)
 	write(t(model_data$p.dm),con,ncolumns=ncol(model_data$p.dm),append=TRUE)
 	# Psi design matrix
 	# zero out subtracted stratum and remove any unneeded columns
-    model_data$Psi.dm[ddl$Psi$stratum==ddl$Psi$tostrata,]=0
+    model_data$Psi.dm[ddl$Psi$stratum==ddl$Psi$tostratum,]=0
 	select=vector("logical",length=ncol(model_data$Psi.dm))
 	for (i in 1:ncol(model_data$Psi.dm))
 		select[i]=any(model_data$Psi.dm[,i]!=0)

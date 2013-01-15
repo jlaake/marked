@@ -68,7 +68,7 @@
 #' 
 #' @aliases process.data accumulate_data
 #' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-#'                        initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
+#'                        initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 #' 
 #'          accumulate_data(data)
 #' 
@@ -99,6 +99,7 @@
 #' @param nocc number of occasions for Nest type; either nocc or time.intervals
 #' must be specified
 #' @param accumulate if TRUE, aggregates data with same values and creates freq field for count of records
+#' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata; for any unobserved strata p=0.
 #' @return from \code{process.data} processed.data (a list with the following elements)
 #' \item{data}{original raw dataframe with group factor variable added if
 #' groups were defined} \item{model}{type of analysis model (eg, "cjs" or "js")}
@@ -139,7 +140,7 @@ accumulate_data <- function(data)
 }
 process.data <-
 function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
+initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 {
    if(model%in%c("cjs","js"))model=toupper(model)
    dataname=substitute(data)
@@ -162,16 +163,23 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
    ch.values=unique(unlist(strsplit(data$ch,"")))
    if(!model.list$strata)
    {
-	   strata.labels=NULL
-	   nstrata=0
+#	   strata.labels=NULL
+#	   nstrata=0
 	   if(any(!ch.values%in%c("0","1",".")))
 		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
    } else
    {
 	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0","."))])
 	   nstrata = length(inp.strata.labels)                  
-	   strata.labels=inp.strata.labels
+	   if(is.null(strata.labels))
+       {
+		   strata.labels=inp.strata.labels
+	   } else
+	   {
+		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
+	   }
 	   nstrata=length(strata.labels)
+	   unobserved=nstrata-length(inp.strata.labels)
 	   if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")		   
    }
    nocc=model.list$nocc
@@ -199,7 +207,6 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
 # if null
 # 
 if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
-if(model%in%c("probitCJS","probitMsCJS")) accumulate=FALSE
 if(accumulate)
 	data=accumulate_data(data)
 else
@@ -237,7 +244,7 @@ if(number.of.factors==0)
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=initial.ages[1],group.covariates=NULL)
-    if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels))
+    if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
 	return(plist)
 }
 #
@@ -363,7 +370,7 @@ else
   plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=init.ages,group.covariates=group.covariates)
-  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels))
+  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
   return(plist)
    
 }

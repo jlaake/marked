@@ -143,6 +143,7 @@
 #' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
+#' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
@@ -182,7 +183,8 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",...)
+ control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",
+ strata.labels=NULL,...)
 {
 if(model%in%c("cjs","js"))model=toupper(model)
 ptm=proc.time()
@@ -199,10 +201,10 @@ if(is.null(data$data))
    cat("Model: ",model,"\n")
    cat("Processing data\n")
    flush.console()
-   if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
+   if(model%in%c("probitCJS","probitMsCJS") | re)accumulate=FALSE
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
-	   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate)
+	   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate,strata.labels=strata.labels)
 }   
 else
 {
