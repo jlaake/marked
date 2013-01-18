@@ -10,7 +10,8 @@
     chunk_size = 1e+07, control = NULL, refit = 1,
     itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
     iter = 1000, use.admb = FALSE, re = FALSE,
-    compile = FALSE, extra.args = "", ...)
+    compile = FALSE, extra.args = "", strata.labels = NULL,
+    ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -87,6 +88,11 @@
 
   \item{extra.args}{optional character string that is
   passed to admb if use.admb==TRUE}
+
+  \item{strata.labels}{labels for strata used in capture
+  history; they are converted to numeric in the order
+  listed. Only needed to specify unobserved strata. For any
+  unobserved strata p=0..}
 
   \item{...}{optional arguments passed to js or cjs and
   optimx}

@@ -186,7 +186,9 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",
  strata.labels=NULL,...)
 {
-if(model%in%c("cjs","js"))model=toupper(model)
+if(model%in%c("cjs","js","mscjs"))model=toupper(model)
+if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
+if(re)warning("\nReal parameter estimates are not produced currently for random effect models\n")
 ptm=proc.time()
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments

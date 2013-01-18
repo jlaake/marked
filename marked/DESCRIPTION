@@ -1,8 +1,9 @@
 Package: marked
 Version: 1.0.8
-Date: 2013-01-08
+Date: 2013-01-17
 Title: R Code for mark-recapture analysis
-Author: Jeff Laake <jeff.laake@noaa.gov>
+Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
+    <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
 Description: This package provides a framework for handling
     data and analysis models for mark-recapture problems.
     Currently it is limited to Cormack-Jolly-Seber and
@@ -19,6 +20,8 @@ Imports:
 LinkingTo: Rcpp
 Suggests:
     RMark
+SystemRequirements: ADMB version 11 (http://admb-project.org/) for
+    use.admb=TRUE; see readme.txt
 LazyLoad: yes
 License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>

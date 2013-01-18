@@ -4,7 +4,7 @@
 \title{Process encounter history dataframe for MARK analysis}
 \usage{
   process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-    initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE)
+    initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 
   accumulate_data(data)
 }
@@ -52,6 +52,11 @@
 
   \item{accumulate}{if TRUE, aggregates data with same
   values and creates freq field for count of records}
+
+  \item{strata.labels}{labels for strata used in capture
+  history; they are converted to numeric in the order
+  listed. Only needed to specify unobserved strata; for any
+  unobserved strata p=0.}
 }
 \value{
   from \code{process.data} processed.data (a list with the
