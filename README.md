@@ -28,21 +28,21 @@ Download [package source files](https://github.com/jlaake/marked/archive/master.
 The following are references from above:
 
 Albert, J. and Chib, S. (1993). Bayesian-analysis of binary and polychotomous
-reponse data. Journal of the American Statistical Association, 88(422):669{679.
+reponse data. Journal of the American Statistical Association, 88(422):669:679.
 
 Fiske, I. J. and Chandler, R. B. (2011). unmarked : An R Package for tting
-hierarchical models of wildlife occurrence and abundance. 43(10):1{23.
+hierarchical models of wildlife occurrence and abundance. 43(10):1:23.
 
 Laake, J. and Rexstad, E. (2008). RMark { an alternative approach to building linear
 models in MARK. In Cooch, E. and White, G. C., editors, Program MARK: A
 Gentle Introduction.
 
 Pledger, S., Pollock, K. H., and Norris, J. L. (2003). Open capture-recapture models
-with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics, 59(4):786{794.
+with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics, 59(4):786:794.
 
 Schwarz, C. J. and Arnason, A. N. (1996). A general methodology for the analysis
-of capture-recapture experiments in open populations. Biometrics, 52(3):860{873.
+of capture-recapture experiments in open populations. Biometrics, 52(3):860:873.
 16
 
 White, G. C. and Burnham, K. P. (1999). Program MARK: survival estimation from
-populations of marked animals. Bird Study, 46:120{139.
+populations of marked animals. Bird Study, 46:120:139.
