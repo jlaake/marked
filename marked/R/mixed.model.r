@@ -8,11 +8,11 @@
 #' mixed.model - creates design matrices and supporting index matrices
 #' in an alternate list format that is not as easily used in ADMB
 #' 
-#' mixed.model.tpl - writes to data file (con) for fixed and random effect stuctures
+#' mixed.model.dat - writes to data file (con) for fixed and random effect stuctures
 #' 
 #' @usage mixed.model.admb(f,data)
 #'           mixed.model(f,data)
-#'           mixed.model.tpl(x,con)
+#'           mixed.model.dat(x,con)
 #' @param f formula for mixed effect mode in the form used in lme4; ~fixed +(re1|g1) +...+(ren|gn)
 #' @param data dataframe used to construct the design matrices from the formula
 #' @param x list structure created by mixed.model.admb
@@ -95,20 +95,18 @@ mixed.model=function(formula,data)
    }
    return(list(fixed.dm=fixed.dm,re.list=re.list))
 }
-mixed.model.tpl=function(x,con)
+mixed.model.dat=function(x,con)
 {
 	# number of columns of fixed dm
 	write(ncol(x$fixed.dm),con,append=TRUE)
 	# fixed dm
 	write(t(x$fixed.dm),con,ncolumns=ncol(x$fixed.dm),append=TRUE)
-    if(!is.null(x$re.dm))
+	if(!is.null(x$re.dm))
 	{
-		# 1 = re
-		write(1,con,append=TRUE)
-		# number of columns of re dm
-		write(ncol(x$re.dm),con,append=TRUE)
 		# number of random effects
 		write(max(x$re.indices),con,append=TRUE)
+		# number of columns of re dm
+		write(ncol(x$re.dm),con,append=TRUE)
 		# re dm
 		write(t(x$re.dm),con,ncolumns=ncol(x$re.dm),append=TRUE)
 		# re indices
@@ -118,11 +116,13 @@ mixed.model.tpl=function(x,con)
 	{
 		# 0 no re
 		write(0,con,append=TRUE)
-		# number of columns of re dm=0
-		write(0,con,append=TRUE)
 		# number of re =0
 		write(0,con,append=TRUE)
+		# number of columns of re dm=0
+		write(0,con,append=TRUE)
 	}
-    invisible()	
+	invisible()	
 }
+
+
 

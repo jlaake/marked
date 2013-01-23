@@ -29,7 +29,7 @@ PROCEDURE_SECTION
 
 	for(i=1;i<=n;i++)                     // loop over rows in data
     {
-          ll_i(i,fixedBeta,randBeta,u);   //compute negative log-likelihood for each row
+          ll_i(i,fixedBeta,randBeta,u(randIndex(i)));   //compute negative log-likelihood for each row
     }
 
 SEPARABLE_FUNCTION void n01_prior(const prevariable&  u)  // taken from glmmadmb.tpl; uses PI 
@@ -41,7 +41,7 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& fixedBeta,const dva
     mu=fixedDM(i)*fixedBeta;                                         // fixed portion of mean   
     if(krand > 0)
 	   for(j=1;j<=krand;j++)                                         // random portion of mean
-	      mu+=randDM(i,j)*u(randIndex(i,j))*mfexp(randBeta(j));
+	      mu+=randDM(i,j)*u(j)*mfexp(randBeta(j));
 	
 	g-= y(i)*mu - log(1+exp(mu));
 
