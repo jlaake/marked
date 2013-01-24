@@ -1,20 +1,21 @@
 Package: marked
-Version: 1.0.8
-Date: 2013-01-23
+Version: 1.0.9
+Date: 2013-01-24
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
 Description: This package provides a framework for handling
-    data and analysis models for mark-recapture problems.
+    data and analysis for mark-recapture.
     Currently it is limited to Cormack-Jolly-Seber and
-    Jolly-Seber type models.
+    Jolly-Seber models.
 Depends:
     R (>= 2.12.0),
     optimx,
     coda,
     truncnorm,
     Matrix,
-    Rcpp (>= 0.9.13)
+    Rcpp (>= 0.9.13),
+    ggplot2
 Imports:
     R2admb
 LinkingTo: Rcpp
@@ -25,6 +26,7 @@ SystemRequirements: ADMB version 11 (http://admb-project.org/) for
 LazyLoad: yes
 License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
+BuildVignettes: false
 Collate:
     'cjs.accumulate.R'
     'cjs.initial.R'
@@ -64,3 +66,5 @@ Collate:
     'scale.r'
     'set.initial.r'
     'mscjs.r'
+    'mixed.model.r'
+    'proc.form.r'

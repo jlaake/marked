@@ -108,12 +108,13 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    model_data=scale.dm(model_data,scale)
    par=scale.par(par,scale)
 #  call optim to find mles with js.lnl which gives -log-likelihood
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+   markedfunc_eval=0
+   jsenv=environment()
    cat("Starting optimization",length(par)," parameters\n")
    if("SANN"%in%method)
    {
 	   mod=optim(par,js.lnl,model_data=model_data,Phi.links=NULL,p.links=NULL,method="SANN",hessian=FALSE,
-			   debug=debug,control=control,...)
+			   debug=debug,control=control,jsenv=jsenv,...)
 	   par= mod$par
 	   convergence=mod$convergence
 	   lnl=mod$value
@@ -121,7 +122,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    }else
    {
 	   mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
-					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,...))
+					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,jsenv=jsenv,...))
 	   objfct=unlist(mod$fvalues)
 	   bestmin=which.min(objfct)
 	   par= mod$par[[bestmin]]
@@ -154,11 +155,9 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  Compute hessian if specified   
    if(hessian) 
    {
-	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 	   cat("Computing hessian\n")
 	   res$beta.vcv=js.hessian(res)
    }   
-   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 #  Restore complete non-accumulated model_data with unscaled design matrices 
    if(!is.null(model_data.save)) res$model_data=model_data.save
 #  Assign class and return

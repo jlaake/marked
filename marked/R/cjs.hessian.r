@@ -29,9 +29,9 @@ cjs.hessian=function(model)
 		scale=model$scale
 		model_data=model$model_data
 	}
-	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-	vcv=hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data)
-	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	markedfunc_eval=0
+	cjsenv=environment()
+	vcv=hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{

@@ -23,12 +23,13 @@
 #' fixed value(f) to fix p(i,j)=f
 #' @param debug if TRUE will printout values of \code{par} and function value
 #' @param nobstot number of unique caught at least once by group if applicable
+#' @param jsenv environment for js to update iteration counter
 #' @return -log likelihood value, excluding data (ui) factorials which are added in js after optimization to match MARK
 #' @author Jeff Laake
 #' @references Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
 #' for the analysis of capture-recapture experiments in open populations.
 #' Biometrics 52:860-873.
-js.lnl=function(par,model_data,debug=FALSE,nobstot)
+js.lnl=function(par,model_data,debug=FALSE,nobstot,jsenv)
 {
 	get.pent=function(beta,dm,nocc)
 	{
@@ -50,8 +51,8 @@ js.lnl=function(par,model_data,debug=FALSE,nobstot)
 	}
 	
 if(debug)cat("par = ",par,"\n")
-f_eval=get(".markedfunc_eval",envir=.GlobalEnv)+1
-assign(".markedfunc_eval", f_eval, envir = .GlobalEnv)
+f_eval=get("markedfunc_eval",envir=jsenv)+1
+assign("markedfunc_eval", f_eval, envir = jsenv)
 # initialize constants and parameter vectors
 nocc=model_data$imat$nocc
 nphi=ncol(model_data$Phi.dm)

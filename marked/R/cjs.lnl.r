@@ -19,6 +19,7 @@
 #' @param debug if TRUE will printout values of \code{par} and function value
 #' @param all if TRUE, returns entire list rather than just lnl; can be used to
 #' extract reals
+#' @param cjsenv environment for cjs to update iteration counter
 #' @return either -log likelihood value if \code{all=FALSE} or the entire
 #' list contents of the call to the FORTRAN subroutine if \code{all=TRUE}. The
 #' latter is used from \code{\link{cjs}} after optimization to extract the real
@@ -92,10 +93,10 @@
 #'	return(lnl) 
 #'} 
 #' 
-cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE)
+cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv)
 {
-	f_eval=get(".markedfunc_eval",envir=.GlobalEnv)+1
-	assign(".markedfunc_eval", f_eval, envir = .GlobalEnv)
+	f_eval=get("markedfunc_eval",envir=cjsenv)+1
+	assign("markedfunc_eval", f_eval, envir = cjsenv)
 	if(debug)cat("par = ",par,"\n")
 	nocc=model_data$imat$nocc
 	nphi=ncol(model_data$Phi.dm)

@@ -3,7 +3,7 @@
 \title{Likelihood function for Cormack-Jolly-Seber model}
 \usage{
   cjs.lnl(par, model_data, Phi.links = NULL,
-    p.links = NULL, debug = FALSE, all = FALSE)
+    p.links = NULL, debug = FALSE, all = FALSE, cjsenv)
 }
 \arguments{
   \item{par}{vector of parameter values}
@@ -29,6 +29,9 @@
 
   \item{all}{if TRUE, returns entire list rather than just
   lnl; can be used to extract reals}
+
+  \item{cjsenv}{environment for cjs to update iteration
+  counter}
 }
 \value{
   either -log likelihood value if \code{all=FALSE} or the

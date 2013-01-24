@@ -117,11 +117,12 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
 	   cat("Starting optimization for ",length(par)," parameters\n")
 	   flush.console()
-	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	   markedfunc_eval=0
+	   cjsenv=environment()
 	   if("SANN"%in%method)
 	   {
 		   mod=optim(par,cjs.lnl,model_data=model_data,method="SANN",hessian=FALSE,
-				   debug=debug,control=control,...)
+				   debug=debug,control=control,cjsenv=cjsenv,...)
 		   par= mod$par
 		   convergence=mod$convergence
 		   lnl=mod$value
@@ -129,7 +130,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   }else
 	   {
 		   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
-						   debug=debug,control=control,itnmax=itnmax,...))
+						   debug=debug,control=control,itnmax=itnmax,cjsenv=cjsenv,...))
 		   objfct=unlist(mod$fvalues)
 		   bestmin=which.min(objfct)
 		   par= mod$par[[bestmin]]
@@ -148,11 +149,9 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
        # Compute hessian if requested
 	   if(hessian) 
 	   {
-		   assign(".markedfunc_eval", 0, envir = .GlobalEnv)
 		   cat("Computing hessian\n")
 		   res$beta.vcv=cjs.hessian(res)
 	   } 
-	   assign(".markedfunc_eval", 0, envir = .GlobalEnv)	   
    } else
    {
        # see if admb can be found; this is not a complete test but should catch the novice user who has

@@ -288,8 +288,6 @@ for(parx in names(parameters))
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }
-#
-#
 # solvecov code was taken from package fpc: Christian
 # Hennig chrish@@stats.ucl.ac.uk http://www.homepages.ucl.ac.uk/~ucakche/
 solvecov=function (m, cmax = 1e+10)

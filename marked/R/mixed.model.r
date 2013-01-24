@@ -1,4 +1,4 @@
-﻿#' Mixed effect model contstruction
+#' Mixed effect model contstruction
 #' 
 #' Functions that develop structures needed for a mixed effect model
 #' 
@@ -10,10 +10,13 @@
 #' 
 #' mixed.model.dat - writes to data file (con) for fixed and random effect stuctures
 #' 
-#' @usage mixed.model.admb(f,data)
-#'           mixed.model(f,data)
-#'           mixed.model.dat(x,con)
-#' @param f formula for mixed effect mode in the form used in lme4; ~fixed +(re1|g1) +...+(ren|gn)
+#' @usage mixed.model.admb(formula,data)
+#' 
+#'        mixed.model(formula,data)
+#' 
+#'        mixed.model.dat(x,con)
+#' @aliases mixed.model.admb mixed.model mixed.model.dat
+#' @param formula formula for mixed effect mode in the form used in lme4; ~fixed +(re1|g1) +...+(ren|gn)
 #' @param data dataframe used to construct the design matrices from the formula
 #' @param x list structure created by mixed.model.admb
 #' @param con connection to data file which contents will be appended

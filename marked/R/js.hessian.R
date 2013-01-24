@@ -30,9 +30,9 @@ js.hessian=function(model)
 		model_data=model$model_data
 	}	
 #nobstot number of unique caught at least once by group if applicable
-	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
-	vcv=hessian(js.lnl,scale.par(model$beta,scale),model_data=model$model_data,nobstot=model$ns)
-	assign(".markedfunc_eval", 0, envir = .GlobalEnv)
+	markedfunc_eval=0
+	jsenv=environment()
+	vcv=hessian(js.lnl,scale.par(model$beta,scale),model_data=model$model_data,nobstot=model$ns,jsenv=jsenv)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{

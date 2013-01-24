@@ -151,6 +151,7 @@ create.model.list<-function(parameters)
 }
 load.model=function(x)
 {
+	model=NULL
 	if(!is.character(x)) stop("argument should be a character filename")
 	if(!file.exists(x))stop(x,"does not exist in the working directory")
 	load(x)

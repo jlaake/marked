@@ -3,7 +3,7 @@
 \title{Likelihood function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-  js.lnl(par, model_data, debug = FALSE, nobstot)
+  js.lnl(par, model_data, debug = FALSE, nobstot, jsenv)
 }
 \arguments{
   \item{par}{vector of parameter values}
@@ -31,6 +31,9 @@ formulation}
 
   \item{nobstot}{number of unique caught at least once by
   group if applicable}
+
+  \item{jsenv}{environment for js to update iteration
+  counter}
 }
 \value{
   -log likelihood value, excluding data (ui) factorials

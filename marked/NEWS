@@ -1,3 +1,11 @@
+marked 1.0.9 24 Jan 2013
+------------
+
+CHANGES
+
+* modified iteration counter so it was stored in an environment rather than in global workspace to meet CRAN policy
+
+
 marked 1.0.8 23 Jan 2013
 ------------
 
