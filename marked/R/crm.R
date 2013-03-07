@@ -140,7 +140,8 @@
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
 #' @param use.admb if TRUE creates data file for cjs.tpl and runs admb optimizer
-#' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
+#' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
+#' @param reml if TRUE uses restricted maximum likelihood
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
@@ -183,12 +184,11 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",
+ control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,...)
 {
 if(model%in%c("cjs","js","mscjs"))model=toupper(model)
 if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
-if(re)warning("\nReal parameter estimates are not produced currently for random effect models\n")
 ptm=proc.time()
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments
@@ -203,7 +203,7 @@ if(is.null(data$data))
    cat("Model: ",model,"\n")
    cat("Processing data\n")
    flush.console()
-   if(model%in%c("probitCJS","probitMsCJS") | re)accumulate=FALSE
+   if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
 	   time.intervals = time.intervals,nocc=NULL,accumulate=accumulate,strata.labels=strata.labels)
@@ -231,8 +231,18 @@ if(!is.null(data.proc$group.covariates))number.of.groups=nrow(data.proc$group.co
 par.list=setup.parameters(data.proc$model,check=TRUE)
 parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 parameters=parameters[par.list]
+re=FALSE
 for (i in 1:length(parameters))
+{
 	if(is.null(parameters[[i]]$formula)) parameters[[i]]$formula=~1
+	mlist=proc.form(parameters[[i]]$formula)
+	if(!is.null(mlist$re.model))re=TRUE
+}
+if(re) use.admb=TRUE
+if(use.admb & !re) 
+	crossed=FALSE
+else
+	if(is.null(crossed))crossed=FALSE
 #
 # Create design matrices for each parameter
 #
@@ -251,7 +261,7 @@ if("SANN"%in%method)
 if("nlminb"%in%method)control$eval.max=itnmax
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,...)
 else
     if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,

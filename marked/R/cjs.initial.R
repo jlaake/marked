@@ -24,7 +24,7 @@ cjs.initial=function(dml,imat,link="logit")
 	x=dml[["p"]][dd.indices,]
     initial.p<-coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
 	initial.p[is.na(initial.p)]=0
-	initial.p[initial.p < -5 | initial.p > 5]=0
+	if(any(initial.p < -5 | initial.p > 5))initial.p=rep(0,length(initial.p))
 	#   Create initial values for S using bernoulli glm assuming p=1
 	last=imat$last+1
 	last[last>ncol(imat$chmat)]=ncol(imat$chmat)
@@ -36,6 +36,6 @@ cjs.initial=function(dml,imat,link="logit")
 	x=dml[["Phi"]][dd.indices,]
 	initial.Phi<-coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link)))
 	initial.Phi[is.na(initial.Phi)]=0
-	initial.Phi[initial.Phi < -5 | initial.Phi > 5]=0
+	if(any(initial.Phi < -5 | initial.Phi > 5))initial.Phi=rep(0,length(initial.Phi))
 	return(list(Phi=initial.Phi,p=initial.p))
 }

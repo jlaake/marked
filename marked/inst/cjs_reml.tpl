@@ -1,6 +1,5 @@
 // Cormack-Jolly-Seber model for fixed, random or mixed effect models for survival (Phi) and capture probability (p)
-// Replaces admbcjs.tpl and can mimic cjsre.tpl (replacement for admbcjsre) but with Laplace approximation
-// Each capture history must represent a single animal
+// Same as cjs.tpl except that it uses reml estimation. Each capture history must represent a single animal.
 // Jeff Laake; 6 Mar 2013
 DATA_SECTION 
     init_int n;                                           // number of capture histories
@@ -55,13 +54,13 @@ DATA_SECTION
     init_matrix pF(1,L,1,2);                              // p fixed matrix with index in first column and value in second column
         
 PARAMETER_SECTION
-    init_vector phi_beta(1,kphi,1);                                // fixed parameter vector for Phi
-    init_vector p_beta(1,kp,1);                                    // fixed parameter vector for p
-    init_vector phi_sigma(1,phi_krand,phi_phase);                  // log-sigma for random effects in phi;             
-    init_vector p_sigma(1,p_krand,p_phase);                        // log-sigma for random effects in p;             
-    objective_function_value f;                                    // objective function - negative log-likelihood
-    random_effects_vector phi_u(0,phi_nre_rows,phi_phase);         // random effect vector for phi
-    random_effects_vector p_u(0,p_nre_rows,p_phase);               // random effect vector for p
+    init_vector phi_sigma(1,phi_krand);                   // log-sigma for random effects in phi;             
+    init_vector p_sigma(1,p_krand);                       // log-sigma for random effects in p;             
+    objective_function_value f;                           // objective function - negative log-likelihood
+    random_effects_vector phi_beta(1,kphi);               // re parameter vector for Phi
+    random_effects_vector p_beta(1,kp);                   // re parameter vector for p
+    random_effects_vector phi_u(0,phi_nre_rows);          // random effect vector for phi
+    random_effects_vector p_u(0,p_nre_rows);              // random effect vector for p
 
 TOP_OF_MAIN_SECTION
   gradient_structure::set_MAX_NVAR_OFFSET(100000); 
@@ -119,7 +118,7 @@ PROCEDURE_SECTION
 		  } else
 		      p_indices(1)=0;                                      // end block of code to handle 0 indices
 			  
-	      if(phi_krand==0 & p_krand>0)                             
+ 	      if(phi_krand==0 & p_krand>0)                             
 		     nophill_i(i,p_sigma,p_u(p_indices),phi_beta,p_beta);                              // p random effects; phi fixed
 		  else
 		     if(p_krand==0 & phi_krand>0)                         
@@ -155,18 +154,18 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
 	      mu=0;
 	      for(L=1;L<=kphi;L++)
             mu+=phi_fixedDM(i2,L)*phi_beta(L);                     // fixed portion of mean 
-          if(phi_phase>0 & current_phase()==phi_phase)
-	      {
-              if(phi_counts(i) > 0)	                               // random portion of mean if any
-	          {
-	             for(L=1;L<=phi_krand;L++)
-		            if(phi_randIndex(i2,L)>0)
-	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
-	          }  
-	      }
-          phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
-          if(tint(i,j-1)!=1)
-             phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
+       if(phi_phase>0 & current_phase()==phi_phase)
+	   {
+           if(phi_counts(i) > 0)	                               // random portion of mean if any
+	       {
+	          for(L=1;L<=phi_krand;L++)
+		         if(phi_randIndex(i2,L)>0)
+	                mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
+	       }
+	   }
+       phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
+       if(tint(i,j-1)!=1)
+          phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
 	   } else
 	      phi(j-1)=phi_fixedDM(i2,kphi+1);
 	   /////// p computation /////////
@@ -175,20 +174,20 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
 	      mu=0;
 	      for(L=1;L<=kp;L++)
             mu+=p_fixedDM(i2,L)*p_beta(L);                         // fixed portion of mean 
-          if(p_phase>0 & current_phase()==p_phase)
-	      {
-              if(p_counts(i) > 0)	                               // random portion of mean if any
-	          {
-	             for(L=1;L<=p_krand;L++)
-		            if(p_randIndex(i2,L)>0)
-	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
-	          }  
-	      }
+	   if(p_phase>0 & current_phase()==p_phase)
+	   {
+           if(p_counts(i) > 0)                                     // random portion of mean if any
+	       {
+	         for(L=1;L<=p_krand;L++)                                 
+		         if(p_randIndex(i2,L)>0)
+	                mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
+	       }
+	   }
           p(j-1)=1/(1+exp(-mu));                                    // compute p for the occasion
 	   } else
 	      p(j-1)=p_fixedDM(i2,kp+1);
 
- 	   phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
+       phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
        cump(j)=cump(j-1)*((1-p(j-1))*(1-ch(i,j))+p(j-1)*ch(i,j));  // compute cummulative capture probability
     }   
     pch=0.0;                                                       // initialize prob of the capture history to 0
@@ -223,9 +222,9 @@ SEPARABLE_FUNCTION void nophill_i(const int i, const dvar_vector& p_sigma,const 
 	      mu=0;
 	      for(L=1;L<=kphi;L++)
             mu+=phi_fixedDM(i2,L)*phi_beta(L);                     // fixed portion of mean 
-          phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
-          if(tint(i,j-1)!=1)
-             phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
+       phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
+       if(tint(i,j-1)!=1)
+          phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
 	   } else
 	      phi(j-1)=phi_fixedDM(i2,kphi+1);
 	   /////// p computation /////////
@@ -234,20 +233,20 @@ SEPARABLE_FUNCTION void nophill_i(const int i, const dvar_vector& p_sigma,const 
 	      mu=0;
 	      for(L=1;L<=kp;L++)
             mu+=p_fixedDM(i2,L)*p_beta(L);                         // fixed portion of mean 
-          if(p_phase>0 & current_phase()==p_phase)
-	      {
-              if(p_counts(i) > 0)	                               // random portion of mean if any
-	          {
-	             for(L=1;L<=p_krand;L++)
-		            if(p_randIndex(i2,L)>0)
-	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
-	          }  
-	      }
+	   if(p_phase>0 & current_phase()==p_phase)
+	   {
+           if(p_counts(i) > 0)                                     // random portion of mean if any
+	       {
+	         for(L=1;L<=p_krand;L++)                                 
+		         if(p_randIndex(i2,L)>0)
+	                mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
+	       }
+	   }
           p(j-1)=1/(1+exp(-mu));                                    // compute p for the occasion
 	   } else
 	      p(j-1)=p_fixedDM(i2,kp+1);
 
-	   phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
+       phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
        cump(j)=cump(j-1)*((1-p(j-1))*(1-ch(i,j))+p(j-1)*ch(i,j));  // compute cummulative capture probability
     }   
     pch=0.0;                                                       // initialize prob of the capture history to 0
@@ -283,17 +282,17 @@ SEPARABLE_FUNCTION void nopll_i(const int i, const dvar_vector& phi_sigma,const 
 	      for(L=1;L<=kphi;L++)
             mu+=phi_fixedDM(i2,L)*phi_beta(L);                     // fixed portion of mean 
           if(phi_phase>0 & current_phase()==phi_phase)
-	      {
-              if(phi_counts(i) > 0)	                               // random portion of mean if any
-	          {
-	             for(L=1;L<=phi_krand;L++)
-		            if(phi_randIndex(i2,L)>0)
-	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
-	          }  
-	      }
-          phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
-          if(tint(i,j-1)!=1)
-             phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
+	   {
+           if(phi_counts(i) > 0)	                               // random portion of mean if any
+	       {
+	          for(L=1;L<=phi_krand;L++)
+		         if(phi_randIndex(i2,L)>0)
+	                mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
+	       }
+	   }
+       phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
+       if(tint(i,j-1)!=1)
+          phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
 	   } else
 	      phi(j-1)=phi_fixedDM(i2,kphi+1);
 	   /////// p computation /////////
@@ -306,7 +305,7 @@ SEPARABLE_FUNCTION void nopll_i(const int i, const dvar_vector& phi_sigma,const 
 	   } else
 	      p(j-1)=p_fixedDM(i2,kp+1);
 
-	   phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
+       phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
        cump(j)=cump(j-1)*((1-p(j-1))*(1-ch(i,j))+p(j-1)*ch(i,j));  // compute cummulative capture probability
     }   
     pch=0.0;                                                       // initialize prob of the capture history to 0

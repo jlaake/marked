@@ -307,7 +307,7 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    if(is.null(fields))
       res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),!names(x$data)%in%c("ch"),drop=FALSE])                             
    else{
-	   if(x$model=="probitCJS") fields=c(fields,"id")
+	   fields=c(fields,"id")
        res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),names(x$data)%in%fields,drop=FALSE])
    }
    if("group"%in%names(res))

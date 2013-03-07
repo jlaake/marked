@@ -6,8 +6,8 @@
     accumulate = TRUE, initial = NULL, method,
     hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
     refit, itnmax = NULL, control = NULL, scale,
-    use.admb = FALSE, re = FALSE, compile = FALSE,
-    extra.args = "", ...)
+    use.admb = FALSE, crossed = TRUE, compile = FALSE,
+    extra.args = NULL, reml, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -61,13 +61,16 @@
   \item{use.admb}{if TRUE creates data file for admbcjs.tpl
   and runs admb optimizer}
 
-  \item{re}{if TRUE creates random effect model
-  admbcjsre.tpl and runs admb optimizer}
+  \item{crossed}{if TRUE it uses cjs.tpl or cjs_reml.tpl if
+  reml=FALSE or TRUE respectively; if FALSE, then it uses
+  cjsre which can use Gauss-Hermite integration}
 
   \item{compile}{if TRUE forces re-compilation of tpl file}
 
   \item{extra.args}{optional character string that is
   passed to admb if use.admb==TRUE}
+
+  \item{reml}{if set to TRUE uses cjs_reml if crossed}
 
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or

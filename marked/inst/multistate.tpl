@@ -1,4 +1,4 @@
-// Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states
+// Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states based on work of Jessica Ford in MEE Dec 2012
 // Jeff Laake; 12 Jan 2013
 DATA_SECTION 
     init_int n;                            // number of capture histories

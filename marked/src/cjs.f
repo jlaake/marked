@@ -54,11 +54,10 @@
 	          ELSE
 	             PCH(I)=PCH(I)+CUMP(J)*PHICUMPROD(J)*(1-PHI(I,J))
 	          ENDIF
-	          IF(PCH(I)<1E-15.AND.FRQ(I).GT.0) PCH(I)=1D-307
   30        CONTINUE
             P0(I)=PCH(I)/(CUMP( INT(LST(I)))*PHICUMPROD(INT(LST(I))))
          ENDIF
-         LNL=LNL-FRQ(I)*LOG(PCH(I))
+         LNL=LNL-FRQ(I)*LOG(PCH(I)+0.000000000000000000000001)
   100  CONTINUE
        RETURN
        END

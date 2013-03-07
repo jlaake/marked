@@ -220,9 +220,12 @@ else
 	}
 }
 if(is.null(data$id))
-	data$id=1:nrow(data)
+	data$id=factor(1:nrow(data))
 else
+{
 	data=data[order(data$id),]
+	if(!is.factor(data$id))data$id=factor(data$id)
+}	
 #
 #  Get number of records in data set
 #

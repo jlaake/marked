@@ -41,9 +41,10 @@
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
 #' @param use.admb if TRUE creates data file for admbcjs.tpl and runs admb optimizer
-#' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
+#' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
+#' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb
@@ -62,9 +63,9 @@
 #' Biometrics 59(4):786-794.
 cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-			use.admb=FALSE,re=FALSE,compile=FALSE,extra.args="",...)
+			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,...)
 {
-   if(re)accumulate=FALSE
+   if(use.admb)accumulate=FALSE
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use default of 1 if none are in Phi.dmdf
@@ -110,7 +111,6 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    if(use.admb)scale=1
    scale=set.scale(names(dml),model_data,scale)
    model_data=scale.dm(model_data,scale)
-   if(re)use.admb=TRUE
    if(!use.admb)
    {
 	   par=scale.par(par,scale)
@@ -157,22 +157,34 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
        # see if admb can be found; this is not a complete test but should catch the novice user who has
 	   # not setup admb at all
 	   if(Sys.which("tpl2cpp.exe")=="")stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path") 
-       # cleanup any leftover admbcjs files
 	   sdir=system.file(package="marked")
-	   # if admbcjs.tpl is not available copy from the package directory
-	   if(!re)
-	      tpl="admbcjs"
-       else
+
+	   # set tpl filename
+	   if(!crossed)
 	   {
-		   tpl="admbcjsre"
-		   if(!hessian)message("ignoring hessian setting; set to TRUE")
-		   hessian=TRUE
+		   tpl="cjsre"
+	   } else
+	   {
+		   if(reml) 
+			   tpl="cjs_reml"
+		   else
+			   tpl="cjs"
 	   }
+	   if(!hessian)message("ignoring hessian setting; set to TRUE")
+		   hessian=TRUE
+	   # cleanup any leftover files
 	   clean_admb(tpl)
+	   # if tpl is not available, copy from the package directory
 	   if(!file.exists(paste(tpl,".tpl",sep="")))
+	   {
 		   file.copy(file.path(sdir,paste(tpl,".tpl",sep="")),file.path(getwd(),paste(tpl,".tpl",sep="")),overwrite=TRUE)
-	   if(!file.exists(paste(tpl,".exe",sep=""))|compile)
-		   compile_admb(tpl,re=re)
+		   file.copy( file.path(sdir,list.files(sdir,"*.cpp")),file.path(getwd()),overwrite=TRUE)
+		   compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
+	   } else
+	   {
+		   if(!file.exists(paste(tpl,".exe",sep=""))|compile)
+			   compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
+	   }
 	   # create admbcjs.dat file to create its contents 
 	   con=file(paste(tpl,".dat",sep=""),open="wt")
 	   # Number of observations
@@ -188,63 +200,105 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   # last occasions seen 
 	   write(model_data$imat$last,con,ncolumns=n,append=TRUE)
 	   # frequency of capture history 
-	   if(!re)
-	   {
-	      write(model_data$imat$freq,con,ncolumns=n,append=TRUE)
-	   } else
-	   {
-		   if(any(model_data$imat$freq!=1))stop("\n cannot use random effects with frequency >1")
-	   }
+       if(tpl=="cjsre") write(model_data$imat$freq,con,ncolumns=n,append=TRUE)
 	   # indicator for loss on capture 
 	   write(model_data$imat$loc,con,ncolumns=n,append=TRUE)
 	   write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
-	   write(ncol(model_data$Phi.dm),con,append=TRUE)
-	   write(t(model_data$Phi.dm),con,ncolumns=ncol(model_data$Phi.dm),append=TRUE)
-	   write(ncol(model_data$p.dm),con,append=TRUE)
-	   write(t(model_data$p.dm),con,ncolumns=ncol(model_data$p.dm),append=TRUE)
-	   if(model_data$Phi.fixed[1,1]== -1)
-	   {
-		   write(0,con,append=TRUE)
-	   }else
+       #phi dm portion
+       phidm=model_data$Phi.dm
+	   phidm=cbind(phidm,rep(-1,nrow(phidm)))
+	   if(model_data$Phi.fixed[1,1]!= -1)
 	   {
 		   index=(nocc-1)*(model_data$Phi.fixed[,1]-1)+model_data$Phi.fixed[,2]
-		   write(nrow(model_data$Phi.fixed),con,append=TRUE)
-		   write(rbind(index,model_data$Phi.fixed[,3]),con,ncolumns=2,append=TRUE)
-	   }  
-	   if(model_data$p.fixed[1,1]== -1)
+		   phidm[index,ncol(phidm)]=model_data$Phi.fixed[,3]
+		   phidm[index,1:(ncol(phidm)-1)]=0
+	   }
+	   write(ncol(phidm)-1,con,append=TRUE)
+	   write(t(as.matrix(phidm)),con,ncolumns=ncol(phidm),append=TRUE)
+	   phimixed=mixed.model.admb(parameters$Phi$formula,ddl$Phi)
+       nphisigma=0
+	   if(!is.null(phimixed$re.dm))nphisigma=ncol(phimixed$re.dm)
+	   if(crossed & !is.null(phimixed$re.dm))
+       {
+		   phimixed$re.indices[ddl$Phi$Time<ddl$Phi$Cohort,]=NA
+		   phimixed=reindex(phimixed,ddl$Phi$id)
+       }
+	   mixed.model.dat(phimixed,con,!crossed,n)
+	   # p dm portion
+       pdm=model_data$p.dm
+	   pdm=cbind(pdm,rep(-1,nrow(pdm)))
+	   if(model_data$p.fixed[1,1]!= -1)
 	   {
-		   write(0,con,append=TRUE)
-	   }else
-	   {
-		   index=(nocc-1)*(model_data$p.fixed[,1]-1)+model_data$p.fixed[,2]
-		   write(nrow(model_data$p.fixed),con,append=TRUE)
-		   write(rbind(index,model_data$p.fixed[,3]),con,ncolumns=2,append=TRUE)
-	   }  
+		   index=(nocc-1)*(model_data$p.fixed[,1]-1)+model_data$p.fixed[,2]-1
+		   pdm[index,ncol(pdm)]=model_data$p.fixed[,3]
+		   pdm[index,1:(ncol(pdm)-1)]=0
+	   }
+	   write(ncol(pdm)-1,con,append=TRUE)
+       write(t(as.matrix(pdm)),con,ncolumns=ncol(pdm),append=TRUE)
+       pmixed=mixed.model.admb(parameters$p$formula,ddl$p)
+	   npsigma=0
+	   if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
+	   if(crossed &!is.null(pmixed$re.dm))
+       {
+		   pmixed$re.indices[ddl$p$Time<ddl$p$Cohort,]=NA
+		   pmixed=reindex(pmixed,ddl$p$id)
+       }	   
+       mixed.model.dat(pmixed,con,!crossed,n)
 	   close(con)
+       # setup initial value file (.pin)
 	   con=file(paste(tpl,".pin",sep=""),open="wt")
 	   write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
 	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
-	   if(re) 
+	   if(nphisigma+npsigma>0) 
 	   {
-		   write(c(0.1,0.1),con,ncolumns=1,append=TRUE)
-		   write(rep(0,n),con,ncolumns=n,append=TRUE)
-		   write(rep(0,n),con,ncolumns=n,append=TRUE)
+		   warning("\nReal parameter estimates are not produced currently for random effect models\n")  
+	  	   write(rep(0.1,nphisigma+npsigma),con,ncolumns=1,append=TRUE)
+	  	   if(nphisigma>0) write(rep(0,nphisigma*nrow(phimixed$re.dm)),con,ncolumns=nphisigma,append=TRUE)
+		   if(npsigma>0) write(rep(0,npsigma*nrow(pmixed$re.dm)),con,ncolumns=npsigma,append=TRUE)
 	   }
 	   close(con)   
+	   cat("\nrunning ADMB program\n")
+	   flush.console()
+	   if(is.null(extra.args))
+	   {
+		   if(!crossed & (nphisigma+npsigma)>0 )
+			   extra.args="-gh 14"
+		   else
+		   {
+			   if(any(model_data$imat$freq!=1) | (nphisigma+npsigma)==0)
+				   extra.args=""
+			   else
+				   extra.args="-shess -isb 100"
+		   }
+	   } else
+	   {
+		   if(length(grep("-shess",extra.args))>0 & any(model_data$imat$freq!=1))
+		   {
+			   extra.args=""
+               warning("Cannot use -shess with accumulate=T. Resetting extra.args to nothing.")
+		   }
+	   }   
 	   if(hessian)
-	       xx=run_admb(tpl,extra.args=extra.args)
-	   else
-		   xx=run_admb(tpl,extra.args=paste(extra.args,"-nohess"))
+	   {
+	       xx=run_admb(tpl,extra.args=extra.args,verbose=T)
+	   } else
+		   xx=run_admb(tpl,verbose=T,extra.args=paste(extra.args,"-nohess"))
 	   convergence=attr(xx,"status")
 	   if(is.null(convergence))convergence=0
 	   res=read_admb(tpl)
-	   cjs.beta.fixed=unscale.par(res$coefficients[1:(ncol(model_data$Phi.dm)+ncol(model_data$p.dm))],scale)
-	   if(re)
+#	   cjs.beta.fixed=unscale.par(res$coefficients[1:(ncol(model_data$Phi.dm)+ncol(model_data$p.dm))],scale)
+#	   if(re)
+#	   {
+#		   cjs.beta.random=res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))]
+#		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
+#	   }
+	   
+	   cjs.beta.fixed=unscale.par(c(res$coeflist$phi_beta,res$coeflist$p_beta),scale)
+	   if((npsigma+nphisigma)>0)
 	   {
-		   cjs.beta.random=res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))]
+		   cjs.beta.random=c(Phi=res$coeflist$phi_sigma,p=res$coeflist$p_sigma)
 		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
-	   }
-	   else 
+	   } else 
 		   cjs.beta.random=NULL
 	   cjs.beta=c(cjs.beta.fixed,cjs.beta.random)
 	   beta=list(cjs.beta)
@@ -255,12 +309,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   colnames(res$hes)=rownames(res$hes)
 		   if(all(diag(beta.vcv>0))) 
 		      res$cor=beta.vcv/outer(sqrt(diag(beta.vcv)),sqrt(diag(beta.vcv)))
-	   }
-	   else
+	   }  else
 		   beta.vcv=res$vcov
 	   rownames(beta.vcv)=names(unlist(cjs.beta))
 	   colnames(beta.vcv)=rownames(beta.vcv)
-	   if(!re)
+	   if(nphisigma+npsigma==0)
 	   {
 		   rownames(res$cor)=rownames(beta.vcv)
 		   colnames(res$cor)=rownames(beta.vcv)

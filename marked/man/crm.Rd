@@ -9,9 +9,9 @@
     method = "BFGS", hessian = FALSE, accumulate = TRUE,
     chunk_size = 1e+07, control = NULL, refit = 1,
     itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
-    iter = 1000, use.admb = FALSE, re = FALSE,
-    compile = FALSE, extra.args = "", strata.labels = NULL,
-    ...)
+    iter = 1000, use.admb = FALSE, crossed = NULL,
+    reml = FALSE, compile = FALSE, extra.args = NULL,
+    strata.labels = NULL, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -81,8 +81,11 @@
   \item{use.admb}{if TRUE creates data file for cjs.tpl and
   runs admb optimizer}
 
-  \item{re}{if TRUE creates random effect model
-  admbcjsre.tpl and runs admb optimizer}
+  \item{crossed}{if TRUE it uses cjs.tpl or cjs_reml.tpl if
+  reml=FALSE or TRUE respectively; if FALSE, then it uses
+  cjsre which can use Gauss-Hermite integration}
+
+  \item{reml}{if TRUE uses restricted maximum likelihood}
 
   \item{compile}{if TRUE forces re-compilation of tpl file}
 

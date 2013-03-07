@@ -1,6 +1,6 @@
 Package: marked
-Version: 1.0.9
-Date: 2013-01-24
+Version: 1.1.0
+Date: 2013-03-06
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
@@ -9,7 +9,7 @@ Description: This package provides a framework for handling
     Currently it is limited to Cormack-Jolly-Seber and
     Jolly-Seber models.
 Depends:
-    R (>= 2.12.0),
+    R (>= 2.15.0),
     optimx,
     coda,
     truncnorm,

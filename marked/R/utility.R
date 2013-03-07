@@ -27,6 +27,7 @@ resight.matrix=function(x)
 {
 	zz=strsplit(x$data$ch,"")
 	zz=t(sapply(zz,as.numeric))
+	x$data$cohort=process.ch(x$data$ch)$first+x$begin-1
 	resight.matrix=t(sapply(split(as.data.frame(zz),x$data$cohort),colSums))
 	colnames(resight.matrix)=c(0,cumsum(x$time.intervals))+x$begin.time
 	return(resight.matrix)
@@ -34,6 +35,7 @@ resight.matrix=function(x)
 naive.survival=function(x)
 {
 	ll=process.ch(x$data$ch,all=TRUE)
+	x$data$cohort=ll$first+x$begin-1
 	surv.matrix=t(sapply(split(as.data.frame(ll$First-ll$Lplus),x$data$cohort),colSums))
 	naive.S=matrix(NA,nrow=nrow(surv.matrix),ncol=ncol(surv.matrix))
 	naive.S=surv.matrix[,2:(ncol(surv.matrix))]/surv.matrix[,1:(ncol(surv.matrix)-1)]

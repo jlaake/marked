@@ -7,7 +7,6 @@
 
 \usepackage{amsthm}\usepackage{epsfig}\usepackage{psfrag}\usepackage{lineno}
 
-\bibliographystyle{apalike}
 
 %\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
 %\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
@@ -303,7 +302,7 @@ verb|marked|
 
 \begin_layout Standard
 \align center
-Jan 15, 2013 
+Feb 21, 2013 
 \end_layout
 
 \begin_layout Standard
@@ -352,19 +351,6 @@ status collapsed
 \end_layout
 
 \begin_layout Standard
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-
-\backslash
-thispagestyle{empty}
-\end_layout
-
-\end_inset
-
- 
 \begin_inset ERT
 status collapsed
 
@@ -614,7 +600,7 @@ verb|marked|
 
 \end_inset
 
- is only capable of fitting Cormack-Jolly-Seber (CJS) and Jolly-Seber models
+ is capable of fitting Cormack-Jolly-Seber (CJS) and Jolly-Seber models
  with maximum likelihood estimation (MLE) and CJS models with Bayesian Markov
  Chain Monte Carlo methods.
  The CJS models can be fitted with MLE using optimization code in R or with
@@ -694,20 +680,7 @@ y-Seber (CJS), Jolly-Seber (JS), mark-recapture, Markov Chain Monte Carlo
 \begin_layout Standard
 
 \size normal
-\begin_inset ERT
-status collapsed
-
-\begin_layout Plain Layout
-
-%
-\backslash
-clearpage{}
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
+\begin_inset Newpage newpage
 \end_inset
 
 
@@ -741,16 +714,6 @@ linenumbers
  
 \begin_inset FormulaMacro
 \renewcommand{\baselinestretch}{1.0}
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-\noindent
-
-\size normal
-\begin_inset VSpace 0.3in
 \end_inset
 
 
@@ -1177,7 +1140,7 @@ verb|marked|
 \shape italic
 Cinclus cinclus
 \shape default
-) data analyzed in 
+) mark-recapture data analyzed in 
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Lebreton1992"
@@ -1997,14 +1960,7 @@ probitCJS
 \size normal
 .
  The first two are based on maximum likelihood estimation (MLE) and the
- third is an MCMC implementation as described by 
-\begin_inset CommandInset citation
-LatexCommand citet
-key "Johnson2013"
-
-\end_inset
-
-.
+ third is an MCMC implementation.
  A model is fitted to the data with the function
 \shape italic
 \size default
@@ -2092,7 +2048,7 @@ model.parameters = list(Phi = list(formula = ~sex+AGE),
 \noindent
 
 \size normal
-                        p = list(formula = ~time+AGE)) 
+                        p = list(formula = ~time+AGE)) .
 \end_layout
 
 \begin_layout Standard
@@ -2140,6 +2096,7 @@ key "White1999"
 \end_inset
 
  is the vector of parameters, and the real parameters (e.g.
+ 
 \begin_inset Formula $\phi$
 \end_inset
 
@@ -2166,17 +2123,10 @@ key "White1999"
 
 \begin_layout Standard
 \noindent
-A probit link is used for probabilities with MCMC (
-\begin_inset CommandInset citation
-LatexCommand citealt
-key "Johnson2013"
-
-\end_inset
-
-).
- F
+A probit link is used for probabilities with MCMC.
+ For JS
 \size normal
-or JS, a log link is used to constrain 
+, a log link is used to constrain 
 \begin_inset Formula $f^{0}$
 \end_inset
 
@@ -2238,7 +2188,7 @@ key "Nash2011"
 \end_inset
 
 ).
- Ff the argument 
+ If the argument 
 \shape italic
 \size default
 use.admb
@@ -2480,14 +2430,14 @@ Dipper data example
 \noindent
 
 \size normal
-We use the European dipper data (first analyzed by 
+We use mark-recapture data for the European dipper (
 \begin_inset CommandInset citation
 LatexCommand citet
 key "Lebreton1992"
 
 \end_inset
 
-) provided with the package to show some examples.
+) provided with the marked package to show some examples of its use.
  The package vignette contains more detailed explanation and the code used
  to create the examples.
  To demonstrate the use of static and time-varying covariates, we added
@@ -2844,7 +2794,8 @@ ref{beta}
 \end_inset
 
 , which are generated automatically for each unique combination of covariates
- used in the model for the parameter (Figure 
+ used in the model for the parameter (Fig.
+ 
 \begin_inset CommandInset ref
 LatexCommand ref
 reference "fig:Survival-probability-estimates"
@@ -3127,7 +3078,7 @@ key "Brownie1993"
 
 \end_inset
 
-,
+, 
 \begin_inset CommandInset citation
 LatexCommand citealt
 key "Dupuis1995"
@@ -3144,7 +3095,7 @@ key "Dupuis1995"
 \begin_inset CommandInset bibtex
 LatexCommand bibtex
 bibfiles "markedWriteUpBib"
-options "jecol"
+options "mee"
 
 \end_inset
 
