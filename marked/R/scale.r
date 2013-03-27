@@ -68,6 +68,9 @@ unscale.par=function(par,scale)
 	snames=factor(unlist(sapply(names(scale),function(x) rep(x,length(scale[[x]])))),levels=pars)
 	par.list=split(par,snames)
 	for(parx in pars)
+	{
 		names(par.list[[parx]])=names(scale[[parx]])
+		par.list[[parx]]=par.list[[parx]]/scale[[parx]]
+	}
     return(par.list)
 }

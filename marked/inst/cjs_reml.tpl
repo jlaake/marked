@@ -63,10 +63,10 @@ PARAMETER_SECTION
     random_effects_vector p_u(0,p_nre_rows);              // random effect vector for p
 
 TOP_OF_MAIN_SECTION
-  gradient_structure::set_MAX_NVAR_OFFSET(100000); 
+  gradient_structure::set_MAX_NVAR_OFFSET(10000); 
   gradient_structure::set_NUM_DEPENDENT_VARIABLES(10000);
   gradient_structure::set_GRADSTACK_BUFFER_SIZE(10000000);
-  gradient_structure::set_CMPDIF_BUFFER_SIZE(10000000);
+  gradient_structure::set_CMPDIF_BUFFER_SIZE(100000000);
   arrmblsize=5000000;
 
 PROCEDURE_SECTION

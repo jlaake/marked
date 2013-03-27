@@ -1,4 +1,4 @@
-marked 1.1.0 6 Mar 2013
+marked 1.1.0 27 Mar 2013
 ------------
 NEW FEATURES
 
@@ -7,7 +7,12 @@ NEW FEATURES
 CHANGES
 
 * modified print.marked.version so it would not conflict with devtools load
+
 * modified code in cjs.f and ADMB TPL files to more closely match MARK in handling small values of Prob(ch) to avoid log(0) 
+
+BUG FIXES
+
+* fixed problem introduced in v1.0.7 in which scaled parameters were not being adjusted back to original scale with R MLE optimization. Did not affect results with MCMC or when use.admb=T. 
 
 marked 1.0.9 24 Jan 2013
 ------------

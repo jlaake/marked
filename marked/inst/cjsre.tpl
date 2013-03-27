@@ -61,9 +61,9 @@ GLOBALS_SECTION
    #include "df1b2ghmult.cpp"   // multiple G-H random effects
    
 TOP_OF_MAIN_SECTION
-  gradient_structure::set_MAX_NVAR_OFFSET(100000); 
-  gradient_structure::set_NUM_DEPENDENT_VARIABLES(100000);
-  gradient_structure::set_GRADSTACK_BUFFER_SIZE(100000000);
+  gradient_structure::set_MAX_NVAR_OFFSET(10000); 
+  gradient_structure::set_NUM_DEPENDENT_VARIABLES(10000);
+  gradient_structure::set_GRADSTACK_BUFFER_SIZE(10000000);
   gradient_structure::set_CMPDIF_BUFFER_SIZE(100000000);
   arrmblsize=5000000;
 
