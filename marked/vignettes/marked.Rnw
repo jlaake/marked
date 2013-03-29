@@ -1,7 +1,5 @@
-\batchmode
-\makeatletter
-\def\input@path{{C:/Users/JLaake/git/marked/manuscript//}}
-\makeatother
+%% LyX 2.0.3 created this file.  For more info, see http://www.lyx.org/.
+%% Do not edit unless you really know what you are doing.
 \documentclass[12pt]{article}
 \usepackage[latin9]{inputenc}
 \usepackage{geometry}
@@ -43,12 +41,12 @@
 \author{Jeff L. Laake, Devin S. Johnson, and Paul B. Conn}
 
 
-\date{{\normalsize Jan 16, 2013}}
+\date{{\normalsize Mar 27, 2013}}
 
 \maketitle
 <<echo=FALSE>>=
 # See note under Validation and Timing regarding rebuilding this vignette
-
+load("C:/Users/JLaake/git/marked/manuscript/simulation/.Rdata")
 
 @
 
@@ -601,16 +599,16 @@ rerun.admb.mark.compare[abs(rerun.admb.mark.compare[,2])>.05,]
 minutes with the R MLE implementation, \Sexpr{round((as.numeric(t1)[3]+as.numeric(admb.t2)[3])/60,2)}
 minutes with the ADMB implementation (\textit{use.admb}=TRUE) and
 \Sexpr{round((as.numeric(t3)[3]+as.numeric(t4)[3])/60,2)} minutes
-with RMark/MARK. MARK was using 7 CPUs for those timings and \verb|marked|
-was using 1 CPU. The time difference was larger prior to the recent
-implementation of parallel processing in MARK. As more group structure
-and time-varying individual covariates are added the time difference
-increases substantially. As a comparison of convergence performance,
-we subtracted the -log-likelihood value of the RMark model fit from
-the equivalent value from \verb|marked|. A negative value implies
-a better fit (convergence) for the \verb|marked| package and vice-versa
-for a positive value. With the initial runs of each package using
-their default starting values there were \Sexpr{nrow(admb.crm.compare[abs(admb.crm.compare[,5])> 0.01,])},
+with RMark/MARK. MARK was using 7 threads for those timings and \verb|marked|
+was using only 1 thread. The time difference was larger prior to the
+recent implementation of parallel processing in MARK. As more group
+structure and time-varying individual covariates are added the time
+difference increases substantially. As a comparison of convergence
+performance, we subtracted the -log-likelihood value of the RMark
+model fit from the equivalent value from \verb|marked|. A negative
+value implies a better fit (convergence) for the \verb|marked| package
+and vice-versa for a positive value. With the initial runs of each
+package using their default starting values there were \Sexpr{nrow(admb.crm.compare[abs(admb.crm.compare[,5])> 0.01,])},
 \Sexpr{nrow(crm.mark.compare[abs(crm.mark.compare[,5])> 0.01,])},
 and \Sexpr{nrow(admb.mark.compare[abs(admb.mark.compare[,5])> 0.01,])}
 models with a difference exceeding 0.01 for R (\textit{use.admb}=FALSE)
@@ -636,7 +634,7 @@ showing that the likelihood for both packages are the same and the
 initial differences resulted from differences in starting values and
 tolerance criterion.
 
-\bibliography{0C__Users_JLaake_git_marked_manuscript_markedWriteUpBib}
+\bibliography{markedWriteUpBib}
 
 
 
@@ -664,71 +662,19 @@ following the release. Using an unique index for each potential parameter,
 the PIMS would be:
 
 \begin{tabular}{ccccccccc}
- &
-\multicolumn{3}{c}{} &
- &
- &
-\multicolumn{3}{c}{}\tabularnewline
+ & \multicolumn{3}{c}{} &  &  & \multicolumn{3}{c}{}\tabularnewline
 \hline 
- &
-\multicolumn{3}{c}{$\phi$ } &
- &
- &
-\multicolumn{3}{c}{$p$}\tabularnewline
+ & \multicolumn{3}{c}{$\phi$ } &  &  & \multicolumn{3}{c}{$p$}\tabularnewline
 \hline 
- &
-\multicolumn{3}{c}{Time} &
- &
- &
-\multicolumn{3}{c}{Time}\tabularnewline
+ & \multicolumn{3}{c}{Time} &  &  & \multicolumn{3}{c}{Time}\tabularnewline
 \cline{2-5} \cline{7-9} 
-Cohort &
-2 &
-3 &
-4 &
- &
-Cohort &
-2 &
-3 &
-4\tabularnewline
+Cohort & 2 & 3 & 4 &  & Cohort & 2 & 3 & 4\tabularnewline
 \cline{2-4} \cline{7-9} 
-1 &
-1 &
-2 &
-3 &
- &
-1 &
-7 &
-8 &
-9\tabularnewline
-2 &
- &
-4 &
-5 &
- &
-2 &
- &
-10 &
-11\tabularnewline
-3 &
- &
- &
-6 &
- &
-3 &
- &
- &
-12\tabularnewline
+1 & 1 & 2 & 3 &  & 1 & 7 & 8 & 9\tabularnewline
+2 &  & 4 & 5 &  & 2 &  & 10 & 11\tabularnewline
+3 &  &  & 6 &  & 3 &  &  & 12\tabularnewline
 \hline 
- &
- &
- &
- &
- &
- &
- &
- &
-\tabularnewline
+ &  &  &  &  &  &  &  & \tabularnewline
 \end{tabular}
 
 \noindent The index 5 represents survival of the second release cohort

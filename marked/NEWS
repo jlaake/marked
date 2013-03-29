@@ -2,11 +2,11 @@ marked 1.1.0 27 Mar 2013
 ------------
 NEW FEATURES
 
-* improved and added to ADMB options for mixed effect modelling which resulted in the modification of a number of calling arguments to crm. 
+* improved and added to ADMB options for mixed effect modeling which resulted in the modification of a number of calling arguments to crm. 
 
 CHANGES
 
-* modified print.marked.version so it would not conflict with devtools load
+* modified print.marked.version so it would not conflict with loading devtools
 
 * modified code in cjs.f and ADMB TPL files to more closely match MARK in handling small values of Prob(ch) to avoid log(0) 
 

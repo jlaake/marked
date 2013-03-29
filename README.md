@@ -6,7 +6,7 @@ contrast to the R package unmarked (Fiske and Chandler 2011) that
 focuses on analysis with unmarked animals. The original impetus 
 for the package was to implement the CJS model using the hierarchical 
 likelihood construction described by Pledger et al. (2003) and to 
-improve on execution times with RMark/MARK (White and Burnham 1999;Laake and Rexstad 2008)
+improve on execution times with RMark/MARK (White and Burnham 1999;Laake 2013)
 for analysis of our own large data sets with many time-varying 
 individual (animal-specific) covariates. Subsequently, we implemented 
 the Jolly-Seber model with the Schwarz and Arnason (1996) POPAN 
@@ -33,9 +33,9 @@ reponse data. Journal of the American Statistical Association, 88(422):669:679.
 Fiske, I. J. and Chandler, R. B. (2011). unmarked : An R Package for tting
 hierarchical models of wildlife occurrence and abundance. 43(10):1:23.
 
-Laake, J. and Rexstad, E. (2008). RMark { an alternative approach to building linear
-models in MARK. In Cooch, E. and White, G. C., editors, Program MARK: A
-Gentle Introduction.
+Laake, J.L. (2013) RMark : An R Interface for Analysis of Capture-Recapture Data
+with MARK. AFSC Processed Rep 2013-01, 25p. Alaska Fish. Sci. Cent., NOAA,
+Natl. Mar. Fish. Serv., 7600 Sand Point Way NE, Seattle WA 98115.
 
 Pledger, S., Pollock, K. H., and Norris, J. L. (2003). Open capture-recapture models
 with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics, 59(4):786:794.

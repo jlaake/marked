@@ -434,6 +434,11 @@ library(marked,quietly=TRUE)
 
 \begin_layout Plain Layout
 
+library(ggplot2,quietly=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
 prepare_admb()
 \end_layout
 
@@ -1077,6 +1082,65 @@ key "Ford2012"
 \end_inset
 
  to incorporate random effects in multistate models.
+ 
+\size default
+Instructions for interfacing 
+\size normal
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+verb|marked|
+\end_layout
+
+\end_inset
+
+
+\size default
+ with 
+\size normal
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+verb|ADMB|
+\end_layout
+
+\end_inset
+
+
+\size default
+ are provided in the 
+\size normal
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+verb|marked|
+\end_layout
+
+\end_inset
+
+
+\size default
+ package help for function 
+\shape italic
+crm.
+
+\shape default
+\size normal
  We also added a Bayesian Markov Chain Monte Carlo (MCMC) implementation
  of the CJS model based on the approach used by 
 \begin_inset CommandInset citation
@@ -1491,14 +1555,26 @@ key "LaakeRMark"
 \end_inset
 
 ).
- The data contain a record for each capture history which is contained in
- a character string named 
+ The data contain a record for each of the 
+\shape italic
+\size default
+n
+\shape default
+\size normal
+ capture histories.
+ The capture history is contained in a character string named 
 \shape italic
 \size default
 ch
 \shape default
 \size normal
-.
+ with a character for each of the 
+\shape italic
+\size default
+m
+\shape default
+\size normal
+ occasions.
  An optional field named 
 \shape italic
 \size default
@@ -1662,7 +1738,7 @@ JS
  or 
 \shape italic
 \size default
-probit-
+probit
 \shape default
 \size normal
 CJS), and several other optional arguments that set data attributes like
@@ -1694,7 +1770,7 @@ freq
  
 \shape italic
 \size default
-probit-CJS
+probitCJS
 \shape default
 \size normal
 ).
@@ -1808,7 +1884,15 @@ age
 age
 \shape default
 \size normal
- is 'time since initial marking' because the default value of 
+ is 
+\begin_inset Quotes eld
+\end_inset
+
+time since initial marking
+\begin_inset Quotes erd
+\end_inset
+
+ because the default value of 
 \shape italic
 \size default
 initial.age
@@ -2088,7 +2172,7 @@ key "White1999"
 ), 
 \size default
 
-\begin_inset Formula $\boldsymbol{X}$
+\begin_inset Formula $\boldsymbol{\mathbf{X}}$
 \end_inset
 
  is the design matrix, 
@@ -2113,7 +2197,7 @@ key "White1999"
  as: 
 \begin_inset Formula 
 \[
-\boldsymbol{\phi}=\left[1+exp(-\boldsymbol{X}^{\phi}\boldsymbol{\beta})\right]{}^{-1}\qquad.
+\boldsymbol{\phi}=\left[1+\exp(-\mathbf{X}\boldsymbol{\beta})\right]{}^{-1}\qquad.
 \]
 
 \end_inset
@@ -2347,7 +2431,7 @@ key "Manly1968"
 \end_inset
 
  animal was seen.
- A similar but more ad-hoc idea is used for survival,
+ A similar but more ad-hoc idea is used for survival, 
 \begin_inset Formula $\phi$
 \end_inset
 
@@ -2432,7 +2516,7 @@ Dipper data example
 \size normal
 We use mark-recapture data for the European dipper (
 \begin_inset CommandInset citation
-LatexCommand citet
+LatexCommand citealt
 key "Lebreton1992"
 
 \end_inset
@@ -2609,6 +2693,7 @@ p
 \shape default
  that we want to fit and call crm using MLE with ADMB (model_admb) and MCMC
  (model_mcmc).
+ 
 \end_layout
 
 \begin_layout Standard
@@ -2617,7 +2702,7 @@ status open
 
 \begin_layout Plain Layout
 
-<<comment="",prompt=TRUE,tidy=FALSE,cache=TRUE,results="hide">>=
+<<comment="",prompt=TRUE,tidy=FALSE,cache=FALSE,results="hide">>=
 \end_layout
 
 \begin_layout Plain Layout
@@ -2642,7 +2727,7 @@ model_admb=crm(dipper.proc,ddl,hessian=TRUE,
 
 \begin_layout Plain Layout
 
-model_mcmc=crm(dipper,model="probitCJS",
+model_mcmc=crm(dipper,model="probitCJS",begin.time=1981,
 \end_layout
 
 \begin_layout Plain Layout
@@ -2831,7 +2916,7 @@ status open
 
 \begin_layout Plain Layout
 
- pdf("Phiplot.pdf")
+ pdf("Phiplot1.pdf")
 \end_layout
 
 \begin_layout Plain Layout
@@ -2961,6 +3046,232 @@ Survival probability",cex=.5))
 \end_layout
 
 \begin_layout Standard
+A sequence of models can be fitted with the function 
+\shape italic
+crm.wrapper
+\shape default
+ which is similar to 
+\shape italic
+mark.wrapper
+\shape default
+ in 
+\size normal
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+verb|RMark|
+\end_layout
+
+\end_inset
+
+
+\size default
+.
+ It fits each combination of the parameter models and provides a model selection
+ table (Table 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+ref{selection}
+\end_layout
+
+\end_inset
+
+).
+ In this example, we also show how a polynomial spline can be fitted to
+ a numeric time covariate with the splines package in R (Fig.
+ 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Survival-probability-estimates-1"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<comment="",prompt=TRUE,tidy=FALSE,cache=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(splines)
+\end_layout
+
+\begin_layout Plain Layout
+
+do.example=function()
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+   Phi.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+   Phi.2=list(formula=~bs(Time))
+\end_layout
+
+\begin_layout Plain Layout
+
+   p.1=list(formula=~1)
+\end_layout
+
+\begin_layout Plain Layout
+
+   p.2=list(formula=~time)
+\end_layout
+
+\begin_layout Plain Layout
+
+   crmodel.list=create.model.list(c("Phi","p"))
+\end_layout
+
+\begin_layout Plain Layout
+
+   return(crm.wrapper(crmodel.list,data=dipper,begin.time=1981,
+\end_layout
+
+\begin_layout Plain Layout
+
+                      hessian=TRUE,use.admb=TRUE,external=FALSE))
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+example=do.example()
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE,results="hide">>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# Produce plot of smoothed cubic spline over time
+\end_layout
+
+\begin_layout Plain Layout
+
+pdf("Phiplot2.pdf")
+\end_layout
+
+\begin_layout Plain Layout
+
+predPhi=predict(example[[3]],se=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+pred.sm=data.frame(spline(predPhi$Phi$Time,predPhi$Phi$estimate,n=100))
+\end_layout
+
+\begin_layout Plain Layout
+
+pred.sm$x=pred.sm$x+1981
+\end_layout
+
+\begin_layout Plain Layout
+
+pred.sm$lcl=spline(predPhi$Phi$Time,predPhi$Phi$lcl,n=100)$y
+\end_layout
+
+\begin_layout Plain Layout
+
+pred.sm$ucl=spline(predPhi$Phi$Time,predPhi$Phi$ucl,n=100)$y
+\end_layout
+
+\begin_layout Plain Layout
+
+p=ggplot(aes(x=x, y=y), data=pred.sm)
+\end_layout
+
+\begin_layout Plain Layout
+
+p=p + geom_line() + geom_ribbon(aes(ymin=lcl,ymax=ucl),alpha=0.25)+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+   xlab("Time") + ylab("Annual survival")
+\end_layout
+
+\begin_layout Plain Layout
+
+print(p)
+\end_layout
+
+\begin_layout Plain Layout
+
+dev.off()
+\end_layout
+
+\begin_layout Plain Layout
+
+modsel=example$model.table[,c(1:2,6,3:5)]
+\end_layout
+
+\begin_layout Plain Layout
+
+names(modsel)=c("Model","#par","-2LnL","AIC","Delta AIC","Model Weight")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 
 \size normal
 \begin_inset VSpace 0.3in
@@ -2998,7 +3309,8 @@ verb|marked|
 
  package will likely be most useful to analysts with data for thousands
  of animals with long capture histories and many individual covariates.
- Beyond faster run times for large analyses, the 
+ Beyond faster run times for large analyses (see marked package vignette
+ for effeciency comparison), the 
 \begin_inset ERT
 status collapsed
 
@@ -3070,7 +3382,7 @@ verb|MARK|
 
  but to develop an open-source platform to provide new models, particularly
  those with random effects or hierarchical extensions.
- We are currently developing a Bayesian MCMC version of the multi-state
+ We are currently developing a Bayesian MCMC and MLE version of the multi-state
  CJS model (
 \begin_inset CommandInset citation
 LatexCommand citealt
@@ -3087,6 +3399,49 @@ key "Dupuis1995"
 
 ) and have plans to develop a model that allows estimates of survival while
  accounting for tag loss.
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset VSpace 0.3in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\series bold
+\size normal
+Acknowledgments
+\series default
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\size normal
+We thank Alexey Altuhkov and Eli Gurarie for suggesting use of the splines
+ package.
+ 
+\size default
+The findings and conclusions in the paper are those of the authors and do
+ not necessarily represent the views of the National Marine Fisheries Service,
+ NOAA.
+ Reference to trade names does not imply endoresement by the National Marine
+ Fisheries Service, NOAA.
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset VSpace 0.3in
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -6056,6 +6411,50 @@ cement="top",latex.environments="center",include.rownames=FALSE,double=TRUE)
 \end_layout
 
 \begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tab3,results="tex",echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(xtable(modsel,caption="Model selection summary table for four example
+ models fitted to the dipper data.
+ The formula  
+\backslash
+
+\backslash
+~{ }1 is a constant model,  
+\backslash
+
+\backslash
+~{ }bs(Time) is a polynomial spline over time, and  
+\backslash
+
+\backslash
+~{ }time has separate parameters for each sampling occasion.",label="selection",a
+lign=rep("r",7)),caption.placement="top",latex.environments="center",include.rownam
+es=FALSE,double=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
 \paragraph_spacing double
 \begin_inset Newpage clearpage
 \end_inset
@@ -6079,7 +6478,7 @@ includegraphics[width=6in,height=4in]
 
 \begin_layout Plain Layout
 
- {Phiplot.pdf}
+ {Phiplot1.pdf}
 \end_layout
 
 \end_inset
@@ -6101,6 +6500,64 @@ name "fig:Survival-probability-estimates"
 Survival probability estimates for each value of weight for flood (F) and
  non-flood (N) years for example model with dipper data.
  Points are MCMC mode estimates and lines are the equivalent MLE estimates.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Newpage clearpage
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+includegraphics[width=6in,height=4in]
+\end_layout
+
+\begin_layout Plain Layout
+
+ {Phiplot2.pdf}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\paragraph_spacing double
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Survival-probability-estimates-1"
+
+\end_inset
+
+Survival probability estimates and confidence intervals for the dipper data
+ using a polynomial spline for variation in survival over time.
+ 
 \end_layout
 
 \end_inset

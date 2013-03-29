@@ -33,7 +33,8 @@
 #' 
 #' In the current implementation, a logit link is used to constrain the
 #' parameters in the unit interval (0,1) except for probability of entry which
-#' uses an mlogit and N which uses a log link.  These could be generalized to
+#' uses an mlogit and N which uses a log link. For the probitCJS model, a probit link is
+#' used for the parameters. These could be generalized to
 #' use other link functions. Following the notation of MARK, the parameters in
 #' the link space are referred to as \code{beta} and those in the actual
 #' parameter space of \code{Phi} and \code{p} as reals.
@@ -108,6 +109,34 @@
 #' external FORTRAN subroutine, if it gets a subscript out of bounds, it will
 #' cause R to terminate.  So make sure to save your workspace frequently if you
 #' use this function in its current implementation.
+#' 
+#' To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
+#' The following are instructions for installation with Windows. For other operating systems see (http://www.admb-project.org/downloads) and 
+#'  (http://www.admb-project.org/tools/gcc/). 
+#' 
+#' Windows Instructions:
+#'
+#'  1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
+#' 
+#'  2) Install ADMB 11: http://admb-project.googlecode.com/files/admb-11-mingw-gcc4.5-32bit.exe. Put the software in C:/admb to
+#'  avoid problems with spaces in directory name and for the function below to work.
+#' 
+#'  3) Install gcc 4.5 from: http://www.admb-project.org/tools/gcc/gcc452-win32.zip/view. Put in c:/MinGW
+#' 
+#' I use the following function in R to setup R2admb to access ADMB rather than adding to my path so gcc versions
+#' with Rtools don't conflict. 
+#' 
+#' prepare_admb=function()
+#' {
+#'   Sys.setenv(PATH = paste("c:/admb/bin;c:admb/utilities;c:/MinGW/bin;", 
+#'         Sys.getenv("PATH"), sep = ";"))
+#'     Sys.setenv(ADMB_HOME = "c:/admb")
+#'     invisible()
+#' }
+#' To use different locations you'll need to change the values used above
+#' 
+#' Before running crm with use.admb=T, execute the function prepare_admb().  You could put this function or the code it 
+#' contains in your .First or .Rprofile so it runs each time you start R. 
 #' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a

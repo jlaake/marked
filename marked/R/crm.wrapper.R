@@ -37,8 +37,8 @@
 #' @param ... aditional arguments passed to crm
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
-#' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and has no return value
-#' either for "CJS" or "JS" at present; load.model returns model object that is stored externally
+#' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
+#' and a model selection table; load.model returns model object that is stored externally
 #' @author Jeff Laake
 #' @export create.model.list
 #' @export crm.wrapper
