@@ -1,14 +1,18 @@
-marked 1.1.0 27 Mar 2013
+marked 1.1.0 29 Mar 2013
 ------------
 NEW FEATURES
 
-* improved and added to ADMB options for mixed effect modeling which resulted in the modification of a number of calling arguments to crm. 
+* improved and added to ADMB options for mixed effect modeling which resulted in the modification of a number of calling arguments to crm.
+
+* included code that looks for ADMB exe files in the package directory or workspace directory and uses them if they are found and !compile. This allows the user to avoid downloading ADMB and gcc but exe's are only available for windows at present. 
 
 CHANGES
 
 * modified print.marked.version so it would not conflict with loading devtools
 
-* modified code in cjs.f and ADMB TPL files to more closely match MARK in handling small values of Prob(ch) to avoid log(0) 
+* modified code in cjs.f and ADMB TPL files to more closely match MARK in handling small values of Prob(ch) to avoid log(0)
+
+* code was moved from crm to process.data which sets accumulate=FALSE if MCMC method is selected. 
 
 BUG FIXES
 

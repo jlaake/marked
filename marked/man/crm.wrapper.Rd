@@ -43,9 +43,10 @@
 }
 \value{
   create.model.list returns a matrix for crm.wrapper;
-  crm.wrapper runs and stores models externally and has no
-  return value either for "CJS" or "JS" at present;
-  load.model returns model object that is stored externally
+  crm.wrapper runs and stores models externally and
+  retrurns a list of model results and a model selection
+  table; load.model returns model object that is stored
+  externally
 }
 \description{
   Some functions that help automate running a set of crm

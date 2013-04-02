@@ -154,11 +154,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   } 
    } else
    {
-       # see if admb can be found; this is not a complete test but should catch the novice user who has
-	   # not setup admb at all
-	   if(Sys.which("tpl2cpp.exe")=="")stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path") 
 	   sdir=system.file(package="marked")
-
 	   # set tpl filename
 	   if(!crossed)
 	   {
@@ -179,11 +175,30 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   {
 		   file.copy(file.path(sdir,paste(tpl,".tpl",sep="")),file.path(getwd(),paste(tpl,".tpl",sep="")),overwrite=TRUE)
 		   file.copy( file.path(sdir,list.files(sdir,"*.cpp")),file.path(getwd()),overwrite=TRUE)
-		   compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
-	   } else
+	   } 
+	   # if exe available in the package or workspace directory use it
+       have.exe=TRUE
+	   if(!file.exists(file.path(getwd(),paste(tpl,".exe",sep=""))))
 	   {
-		   if(!file.exists(paste(tpl,".exe",sep=""))|compile)
-			   compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
+		   if(file.exists(file.path(sdir,paste(tpl,".exe",sep=""))) &!compile)
+		   {
+			   file.copy(file.path(sdir,paste(tpl,".exe",sep="")),file.path(getwd(),paste(tpl,".exe",sep="")),overwrite=TRUE)
+		   }else
+ 	       # if there is no exe in either place then check to make sure ADMB is installed and linked
+		   {
+			  have.exe=FALSE
+		   }
+	   }
+	   if(!have.exe | compile)
+	   {
+		   # no exe or compile set TRUE; see if admb can be found; this is not a complete test but should catch the novice user who has
+	       # not setup admb at all
+	       if(Sys.which("tpl2cpp.exe")=="")
+					  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
+		   else
+		   {
+			  compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
+		    }
 	   }
 	   # create admbcjs.dat file to create its contents 
 	   con=file(paste(tpl,".dat",sep=""),open="wt")

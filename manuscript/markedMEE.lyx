@@ -302,7 +302,7 @@ verb|marked|
 
 \begin_layout Standard
 \align center
-Feb 21, 2013 
+March 29, 2013 
 \end_layout
 
 \begin_layout Standard
@@ -3309,8 +3309,20 @@ verb|marked|
 
  package will likely be most useful to analysts with data for thousands
  of animals with long capture histories and many individual covariates.
- Beyond faster run times for large analyses (see marked package vignette
- for effeciency comparison), the 
+ Beyond faster run times for large analyses (see 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+verb|marked|
+\end_layout
+
+\end_inset
+
+ package vignette for effeciency comparison), the 
 \begin_inset ERT
 status collapsed
 

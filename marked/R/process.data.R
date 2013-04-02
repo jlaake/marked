@@ -143,6 +143,7 @@ function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,ag
 initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 {
    if(model%in%c("cjs","js"))model=toupper(model)
+   if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
    dataname=substitute(data)
 #
 #  Compute number of occasions and check validity of model
