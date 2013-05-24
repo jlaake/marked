@@ -154,6 +154,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   } 
    } else
    {
+	   os=R.Version()$os
 	   sdir=system.file(package="marked")
 	   # set tpl filename
 	   if(!crossed)
@@ -193,7 +194,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   {
 		   # no exe or compile set TRUE; see if admb can be found; this is not a complete test but should catch the novice user who has
 	       # not setup admb at all
-	       if(Sys.which("tpl2cpp.exe")=="")
+	       if(os=="mingw32" & Sys.which("tpl2cpp.exe")=="")
 					  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
 		   else
 		   {
@@ -326,13 +327,10 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		      res$cor=beta.vcv/outer(sqrt(diag(beta.vcv)),sqrt(diag(beta.vcv)))
 	   }  else
 		   beta.vcv=res$vcov
-	   rownames(beta.vcv)=names(unlist(cjs.beta))
+	   rownames(beta.vcv)=names(coef(res))
 	   colnames(beta.vcv)=rownames(beta.vcv)
-	   if(nphisigma+npsigma==0)
-	   {
-		   rownames(res$cor)=rownames(beta.vcv)
-		   colnames(res$cor)=rownames(beta.vcv)
-	   }
+	   rownames(res$cor)=rownames(beta.vcv)
+	   colnames(res$cor)=rownames(beta.vcv)
 	   res$vcov=NULL
 	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,res)
 	   res$beta.vcv=beta.vcv

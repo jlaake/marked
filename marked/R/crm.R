@@ -217,7 +217,7 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  strata.labels=NULL,...)
 {
 if(model%in%c("cjs","js","mscjs"))model=toupper(model)
-if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
+#if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
 ptm=proc.time()
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments

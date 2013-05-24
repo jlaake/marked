@@ -49,7 +49,7 @@ coef.crm=function(object,...)
 	   beta=data.frame(Estimate=unlist(object$beta))
 	   if(!is.null(object$beta.vcv))
 	   {
-		   beta$se=sqrt(diag(object$beta.vcv))
+		   beta$se=sqrt(diag(object$beta.vcv[1:length(beta$Estimate),1:length(beta$Estimate)]))
 		   beta$lcl=beta$Estimate - 1.96*beta$se
 		   beta$ucl=beta$Estimate + 1.96*beta$se
 	   }
