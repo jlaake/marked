@@ -1,4 +1,4 @@
-marked 1.1.0 24 May 2013
+marked 1.1.0 28 May 2013
 ------------
 NEW FEATURES
 
@@ -21,6 +21,7 @@ BUG FIXES
 * on Mac or Linux the code to assess whether admb was available, did not work. It is not optimal but at present this test is restricted to Window OS.
 
 * fixed bug in cjs which was written with a local copy of R2admb and did not work with the posted R2admb. This also involved changes to coef.crm 
+
 
 marked 1.0.9 24 Jan 2013
 ------------

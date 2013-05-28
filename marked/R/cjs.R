@@ -310,29 +310,40 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 #	   }
 	   
 	   cjs.beta.fixed=unscale.par(c(res$coeflist$phi_beta,res$coeflist$p_beta),scale)
-	   if((npsigma+nphisigma)>0)
-	   {
-		   cjs.beta.random=c(Phi=res$coeflist$phi_sigma,p=res$coeflist$p_sigma)
-		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
-	   } else 
-		   cjs.beta.random=NULL
+	   cjs.beta.random=c(Phi=res$coeflist$phi_sigma,p=res$coeflist$p_sigma)
+	   if(!is.null(cjs.beta.random))names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
 	   cjs.beta=c(cjs.beta.fixed,cjs.beta.random)
+	   parnames=names(unlist(cjs.beta))
+	   fixed.npar=length(parnames)
+       if(fixed.npar<res$npar)
+	   {
+		   allnames=names(unlist(res$coeflist))
+		   allnames=sub("phi_","Phi.",allnames)
+		   allnames=sub("p_","p.",allnames)
+		   allnames[1:fixed.npar]=parnames
+		   random.effects=coef(res)[(fixed.npar+1):res$npar]
+		   names(random.effects)=allnames[(fixed.npar+1):res$npar]
+	   }else
+	   {
+		   random.effects=NULL
+		   allnames=parnames
+	   }
 	   beta=list(cjs.beta)
 	   if(!is.null(res$hes))
 	   {
 		   beta.vcv=solvecov(res$hes)$inv
-		   rownames(res$hes)=names(unlist(cjs.beta))
+		   rownames(res$hes)=allnames
 		   colnames(res$hes)=rownames(res$hes)
 		   if(all(diag(beta.vcv>0))) 
 		      res$cor=beta.vcv/outer(sqrt(diag(beta.vcv)),sqrt(diag(beta.vcv)))
 	   }  else
 		   beta.vcv=res$vcov
-	   rownames(beta.vcv)=names(coef(res))
+	   rownames(beta.vcv)=allnames
 	   colnames(beta.vcv)=rownames(beta.vcv)
 	   rownames(res$cor)=rownames(beta.vcv)
 	   colnames(res$cor)=rownames(beta.vcv)
 	   res$vcov=NULL
-	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,res)
+	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,random.effects=list(random.effects),res)
 	   res$beta.vcv=beta.vcv
    }
 #  Restore non-accumulated, non-scaled dm's etc
