@@ -343,7 +343,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   rownames(res$cor)=rownames(beta.vcv)
 	   colnames(res$cor)=rownames(beta.vcv)
 	   res$vcov=NULL
-	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,random.effects=list(random.effects),res)
+	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*fixed.npar,convergence=convergence,random.effects=list(random.effects),res)
 	   res$beta.vcv=beta.vcv
    }
 #  Restore non-accumulated, non-scaled dm's etc
