@@ -352,6 +352,7 @@ REPORT_SECTION
 	   } else
 	     phi(j-1)=phi_fixedDM(i2,kphi+1);
 	}
+	report << "# phiest" << endl;
 	report << phi << endl;
 	}
     for(i=1;i<=n;i++)
@@ -380,6 +381,7 @@ REPORT_SECTION
        } else
 	     p(j-1)=p_fixedDM(i2,kp+1);
 	   }
+	report << "# pest" << endl;
 	report << p << endl;
 	}
 
