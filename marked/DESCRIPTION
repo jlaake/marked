@@ -68,3 +68,8 @@ Collate:
     'mscjs.r'
     'mixed.model.r'
     'proc.form.r'
+    'HMMLikelihood.r'
+    'Transition_functions.r'
+    'Observation_functions.r'
+    'fitHMM.r'
+    'simHMM.r'

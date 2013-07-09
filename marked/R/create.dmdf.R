@@ -305,10 +305,10 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 #  return dataframe.
    res=do.call("rbind",dm.df)
    if(is.null(fields))
-      res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),!names(x$data)%in%c("ch"),drop=FALSE])                             
+      res=cbind(res,x$data[rep(1:nrow(x$data),each= nrow(res)/nrow(x$data)),!names(x$data)%in%c("ch"),drop=FALSE])                             
    else{
 	   fields=c(fields,"id")
-       res=cbind(res,x$data[rep(1:nrow(x$data),each=ntimes),names(x$data)%in%fields,drop=FALSE])
+       res=cbind(res,x$data[rep(1:nrow(x$data), nrow(res)/nrow(x$data)),names(x$data)%in%fields,drop=FALSE])
    }
    if("group"%in%names(res))
 	   levels(res$group)=apply(x$group.covariates,1,paste,collapse="")

@@ -186,6 +186,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    nocc=model.list$nocc
    nocc.secondary=NULL
    num=model.list$num
+   model.list=setupHMM(model.list,model,strata.labels)
 #
 #     If time intervals specified make sure there are nocc-1 of them
 #     If none specified assume they are 1
@@ -249,6 +250,7 @@ if(number.of.factors==0)
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=initial.ages[1],group.covariates=NULL)
     if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
+	if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
 	return(plist)
 }
 #
@@ -375,6 +377,7 @@ else
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=init.ages,group.covariates=group.covariates)
   if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
+  if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
   return(plist)
    
 }

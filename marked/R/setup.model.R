@@ -23,6 +23,7 @@
 #' @param nocc length of capture history string
 #' @param mixtures number of mixtures
 #' @export
+#' @aliases setup.model setupHMM
 #' @return model.list - a list with following elements \item{etype}{encounter
 #' type string for MARK input; typically same as model} \item{nocc}{number of
 #' capture occasions} \item{num}{number of time intervals relative to number of
@@ -67,5 +68,34 @@ setup.model <-
 		model_def$mixtures=mixtures
 	model_def$default.mixtures=NULL
 	model_def$nocc=nocc/model_def$divisor
-	return(as.list(model_def))
+	model_def=as.list(model_def)
+	return(model_def)
 }
+setupHMM=function(model_def,model,strata.labels)
+{
+	if(toupper(model)=="HMMCJS")
+	{
+		model_def$hmm$ObsLevels=c(0,1)
+		model_def$hmm$fct_dmat=marked:::cjs_dmat
+		model_def$hmm$fct_gamma=marked:::cjs_gamma
+		model_def$hmm$m=2
+	} else
+	if(toupper(model)=="HMMMSCJS")
+	{
+		model_def$hmm$ObsLevels=c(0,strata.labels)
+		model_def$hmm$fct_dmat=marked:::ms_dmat
+		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$m=length(strata.labels)+1
+	}   
+	if(toupper(model)=="HMMUMSCJS")
+	{
+		model_def$hmm$ObsLevels=c(0,strata.labels,"u")
+		model_def$hmm$fct_dmat=marked:::ums_dmat
+		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$m=length(strata.labels)+1
+	}
+	return(model_def)
+}
+
+
+

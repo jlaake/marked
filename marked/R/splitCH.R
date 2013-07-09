@@ -32,10 +32,7 @@
 splitCH <- function(x="ch", data=NULL, prefix="Time"){
 #   Set value of ch depending on what arguments are set
 	if(is.null(data)){
-		if(length(x)>1)
-			ch=x
-		else
-			stop("Bad input for x, data")
+	  ch=x
 	} else
 	{
 		if(!x%in%names(data)) stop(paste("value for data does not contain field", x))

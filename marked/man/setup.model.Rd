@@ -1,5 +1,6 @@
 \name{setup.model}
 \alias{setup.model}
+\alias{setupHMM}
 \title{Defines model specific parameters (internal use)}
 \usage{
   setup.model(model, nocc, mixtures = 1)

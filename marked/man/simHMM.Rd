@@ -1,0 +1,65 @@
+\name{simHMM}
+\alias{simHMM}
+\title{Simulates data from Hidden Markov Model}
+\usage{
+  simHMM(data, ddl = NULL, begin.time = 1,
+    model = "hmmCJS", title = "",
+    model.parameters = list(), design.parameters = list(),
+    initial = NULL, groups = NULL, time.intervals = NULL,
+    accumulate = TRUE, strata.labels = NULL)
+}
+\arguments{
+  \item{data}{Either the raw data which is a dataframe with
+  at least one column named ch (a character field
+  containing the capture history) or a processed dataframe}
+
+  \item{ddl}{Design data list which contains a list element
+  for each parameter type; if NULL it is created}
+
+  \item{begin.time}{Time of first capture(release)
+  occasion}
+
+  \item{model}{Type of c-r model ("cjs" or "js" at
+  present)}
+
+  \item{title}{Optional title; not used at present}
+
+  \item{design.parameters}{Specification of any grouping
+  variables for design data for each parameter}
+
+  \item{model.parameters}{List of model parameter
+  specifications}
+
+  \item{initial}{Optional list (by parameter type) of
+  initial values for beta parameters (e.g.,
+  initial=list(Phi=0.3,p=-2)}
+
+  \item{groups}{Vector of names of factor variables for
+  creating groups}
+
+  \item{time.intervals}{Intervals of time between the
+  capture occasions}
+
+  \item{accumulate}{if TRUE, like capture-histories are
+  accumulated to reduce computation}
+
+  \item{strata.labels}{labels for strata used in capture
+  history; they are converted to numeric in the order
+  listed. Only needed to specify unobserved strata. For any
+  unobserved strata p=0..}
+}
+\value{
+  dataframe with simulated data
+}
+\description{
+  Creates a set of data from a specified HMM for
+  capture-recapture data.
+}
+\examples{
+# simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
+df=simHMM(data.frame(ch=rep("100",2),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=F))
+}
+\author{
+  Jeff Laake <jeff.laake@noaa.gov>
+}
+
