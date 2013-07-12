@@ -324,6 +324,9 @@ REPORT_SECTION
     dvar_vector p(1,m-1);                // temp vector for Phis for each occasion for a single history
     int i,i1,i2,j,L;	                   // miscellaneous ints
     dvariable mu;                      // link function value
+	if(last_phase())
+	{
+	report << "# phiest" << endl;
     for(i=1;i<=n;i++)
 	{
     phi=0;                                                         // set all phi values to 0
@@ -343,7 +346,7 @@ REPORT_SECTION
 	          {
 	             for(L=1;L<=phi_krand;L++)
 		            if(phi_randIndex(i2,L)>0)
-	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
+	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L)-1)*mfexp(phi_sigma(L));
 	          }  
 	      }
           phi(j-1)=1/(1+exp(-mu));                                 // compute phi for the interval
@@ -352,9 +355,9 @@ REPORT_SECTION
 	   } else
 	     phi(j-1)=phi_fixedDM(i2,kphi+1);
 	}
-	report << "# phiest" << endl;
 	report << phi << endl;
 	}
+	report << "# pest" << endl;
     for(i=1;i<=n;i++)
 	{
 	p=0;
@@ -374,17 +377,16 @@ REPORT_SECTION
 	          {
 	             for(L=1;L<=p_krand;L++)
 		            if(p_randIndex(i2,L)>0)
-	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
+	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L)-1)*mfexp(p_sigma(L));
 	          }  
 	      }
           p(j-1)=1/(1+exp(-mu));                                     
        } else
 	     p(j-1)=p_fixedDM(i2,kp+1);
 	   }
-	report << "# pest" << endl;
 	report << p << endl;
 	}
-
+    }
 
 
 	

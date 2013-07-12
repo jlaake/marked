@@ -224,7 +224,7 @@ if(mcmc)
 # computes real estimates using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
 # returns the number of columns in the design matrix (compute=FALSE); handles fixed parameters assigned by non-NA value in field named 
 # fix in the ddl dataframe.
-reals=function(parname,ddl,parameters,link=NULL,parlist=NULL,compute=TRUE)
+reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
 {
 	# create design matrix (dm) for parameter parname
 	dm=model.matrix(parameters[[parname]]$formula,ddl)
@@ -238,9 +238,9 @@ reals=function(parname,ddl,parameters,link=NULL,parlist=NULL,compute=TRUE)
 	# if not computing reals, return the number of colmns in dm
 	if(!compute)return(ncol(dm))
 	# Currently for log or logit link, return the inverse values
-	if(link=="log")
+	if(parameters[[parname]]$link=="log")
 		values=exp(dm%*%parlist[[parname]])
-	else if(link=="logit")
+	else if(parameters[[parname]]$link=="logit")
 		values=plogis(dm%*%parlist[[parname]])
 	# if some reals are fixed, set reals to their fixed values 
 	if(!is.null(ddl$fix))

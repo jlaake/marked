@@ -47,12 +47,7 @@ DATA_SECTION
     !! if(p_nre==0)npcounts=0;
     init_ivector p_counts(1,npcounts);                    // count of p random effect indices by id
     init_imatrix p_idIndex(1,npcounts,1,p_counts);        // p random effect indices by id
-
-    init_int K;                                           // number of fixed Phi values 
-    init_matrix PhiF(1,K,1,2);                            // Phi fixed matrix with index in first column and value in second column
-    init_int L;                                           // number of fixed p values
-    init_matrix pF(1,L,1,2);                              // p fixed matrix with index in first column and value in second column
-        
+         
 PARAMETER_SECTION
     init_vector phi_sigma(1,phi_krand);                   // log-sigma for random effects in phi;             
     init_vector p_sigma(1,p_krand);                       // log-sigma for random effects in p;             
@@ -323,6 +318,9 @@ REPORT_SECTION
     dvar_vector p(1,m-1);                // temp vector for Phis for each occasion for a single history
     int i,i1,i2,j,L;	                   // miscellaneous ints
     dvariable mu;                      // link function value
+	if(last_phase())
+	{
+	report << "# phiest" << endl;
     for(i=1;i<=n;i++)
 	{
     phi=0;                                                         // set all phi values to 0
@@ -342,7 +340,7 @@ REPORT_SECTION
 	          {
 	             for(L=1;L<=phi_krand;L++)
 		            if(phi_randIndex(i2,L)>0)
-	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
+	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L)-1)*mfexp(phi_sigma(L));
 	          }  
 	      }
           phi(j-1)=1/(1+exp(-mu));                                 // compute phi for the interval
@@ -351,9 +349,9 @@ REPORT_SECTION
 	   } else
 	     phi(j-1)=phi_fixedDM(i2,kphi+1);
 	}
-	report << "# phiest" << endl;
 	report << phi << endl;
 	}
+   	report << "# pest" << endl;
     for(i=1;i<=n;i++)
 	{
 	p=0;
@@ -373,17 +371,16 @@ REPORT_SECTION
 	          {
 	             for(L=1;L<=p_krand;L++)
 		            if(p_randIndex(i2,L)>0)
-	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L))*mfexp(p_sigma(L));
+	                   mu+=p_randDM(i2,L)*p_u(p_randIndex(i2,L)-1)*mfexp(p_sigma(L));
 	          }  
 	      }
           p(j-1)=1/(1+exp(-mu));                                     
        } else
 	     p(j-1)=p_fixedDM(i2,kp+1);
 	   }
-   	report << "# pest" << endl;
 	report << p << endl;
 	}
-
+    }
 
 
 	

@@ -29,6 +29,7 @@
 #' @return result from optim
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @export
+#' @import plyr
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
 #' @examples
 #' ## Example; uses process.data and make.design.data from marked
@@ -46,7 +47,7 @@
 #' ms.ddl$Psi$fix=NA
 #' ms.ddl$Psi$fix[ms.ddl$Psi$stratum==ms.ddl$Psi$tostratum]=1
 #' fitHMM(ms,ms.ddl,model.parameteres=list(Psi=list(formula=~-1+stratum:tostratum)))
-fitHMM=function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
+fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
 		groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,control=NULL,itnmax=5000,
 		run=TRUE,strata.labels=NULL)
 	
@@ -73,6 +74,7 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
 		data.proc=data
 		model=data$model
 	}
+	if(substr(model,1,3)!="hmm") stop("\n ",model," is not an HMM model \n")
 #
 # If the design data have not been constructed, do so now
 #
@@ -89,6 +91,10 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
 	number.of.groups=1
 	if(!is.null(data.proc$group.covariates))number.of.groups=nrow(data.proc$group.covariates)
 	par.list=setup.parameters(data.proc$model,check=TRUE)
+	#
+	# Check validity of parameter list; stop if not valid
+	#
+	if(!valid.parameters(model,model.parameters)) stop()
 	parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 	parameters=parameters[par.list]
 	for (i in 1:length(parameters))
@@ -131,7 +137,7 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
 	if(run)
 		return(optim(par,loglikelihood,type=ptype,x=x,m=data.proc$m,T=data.proc$nocc,start=start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,ddl=ddl,parameters=parameters,control=control,
-			method=method,debug=debug))
+			method=method,debug=debug,hessian=hessian))
     else
 		return(list(data=data.proc,ddl=ddl,ptype=ptype,start=start,x=x,par=par,model.parameters=parameters))
 }

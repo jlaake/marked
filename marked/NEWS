@@ -1,12 +1,14 @@
-marked 1.1.0 8 July 2013
+marked 1.1.0 11 July 2013
 ------------
 NEW FEATURES
 
 * improved and added to ADMB options for mixed effect modeling which resulted in the modification of a number of calling arguments to crm.
 
-* included code that looks for ADMB exe files in the package directory or workspace directory and uses them if they are found and !compile. This allows the user to avoid downloading ADMB and gcc but exe's are only available for windows at present. 
+* included code that looks for ADMB executable files in the package directory or workspace directory and uses them if they are found and !compile. This allows the user to avoid downloading ADMB and gcc but exe's are only available for windows at present. 
 
 * included code for HMM likelihood model fitting of c-r models (fitHMM) and simulation (simHMM) and supporting functions
+
+* added clean argument to remove TPL and executable files remaining in the working directory
 
 CHANGES
 
@@ -18,13 +20,15 @@ CHANGES
 
 * removed code that prevented splitCH from working on a single ch value
 
+* use suppressMessages around optimx to avoid messages about BB and other packages not used
+
 BUG FIXES
 
 * create.dmdf was not assigning id values correctly for MSCJS model
 
 * fixed problem introduced in v1.0.7 in which scaled parameters were not being adjusted back to original scale with R MLE optimization. Did not affect results with MCMC or when use.admb=T.
 
-* on Mac or Linux the code to assess whether admb was available, did not work. It is not optimal but at present this test is restricted to Window OS.
+* on Mac or Linux the code to assess whether admb was available, did not work. This was patched.
 
 * fixed bug in cjs which was written with a local copy of R2admb and did not work with the posted R2admb. This also involved changes to coef.crm 
 

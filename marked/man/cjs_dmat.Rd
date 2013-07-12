@@ -4,9 +4,7 @@
 \alias{ums_dmat}
 \title{HMM Observation Probability matrix functions}
 \usage{
-  cjs_dmat(id,ddl,parlist,parameters)
-    ms_dmat(id,ddl,parlist,parameters)
-    ums_dmat(id,ddl,parlist,parameters)
+  cjs_dmat(pars,m,T) ms_dmat(pars,m,T) ums_dmat(pars,m,T)
 }
 \arguments{
   \item{id}{sequential id for the observed sequence}
@@ -19,7 +17,7 @@
   \item{parameters}{formulas for each parameter type}
 }
 \value{
-  list of occasion-specific observation probability
+  array of id and occasion-specific observation probability
   matrices - state-dependent distributions in Zucchini and
   MacDonald (2009)
 }

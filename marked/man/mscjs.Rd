@@ -7,7 +7,7 @@
     hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
     refit, itnmax = NULL, control = NULL, scale,
     use.admb = FALSE, re = FALSE, compile = FALSE,
-    extra.args = "", ...)
+    extra.args = "", clean = TRUE, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -20,7 +20,7 @@
 
   \item{model_data}{a list of all the relevant data for
   fitting the model including imat,
-  Phi.dm,p.dm,Psi.dm,Phi.fixed,p.fixed,Psi.fixed and
+  S.dm,p.dm,Psi.dm,S.fixed,p.fixed,Psi.fixed and
   time.intervals. It is used to save values and avoid
   accumulation again if the model was re-rerun with an
   additional call to cjs when using autoscale or
@@ -32,7 +32,7 @@
 
   \item{accumulate}{if TRUE will accumulate capture
   histories with common value and with a common design
-  matrix for Phi and p to speed up execution}
+  matrix for S and p to speed up execution}
 
   \item{initial}{list of initial values for parameters if
   desired; if each is a named vector from previous run it
@@ -70,6 +70,9 @@
   \item{extra.args}{optional character string that is
   passed to admb if use.admb==TRUE}
 
+  \item{clean}{if TRUE, deletes the tpl and executable
+  files for amdb if use.admb=T}
+
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or
   \code{\link{cjs.lnl}}}
@@ -83,7 +86,7 @@
   \item{convergence}{result from \code{optim}; if 0
   \code{optim} thinks it converged}
   \item{count}{\code{optim} results of number of function
-  evaluations} \item{reals}{dataframe of data and real Phi
+  evaluations} \item{reals}{dataframe of data and real S
   and p estimates for each animal-occasion excluding those
   that occurred before release} \item{vcv}{var-cov matrix
   of betas if hessian=TRUE was set}

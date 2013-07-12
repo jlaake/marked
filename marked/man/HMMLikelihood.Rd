@@ -3,7 +3,7 @@
 \alias{loglikelihood}
 \title{Hidden Markov Model likelihood functions}
 \usage{
-  HMMLikelihood(id,x,start,m,T,fct_dmat,fct_gamma,ddl,parlist,parameters)
+  HMMLikelihood(id,x,start,m,T,dmat,gamma)
     loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,ddl,parameters,debug=FALSE)
 }
 \arguments{
@@ -20,8 +20,17 @@
 
   \item{T}{number of occasions; sequence length}
 
-  \item{parlist}{list of parameter vectors split by type
-  (eg Phi, p in CJS)}
+  \item{dmat}{observation probability matrices}
+
+  \item{gamma}{transition matrices}
+
+  \item{par}{vector of parameter values for log-likelihood
+  evaluation}
+
+  \item{type}{vector of parameter names used to split par
+  vector into types}
+
+  \item{freq}{vector of history frequencies or 1}
 
   \item{fct_dmat}{function to create D from parameters}
 
@@ -34,14 +43,6 @@
 
   \item{debug}{if TRUE, print out par values and
   -log-likelihood}
-
-  \item{par}{vector of parameter values for log-likelihood
-  evaluation}
-
-  \item{type}{vector of parameter names used to split par
-  vector into types}
-
-  \item{freq}{vector of history frequencies or 1}
 }
 \value{
   HMMLikelihood returns log-likelihood for a single

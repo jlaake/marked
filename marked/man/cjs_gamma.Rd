@@ -3,22 +3,21 @@
 \alias{ms_gamma}
 \title{HMM Transition matrix functions}
 \usage{
-  cjs_gamma(id,ddl,parlist,parameters)
-    ms_gamma(id,ddl,parlist,parameters)
+  cjs_gamma(pars,m,T) ms_gamma(pars,m,T)
 }
 \arguments{
-  \item{id}{sequential id for the observed sequence}
+  \item{pars}{list of real parameter values for each type
+  of parameter}
 
-  \item{ddl}{design data list of parameters for each id}
+  \item{m}{number of states}
 
-  \item{parlist}{list of parameter vectors split by type
-  (eg Phi, p in CJS)}
+  \item{T}{number of occasions}
 
   \item{parameters}{formulas for each parameter type}
 }
 \value{
-  list of occasion-specific transition matrices - Gamma in
-  Zucchini and MacDonald (2009)
+  array of id and occasion-specific transition matrices -
+  Gamma in Zucchini and MacDonald (2009)
 }
 \description{
   Functions that compute the transition matrix for various

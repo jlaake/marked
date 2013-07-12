@@ -174,6 +174,7 @@
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
+#' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
@@ -214,11 +215,13 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,...)
+ strata.labels=NULL,clean=TRUE,...)
 {
 if(model%in%c("cjs","js","mscjs"))model=toupper(model)
 #if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
 ptm=proc.time()
+if(is.null(crossed))crossed=FALSE
+if(crossed)accumulate=FALSE
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments
 # 
@@ -257,6 +260,10 @@ if(is.null(ddl))
 number.of.groups=1
 if(!is.null(data.proc$group.covariates))number.of.groups=nrow(data.proc$group.covariates)
 par.list=setup.parameters(data.proc$model,check=TRUE)
+#
+# Check validity of parameter list; stop if not valid
+#
+if(!valid.parameters(model,model.parameters)) stop()
 parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 parameters=parameters[par.list]
 re=FALSE
@@ -269,8 +276,7 @@ for (i in 1:length(parameters))
 if(re) use.admb=TRUE
 if(use.admb & !re) 
 	crossed=FALSE
-else
-	if(is.null(crossed))crossed=FALSE
+	
 #
 # Create design matrices for each parameter
 #
@@ -289,7 +295,7 @@ if("SANN"%in%method)
 if("nlminb"%in%method)control$eval.max=itnmax
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,...)
+		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
 else
     if(model=="JS")
           runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
@@ -297,7 +303,7 @@ else
 	else 
 	   if(model=="MSCJS")
 		   runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,...)
+				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
 	   else{
 	      if(is.null(initial)){
 		      imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)

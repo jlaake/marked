@@ -304,6 +304,9 @@ REPORT_SECTION
     dvar_vector p(1,m-1);                // temp vector for Phis for each occasion for a single history
     int i,i1,i2,j,L;	                   // miscellaneous ints
     dvariable mu;                      // link function value
+	if(last_phase())
+	{
+	report << "# phiest" << endl;
     for(i=1;i<=n;i++)
 	{
     phi=0;                                                         // set all phi values to 0
@@ -325,9 +328,9 @@ REPORT_SECTION
 	   } else
 	     phi(j-1)=phi_fixedDM(i2,kphi+1);
 	}
-	report << "# phiest" << endl;
 	report << phi << endl;
 	}
+   	report << "# pest" << endl;
     for(i=1;i<=n;i++)
 	{
 	p=0;
@@ -347,8 +350,7 @@ REPORT_SECTION
        } else
 	     p(j-1)=p_fixedDM(i2,kp+1);
 	   }
-   	report << "# pest" << endl;
 	report << p << endl;
 	}
-
+    }
 

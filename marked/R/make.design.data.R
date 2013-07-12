@@ -147,6 +147,21 @@ full.design.data=vector("list",length=length(parameters))
 			  full.design.data[[i]]$Y=NULL
 			  full.design.data[[i]]$Z=NULL
 		  }
+	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
+	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
+	  {
+		  if(is.null(parameters[[i]]$subtract.stratum)) parameters[[i]]$subtract.stratum=1:length(data$strata.labels)
+		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
+		  {
+			  full.design.data[[i]]$fix=NA
+			  if(length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
+			  for(j in 1:length(data$strata.labels))
+			  {
+				  if(!parameters[[i]]$subtract.stratum[j]%in%(1:length(data$strata.labels))) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
+				  full.design.data[[i]]$fix[full.design.data[[i]]$stratum==j & full.design.data[[i]]$tostratum==parameters[[i]]$subtract.stratum[j]]=1
+			  } 
+		  }		  
+	  }	  
    }
    names(full.design.data)=names(parameters)
    full.design.data[["design.parameters"]]=parameters

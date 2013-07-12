@@ -11,7 +11,7 @@
     itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
     iter = 1000, use.admb = FALSE, crossed = NULL,
     reml = FALSE, compile = FALSE, extra.args = NULL,
-    strata.labels = NULL, ...)
+    strata.labels = NULL, clean = TRUE, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -96,6 +96,9 @@
   history; they are converted to numeric in the order
   listed. Only needed to specify unobserved strata. For any
   unobserved strata p=0..}
+
+  \item{clean}{if TRUE, deletes the tpl and executable
+  files for amdb if use.admb=T}
 
   \item{...}{optional arguments passed to js or cjs and
   optimx}

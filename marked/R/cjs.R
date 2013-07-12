@@ -44,7 +44,8 @@
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
-#' @param reml if set to TRUE uses cjs_reml if crossed 
+#' @param reml if set to TRUE uses cjs_reml if crossed \
+#' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb
@@ -63,7 +64,7 @@
 #' Biometrics 59(4):786-794.
 cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,...)
+			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,clean=TRUE,...)
 {
    if(use.admb)accumulate=FALSE
    nocc=x$nocc
@@ -129,7 +130,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   counts=mod$counts
 	   }else
 	   {
-		   mod=suppressPackageStartupMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
+		   mod=suppressMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
 						   debug=debug,control=control,itnmax=itnmax,cjsenv=cjsenv,...))
 		   objfct=unlist(mod$fvalues)
 		   bestmin=which.min(objfct)
@@ -154,7 +155,10 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   } 
    } else
    {
-	   os=R.Version()$os
+	   if(R.Version()$os=="mingw32")
+		   ext=".exe"
+       else
+		   ext=""
 	   sdir=system.file(package="marked")
 	   # set tpl filename
 	   if(!crossed)
@@ -171,6 +175,12 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   hessian=TRUE
 	   # cleanup any leftover files
 	   clean_admb(tpl)
+	   # if argument clean is TRUE, delete exe and TPL files as well
+	   if(clean)
+	   {
+		  if(file.exists(paste(tpl,".tpl",sep=""))) unlink(paste(tpl,".tpl",sep=""))
+		  if(file.exists(paste(tpl,ext,sep=""))) unlink(paste(tpl,ext,sep=""))
+	  }
 	   # if tpl is not available, copy from the package directory
 	   if(!file.exists(paste(tpl,".tpl",sep="")))
 	   {
@@ -179,11 +189,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   } 
 	   # if exe available in the package or workspace directory use it
        have.exe=TRUE
-	   if(!file.exists(file.path(getwd(),paste(tpl,".exe",sep=""))))
+	   if(!file.exists(file.path(getwd(),paste(tpl,ext,sep=""))))
 	   {
-		   if(file.exists(file.path(sdir,paste(tpl,".exe",sep=""))) &!compile)
+		   if(file.exists(file.path(sdir,paste(tpl,ext,sep=""))) &!compile)
 		   {
-			   file.copy(file.path(sdir,paste(tpl,".exe",sep="")),file.path(getwd(),paste(tpl,".exe",sep="")),overwrite=TRUE)
+			   file.copy(file.path(sdir,paste(tpl,ext,sep="")),file.path(getwd(),paste(tpl,ext,sep="")),overwrite=TRUE)
 		   }else
  	       # if there is no exe in either place then check to make sure ADMB is installed and linked
 		   {
@@ -194,12 +204,12 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   {
 		   # no exe or compile set TRUE; see if admb can be found; this is not a complete test but should catch the novice user who has
 	       # not setup admb at all
-	       if(os=="mingw32" & Sys.which("tpl2cpp.exe")=="")
-					  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
+	       if(Sys.which(paste("tpl2cpp",ext,sep=""))=="")
+			  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
 		   else
 		   {
 			  compile_admb(tpl,re=TRUE,safe=TRUE,verbose=T)
-		    }
+		   }
 	   }
 	   # create admbcjs.dat file to create its contents 
 	   con=file(paste(tpl,".dat",sep=""),open="wt")
@@ -271,29 +281,17 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	  	   write(rep(0.1,nphisigma+npsigma),con,ncolumns=1,append=TRUE)
 	  	   if(nphisigma>0) write(rep(0,nphisigma*nrow(phimixed$re.dm)),con,ncolumns=nphisigma,append=TRUE)
 		   if(npsigma>0) write(rep(0,npsigma*nrow(pmixed$re.dm)),con,ncolumns=npsigma,append=TRUE)
+		   if(crossed)
+		   {
+			   if(any(model_data$imat$freq!=1)) stop("\n freq cannot be > 1 if crossed effects; don't accumulate")
+			   if(is.null(extra.args))extra.args="-shess -isb 10"
+		   } else
+		       if(is.null(extra.args))extra.args="-gh 14"
 	   }
 	   close(con)   
+	   if(is.null(extra.args)) extra.args=""
 	   cat("\nrunning ADMB program\n")
 	   flush.console()
-	   if(is.null(extra.args))
-	   {
-		   if(!crossed & (nphisigma+npsigma)>0 )
-			   extra.args="-gh 14"
-		   else
-		   {
-			   if(any(model_data$imat$freq!=1) | (nphisigma+npsigma)==0)
-				   extra.args=""
-			   else
-				   extra.args="-shess -isb 100"
-		   }
-	   } else
-	   {
-		   if(length(grep("-shess",extra.args))>0 & any(model_data$imat$freq!=1))
-		   {
-			   extra.args=""
-               warning("Cannot use -shess with accumulate=T. Resetting extra.args to nothing.")
-		   }
-	   }   
 	   if(hessian)
 	   {
 	       xx=run_admb(tpl,extra.args=extra.args,verbose=T)
@@ -314,13 +312,13 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   if(!is.null(cjs.beta.random))names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
 	   cjs.beta=c(cjs.beta.fixed,cjs.beta.random)
 	   parnames=names(unlist(cjs.beta))
-	   fixed.npar=length(parnames)
+	   fixed.npar=length(cjs.beta.fixed)
        if(fixed.npar<res$npar)
 	   {
-		   allnames=names(unlist(res$coeflist))
+		   allnames=names(unlist(res$coeflist))[1:(res$npar+res$npar_re)]
 		   allnames=sub("phi_","Phi.",allnames)
 		   allnames=sub("p_","p.",allnames)
-		   allnames[1:fixed.npar]=parnames
+		   allnames[1:fixed.npar]=parnames[1:fixed.npar]
 		   random.effects=coef(res)[(fixed.npar+1):res$npar]
 		   names(random.effects)=allnames[(fixed.npar+1):res$npar]
 	   }else

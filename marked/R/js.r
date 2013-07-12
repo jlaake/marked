@@ -121,7 +121,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 	   counts=mod$counts
    }else
    {
-	   mod=suppressPackageStartupMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
+	   mod=suppressMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
 					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,jsenv=jsenv,...))
 	   objfct=unlist(mod$fvalues)
 	   bestmin=which.min(objfct)

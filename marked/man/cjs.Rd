@@ -7,7 +7,7 @@
     hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
     refit, itnmax = NULL, control = NULL, scale,
     use.admb = FALSE, crossed = TRUE, compile = FALSE,
-    extra.args = NULL, reml, ...)
+    extra.args = NULL, reml, clean = TRUE, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -70,7 +70,10 @@
   \item{extra.args}{optional character string that is
   passed to admb if use.admb==TRUE}
 
-  \item{reml}{if set to TRUE uses cjs_reml if crossed}
+  \item{reml}{if set to TRUE uses cjs_reml if crossed \}
+
+  \item{clean}{if TRUE, deletes the tpl and executable
+  files for amdb if use.admb=T}
 
   \item{...}{any remaining arguments are passed to
   additional parameters passed to \code{optim} or
