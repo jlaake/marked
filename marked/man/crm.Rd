@@ -24,8 +24,7 @@
   \item{begin.time}{Time of first capture(release)
   occasion}
 
-  \item{model}{Type of c-r model ("cjs" or "js" at
-  present)}
+  \item{model}{Type of c-r model (eg, "cjs", "js")}
 
   \item{title}{Optional title; not used at present}
 

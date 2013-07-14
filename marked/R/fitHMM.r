@@ -9,7 +9,7 @@
 #' @param ddl Design data list which contains a list element for each parameter
 #' type; if NULL it is created
 #' @param begin.time Time of first capture(release) occasion
-#' @param model Type of c-r model ("cjs" or "js" at present)
+#' @param model Type of c-r model (eg "cjs" "js")
 #' @param title Optional title; not used at present
 #' @param design.parameters Specification of any grouping variables for design
 #' data for each parameter
@@ -50,7 +50,6 @@
 fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
 		groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,control=NULL,itnmax=5000,
 		run=TRUE,strata.labels=NULL)
-	
 {
 #
 #  If the data haven't been processed (data$data is NULL) do it now with specified or default arguments

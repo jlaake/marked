@@ -19,8 +19,7 @@
   \item{begin.time}{Time of first capture(release)
   occasion}
 
-  \item{model}{Type of c-r model ("cjs" or "js" at
-  present)}
+  \item{model}{Type of c-r model}
 
   \item{title}{Optional title; not used at present}
 
@@ -52,8 +51,24 @@
   dataframe with simulated data
 }
 \description{
-  Creates a set of data from a specified HMM for
+  Creates a set of data from a specified HMM model for
   capture-recapture data.
+}
+\details{
+  The specification for the simulation includes a set of
+  data with at least 2 unique ch and freq value to specify
+  the number of ch values to simulate that start at the
+  specified occasion. For example, 1000 50 0100 50 0010 50
+  would simulate 150 capture histories with 50 starting at
+  each of occasions 1 2 and 3. The data can also contain
+  other fields used to generate the model probabilities and
+  each row can have freq=1 to use individual covariates.
+  Either a dataframe (data) is provided and it is processed
+  and the design data list are created or the processed
+  dataframe and design data list are provided. Formula for
+  the model parameters for generating the data are provided
+  in model.parameters and parameter values are provided in
+  initial.
 }
 \examples{
 # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion

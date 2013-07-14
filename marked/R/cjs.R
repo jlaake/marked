@@ -44,20 +44,18 @@
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
-#' @param reml if set to TRUE uses cjs_reml if crossed \
+#' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb
 #' @return The resulting value of the function is a list with the class of
 #' crm,cjs such that the generic functions print and coef can be used.
-#' \item{beta}{named vector of parameter estimates} \item{lnl}{-2*log
-#' likelihood} \item{AIC}{lnl + 2* number of parameters}
-#' \item{convergence}{result from \code{optim}; if 0 \code{optim} thinks it
-#' converged} \item{count}{\code{optim} results of number of function
-#' evaluations} \item{reals}{dataframe of data and real Phi and p estimates for
-#' each animal-occasion excluding those that occurred before release}
-#' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
+#' Elements are 1) beta: named vector of parameter estimatesm 2) lnl: -2*log
+#' likelihood, 3) AIC: lnl + 2* number of parameters, 4) convergence: result from \code{optim}; if 0 \code{optim} thinks it
+#' converged, 5) count:\code{optim} results of number of function
+#' evaluations, 6) reals: dataframe of data and real Phi and p estimates for
+#' each animal-occasion excluding those that occurred before release, 7) vcv:var-cov matrix of betas if hessian=TRUE was set.
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.

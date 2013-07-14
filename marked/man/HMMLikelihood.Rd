@@ -13,8 +13,9 @@
   HMMLikelihood and matrix of observed sequences (row:id;
   column:occasion/time) in loglikelihood}
 
-  \item{start}{vector of 2 elements: 1) first state, 2)
-  first occasion or matrix for all id's}
+  \item{start}{vector in HMMLikelihood and matrix in
+  log-likelihood; values are first observed state and
+  occasion of first observation}
 
   \item{m}{number of states}
 

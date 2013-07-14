@@ -70,7 +70,7 @@
   \item{extra.args}{optional character string that is
   passed to admb if use.admb==TRUE}
 
-  \item{reml}{if set to TRUE uses cjs_reml if crossed \}
+  \item{reml}{if set to TRUE uses cjs_reml if crossed}
 
   \item{clean}{if TRUE, deletes the tpl and executable
   files for amdb if use.admb=T}
@@ -82,16 +82,15 @@
 \value{
   The resulting value of the function is a list with the
   class of crm,cjs such that the generic functions print
-  and coef can be used. \item{beta}{named vector of
-  parameter estimates} \item{lnl}{-2*log likelihood}
-  \item{AIC}{lnl + 2* number of parameters}
-  \item{convergence}{result from \code{optim}; if 0
-  \code{optim} thinks it converged}
-  \item{count}{\code{optim} results of number of function
-  evaluations} \item{reals}{dataframe of data and real Phi
-  and p estimates for each animal-occasion excluding those
-  that occurred before release} \item{vcv}{var-cov matrix
-  of betas if hessian=TRUE was set}
+  and coef can be used. Elements are 1) beta: named vector
+  of parameter estimatesm 2) lnl: -2*log likelihood, 3)
+  AIC: lnl + 2* number of parameters, 4) convergence:
+  result from \code{optim}; if 0 \code{optim} thinks it
+  converged, 5) count:\code{optim} results of number of
+  function evaluations, 6) reals: dataframe of data and
+  real Phi and p estimates for each animal-occasion
+  excluding those that occurred before release, 7)
+  vcv:var-cov matrix of betas if hessian=TRUE was set.
 }
 \description{
   A function for computing MLEs for a specified

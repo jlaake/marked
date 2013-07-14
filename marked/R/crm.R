@@ -144,7 +144,7 @@
 #' @param ddl Design data list which contains a list element for each parameter
 #' type; if NULL it is created
 #' @param begin.time Time of first capture(release) occasion
-#' @param model Type of c-r model ("cjs" or "js" at present)
+#' @param model Type of c-r model (eg, "cjs", "js") 
 #' @param title Optional title; not used at present
 #' @param design.parameters Specification of any grouping variables for design
 #' data for each parameter

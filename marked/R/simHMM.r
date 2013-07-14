@@ -1,13 +1,22 @@
 #' Simulates data from Hidden Markov Model 
 #' 
-#' Creates a set of data from a specified HMM for capture-recapture data.
+#' Creates a set of data from a specified HMM model for capture-recapture data.
 #' 
-#' @param data Either the raw data which is a dataframe with at least one
-#' column named ch (a character field containing the capture history) or a
-#' processed dataframe
+#' The specification for the simulation includes a set of data with at least 2 unique ch and freq value to 
+#' specify the number of ch values to simulate that start at the specified occasion. For example, 
+#' 1000 50
+#' 0100 50
+#' 0010 50
+#' would simulate 150 capture histories with 50 starting at each of occasions 1 2 and 3. The data can also 
+#' contain other fields used to generate the model probabilities and each row can have freq=1 to use individual
+#' covariates. Either a dataframe (data) is provided and it is processed and the design data list are created
+#' or the processed dataframe and design data list are provided. Formula for the model parameters for generating 
+#' the data are provided in model.parameters and parameter values are provided in initial.  
+#' 
+#' @param data Either the raw data which is a dataframe with at least one column named ch (a character field containing the capture history) or a processed dataframe
 #' @param ddl Design data list which contains a list element for each parameter type; if NULL it is created
 #' @param begin.time Time of first capture(release) occasion
-#' @param model Type of c-r model ("cjs" or "js" at present)
+#' @param model Type of c-r model 
 #' @param title Optional title; not used at present
 #' @param design.parameters Specification of any grouping variables for design data for each parameter
 #' @param model.parameters List of model parameter specifications
@@ -24,12 +33,14 @@
 #' df=simHMM(data.frame(ch=rep("100",2),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=F))
 #' df=simHMM(data.frame(ch=rep("100",100),u=rnorm(100,0,1),freq=rep(1,100),stringsAsFactors=F),
 #'   model.parameters=list(Phi=list(formula=~u),p=list(formula=~time)),initial=list(Phi=c(1,1),p=c(0,1)))
-simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
-		groups = NULL, time.intervals = NULL,accumulate=TRUE,strata.labels=NULL)
+simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),
+		design.parameters=list(),initial=NULL,groups=NULL,time.intervals=NULL,accumulate=TRUE,strata.labels=NULL)
 { 
+	# call fitHMM to use its code to setup quantities but not fitting model
 	setup=fitHMM(data=data,ddl=ddl,begin.time=begin.time,model=model,title=title,model.parameters=model.parameters,
-			design.parameters=design.parameters,initial=initial,groups = groups, time.intervals = time.intervals, accumulate=accumulate,
-			run=FALSE,strata.labels=strata.labels)
+			design.parameters=design.parameters,initial=initial,groups=groups,time.intervals=time.intervals,
+			accumulate=accumulate,run=FALSE,strata.labels=strata.labels)
+	if(nrow(data$data)==1)stop(" Use at least 2 capture histories; unique ch if accumulate=T")
 	parlist=split(setup$par,setup$ptype)
 	T=setup$data$nocc
 	m=setup$data$m
@@ -38,10 +49,12 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	# compute real parameters
 	pars=list()
 	for(parname in names(setup$model.parameters))
-		pars[[parname]]=laply(split(reals(parname,ddl=setup$ddl[[parname]],parameters=setup$model.parameters,parlist=parlist),setup$ddl[[parname]]$id),function(x) x)
+		pars[[parname]]=laply(split(reals(parname,ddl=setup$ddl[[parname]],parameters=setup$model.parameters,
+							parlist=parlist),setup$ddl[[parname]]$id),function(x) x)
 	# compute arrays of observation and transition matrices using parameter values
 	dmat=setup$data$fct_dmat(pars,m,T)
 	gamma=setup$data$fct_gamma(pars,m,T)
+	# loop over each capture history
 	for (id in as.numeric(setup$data$data$id))
 	{
 		# set up state with freq rows
@@ -55,21 +68,28 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 			{
 				instate=sum(state[,j]==k)
 				if(instate>0)
-					state[state[,j]==k,j+1]= apply(rmultinom(instate,1,gamma[id,j,k,]),2,function(x) which(x==1))
+				{
+					rmult=rmultinom(instate,1,gamma[id,j,k,])
+					state[state[,j]==k,j+1]= apply(rmult,2,function(x) which(x==1))
+				}
 			} 
 			# use dmat to create observed sequence
 			for(k in 1:m)
 			{
 				instate=sum(state[,j+1]==k)
 				if(instate>0)
-					history[state[,j+1]==k,j+1]= setup$data$ObsLevels[apply(rmultinom(instate,1,dmat[id,j,,k]),2,function(x) which(x==1))]
+				{
+					rmult=rmultinom(instate,1,dmat[id,j,,k])
+					history[state[,j+1]==k,j+1]= setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
+				}
 			}
 		}
-	    ch=c(ch,apply(history,1,paste,collapse=""))	
+	    ch=c(ch,apply(history,1,paste,collapse=""))
+		cols2xclude=-which(names(setup$data$data)%in%c("ch","freq","id"))
 		if(is.null(df2))
-			df2=setup$data$data[rep(id,setup$data$data$freq[id]),-which(names(setup$data$data)%in%c("ch","freq","id")),drop=FALSE]
+			df2=setup$data$data[rep(id,setup$data$data$freq[id]),cols2xclude,drop=FALSE]
 		else
-			df2=rbind(df2,setup$data$data[rep(id,setup$data$data$freq[id]),-which(names(setup$data$data)%in%c("ch","freq","id")),drop=FALSE])		
+			df2=rbind(df2,setup$data$data[rep(id,setup$data$data$freq[id]),cols2xclude,drop=FALSE])		
 	}   
 	df=data.frame(ch=ch,stringsAsFactors=FALSE)
 	if(nrow(df2)==0)

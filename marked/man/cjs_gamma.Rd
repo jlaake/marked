@@ -12,8 +12,6 @@
   \item{m}{number of states}
 
   \item{T}{number of occasions}
-
-  \item{parameters}{formulas for each parameter type}
 }
 \value{
   array of id and occasion-specific transition matrices -
