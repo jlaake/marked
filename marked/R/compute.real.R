@@ -220,31 +220,3 @@ if(mcmc)
     else
         return(reals)
 }
-# Temp function for HMM to be merged into compute.real at some point
-# computes real estimates using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
-# returns the number of columns in the design matrix (compute=FALSE); handles fixed parameters assigned by non-NA value in field named 
-# fix in the ddl dataframe.
-reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
-{
-	# create design matrix (dm) for parameter parname
-	dm=model.matrix(parameters[[parname]]$formula,ddl)
-	# if some reals are fixed, assign 0 to rows of dm and then
-	# remove any columns (parameters) that are all 0.
-	if(!is.null(ddl$fix))
-	{
-		dm[!is.na(ddl$fix),]=0
-		dm=dm[,apply(dm,2,function(x) any(x!=0)),drop=FALSE]
-	}
-	# if not computing reals, return the number of colmns in dm
-	if(!compute)return(ncol(dm))
-	# Currently for log or logit link, return the inverse values
-	if(parameters[[parname]]$link=="log")
-		values=exp(dm%*%parlist[[parname]])
-	else if(parameters[[parname]]$link=="logit")
-		values=plogis(dm%*%parlist[[parname]])
-	# if some reals are fixed, set reals to their fixed values 
-	if(!is.null(ddl$fix))
-		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]
-	# return vector of reals
-	return(values)
-}

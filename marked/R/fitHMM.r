@@ -29,7 +29,6 @@
 #' @return result from optim
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @export
-#' @import plyr
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
 #' @examples
 #' ## Example; uses process.data and make.design.data from marked
@@ -46,7 +45,7 @@
 #' ms.ddl=make.design.data(ms)
 #' ms.ddl$Psi$fix=NA
 #' ms.ddl$Psi$fix[ms.ddl$Psi$stratum==ms.ddl$Psi$tostratum]=1
-#' fitHMM(ms,ms.ddl,model.parameteres=list(Psi=list(formula=~-1+stratum:tostratum)))
+#' fitHMM(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
 		groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,control=NULL,itnmax=5000,
 		run=TRUE,strata.labels=NULL)

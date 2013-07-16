@@ -15,7 +15,8 @@ Depends:
     truncnorm,
     Matrix,
     Rcpp (>= 0.9.13),
-    ggplot2
+    ggplot2,
+    plyr
 Imports:
     R2admb
 LinkingTo: Rcpp

@@ -6,8 +6,6 @@
 #' @param pars list of real parameter values for each type of parameter
 #' @param m number of states
 #' @param T number of occasions
-#' @usage cjs_gamma(pars,m,T)
-#'        ms_gamma(pars,m,T)
 #' @aliases cjs_gamma ms_gamma
 #' @return array of id and occasion-specific transition matrices - Gamma in Zucchini and MacDonald (2009)
 #' @author Jeff Laake <jeff.laake@@noaa.gov>

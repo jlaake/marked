@@ -1,10 +1,12 @@
 \name{HMMLikelihood}
 \alias{HMMLikelihood}
 \alias{loglikelihood}
+\alias{reals}
 \title{Hidden Markov Model likelihood functions}
 \usage{
   HMMLikelihood(id,x,start,m,T,dmat,gamma)
     loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,ddl,parameters,debug=FALSE)
+    reals(parname,ddl,parameters,parlist=NULL,compute=TRUE)
 }
 \arguments{
   \item{id}{sequential id for the observed sequence}
@@ -44,11 +46,21 @@
 
   \item{debug}{if TRUE, print out par values and
   -log-likelihood}
+
+  \item{parname}{string name of parameter (eg "Phi")}
+
+  \item{parlist}{list of parameter strings used to split
+  par vector}
+
+  \item{compute}{if TRUE, computes reals; otherwise returns
+  column dimenstion of design matrix for the parameter}
 }
 \value{
   HMMLikelihood returns log-likelihood for a single
   sequence and loglikelihood returns the negative
-  log-likelihood for all of the data.
+  log-likelihood for all of the data. reals returns either
+  the column dimension of design matrix for parameter or
+  the real parameter vector
 }
 \description{
   Functions HMMLikelihood and loglikelihood which compute

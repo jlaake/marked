@@ -48,11 +48,6 @@ DATA_SECTION
     !! if(p_nre==0)npcounts=0;
     init_ivector p_counts(1,npcounts);                    // count of p random effect indices by id
     init_imatrix p_idIndex(1,npcounts,1,p_counts);        // p random effect indices by id
-
-    init_int K;                                           // number of fixed Phi values 
-    init_matrix PhiF(1,K,1,2);                            // Phi fixed matrix with index in first column and value in second column
-    init_int L;                                           // number of fixed p values
-    init_matrix pF(1,L,1,2);                              // p fixed matrix with index in first column and value in second column
         
 PARAMETER_SECTION
     init_vector phi_beta(1,kphi,1);                                // fixed parameter vector for Phi

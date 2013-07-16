@@ -3,7 +3,7 @@
 \alias{ms_gamma}
 \title{HMM Transition matrix functions}
 \usage{
-  cjs_gamma(pars,m,T) ms_gamma(pars,m,T)
+  cjs_gamma(pars, m, T)
 }
 \arguments{
   \item{pars}{list of real parameter values for each type

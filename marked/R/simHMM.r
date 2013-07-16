@@ -60,8 +60,10 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		# set up state with freq rows
 		history=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
 		state=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
+		# create initial state and encounter history value
 		state[,setup$start[id,2]]=setup$start[id,setup$start[id,1]]
 		history[,setup$start[id,2]]= setup$data$ObsLevels[setup$start[id,setup$start[id,1]]+1]
+		# loop over each remaining occasion after the initial occasion 
 		for(j in setup$start[id,2]:(T-1))
 		{
 			for(k in 1:m)

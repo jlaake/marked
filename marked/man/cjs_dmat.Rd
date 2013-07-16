@@ -4,7 +4,7 @@
 \alias{ums_dmat}
 \title{HMM Observation Probability matrix functions}
 \usage{
-  cjs_dmat(pars,m,T) ms_dmat(pars,m,T) ums_dmat(pars,m,T)
+  cjs_dmat(pars, m, T)
 }
 \arguments{
   \item{pars}{list of real parameter matrices (id by

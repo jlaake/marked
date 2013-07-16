@@ -6,9 +6,6 @@
 #' @param pars list of real parameter matrices (id by occasion) for each type of parameter
 #' @param m number of states
 #' @param T number of occasions
-#' @usage cjs_dmat(pars,m,T)
-#'        ms_dmat(pars,m,T)
-#'        ums_dmat(pars,m,T)
 #' @aliases cjs_dmat ms_dmat ums_dmat
 #' @return 4-d array of id and occasion-specific observation probability matrices - state-dependent distributions in Zucchini and MacDonald (2009)
 #' @author Jeff Laake <jeff.laake@@noaa.gov>

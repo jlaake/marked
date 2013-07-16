@@ -282,7 +282,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   if(crossed)
 		   {
 			   if(any(model_data$imat$freq!=1)) stop("\n freq cannot be > 1 if crossed effects; don't accumulate")
-			   if(is.null(extra.args))extra.args="-shess -isb 10"
+			   if(is.null(extra.args))extra.args="-shess"
 		   } else
 		       if(is.null(extra.args))extra.args="-gh 14"
 	   }

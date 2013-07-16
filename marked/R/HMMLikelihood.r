@@ -21,11 +21,16 @@
 #' @param ddl design data list of parameters for each id
 #' @param parameters formulas for each parameter type
 #' @param debug if TRUE, print out par values and -log-likelihood
+#' @param parname string name of parameter (eg "Phi")
+#' @param parlist list of parameter strings used to split par vector
+#' @param compute if TRUE, computes reals; otherwise returns column dimenstion of design matrix for the parameter
 #' @usage HMMLikelihood(id,x,start,m,T,dmat,gamma)
 #'        loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,ddl,parameters,debug=FALSE)
-#' @aliases HMMLikelihood loglikelihood
+#'        reals(parname,ddl,parameters,parlist=NULL,compute=TRUE)
+#' @aliases HMMLikelihood loglikelihood reals
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
-#' loglikelihood returns the negative log-likelihood for all of the data.
+#' loglikelihood returns the negative log-likelihood for all of the data. reals
+#' returns either the column dimension of design matrix for parameter or the real parameter vector
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(id,x,start,m,T,dmat,gamma)
@@ -110,4 +115,31 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 								dmat=dmat[id,,,],gamma=gamma[id,,,])))
 	if(debug) cat("\npar = ",par," -lnl= ",neglnl)
 	return(neglnl)
+}
+# Computes real estimates for HMM models using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
+# returns the number of columns in the design matrix (compute=FALSE); handles fixed parameters assigned by non-NA value in field named 
+# fix in the ddl dataframe.
+reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
+{
+	# create design matrix (dm) for parameter parname
+	dm=model.matrix(parameters[[parname]]$formula,ddl)
+	# if some reals are fixed, assign 0 to rows of dm and then
+	# remove any columns (parameters) that are all 0.
+	if(!is.null(ddl$fix))
+	{
+		dm[!is.na(ddl$fix),]=0
+		dm=dm[,apply(dm,2,function(x) any(x!=0)),drop=FALSE]
+	}
+	# if not computing reals, return the number of colmns in dm
+	if(!compute)return(ncol(dm))
+	# Currently for log or logit link, return the inverse values
+	if(parameters[[parname]]$link=="log")
+		values=exp(dm%*%parlist[[parname]])
+	else if(parameters[[parname]]$link=="logit")
+		values=plogis(dm%*%parlist[[parname]])
+	# if some reals are fixed, set reals to their fixed values 
+	if(!is.null(ddl$fix))
+		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]
+	# return vector of reals
+	return(values)
 }
