@@ -5,7 +5,8 @@
 \usage{
   splitCH(x="ch", data=NULL, prefix="Time")
 
-  collapseCH(chmat=NULL, data=NULL, prefix="Time")
+  collapseCH(chmat=NULL, data=NULL, prefix="Time",
+    collapse="")
 }
 \arguments{
   \item{x}{A vector containing the character strings of
@@ -18,6 +19,10 @@
   \item{prefix}{first portion of field names for split ch}
 
   \item{chmat}{capture history matrix}
+
+  \item{collapse}{in collapseCH the separator for ch
+  string; defaults to "" but "," also useful if
+  multi-characters are used}
 }
 \value{
   A data frame if data specified and a matrix if vector ch
@@ -25,14 +30,15 @@
 }
 \description{
   splitCH will split a character string vector of capture
-  histories into a matrix. The matrix is appended to the
-  original data set (data) if one is specified. Will handle
-  character and numeric values in ch. Results will differ
-  depending on content of ch. collapseCH will collapse a
-  capture history matrix back into a character vector.
-  Argument can either be a capture history matrix (chmat)
-  or a dataframe (data) that contains fields with a
-  specified prefix.
+  histories into a matrix. The ch can either be single
+  character or comma separated string. The matrix is
+  appended to the original data set (data) if one is
+  specified. Will handle character and numeric values in
+  ch. Results will differ depending on content of ch.
+  collapseCH will collapse a capture history matrix back
+  into a character vector. Argument can either be a capture
+  history matrix (chmat) or a dataframe (data) that
+  contains fields with a specified prefix.
 }
 \examples{
 data(dipper)

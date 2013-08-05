@@ -78,6 +78,7 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$ObsLevels=c(0,1)
 		model_def$hmm$fct_dmat=marked:::cjs_dmat
 		model_def$hmm$fct_gamma=marked:::cjs_gamma
+		model_def$hmm$fct_delta=marked:::cjs_delta
 		model_def$hmm$m=2
 	} else
 	if(toupper(model)=="HMMMSCJS")
@@ -85,6 +86,8 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$ObsLevels=c(0,strata.labels)
 		model_def$hmm$fct_dmat=marked:::ms_dmat
 		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$fct_delta=marked:::cjs_delta
+		model_def$hmm$strata.labels=strata.labels
 		model_def$hmm$m=length(strata.labels)+1
 	}   
 	if(toupper(model)=="HMMUMSCJS")
@@ -92,8 +95,25 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$ObsLevels=c(0,strata.labels,"u")
 		model_def$hmm$fct_dmat=marked:::ums_dmat
 		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$fct_delta=marked:::cjs_delta
+		model_def$hmm$strata.labels=strata.labels
 		model_def$hmm$m=length(strata.labels)+1
 	}
+	if(toupper(model)%in%c("HMMU2MSCJS","HMMU2IMSCJS"))
+	{
+		if(length(strata.labels)!=2 | !"states"%in%names(strata.labels))
+			stop("structure of strata labels is incorrect; list of 2 character vectors with one named states")
+		obs.states=c(strata.labels$states,"u")
+		strata=strata.labels[[names(strata.labels)[names(strata.labels)!="states"]]]
+        model_def$hmm$ObsLevels=c(0,apply(rev(expand.grid(list(obs.states,strata))),1,paste,collapse=""))
+		model_def$hmm$fct_delta=marked:::cjs_delta		
+		model_def$hmm$fct_dmat=marked:::ums2_dmat		
+		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$strata.list=strata.labels
+		model_def$hmm$strata.labels=apply(rev(expand.grid(list(strata.labels$states,strata))),1,paste,collapse="")
+		model_def$hmm$m=length(model_def$hmm$strata.labels)+1
+	}
+	if(toupper(model)=="HMMU2IMSCJS") model_def$hmm$fct_gamma=marked:::ms2_gamma
 	return(model_def)
 }
 

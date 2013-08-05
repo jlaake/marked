@@ -150,7 +150,9 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 #
    if(is.null(data$ch))
      stop("Field ch is missing in ",substitute(data))
-   ch.lengths=nchar(data$ch)
+   if(length(grep(",",data$ch[1]))==0)
+	   data$ch=sapply(strsplit(data$ch,""),paste,collapse=",")
+   ch.lengths=sapply(strsplit(data$ch,","),length)
    nocc=median(ch.lengths)
    if(any(ch.lengths!=nocc))
    {
@@ -161,32 +163,32 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 #  Setup model
 #
    model.list=setup.model(model,nocc,mixtures)
-   ch.values=unique(unlist(strsplit(data$ch,"")))
+   ch.values=unique(unlist(strsplit(data$ch,",")))
+#  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
    {
-#	   strata.labels=NULL
-#	   nstrata=0
-	   if(any(!ch.values%in%c("0","1",".")))
+	   if(any(!ch.values%in%c("0","1")))
 		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
    } else
    {
-	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0","."))])
+       # Get unique ch values and use as strata.labels unless they are specified   
+	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
 	   nstrata = length(inp.strata.labels)                  
 	   if(is.null(strata.labels))
-       {
 		   strata.labels=inp.strata.labels
-	   } else
+	   # If strata specified as a vector test otherwise pass it through
+	   if(is.vector(strata.labels))
 	   {
 		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
+ 	       nstrata=length(strata.labels)
+	       unobserved=nstrata-length(inp.strata.labels)
+	       if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")
 	   }
-	   nstrata=length(strata.labels)
-	   unobserved=nstrata-length(inp.strata.labels)
-	   if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")		   
    }
    nocc=model.list$nocc
    nocc.secondary=NULL
    num=model.list$num
-   model.list=setupHMM(model.list,model,strata.labels)
+   if(model.list$IShmm) model.list=setupHMM(model.list,model,strata.labels)
 #
 #     If time intervals specified make sure there are nocc-1 of them
 #     If none specified assume they are 1
@@ -206,8 +208,13 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
      number.of.factors=length(groups)
 #
 # Accumulate non-unique data; if accumulate=F and dataframe has freq>1 expand and add id field
-# if null
+# if null; if cjs type remove all histories that are initiated on last occasion
 # 
+if(model.list$cjs)
+{
+	chproc=process.ch(data$ch,freq=1,all=FALSE)
+	data=data[chproc$first!=chproc$nocc,,drop=FALSE]
+}	
 if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
 if(accumulate)
 	data=accumulate_data(data)
@@ -249,8 +256,11 @@ if(number.of.factors==0)
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=initial.ages[1],group.covariates=NULL)
-    if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
-	if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
+ 	if(model.list$IShmm)
+		plist=c(plist,model.list$hmm)
+	else
+	    if(model.list$strata)
+			  plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
 	return(plist)
 }
 #
@@ -376,7 +386,7 @@ else
   plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=init.ages,group.covariates=group.covariates)
-  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
+  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=model.list$strata.labels,unobserved=unobserved))
   if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
   return(plist)
    
@@ -434,7 +444,7 @@ add.dummy.data=function(data,nocc,group.covariates)
 	}
 	chmat=matrix(0,nrow=nocc,ncol=nocc)
 	diag(chmat)=1
-	ch=apply(chmat,1,paste,collapse="")
+	ch=apply(chmat,1,paste,collapse=",")
 	ch=rep(ch,number.of.groups)
 	if(is.null(data$freq))
 		data$freq=1

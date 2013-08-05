@@ -5,8 +5,12 @@
   process.ch(ch, freq = NULL, all = FALSE)
 }
 \arguments{
-  \item{ch}{Vector of character strings containing 0/1
-  capture-history}
+  \item{ch}{Vector of character strings; each character
+  string is composed of either a constant length sequence
+  of single characters (01001) or the character string can
+  be comma separated if more than a single character is
+  used (1S,1W,0,2W). If comma separated, each string must
+  contain a constant number of elements.}
 
   \item{freq}{Optional vector of frequencies for ch; if
   missing assumed to be a; if <0 indicates a loss on
@@ -14,7 +18,7 @@
 
   \item{all}{FALSE is okay for cjs unless R code used to
   compute lnl instead of FORTRAN; must be true for js
-  becaus it returns additional quantities needed for entry
+  because it returns additional quantities needed for entry
   prob.}
 }
 \value{

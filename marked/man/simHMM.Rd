@@ -72,7 +72,7 @@
 }
 \examples{
 # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
-df=simHMM(data.frame(ch=rep("100",2),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=FALSE))
+df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=FALSE))
 df=simHMM(data.frame(ch=rep("100",100),u=rnorm(100,0,1),freq=rep(1,100),stringsAsFactors=FALSE),
   model.parameters=list(Phi=list(formula=~u),p=list(formula=~time)),initial=list(Phi=c(1,1),p=c(0,1)))
 }

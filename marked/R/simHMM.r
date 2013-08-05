@@ -30,7 +30,7 @@
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @examples 
 #' # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
-#' df=simHMM(data.frame(ch=rep("100",2),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=FALSE))
+#' df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=FALSE))
 #' df=simHMM(data.frame(ch=rep("100",100),u=rnorm(100,0,1),freq=rep(1,100),stringsAsFactors=FALSE),
 #'   model.parameters=list(Phi=list(formula=~u),p=list(formula=~time)),initial=list(Phi=c(1,1),p=c(0,1)))
 simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),
@@ -40,7 +40,7 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	setup=fitHMM(data=data,ddl=ddl,begin.time=begin.time,model=model,title=title,model.parameters=model.parameters,
 			design.parameters=design.parameters,initial=initial,groups=groups,time.intervals=time.intervals,
 			accumulate=accumulate,run=FALSE,strata.labels=strata.labels)
-	if(nrow(data$data)==1)stop(" Use at least 2 capture histories; unique ch if accumulate=T")
+	if(nrow(setup$data$data)==1)stop(" Use at least 2 capture histories; unique ch if accumulate=T")
 	parlist=split(setup$par,setup$ptype)
 	T=setup$data$nocc
 	m=setup$data$m
@@ -54,6 +54,7 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	# compute arrays of observation and transition matrices using parameter values
 	dmat=setup$data$fct_dmat(pars,m,T)
 	gamma=setup$data$fct_gamma(pars,m,T)
+    delta=setup$data$fct_delta(pars,m,T,setup$start)
 	# loop over each capture history
 	for (id in as.numeric(setup$data$data$id))
 	{
@@ -61,28 +62,38 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		history=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
 		state=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
 		# create initial state and encounter history value
-		state[,setup$start[id,2]]=setup$start[id,setup$start[id,1]]
-		history[,setup$start[id,2]]= setup$data$ObsLevels[setup$start[id,setup$start[id,1]]+1]
+		state[,setup$start[id,2]]=apply(rmultinom(setup$data$data$freq[id],1,delta[id,]),
+				                                2,function(x)which(x==1))
+		for(k in 1:m)
+		{
+			instate=sum(state[,setup$start[id,2]]==k)
+			if(instate>0)
+			{
+				rmult=rmultinom(instate,1,dmat[id,1,,k])
+				history[state[,setup$start[id,2]]==k,setup$start[id,2]]= 
+						setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
+			}
+		}
 		# loop over each remaining occasion after the initial occasion 
-		for(j in setup$start[id,2]:(T-1))
+		for(j in (setup$start[id,2]+1):T)
 		{
 			for(k in 1:m)
 			{
-				instate=sum(state[,j]==k)
+				instate=sum(state[,j-1]==k)
 				if(instate>0)
 				{
-					rmult=rmultinom(instate,1,gamma[id,j,k,])
-					state[state[,j]==k,j+1]= apply(rmult,2,function(x) which(x==1))
+					rmult=rmultinom(instate,1,gamma[id,j-1,k,])
+					state[state[,j-1]==k,j]= apply(rmult,2,function(x) which(x==1))
 				}
 			} 
 			# use dmat to create observed sequence
 			for(k in 1:m)
 			{
-				instate=sum(state[,j+1]==k)
+				instate=sum(state[,j]==k)
 				if(instate>0)
 				{
 					rmult=rmultinom(instate,1,dmat[id,j,,k])
-					history[state[,j+1]==k,j+1]= setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
+					history[state[,j]==k,j]= setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
 				}
 			}
 		}

@@ -141,7 +141,7 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
-	  if(!data$model%in%c("probitCJS","probitMsCJS"))
+	  if(!toupper(data$model)%in%c("PROBITCJS","PROBITMSCJS"))
 		  if("Y" %in% names(full.design.data[[i]]))
 		  {
 			  full.design.data[[i]]$Y=NULL
@@ -150,18 +150,25 @@ full.design.data=vector("list",length=length(parameters))
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {
-		  if(is.null(parameters[[i]]$subtract.stratum)) parameters[[i]]$subtract.stratum=1:length(data$strata.labels)
+		  if(is.null(parameters[[i]]$subtract.stratum)) parameters[[i]]$subtract.stratum=data$strata.labels
 		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
 		  {
 			  full.design.data[[i]]$fix=NA
 			  if(length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
 			  for(j in 1:length(data$strata.labels))
 			  {
-				  if(!parameters[[i]]$subtract.stratum[j]%in%(1:length(data$strata.labels))) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
-				  full.design.data[[i]]$fix[full.design.data[[i]]$stratum==j & full.design.data[[i]]$tostratum==parameters[[i]]$subtract.stratum[j]]=1
+				  if(!parameters[[i]]$subtract.stratum[j]%in%data$strata.labels) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
+				  full.design.data[[i]]$fix[full.design.data[[i]]$stratum==data$strata.labels[j] & full.design.data[[i]]$tostratum==parameters[[i]]$subtract.stratum[j]]=1
 			  } 
 		  }		  
-	  }	  
+	  }
+	  # assign p/delta for CJS type models conditionining on first release
+      if(parameters[[i]]$cjs)
+	  {
+		  full.design.data[[i]]$fix=NA
+		  full.design.data[[i]]$fix[as.character(full.design.data[[i]]$time)==as.character(full.design.data[[i]]$cohort)]=1	  
+	  }	
+	  full.design.data[[i]]=droplevels(full.design.data[[i]])
    }
    names(full.design.data)=names(parameters)
    full.design.data[["design.parameters"]]=parameters

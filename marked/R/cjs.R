@@ -48,7 +48,7 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
-#' @import R2admb
+#' @import R2admb optimx
 #' @return The resulting value of the function is a list with the class of
 #' crm,cjs such that the generic functions print and coef can be used.
 #' Elements are 1) beta: named vector of parameter estimatesm 2) lnl: -2*log
@@ -128,20 +128,25 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   counts=mod$counts
 	   }else
 	   {
-		   mod=suppressMessages(optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
-						   debug=debug,control=control,itnmax=itnmax,cjsenv=cjsenv,...))
-		   objfct=unlist(mod$fvalues)
-		   bestmin=which.min(objfct)
-		   par= mod$par[[bestmin]]
-		   convergence=mod$conv[[bestmin]]
-		   counts=mod$itns[[length(mod$itns)]]
-		   lnl=mod$fvalues[[bestmin]]
+		   mod=optimx(par,cjs.lnl,model_data=model_data,method=method,hessian=FALSE,
+						   debug=debug,control=control,itnmax=itnmax,cjsenv=cjsenv,...)
+		   par <- coef(mod, order="value")[1, ]
+		   mod=as.list(summary(mod, order="value")[1, ])
+		   convergence=mod$convcode
+		   lnl=mod$value
+				   
+	#	   objfct=unlist(mod$fvalues)
+	#	   bestmin=which.min(objfct)
+	#	   par= mod$par[[bestmin]]
+	#	   convergence=mod$conv[[bestmin]]
+	#	   counts=mod$itns[[length(mod$itns)]]
+	#	   lnl=mod$value
 	   }
 	   #  Rescale parameter vector 
 	   cjs.beta=unscale.par(par,scale)
        # Create results list 
 	   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-			   convergence=convergence,count=counts,optim.details=mod,
+			   convergence=convergence,optim.details=mod,
 			   scale=scale,model_data=model_data,
 			   options=list(accumulate=accumulate,initial=initial,method=method,
 					   chunk_size=chunk_size,itnmax=itnmax,control=control))
@@ -339,7 +344,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   rownames(res$cor)=rownames(beta.vcv)
 	   colnames(res$cor)=rownames(beta.vcv)
 	   res$vcov=NULL
-	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*fixed.npar,convergence=convergence,random.effects=list(random.effects),res)
+	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,random.effects=list(random.effects),res)
 	   res$beta.vcv=beta.vcv
    }
 #  Restore non-accumulated, non-scaled dm's etc

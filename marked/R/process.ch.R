@@ -3,11 +3,15 @@
 #' Creates needed constructs from the release-recapture history.
 #' 
 #' 
-#' @param ch Vector of character strings containing 0/1 capture-history
+#' @param ch Vector of character strings; each character string is 
+#' composed of either a constant length sequence of single characters (01001) or 
+#' the character string can be comma separated if more than a single 
+#' character is used (1S,1W,0,2W). If comma separated, each string must contain a constant
+#' number of elements. 
 #' @param freq Optional vector of frequencies for ch; if missing assumed to be
 #' a; if <0 indicates a loss on capture
 #' @param all FALSE is okay for cjs unless R code used to compute lnl instead of
-#' FORTRAN; must be true for js becaus it returns additional quantities needed for entry prob.
+#' FORTRAN; must be true for js because it returns additional quantities needed for entry prob.
 #' @return \item{nocc}{number of capture occasions} \item{freq}{absolute value
 #' of frequency for each ch} \item{first}{vector of occasion numbers for first
 #' 1} \item{last}{vector of occasion numbers for last 1} \item{loc}{vector of
@@ -45,11 +49,17 @@ process.ch=function(ch,freq=NULL,all=FALSE)
 #        First       - 1's from occasion first (1) to nocc(last occasion)
 #################################################################################
 {
+#  is ch comma separated? If not, separate by commas
+   if(length(grep(",",ch[1]))==0)
+		ch=sapply(strsplit(ch,""),paste,collapse=",")
+   ch.lengths=sapply(strsplit(ch,","),length)
+   nocc=ch.lengths[1]
+   if(any(ch.lengths!=nocc))
+	   stop("\nCapture history length is not constant. \nch must be a character string with constant length or comma separated with constant number of elements \n")	
    nch=length(ch)
    if(is.null(freq))freq=rep(1,nch)
-   nocc=nchar(ch[1])
-# in case MS data passed change all non-zero to 1
-   chmat=matrix((unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=nch)
+# in case multistate data are passed change all non-zero to 1
+   chmat=matrix((unlist(strsplit(ch,","))),byrow=TRUE,ncol=nocc,nrow=nch)
    ch=apply(t(apply(splitCH(ch),1,function(x){ 
 							   x[x!="0"]=1 
 							   return(x)

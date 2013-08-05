@@ -78,7 +78,7 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 #  get first and last vectors, loc and chmat with process.ch and store in imat
 	ch=x$ch
 	imat=process.ch(ch,freq,all=FALSE)
-	chmat=matrix((unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=length(ch))
+	chmat=matrix((unlist(strsplit(ch,","))),byrow=TRUE,ncol=nocc,nrow=length(ch))
 	for(nlabel in 1:length(strata.labels))
 		chmat=t(apply(chmat,1,sub,pattern=strata.labels[nlabel],replacement=nlabel))
 #  Use specified initial values or create if null
@@ -182,8 +182,7 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	write(t(model_data$p.dm),con,ncolumns=ncol(model_data$p.dm),append=TRUE)
 	# Psi design matrix
 	# zero out subtracted stratum and remove any unneeded columns
-    ###################  NEED TO MAKE THIS WORK WITH SUBTRACT.STRATUM##########################
-    model_data$Psi.dm[ddl$Psi$stratum==ddl$Psi$tostratum,]=0
+    model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
 	select=vector("logical",length=ncol(model_data$Psi.dm))
 	for (i in 1:ncol(model_data$Psi.dm))
 		select[i]=any(model_data$Psi.dm[,i]!=0)
@@ -206,7 +205,7 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 #  Restore non-accumulated, non-scaled dm's etc
    res$model_data=model_data.save
 #  Assign S3 class values and return
-   #class(res)=c("crm","mle","mscjs")
+   class(res)=c("crm","admb","mle","mscjs")
    return(res)
 }
 

@@ -269,6 +269,7 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
            ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
         ages[ages<min.age]=min.age
 		Y=chmat[.row,begin.num:(ntimes+begin.num-1)]
+		sl=x$strata.labels
         if(!is.null(parameter$bystratum)&&parameter$bystratum)
 		{
 			if(!is.null(parameter$tostrata)&&parameter$tostrata)
@@ -278,15 +279,15 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 						Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
 						age=rep(factor(ages),each=nstrata^2),
 						Age=rep(ages,each=nstrata^2),
-						stratum=factor(rep(rep(1:nstrata,each=nstrata),ntimes)),
-						tostratum=factor(rep(rep(1:nstrata,nstrata),ntimes)))
+						stratum=factor(rep(rep(sl[1:nstrata],each=nstrata),ntimes)),
+						tostratum=factor(rep(rep(sl[1:nstrata],nstrata),ntimes)))
 			else	
 				newdm.df=data.frame(time=rep(factor.times,each=nstrata),
 						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
 						Time=rep(Times,each=nstrata),
 						Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
 						age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
-						stratum=factor(rep(1:nstrata,ntimes)))
+						stratum=factor(rep(sl[1:nstrata],ntimes)))
 		}else
 			newdm.df=data.frame(time=factor.times,
 					cohort=rep(factor(cohort,levels=cohort.levels),ntimes),

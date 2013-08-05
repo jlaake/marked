@@ -101,9 +101,11 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	ptype=NULL
 	par=NULL
 	total.npar=0
+	beta.labels=list()
 	for(parname in names(parameters))
 	{
-		npar=reals(parname,ddl=ddl[[parname]],parameters=parameters,compute=FALSE)
+		beta.labels[[parname]]=reals(parname,ddl=ddl[[parname]],parameters=parameters,compute=FALSE)
+		npar=length(beta.labels[[parname]])
 		total.npar=total.npar+npar
 		ptype=c(ptype,rep(parname,npar))	
 		if(!is.null(initial))
@@ -126,16 +128,28 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		par=rep(0,total.npar)
 	# start - for each ch, the first non-zero x value and the occasion of the first non-zero value
 	start=t(sapply(data.proc$data$ch,function(x){
-						xx=strsplit(x,"")[[1]]
-						ich=min(which(strsplit(x,"")[[1]]!="0"))
+						xx=strsplit(x,",")[[1]]
+						ich=min(which(strsplit(x,",")[[1]]!="0"))
 						return(c(as.numeric(factor(xx[ich],levels=data.proc$ObsLevels))-1,ich))
 					}))
 	# create encounter history matrix
-	x=t(sapply(strsplit(data.proc$data$ch,""),function(x) as.numeric(factor(x,levels=data.proc$ObsLevels))))
+	x=t(sapply(strsplit(data.proc$data$ch,","),function(x) as.numeric(factor(x,levels=data.proc$ObsLevels))))
+	
 	if(run)
-		return(optim(par,loglikelihood,type=ptype,x=x,m=data.proc$m,T=data.proc$nocc,start=start,freq=data.proc$freq,
-			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,ddl=ddl,parameters=parameters,control=control,
-			method=method,debug=debug,hessian=hessian))
+	{
+		fit=optim(par,loglikelihood,type=ptype,x=x,m=data.proc$m,T=data.proc$nocc,start=start,freq=data.proc$freq,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,parameters=parameters,control=control,
+				method=method,debug=debug,hessian=hessian)
+		par=split(fit$par,ptype)
+		for(p in names(par))
+		{
+		    if(is.null(model.parameters[[p]]$formula))
+				names(par[[p]])="(Intercept)"
+            else
+			    names(par[[p]])=beta.labels[[p]]
+		}
+		return(list(data=data.proc,ddl=ddl,par=par,model.parameters=parameters,fit=fit))
+	}
     else
 		return(list(data=data.proc,ddl=ddl,ptype=ptype,start=start,x=x,par=par,model.parameters=parameters))
 }

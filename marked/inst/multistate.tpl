@@ -25,13 +25,12 @@ DATA_SECTION
 	init_matrix psidm(1,all_nT,1,kpsi);    // design matrix for transition probs
 		
 PARAMETER_SECTION
-	
     init_vector phibeta(1,kphi);       // parameter vector for Phi
     init_vector pbeta(1,kp);           // parameter vector for p
     init_vector psibeta(1,kpsi);       // parameter vector for p
 	objective_function_value g; 
 
-PROCEDURE_SECTION	   
+PROCEDURE_SECTION
     int i;                             // index over observations
     for(i=1;i<=n;i++)                  // loop over capture histories - one per capture history
         ll_i(i,phibeta,pbeta,psibeta);
@@ -115,6 +114,3 @@ FUNCTION void ll_i(const int i, const dvar_vector& phibeta, const dvar_vector& p
 	    Lglki+=log(u);    	                            // accumulate log-likelihood value
 	}
 	g-=freq(i)*Lglki;
-		
-REPORT_SECTION
-	report<<g<<endl;

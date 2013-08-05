@@ -1,4 +1,4 @@
-marked 1.1.0 11 July 2013
+marked 1.1.0 5 Aug 2013
 ------------
 NEW FEATURES
 
@@ -10,6 +10,8 @@ NEW FEATURES
 
 * added clean argument to remove TPL and executable files remaining in the working directory
 
+* capture history strings can now be comma separated strings to cope with multi-character states
+
 CHANGES
 
 * modified print.marked.version so it would not conflict with loading devtools
@@ -20,7 +22,14 @@ CHANGES
 
 * removed code that prevented splitCH from working on a single ch value
 
-* use suppressMessages around optimx to avoid messages about BB and other packages not used
+* added code to crm to assure accumulate=FALSE with any random effect; individual random effect is supposed to work with weights but
+tpl and cpp code do not appear to be working together; with accumulate=FALSE, results are correct.
+
+* added code to make.design.data which handles subtract.stratum for Psi type parameters and cjs type parameters which sets value to 1
+when cohort=time. Those changes are for fitHMM code which uses subtract.stratum in MS models and uses first occasion seen parameters to 
+make the hmm code work with JS and CJS type models.
+
+* made changes to cjs and js for changes in optimx package
 
 BUG FIXES
 

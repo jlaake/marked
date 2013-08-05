@@ -276,7 +276,8 @@ for (i in 1:length(parameters))
 if(re) use.admb=TRUE
 if(use.admb & !re) 
 	crossed=FALSE
-	
+# if re and accumulate=T, stop with message to use accumulate=FALSE
+if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
 #
 # Create design matrices for each parameter
 #

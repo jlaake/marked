@@ -121,14 +121,12 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 	   counts=mod$counts
    }else
    {
-	   mod=suppressMessages(optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
-					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,jsenv=jsenv,...))
-	   objfct=unlist(mod$fvalues)
-	   bestmin=which.min(objfct)
-	   par= mod$par[[bestmin]]
-	   convergence=mod$conv[[bestmin]]
-	   counts=mod$itns[[length(mod$itns)]]
-	   lnl=mod$fvalues[[bestmin]]
+	   mod=optimx(par,js.lnl,model_data=model_data,method=method,hessian=hessian,
+					   debug=debug,control=control,itnmax=itnmax,nobstot=nobstot,jsenv=jsenv,...)
+	   par <- coef(mod, order="value")[1, ]
+	   mod=as.list(summary(mod, order="value")[1, ])
+	   convergence=mod$convcode
+	   lnl=mod$value
    }
    js.beta=unscale.par(par,scale)
 #  Compute additional likelihood component so lnl matches output for MARK; not needed for optimization
@@ -148,7 +146,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    lnl=lnl+sum(lfactorial(ui))
 #  create results list
    res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(js.beta,length)),
-		   convergence=convergence,count=counts,optim.details=mod,
+		   convergence=convergence,optim.details=mod,
 		   scale=scale,model_data=model_data,ns=nobstot,
 		   options=list(accumulate=accumulate,initial=initial,method=method,
 		   chunk_size=chunk_size,itnmax=itnmax,control=control))
