@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.1.0
-Date: 2013-8-5
+Date: 2013-8-12
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
@@ -19,7 +19,7 @@ Depends:
     plyr
 Imports:
     R2admb,
-    optimx
+    optimx (>= 2013.8.6)
 LinkingTo: Rcpp
 Suggests:
     RMark
