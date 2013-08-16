@@ -99,7 +99,7 @@ mixed.model=function(formula,data,indices=FALSE)
            stop(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
         else
         {
-          zz=model.matrix(as.formula(mlist$re.model[[i]]$sub),data)
+          zz=Matrix(model.matrix(as.formula(mlist$re.model[[i]]$sub),data))
 		  if(indices)
 		  {
 			  used.columns=which(colSums(zz)>0)

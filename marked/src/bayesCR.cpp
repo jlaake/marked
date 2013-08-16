@@ -44,6 +44,8 @@ RcppExport SEXP makeZtildeIdx(SEXP ID, SEXP zvec){
 	return wrap(out);
 }
 
+
+/*
 RcppExport SEXP makeZCovIdx(SEXP ID, SEXP zvec){
   IntegerVector id(ID);
 	IntegerVector z(zvec);
@@ -60,7 +62,7 @@ RcppExport SEXP makeZCovIdx(SEXP ID, SEXP zvec){
   
 	return wrap(out);
 }
-
+*/
 
 /*
  * Sample the 'alive' or 'dead' state of an individual
@@ -74,6 +76,52 @@ NumericVector p(PVec);
 NumericVector phi(PhiVec);
 IntegerVector y(yVec);
 int n = y.size();
+NumericMatrix pi(n,2);
+NumericVector prob(2);
+IntegerVector out(n);
+
+// Starting forward loop
+ if(y(0)==1) pi(0,1) = 1;
+ else {
+   pi(0,0) = 1-phi(0);
+   pi(0,1) = phi(0)*(1-p(0));
+ }
+for(int i=1; i<n; i++)
+{
+  if(y(i)==1) pi(i,y(i)) = 1;
+  else if(indiv(i) != indiv(i-1)) {
+    pi(i,0) = 1-phi(i);
+    pi(i,1) = phi(i)*(1-p(i));
+  }
+  else {
+    pi(i,0) = pi(i-1,0) + pi(i-1,1)*(1-phi(i-1));
+    pi(i,1) = pi(i-1,1)*phi(i-1)*(1-p(i));   
+  }
+}
+
+// Starting backwrd pass with sampling
+prob = pi(n-1,_);  
+out(n-1) = sampleDU(pi(n-1,_))-1;
+for(int i=n-2; i>=0; i--)
+{
+  prob = pi(i,_);
+  if(indiv(i+1)==indiv(i)){
+    prob(0) *= 1-out(i+1);
+    prob(1) *= out(i+1)*phi(i+1)*(1-p(i+1))  + (1-out(i+1))*(1-phi(i+1));
+  }
+  out(i) = sampleDU(prob)-1;
+}
+return wrap(out);   
+}
+
+RcppExport SEXP sampleStateCJS(SEXP ID, SEXP PVec, SEXP PhiVec, SEXP stateVec, SEXP k){
+  
+// Setting up the variables
+IntegerVector indiv(ID);
+NumericVector p(PVec);
+NumericVector phi(PhiVec);
+IntegerVector s(stateVec);
+int n = s.size();
 NumericMatrix pi(n,2);
 NumericVector prob(2);
 IntegerVector out(n);
