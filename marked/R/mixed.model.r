@@ -35,8 +35,9 @@
 #' @return mixed.model.admb returns a list with elements re.dm, a combined design matrix for all of the random effects; and 
 #' re.indices, matrix of indices into a single vector of random effects to be applied to the 
 #' design matrix location.
-#' mixed.model returns similar quantities for the random effects in a list structure (re.list) except that the indices are limited 
-#' to the particular random effect grouping. May be more useful with R than ADMB.
+#' mixed.model returns a list (re.list) with an element for each random effect structure. The contents
+#' are a standard design matrix (re.dm) if indices==FALSE and a re.dm and re.indices which matches the 
+#' structure of mixed.model.admb. mixed.model will be more useful with R than ADMB.
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' 
 mixed.model.admb=function(formula,data)
@@ -84,7 +85,7 @@ mixed.model.admb=function(formula,data)
    return(list(re.dm=re.dm,re.indices=re.indices))
 #   return(list(fixed.dm=fixed.dm,re.dm=re.dm,re.indices=re.indices))
 }
-mixed.model=function(formula,data)
+mixed.model=function(formula,data,indices=FALSE)
 {
   mlist=proc.form(formula)
 #  fixed.dm=model.matrix(as.formula(mlist$fix.model),data)
@@ -99,15 +100,20 @@ mixed.model=function(formula,data)
         else
         {
           zz=model.matrix(as.formula(mlist$re.model[[i]]$sub),data)
-          used.columns=which(colSums(zz)>0)
-          nre=length(used.columns)
-          indices=rowSums(zz*col(zz))
-          if(nre!=ncol(zz))indices=match(indices,used.columns)
-             re.dm=model.matrix(as.formula(mlist$re.model[[i]]$model),data)   
-          re.list[[i]]=list(re.indices=indices,re.dm=re.dm)
+		  if(indices)
+		  {
+			  used.columns=which(colSums(zz)>0)
+			  nre=length(used.columns)
+			  indices=rowSums(zz*col(zz))
+			  if(nre!=ncol(zz))indices=match(indices,used.columns)
+			  re.dm=model.matrix(as.formula(mlist$re.model[[i]]$model),data)   
+			  re.list[[i]]=list(re.indices=indices,re.dm=re.dm)
+		  }else
+			  re.list[[i]]=list(re.dm=zz)
         }
       }
-   }
+	  names(re.list)=names(mlist$re.model)	  
+  }
    return(list(re.list=re.list))
 }
 mixed.model.dat=function(x,con,idonly,n)

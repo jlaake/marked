@@ -38,12 +38,23 @@
 
   \item{restrict}{if TRUE, only use design data with Time
   >= Cohort}
+
+  \item{use.admb}{if TRUE uses mixed.model.admb for random
+  effects; otherwise mixed.model}
 }
 \value{
-  A design matrix constructed with the design dataframe and
-  the formula.  It contains a row for each animal-occasion
-  and a column for each beta parameter in the model. It
-  excludes any columns that are all 0.
+  create.dm returns a fixed effect design matrix
+  constructed with the design dataframe and the formula for
+  a single parametre.  It excludes any columns that are all
+  0. create.dml returns a list with an element for for each
+  parameter with a sub-list for the fixed effect (fe) and
+  random effects. The re structure depends on switch
+  use.admb. When TRUE, it contains a single design matrix
+  (re.dm) and indices for random effects (re.indices). When
+  FALSE, it returns re.list which is a list with an element
+  for each random component containing re.dm and indices
+  for that random effect (eg (1|id) + (1|time) would
+  produce elements for id and time.
 }
 \description{
   Creates a design matrix using the design dataframe, a

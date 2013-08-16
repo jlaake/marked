@@ -21,6 +21,7 @@ proc.form <- function(f){
 	if(length(re.lst)==0) re.model <- NULL
 	else{
 		re.model <- lapply(re.lst, function(x){list(model=paste("~",x[1]), sub=paste("~",x[2],"-1", collapse=""))})
+		names(re.model) <- sapply(re.lst, function(x) x[2])
 	}
 	return(list(fix.model=fix.model, re.model=re.model))
 }

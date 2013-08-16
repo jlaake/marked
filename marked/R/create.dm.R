@@ -138,8 +138,7 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 				dml$re[[i]]=mixed.model.admb(model.parameters[[i]]$formula,dd)
 		    else
 				dml$re[[i]]=mixed.model(model.parameters[[i]]$formula,dd)
-		}else
-			dml$re[[i]]=NULL
+		}
 	}
 	return(dml)
 }
