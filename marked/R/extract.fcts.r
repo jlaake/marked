@@ -35,5 +35,9 @@ function.wrapper <- function(x,fx,base="",...)
 	return(get("result",envir=e1))
 }
 
-fx.aic=function(x) x$neg2lnl/chat + 2*length(x$beta)
+fx.aic=function(x) 
+{
+	if(!"chat"%in% ls())chat=1
+	x$neg2lnl/chat + 2*length(x$beta)
+}
 fx.par.count=function(x) length(grep(paste("^",par,":",sep=""),names(x$beta)))

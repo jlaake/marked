@@ -56,7 +56,8 @@ get.p=function(beta,dm,nocc,Fplus)
 {
 # compute p matrix from parameters (beta) and list of design matrices (dm)
 # created by function create.dm
-  ps=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
+  ps=cbind(rep(1,nrow(dm)/(nocc-1)),
+     matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
   ps[Fplus==1]=plogis(ps[Fplus==1])
   return(ps)
 }
@@ -64,7 +65,8 @@ get.Phi=function(beta,dm,nocc,Fplus)
 {
 # compute Phi matrix from parameters (beta) and list of design matrices (dm)
 # created by function create.dm
-  Phis=cbind(rep(1,nrow(dm)/(nocc-1)),matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
+  Phis=cbind(rep(1,nrow(dm)/(nocc-1)),
+     matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
   Phis[Fplus==1]=plogis(Phis[Fplus==1])
   return(Phis)
 }
@@ -103,7 +105,8 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	# compute cummulative survival from release across each subsequent time
 	# and the cummulative probability for detection (capture) across each time
 	Phi.cumprod=1-model_data$imat$Fplus + Phis*model_data$imat$Fplus
-	cump=(1-model_data$imat$Fplus)+model_data$imat$Fplus*(model_data$imat$chmat*ps+(1-model_data$imat$chmat)*(1-ps))
+	cump=(1-model_data$imat$Fplus)+model_data$imat$Fplus*
+         (model_data$imat$chmat*ps+(1-model_data$imat$chmat)*(1-ps))
 	for (i in 2:ncol(cump))
 	{
 		Phi.cumprod[,i]=Phi.cumprod[,i-1]*Phi.cumprod[,i]

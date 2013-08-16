@@ -223,7 +223,7 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    chp = process.ch(x$data$ch)
    firstseen=chp$first
    lastseen=chp$last
-   chmat = chp$chmat
+   if(all(is.na(x$ehmat)))x$ehmat= chp$chmat
 #  requires field in each record called initial.age; if missing set to 0 for a
 #  time since marked field
    if(is.null(x$data$initial.age)) x$data$initial.age=0
@@ -268,7 +268,7 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
         else
            ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
         ages[ages<min.age]=min.age
-		Y=chmat[.row,begin.num:(ntimes+begin.num-1)]
+		Y=x$ehmat[.row,begin.num:(ntimes+begin.num-1)]
 		sl=x$strata.labels
         if(!is.null(parameter$bystratum)&&parameter$bystratum)
 		{

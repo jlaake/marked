@@ -83,21 +83,23 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		ddl=make.design.data(data.proc,design.parameters)
 	} else
 		design.parameters=ddl$design.parameters
-#
-# Setup parameter list
-#
+    #
+    # setup parameter list
+    #
 	number.of.groups=1
 	if(!is.null(data.proc$group.covariates))number.of.groups=nrow(data.proc$group.covariates)
 	par.list=setup.parameters(data.proc$model,check=TRUE)
 	#
-	# Check validity of parameter list; stop if not valid
+	# check validity of parameter list; stop if not valid
 	#
 	if(!valid.parameters(model,model.parameters)) stop()
 	parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 	parameters=parameters[par.list]
 	for (i in 1:length(parameters))
 		if(is.null(parameters[[i]]$formula)) parameters[[i]]$formula=~1
-	# get parameter partition to split vector to list
+	#
+	#  get parameter partition to split vector to list and setup initial values
+    #
 	ptype=NULL
 	par=NULL
 	total.npar=0
@@ -127,17 +129,17 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	if(is.null(initial))
 		par=rep(0,total.npar)
 	# start - for each ch, the first non-zero x value and the occasion of the first non-zero value
-	start=t(sapply(data.proc$data$ch,function(x){
-						xx=strsplit(x,",")[[1]]
-						ich=min(which(strsplit(x,",")[[1]]!="0"))
-						return(c(as.numeric(factor(xx[ich],levels=data.proc$ObsLevels))-1,ich))
-					}))
+	#start=t(sapply(data.proc$data$ch,function(x){
+	#					xx=strsplit(x,",")[[1]]
+	#					ich=min(which(strsplit(x,",")[[1]]!="0"))
+	#					return(c(as.numeric(factor(xx[ich],levels=data.proc$ObsLevels))-1,ich))
+	#				}))
 	# create encounter history matrix
-	x=t(sapply(strsplit(data.proc$data$ch,","),function(x) as.numeric(factor(x,levels=data.proc$ObsLevels))))
+	#x=t(sapply(strsplit(data.proc$data$ch,","),function(x) as.numeric(factor(x,levels=data.proc$ObsLevels))))
 	
 	if(run)
 	{
-		fit=optim(par,loglikelihood,type=ptype,x=x,m=data.proc$m,T=data.proc$nocc,start=start,freq=data.proc$freq,
+		fit=optim(par,loglikelihood,type=ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
 		par=split(fit$par,ptype)
@@ -151,5 +153,5 @@ fitHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		return(list(data=data.proc,ddl=ddl,par=par,model.parameters=parameters,fit=fit))
 	}
     else
-		return(list(data=data.proc,ddl=ddl,ptype=ptype,start=start,x=x,par=par,model.parameters=parameters))
+		return(list(data=data.proc,ddl=ddl,ptype=ptype,start=data.proc$start,x=data.proc$ehmat,par=par,model.parameters=parameters))
 }

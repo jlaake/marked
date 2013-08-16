@@ -73,7 +73,7 @@ setup.model <-
 }
 setupHMM=function(model_def,model,strata.labels)
 {
-	if(toupper(model)=="HMMCJS")
+	if(toupper(model)%in%c("PROBITCJS","HMMCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,1)
 		model_def$hmm$fct_dmat=marked:::cjs_dmat
@@ -81,7 +81,7 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$fct_delta=marked:::cjs_delta
 		model_def$hmm$m=2
 	} else
-	if(toupper(model)=="HMMMSCJS")
+	if(toupper(model)%in%c("PROBITMSCJS","HMMMSCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,strata.labels)
 		model_def$hmm$fct_dmat=marked:::ms_dmat

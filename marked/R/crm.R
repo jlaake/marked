@@ -97,7 +97,8 @@
 #' particular occasion you can use the following example with the dipper data
 #' as a template:
 #' 
-#' \code{model.parameters=list(Phi=list(,fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
+#' \code{model.parameters=list(Phi=list(,fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),}
+#' \code{rep(1,nrow(dipper)))))}
 #' 
 #' The above sets \code{Phi} to 1 for the interval between occasions 2 and 3
 #' for all animals. At present there is no modification of the parameter count
@@ -180,6 +181,7 @@
 #' either "CJS" or "JS" at present.
 #' @author Jeff Laake
 #' @export crm
+#' @import optimx ggplot2 Matrix Rcpp numDeriv plyr
 #' @useDynLib marked
 #' @seealso \code{\link{cjs}}, \code{\link{js}},
 #' \code{\link{make.design.data}},\code{\link{process.data}}
@@ -191,26 +193,34 @@
 #' data(dipper)
 #' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 #' dipper.ddl=make.design.data(dipper.proc)
-#' mod.Phit.pt=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
+#' mod.Phit.pt=crm(dipper.proc,dipper.ddl,
+#'    model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
 #' mod.Phit.pt
-#' mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
+#' mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,
+#'    model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
 #' mod.Phidot.pdot
-#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
+#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",
+#'    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
 #' mod.Phisex.pdot
 #' # fit same 3 models with calls to mark
 #' \donttest{
 #' require(RMark)
-#' mod0=mark(dipper,model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
+#' mod0=mark(dipper,
+#'    model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
 #' summary(mod0,brief=TRUE)
-#' mod1=mark(dipper,model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
+#' mod1=mark(dipper,
+#'    model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
 #' summary(mod1,brief=TRUE)
-#' mod2<-mark(dipper,groups="sex",model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
+#' mod2<-mark(dipper,groups="sex",
+#'    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
 #' summary(mod2,brief=TRUE)
 #' }
 #' # jolly seber model
-#' crm(dipper,model="js",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
+#' crm(dipper,model="js",groups="sex",
+#'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
 #' \donttest{
-#' mark(dipper,model="POPAN",groups="sex",model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
+#' mark(dipper,model="POPAN",groups="sex",
+#'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
@@ -305,12 +315,14 @@ else
 	   if(model=="MSCJS")
 		   runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
-	   else{
+	   else{ 
+		  ddl$p$Y=ddl$p$Y-1
 	      if(is.null(initial)){
 		      imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
 		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 				               imat=imat,iter=iter,burnin=burnin)
 	      }else
+			 
 		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 				               initial=initial,iter=iter,burnin=burnin)
 	    }

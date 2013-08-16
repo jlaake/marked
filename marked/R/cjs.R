@@ -86,11 +86,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    imat=process.ch(ch,freq,all=FALSE)
 #  Use specified initial values or create if null
    if(is.null(initial))
-	   par=cjs.initial(dml,imat)
+	   par=cjs.initial(dml$fe,imat)
    else
-       par=set.initial(names(dml),dml,initial)
+       par=set.initial(names(dml$fe),dml$fe,initial)
 #  Create list of model data for optimization
-	model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
+	model_data=list(Phi.dm=dml$fe$Phi,p.dm=dml$fe$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
 			p.fixed=parameters$p$fixed,time.intervals=time.intervals)
 #   If data are to be accumulated based on ch and design matrices do so here;
 	if(accumulate)
@@ -108,7 +108,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
    if(use.admb)scale=1
-   scale=set.scale(names(dml),model_data,scale)
+   scale=set.scale(names(dml$fe),model_data,scale)
    model_data=scale.dm(model_data,scale)
    if(!use.admb)
    {

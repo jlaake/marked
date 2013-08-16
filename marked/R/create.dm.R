@@ -23,9 +23,14 @@
 #' data for each parameter
 #' @param model.parameters List of model parameter specifications 
 #' @param restrict if TRUE, only use design data with Time >= Cohort
-#' @return A design matrix constructed with the design dataframe and the
-#' formula.  It contains a row for each animal-occasion and a column for each
-#' beta parameter in the model. It excludes any columns that are all 0.
+#' @param use.admb if TRUE uses mixed.model.admb for random effects; otherwise mixed.model
+#' @return create.dm returns a fixed effect design matrix constructed with the design dataframe and the
+#' formula for a single parametre.  It excludes any columns that are all 0. create.dml returns a list with an element for
+#' for each parameter with a sub-list for the fixed effect (fe) and random effects. The re structure depends
+#' on switch use.admb. When TRUE, it contains a single design matrix (re.dm) and indices for random effects (re.indices).
+#' When FALSE, it returns re.list which is a list with an element for each random component containing re.dm and indices for
+#' that random effect (eg (1|id) + (1|time) would produce elements for id and time. 
+#' 
 #' @author Jeff Laake
 create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 ##############################################################################
@@ -111,18 +116,30 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
    colnames(dm)=colnames(mm)
    return(dm[,select,drop=FALSE])
 }
-create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
+create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
 {
-	dml=vector("list",length=length(model.parameters))
-	names(dml)=names(model.parameters)
+	dml=vector("list",length=2)
+	names(dml)=c("fe","re")
+	dml$fe=vector("list",length(model.parameters))
+	dml$re=vector("list",length(model.parameters))
+	names(dml$fe)=names(model.parameters)
+	names(dml$re)=names(model.parameters)
 	for (i in 1:length(model.parameters))
 	{
 		pn=names(model.parameters)[i]
 		dd=ddl[[pn]]
 		if(restrict)dd=dd[dd$Time>=dd$Cohort,]
 		mlist=proc.form(model.parameters[[i]]$formula)  # parse formula for fixed effects
-		dml[[i]]=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
+		dml$fe[[i]]=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept)
+		if(!is.null(mlist$re.model))
+		{
+			if(use.admb)
+				dml$re[[i]]=mixed.model.admb(model.parameters[[i]]$formula,dd)
+		    else
+				dml$re[[i]]=mixed.model(model.parameters[[i]]$formula,dd)
+		}else
+			dml$re[[i]]=NULL
 	}
 	return(dml)
 }

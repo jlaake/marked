@@ -67,8 +67,10 @@
 #' age,time,cohort,Age,Time,Cohort,Y,Z
 #' 
 #' @aliases process.data accumulate_data
-#' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
-#'                        initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
+#' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,
+#'                        allgroups=FALSE,age.var=NULL,initial.ages=c(0), 
+#'                        time.intervals=NULL,nocc=NULL,accumulate=TRUE,
+#'                        strata.labels=NULL)
 #' 
 #'          accumulate_data(data)
 #' 
@@ -145,11 +147,12 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    if(model%in%c("cjs","js"))model=toupper(model)
    if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
    dataname=substitute(data)
-#
-#  Compute number of occasions and check validity of model
-#
+  #
+  #  Compute number of occasions and check validity of model
+  #
    if(is.null(data$ch))
      stop("Field ch is missing in ",substitute(data))
+   # If ch is not comma delimited, turn into comma delimited
    if(length(grep(",",data$ch[1]))==0)
 	   data$ch=sapply(strsplit(data$ch,""),paste,collapse=",")
    ch.lengths=sapply(strsplit(data$ch,","),length)
@@ -159,12 +162,12 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
         stop(paste("\nCapture history length is not constant. ch must be a character string",
             "\n row numbers with incorrect ch length",paste(row.names(data[ch.lengths!=nocc,]),collapse=","),"\n"))
    }
-#
-#  Setup model
-#
+   #
+   #  Setup model
+   #
    model.list=setup.model(model,nocc,mixtures)
    ch.values=unique(unlist(strsplit(data$ch,",")))
-#  If no strata in model then only 0,1 are acceptable values
+   #  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
    {
 	   if(any(!ch.values%in%c("0","1")))
@@ -189,208 +192,212 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    nocc.secondary=NULL
    num=model.list$num
    if(model.list$IShmm) model.list=setupHMM(model.list,model,strata.labels)
-#
-#     If time intervals specified make sure there are nocc-1 of them
-#     If none specified assume they are 1
-#
+   #
+   #     If time intervals specified make sure there are nocc-1 of them
+   #     If none specified assume they are 1
+   #
    if(is.null(time.intervals))
       time.intervals=rep(1,nocc+model.list$num)
    else
       if(length(time.intervals)!=(nocc+num))
           stop("Incorrect number of time intervals")
    mixtures=model.list$mixtures
-#
-#  Get number of factors to create groups
-#
+   #
+   #  Get number of factors to create groups
+   #
    if(is.null(groups))
      number.of.factors=0
    else
      number.of.factors=length(groups)
-#
-# Accumulate non-unique data; if accumulate=F and dataframe has freq>1 expand and add id field
-# if null; if cjs type remove all histories that are initiated on last occasion
-# 
-if(model.list$cjs)
-{
-	chproc=process.ch(data$ch,freq=1,all=FALSE)
-	data=data[chproc$first!=chproc$nocc,,drop=FALSE]
-}	
-if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
-if(accumulate)
-	data=accumulate_data(data)
-else
-{
-	if(is.null(data$freq))
-		data$freq=1
-	else
-	{
-		data=data[rep(1:nrow(data),times=data$freq),]
-		data$freq=1
-	}
-}
-if(is.null(data$id))
-	data$id=factor(1:nrow(data))
-else
-{
-	data=data[order(data$id),]
-	if(!is.factor(data$id))data$id=factor(data$id)
-}	
-#
-#  Get number of records in data set
-#
-number.of.ch=nrow(data)
-#
-#  If there are no factors then
-#     if already has freq variable return the input data set as a list
-#     otherwise add the freq variable with each value = 1 and return as a list
-#  If model=js, then add dummy data for non-captured 
-#
-if(number.of.factors==0)
-{
-    if(model=="JS")
-    {
-       data=add.dummy.data(data,nocc=nocc,group.covariates=NULL)     
-       number.of.ch=nrow(data)
-    }
-    plist=list(data=data,model=model,mixtures=mixtures,
+   #
+   # Accumulate non-unique data; if accumulate=F and dataframe has freq>1 expand and add id field
+   # if null; if cjs type remove all histories that are initiated on last occasion
+   # 
+   if(model.list$cjs)
+   {
+	  chproc=process.ch(data$ch,freq=1,all=FALSE)
+	  data=data[chproc$first!=chproc$nocc,,drop=FALSE]
+   }	
+   if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
+   if(accumulate)
+    	data=accumulate_data(data)
+   else
+   {
+	   if(is.null(data$freq))
+	    	data$freq=1
+	   else
+	   {
+	    	data=data[rep(1:nrow(data),times=data$freq),]
+		    data$freq=1
+	   }
+   }
+   if(is.null(data$id))
+    	data$id=factor(1:nrow(data))
+   else
+   {
+ 	    data=data[order(data$id),]
+	    if(!is.factor(data$id))data$id=factor(data$id)
+   }	
+   #
+   #  Get number of records in data set
+   #
+   number.of.ch=nrow(data)
+   # start - for each ch, the first non-zero x value and the occasion of the first non-zero value
+   start=t(sapply(data$ch,function(x){
+					xx=strsplit(x,",")[[1]]
+					ich=min(which(strsplit(x,",")[[1]]!="0"))
+					return(c(as.numeric(factor(xx[ich],levels=model.list$hmm$ObsLevels))-1,ich))
+				}))
+   # create encounter history matrix
+   ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
+   #
+   #  If there are no factors then
+   #     if already has freq variable return the input data set as a list
+   #     otherwise add the freq variable with each value = 1 and return as a list
+   #  If model=js, then add dummy data for non-captured 
+   #
+   if(number.of.factors==0)
+   {
+       if(model=="JS")
+       {
+          data=add.dummy.data(data,nocc=nocc,group.covariates=NULL)     
+          number.of.ch=nrow(data)
+       }
+       plist=list(data=data,model=model,mixtures=mixtures,
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
-                   initial.ages=initial.ages[1],group.covariates=NULL)
- 	if(model.list$IShmm)
-		plist=c(plist,model.list$hmm)
-	else
-	    if(model.list$strata)
+                   initial.ages=initial.ages[1],group.covariates=NULL,start=start,ehmat=ehmat)
+ 	   if(model.list$IShmm)
+		   plist=c(plist,model.list$hmm)
+	   else
+	       if(model.list$strata)
 			  plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
-	return(plist)
-}
-#
-#   If there are one or more in the group factor list then
-#     make sure each is a factor variable in the data set and compute number
-#         of levels for each factor, cumlevels and factor matrix
-#     if not a factor variable - stop with error message
-# 
-else
-{
-  number.of.groups=1
-  n.levels=rep(0,number.of.factors)
-  facmat=NULL
-  faclabs=list()
-  for (i in 1:number.of.factors)
-  {
-    vari=data[,groups[i]]
-    if(!is.factor(vari))
-        stop(paste("\n ",groups[i]," is not a factor variable\n"))
-     else
-     {
-        n.levels[i]=length(levels(vari))
-        facmat=cbind(facmat,as.numeric(vari)-1)
-        faclabs[[i]]=levels(vari)
-     }       
-  }
-  cumlevels=cumprod(n.levels)
-  number.of.groups=cumlevels[length(cumlevels)]
-
-#  If age.var is specified, make sure it is valid and that the number of 
-#  initial.ages matches number of levels of identified variable
-#
-   if(is.null(age.var))
-      age.var=match("age",groups)
-   if(!is.na(age.var))
-   {
-      if(age.var>length(groups) | age.var<1)
-         stop("Invalid age variable. Must be between 1 and ",length(groups))
-      if(is.null(initial.ages))
-         stop("initial.ages must be specified if age.var is specified")
-      else
-         if(!is.numeric(initial.ages) | (length(initial.ages)!=n.levels[age.var] &length(initial.ages)>1) )
-           stop(paste("intial.ages must be numeric and match length of levels of",groups[age.var]))
+	   return(plist)
    }
-#
-#  Next compute the group number for each capture history
-#
-   if(number.of.factors==1)
-      data$group=facmat+1
+   #
+   #   If there are one or more in the group factor list then
+   #     make sure each is a factor variable in the data set and compute number
+   #         of levels for each factor, cumlevels and factor matrix
+   #     if not a factor variable - stop with error message
+   # 
    else
-      if(number.of.factors==2)
-         data$group=facmat[,2]*cumlevels[1]+facmat[,1]+1
-      else
-         data$group=facmat[,2:number.of.factors]%*%cumlevels[1:(number.of.factors-1)]+facmat[,1]+1
-#
-#  Next create frequency matrix for groups   
-#
-  freqmat=matrix(0,nrow=number.of.ch,ncol=number.of.groups)
-  for(i in 1:number.of.ch)
-  {
-     freqmat[i,data$group[i]]=data$freq[i]
-  }
-#
-#  If allgroups=FALSE, recompute number of groups and group number based on groups with 1 or more capture histories
-#
-  if(!allgroups)
-  {
-     test.freq=freqmat
-     test.freq[test.freq!=0]=1
-     counts = apply(test.freq, 2, sum)
-     newgroups=rep(0,number.of.groups)
-     index=1
-     for (i in 1:number.of.groups)
-        if(counts[i]>0)
+   {
+      number.of.groups=1
+      n.levels=rep(0,number.of.factors)
+      facmat=NULL
+      faclabs=list()
+      for (i in 1:number.of.factors)
+      {
+        vari=data[,groups[i]]
+        if(!is.factor(vari))
+            stop(paste("\n ",groups[i]," is not a factor variable\n"))
+        else
         {
-           newgroups[i]=index
-           index=index+1
-        }     
-     data$group=as.factor(newgroups[data$group])
-     freqmat=freqmat[,counts>0]
-     number.of.groups=index-1
-  }
-#
-#  Check to make sure length of begin.time is either 1 or equal to the
-#  number of groups
-#
-  if(length(begin.time)!=1 & length(begin.time)!=number.of.groups)
-    stop("length of begin.time must either be 1 or match number of groups")
-#
-#  Create group labels
-#  
-  labs=expand.grid(faclabs)
-  if(!allgroups)labs=as.matrix(labs[counts>0,])
-#
-#  If age.var has not been set, initial ages are set to 0
-#
-  if(is.na(age.var))
-    init.ages=rep(initial.ages[1],number.of.groups)
-  else
-  {
-    if(length(initial.ages)==1)
-       initial.ages=rep(initial.ages,length(levels(as.factor(labs[,age.var]))))
-    init.ages = initial.ages[as.numeric(factor(labs[,age.var],levels=unique(faclabs[[age.var]])))]
-  }
-  grouplabs=rep(" ",number.of.groups)
-  for (i in 1:number.of.groups)
-     grouplabs[i]=paste(groups,labs[i,],sep="",collapse=".") 
-  freqmat=as.data.frame(freqmat)
-  names(freqmat)=grouplabs
-#
-#  Store labs as group covariates; set levels to the same as in data
-#  
-  group.covariates=as.data.frame(labs)
-  names(group.covariates)=groups
-  for (i in 1:dim(group.covariates)[2])
-     group.covariates[,i]=factor(group.covariates[,i],levels=levels(data[,groups[i]]))
-#
-# Return data as a list with original dataframe and frequency matrix
-#
-  if(model=="JS")
-     data=add.dummy.data(data,nocc,group.covariates)     
-  data$initial.age=init.ages[data$group]
-  plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
+            n.levels[i]=length(levels(vari))
+            facmat=cbind(facmat,as.numeric(vari)-1)
+            faclabs[[i]]=levels(vari)
+        }       
+      }
+      cumlevels=cumprod(n.levels)
+      number.of.groups=cumlevels[length(cumlevels)]
+      #  If age.var is specified, make sure it is valid and that the number of 
+      #  initial.ages matches number of levels of identified variable
+      #
+      if(is.null(age.var))
+         age.var=match("age",groups)
+      if(!is.na(age.var))
+      {
+         if(age.var>length(groups) | age.var<1)
+            stop("Invalid age variable. Must be between 1 and ",length(groups))
+         if(is.null(initial.ages))
+            stop("initial.ages must be specified if age.var is specified")
+         else
+            if(!is.numeric(initial.ages) | (length(initial.ages)!=n.levels[age.var] &length(initial.ages)>1) )
+              stop(paste("intial.ages must be numeric and match length of levels of",groups[age.var]))
+      }
+      #
+      #  Next compute the group number for each capture history
+      #
+      if(number.of.factors==1)
+         data$group=facmat+1
+      else
+         if(number.of.factors==2)
+            data$group=facmat[,2]*cumlevels[1]+facmat[,1]+1
+         else
+            data$group=facmat[,2:number.of.factors]%*%cumlevels[1:(number.of.factors-1)]+facmat[,1]+1
+      #
+      #  Next create frequency matrix for groups   
+      #
+      freqmat=matrix(0,nrow=number.of.ch,ncol=number.of.groups)
+      for(i in 1:number.of.ch)
+         freqmat[i,data$group[i]]=data$freq[i]
+      #
+      #  If allgroups=FALSE, recompute number of groups and group number based on groups with 1 or more capture histories
+      #
+      if(!allgroups)
+      {
+        test.freq=freqmat
+        test.freq[test.freq!=0]=1
+        counts = apply(test.freq, 2, sum)
+        newgroups=rep(0,number.of.groups)
+        index=1
+        for (i in 1:number.of.groups)
+           if(counts[i]>0)
+           {
+              newgroups[i]=index
+              index=index+1
+           }     
+        data$group=as.factor(newgroups[data$group])
+        freqmat=freqmat[,counts>0]
+        number.of.groups=index-1
+      } 
+      #
+      #  Check to make sure length of begin.time is either 1 or equal to the
+      #  number of groups
+      #
+      if(length(begin.time)!=1 & length(begin.time)!=number.of.groups)
+         stop("length of begin.time must either be 1 or match number of groups")
+      #
+      #  Create group labels
+      #  
+      labs=expand.grid(faclabs)
+      if(!allgroups)labs=as.matrix(labs[counts>0,])
+      #
+      #  If age.var has not been set, initial ages are set to 0
+      #
+      if(is.na(age.var))
+         init.ages=rep(initial.ages[1],number.of.groups)
+      else
+      {
+         if(length(initial.ages)==1)
+            initial.ages=rep(initial.ages,length(levels(as.factor(labs[,age.var]))))
+         init.ages = initial.ages[as.numeric(factor(labs[,age.var],levels=unique(faclabs[[age.var]])))]
+      }
+        grouplabs=rep(" ",number.of.groups)
+        for (i in 1:number.of.groups)
+           grouplabs[i]=paste(groups,labs[i,],sep="",collapse=".") 
+        freqmat=as.data.frame(freqmat)
+        names(freqmat)=grouplabs
+        #
+        #  Store labs as group covariates; set levels to the same as in data
+        #  
+        group.covariates=as.data.frame(labs)
+        names(group.covariates)=groups
+        for (i in 1:dim(group.covariates)[2])
+           group.covariates[,i]=factor(group.covariates[,i],levels=levels(data[,groups[i]]))
+        #
+        # Return data as a list with original dataframe and frequency matrix
+        #
+        if(model=="JS")
+          data=add.dummy.data(data,nocc,group.covariates)     
+        data$initial.age=init.ages[data$group]
+        plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
-                   initial.ages=init.ages,group.covariates=group.covariates)
-  if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=model.list$strata.labels,unobserved=unobserved))
-  if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
-  return(plist)
-   
-}
+                   initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
+        if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=model.list$strata.labels,unobserved=unobserved))
+        if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
+        return(plist) 
+    }
 }
 add.dummy.data=function(data,nocc,group.covariates)
 {

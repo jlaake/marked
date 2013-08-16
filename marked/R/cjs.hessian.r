@@ -31,7 +31,7 @@ cjs.hessian=function(model)
 	}
 	markedfunc_eval=0
 	cjsenv=environment()
-	vcv=hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
+	vcv=numDeriv::hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
 	vcv=try(solvecov(vcv))
 	if(class(vcv)[1]=="try-error")
 	{

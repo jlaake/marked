@@ -1,6 +1,6 @@
 Package: marked
-Version: 1.1.0
-Date: 2013-8-12
+Version: 1.1.3
+Date: 2013-8-14
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
@@ -9,17 +9,17 @@ Description: This package provides a framework for handling
     Currently it is limited to Cormack-Jolly-Seber and
     Jolly-Seber models.
 Depends:
-    R (>= 2.15.0),
-    coda,
-    truncnorm,
-    Matrix,
-    Rcpp (>= 0.9.13),
-    ggplot2,
-    numDeriv,
-    plyr
+    R (>= 2.15.0)
 Imports:
     R2admb,
-    optimx (>= 2013.8.6)
+    truncnorm,
+    coda,
+    optimx (>= 2013.8.6),
+    ggplot2,
+    Matrix,
+    numDeriv,
+    Rcpp (>= 0.9.13),
+    plyr
 LinkingTo: Rcpp
 Suggests:
     RMark
@@ -28,7 +28,6 @@ SystemRequirements: ADMB version 11 (http://admb-project.org/) for
 LazyLoad: yes
 License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
-BuildVignettes: false
 Collate:
     'cjs.accumulate.R'
     'cjs.initial.R'

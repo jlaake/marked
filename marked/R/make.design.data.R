@@ -141,12 +141,9 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
-	  if(!toupper(data$model)%in%c("PROBITCJS","PROBITMSCJS"))
+	  if(!toupper(data$model)%in%c("PROBITCJS","PROBITMSCJS","NULL"))
 		  if("Y" %in% names(full.design.data[[i]]))
-		  {
 			  full.design.data[[i]]$Y=NULL
-			  full.design.data[[i]]$Z=NULL
-		  }
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {

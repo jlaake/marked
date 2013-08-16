@@ -22,6 +22,7 @@
 #' \item{beta}{list with elements Phi and p which contain summary of MCMC iterations for each beta parameter} 
 #' \item{reals}{list with elements Phi and p which contain summary of MCMC iterations for each real parameter} 
 #' @export
+#' @import coda truncnorm
 #' @author Devin Johnson
 #' @examples
 #' \donttest{

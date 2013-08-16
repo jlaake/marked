@@ -109,6 +109,8 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	gamma=fct_gamma(pars,m,T)
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,T,start)
+#	browser()
+#	xx=hmm.lnl(x,start,m,T,dmat,gamma,delta)
 	# loop over each encounter history in sapply and 
 	# create log-likelihood vector - an element for each x
 	# sum is total log-likelihood across individuals 
@@ -164,3 +166,13 @@ reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
 	# return vector of reals
 	return(values)
 }
+
+hmm.lnl=function(x,start,m,T,dmat,gamma,delta)
+{
+	browser()
+	lnl=.Fortran("hmmlike",as.integer(x),as.integer(nrow(x)),as.integer(m),as.integer(T),
+			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(dmat),
+			as.double(gamma),as.double(delta),lnl=double(lnl),P=double(P),PACKAGE="marked")
+    lnl
+}
+		

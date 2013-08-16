@@ -1,5 +1,7 @@
-%% LyX 2.0.3 created this file.  For more info, see http://www.lyx.org/.
-%% Do not edit unless you really know what you are doing.
+\batchmode
+\makeatletter
+\def\input@path{{C:/Users/JLaake/git/marked/manuscript//}}
+\makeatother
 \documentclass[12pt]{article}
 \usepackage[latin9]{inputenc}
 \usepackage{geometry}
@@ -8,7 +10,7 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[authoryear]{natbib}
-
+%\VignetteIndexEntry{Using marked}
 \makeatletter
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LyX specific LaTeX commands.
@@ -41,12 +43,12 @@
 \author{Jeff L. Laake, Devin S. Johnson, and Paul B. Conn}
 
 
-\date{{\normalsize Mar 27, 2013}}
+\date{{\normalsize Jan 16, 2013}}
 
 \maketitle
 <<echo=FALSE>>=
 # See note under Validation and Timing regarding rebuilding this vignette
-load("C:/Users/JLaake/git/marked/manuscript/simulation/.Rdata")
+
 
 @
 
@@ -117,7 +119,7 @@ For background material on capture-recapture and MARK refer to \url{http://www.p
 In the appendix, we provide a comparison of the MARK and \verb|marked|
 data and model structures and details on likelihood construction for
 the CJS and JS models. Our focus in the vignette will be to provide
-examples on the use of \verb|marked| and simulation with timing differences.
+examples on the use of \verb|marked|.
 
 
 \section*{Dipper data example}
@@ -435,205 +437,6 @@ MCMCfit$results$reals
 @
 
 
-\section*{Validation and timing}
-
-For a comparison of execution times and to validate the results against
-RMark/MARK, we replicated the dipper data twenty-fold so there were
-roughly 6,000 records, added a random weight field rounded to values
-1 to 10, added individual time-varying covariates \textit{td} and
-\textit{age} as shown in the following code:
-
-<<eval=FALSE>>=
-data(dipper)
-dipper=dipper[rep(1:nrow(dipper),each=20),]
-dipper$weight=round(runif(nrow(dipper),0,10),0)
-dipper$region=factor(floor(runif(nrow(dipper),1,10.99)))
-td=splitCH(dipper$ch)
-td=td[,1:6]
-colnames(td)=paste("td",2:7,sep="")
-dipper=cbind(dipper,td)
-age=t(apply(process.ch(dipper$ch,all=TRUE)$Fplus,1,cumsum))
-colnames(age)=paste("age",1:7,sep="")
-dipper=cbind(dipper,age)
-@
-
-\noindent We defined the following set of 8 models for $\phi$ and
-7 models for \textit{p }and fitted all 56 models with the \verb|marked|
-and RMark packages. 
-
-<<eval=FALSE>>=
-Phi.1=list(formula=~1)
-Phi.2=list(formula=~weight+age)
-Phi.3=list(formula=~time+weight)
-Phi.4=list(formula=~sex+weight)
-Phi.5=list(formula=~sex+weight+age)
-Phi.6=list(formula=~region+weight+age)
-Phi.7=list(formula=~region+time+weight)
-Phi.8=list(formula=~region+sex+weight)
-p.1=list(formula=~1)
-p.2=list(formula=~time)
-p.3=list(formula=~sex)
-p.4=list(formula=~td)
-p.5=list(formula=~td+sex)
-p.6=list(formula=~td+sex+age)
-p.7=list(formula=~region+sex+age)
-
-
-<<echo=FALSE,eval=FALSE>>=
-# eval set to FALSE to avoid running and testing on CRAN submission
-# to build the vignette you must have MARK,RMark,ADMB setup and working
-# on your machine.
-run=TRUE
-if(run)
-{
-if(length(grep("RMark",.packages()))!=0)detach("package:RMark")
-library(marked)
-
-Phi.1=list(formula=~1)
-Phi.2=list(formula=~weight+age)
-Phi.3=list(formula=~time+weight)
-Phi.4=list(formula=~sex+weight)
-Phi.5=list(formula=~sex+weight+age)
-Phi.6=list(formula=~region+weight+age)
-Phi.7=list(formula=~region+time+weight)
-Phi.8=list(formula=~region+sex+weight)
-p.1=list(formula=~1)
-p.2=list(formula=~time)
-p.3=list(formula=~sex)
-p.4=list(formula=~td)
-p.5=list(formula=~td+sex)
-p.6=list(formula=~td+sex+age)
-p.7=list(formula=~region+sex+age)
-
-data(dipper)
-dipper=dipper[rep(1:nrow(dipper),each=20),]
-dipper$weight=round(runif(nrow(dipper),0,10),0)
-dipper$region=factor(floor(runif(nrow(dipper),1,10.99)))
-td=splitCH(dipper$ch)
-td=td[,1:6]
-colnames(td)=paste("td",2:7,sep="")
-dipper=cbind(dipper,td)
-age=t(apply(marked:::process.ch(dipper$ch,all=TRUE)$Fplus,1,cumsum))
-colnames(age)=paste("age",1:7,sep="")
-dipper=cbind(dipper,age)
-
-## admb run
-crmodel.list=create.model.list(c("Phi","p"))
-t1=system.time({
-	dipper.proc=process.data(dipper,model="cjs",begin.time=1)
-    dipper.ddl=make.design.data(dipper.proc,parameters=list(Phi=list(time.varying="age"),p=list(time.varying=c("td","age"))))
-})
-use.admb=TRUE
-hessian=TRUE
-prepare_admb()
-t2=system.time({
-crm.list=crm.wrapper(crmodel.list,data=dipper.proc,ddl=dipper.ddl,hessian=hessian,use.admb=use.admb,external=FALSE)
-})
-admb.t2=t2
-admb.crm.list=crm.list
-
-use.admb=FALSE
-hessian=TRUE
-prepare_admb()
-t2=system.time({
-crm.list=crm.wrapper(crmodel.list,data=dipper.proc,ddl=dipper.ddl,method="BFGS",hessian=hessian,use.admb=use.admb,external=FALSE)
-})
-r.t2=t2
-r.crm.list=crm.list
-r.crm.table=crm.list$model.table[,2:6]
-
-admb.crm.table=admb.crm.list$model.table[,2:6]
-admb.crm.compare=r.crm.table[order(as.numeric(row.names(r.crm.table))),]-admb.crm.table[order(as.numeric(row.names(admb.crm.table))),]
-admb.crm.compare[abs(admb.crm.compare[,2])>.05,]
-
-
-# fit same models with calls to mark
-if(length(grep("marked",.packages()))!=0)detach("package:marked")
-library(RMark)
-model.list=create.model.list("CJS")
-t3=system.time({
-	dipper.proc=process.data(dipper,model="CJS",begin.time=1,groups=c("sex","region"))
-    dipper.ddl=make.design.data(dipper.proc)
-})
-t4=system.time({
-mark.list=mark.wrapper(model.list,data=dipper.proc,ddl=dipper.ddl,output=FALSE)
-})
-mark.list$model.table=model.table(mark.list,use.AIC=TRUE,use.lnl=TRUE)
-
-mark.table=mark.list$model.table[,4:8]
-crm.mark.compare=crm.table[order(as.numeric(row.names(r.crm.table))),]-mark.table[order(as.numeric(row.names(mark.table))),]
-crm.mark.compare[abs(crm.mark.compare[,2])>.05,]
-
-admb.crm.table=admb.crm.list$model.table[,2:6]
-admb.mark.compare=admb.crm.table[order(as.numeric(row.names(admb.crm.table))),]-mark.table[order(as.numeric(row.names(mark.table))),]
-admb.mark.compare[abs(admb.mark.compare[,2])>.05,]
-
-# refit mark models with crm initial values
-rerun.mark.list=mark.list
-model.list=model.list[ do.call(order, model.list) ,]
-for(i in 1:nrow(model.list))
-{
-    initial.list= r.crm.list[[i]]$results$beta
-    initial=NULL
-	for(parx in names(initial.list))
-		initial=c(initial,initial.list[[parx]])
-	init_names=NULL
-	for(parx in names(initial.list))
-		init_names=c(init_names,paste(parx,":",names(initial.list[[parx]]),sep=""))
-	names(initial)=init_names
-	rerun.mark.list[[i]]=eval(parse(text=paste("mark(dipper.proc,dipper.ddl,model.parameters=list(Phi=",model.list[i,"Phi"],",p=",model.list[i,"p"],"),initial=initial,output=FALSE)",sep="")))
-} 
-rerun.mark.list$model.table=model.table(rerun.mark.list,use.AIC=TRUE,use.lnl=TRUE)
-
-rerun.mark.table=rerun.mark.list$model.table[,4:8]
-rerun.crm.mark.compare=crm.table[order(as.numeric(row.names(crm.table))),]-rerun.mark.table[order(as.numeric(row.names(rerun.mark.table))),]
-rerun.crm.mark.compare[abs(rerun.crm.mark.compare[,2])>.05,]
-
-rerun.admb.mark.compare=admb.crm.table[order(as.numeric(row.names(admb.crm.table))),]-rerun.mark.table[order(as.numeric(row.names(rerun.mark.table))),]
-rerun.admb.mark.compare[abs(rerun.admb.mark.compare[,2])>.05,]
-}
-
-@
-
-\noindent The models were fitted with \verb|marked| in \Sexpr{round((as.numeric(t1)[3]+as.numeric(r.t2)[3])/60,2)}
-minutes with the R MLE implementation, \Sexpr{round((as.numeric(t1)[3]+as.numeric(admb.t2)[3])/60,2)}
-minutes with the ADMB implementation (\textit{use.admb}=TRUE) and
-\Sexpr{round((as.numeric(t3)[3]+as.numeric(t4)[3])/60,2)} minutes
-with RMark/MARK. MARK was using 7 threads for those timings and \verb|marked|
-was using only 1 thread. The time difference was larger prior to the
-recent implementation of parallel processing in MARK. As more group
-structure and time-varying individual covariates are added the time
-difference increases substantially. As a comparison of convergence
-performance, we subtracted the -log-likelihood value of the RMark
-model fit from the equivalent value from \verb|marked|. A negative
-value implies a better fit (convergence) for the \verb|marked| package
-and vice-versa for a positive value. With the initial runs of each
-package using their default starting values there were \Sexpr{nrow(admb.crm.compare[abs(admb.crm.compare[,5])> 0.01,])},
-\Sexpr{nrow(crm.mark.compare[abs(crm.mark.compare[,5])> 0.01,])},
-and \Sexpr{nrow(admb.mark.compare[abs(admb.mark.compare[,5])> 0.01,])}
-models with a difference exceeding 0.01 for R (\textit{use.admb}=FALSE)
-versus ADMB (\textit{use.admb}=TRUE), R versus MARK and ADMB versus
-MARK. The range of -loglikelihood differences was from \Sexpr{formatC(min(admb.crm.compare[,5]),format="E",digits=4)}
-to \Sexpr{formatC(max(admb.crm.compare[,5]),format="E",digits=4)},
-\Sexpr{formatC(min(crm.mark.compare[,5]),format="E",digits=4)} to
-\Sexpr{formatC(max(crm.mark.compare[,5]),format="E",digits=4)}, and
-\Sexpr{formatC(min(admb.mark.compare[,5]),format="E",digits=4)} to
-\Sexpr{formatC(max(admb.mark.compare[,5]),format="E",digits=4)} for
-the three comparisons respectively. ADMB had the lowest negative log-likelihood
-for all of the models. The models that differed had little model weight
-and either had confounded parameters (e.g., Phi(time)p(time)) or had
-large negative or positive parameters as the real parameters approached
-boundaries of 0 or 1. With the exception of the 1 model in MARK most
-converged to similar values in the initial run. We re-ran the set
-of MARK models using starting values from the models fit with \verb|marked|,
-and then ran the \verb|marked| models with starting values from the
-models re-fitted with MARK. After re-running models the differences
-in -log-likelihood values between ADMB and MARK ranged from \Sexpr{formatC(min(rerun.admb.mark.compare[,5]),format="E",digits=4)}
-to \Sexpr{formatC(max(rerun.admb.mark.compare[,5]),format="E",digits=4)}
-showing that the likelihood for both packages are the same and the
-initial differences resulted from differences in starting values and
-tolerance criterion.
-
 \bibliography{markedWriteUpBib}
 
 
@@ -662,19 +465,71 @@ following the release. Using an unique index for each potential parameter,
 the PIMS would be:
 
 \begin{tabular}{ccccccccc}
- & \multicolumn{3}{c}{} &  &  & \multicolumn{3}{c}{}\tabularnewline
+ &
+\multicolumn{3}{c}{} &
+ &
+ &
+\multicolumn{3}{c}{}\tabularnewline
 \hline 
- & \multicolumn{3}{c}{$\phi$ } &  &  & \multicolumn{3}{c}{$p$}\tabularnewline
+ &
+\multicolumn{3}{c}{$\phi$ } &
+ &
+ &
+\multicolumn{3}{c}{$p$}\tabularnewline
 \hline 
- & \multicolumn{3}{c}{Time} &  &  & \multicolumn{3}{c}{Time}\tabularnewline
+ &
+\multicolumn{3}{c}{Time} &
+ &
+ &
+\multicolumn{3}{c}{Time}\tabularnewline
 \cline{2-5} \cline{7-9} 
-Cohort & 2 & 3 & 4 &  & Cohort & 2 & 3 & 4\tabularnewline
+Cohort &
+2 &
+3 &
+4 &
+ &
+Cohort &
+2 &
+3 &
+4\tabularnewline
 \cline{2-4} \cline{7-9} 
-1 & 1 & 2 & 3 &  & 1 & 7 & 8 & 9\tabularnewline
-2 &  & 4 & 5 &  & 2 &  & 10 & 11\tabularnewline
-3 &  &  & 6 &  & 3 &  &  & 12\tabularnewline
+1 &
+1 &
+2 &
+3 &
+ &
+1 &
+7 &
+8 &
+9\tabularnewline
+2 &
+ &
+4 &
+5 &
+ &
+2 &
+ &
+10 &
+11\tabularnewline
+3 &
+ &
+ &
+6 &
+ &
+3 &
+ &
+ &
+12\tabularnewline
 \hline 
- &  &  &  &  &  &  &  & \tabularnewline
+ &
+ &
+ &
+ &
+ &
+ &
+ &
+ &
+\tabularnewline
 \end{tabular}
 
 \noindent The index 5 represents survival of the second release cohort

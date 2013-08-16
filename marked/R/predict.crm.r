@@ -27,7 +27,8 @@
 #' data(dipper)
 #' dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 #' dipper.ddl=make.design.data(dipper.proc)
-#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
+#' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,
+#'    model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
 #' xx=predict(mod.Phisex.pdot)
 #' xx
 #' xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
@@ -43,8 +44,8 @@ predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,v
 			newdata.proc=process.data(newdata,model=object$model,begin.time=object$data$begin.time,groups=names(object$data$group.covariates),accumulate=FALSE)
 			ddl=make.design.data(newdata.proc,parameters=object$design.parameters)
 			dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=object$design.parameters)
-		    object$results$model_data$Phi.dm=dml$Phi
-			object$results$model_data$p.dm=dml$p		
+		    object$results$model_data$Phi.dm=dml$fixed$Phi
+			object$results$model_data$p.dm=dml$fixed$p		
 		}else
 			stop("Invalid newdata")
 	}
