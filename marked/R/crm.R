@@ -227,7 +227,6 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,clean=TRUE,...)
 {
-if(model%in%c("cjs","js","mscjs"))model=toupper(model)
 #if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE

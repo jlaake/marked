@@ -99,20 +99,24 @@ mixed.model=function(formula,data,indices=FALSE)
            stop(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
         else
         {
-          zz=Matrix(model.matrix(as.formula(mlist$re.model[[i]]$sub),data))
 		  if(indices)
 		  {
+			  zz=Matrix(model.matrix(as.formula(mlist$re.model[[i]]$sub),data))
 			  used.columns=which(colSums(zz)>0)
 			  nre=length(used.columns)
 			  indices=rowSums(zz*col(zz))
 			  if(nre!=ncol(zz))indices=match(indices,used.columns)
 			  re.dm=model.matrix(as.formula(mlist$re.model[[i]]$model),data)   
 			  re.list[[i]]=list(re.indices=indices,re.dm=re.dm)
+			  names(re.list)=names(mlist$re.model)	
 		  }else
-			  re.list[[i]]=list(re.dm=zz)
+		  {
+			  # code for probitcjs
+			  re.list[[i]]=list(re.dm=1)
+		  }
         }
       }
-	  names(re.list)=names(mlist$re.model)	  
+	  
   }
    return(list(re.list=re.list))
 }
