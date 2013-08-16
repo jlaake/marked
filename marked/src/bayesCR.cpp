@@ -113,7 +113,7 @@ for(int i=n-2; i>=0; i--)
 }
 return wrap(out);   
 }
-
+/*
 RcppExport SEXP sampleStateCJS(SEXP ID, SEXP PVec, SEXP PhiVec, SEXP stateVec, SEXP k){
   
 // Setting up the variables
@@ -159,3 +159,4 @@ for(int i=n-2; i>=0; i--)
 }
 return wrap(out);   
 }
+*/
