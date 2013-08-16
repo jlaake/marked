@@ -1,6 +1,6 @@
 #' Perform MCMC analysis of a CJS model
 #' 
-#' Takes design data list created with the function \link{make.design.data} for model "probitCJS" 
+#' Takes design data list created with the function \link{make.design.data} for model "probitMsCJS" 
 #' and draws a sample from the posterior distribution using a Gibbs sampler.
 #' 
 #' 
@@ -33,7 +33,7 @@
 #' # Real parameter summary
 #' fit1$results$reals
 #' }
-probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial=NULL, imat=NULL){
+probitMsCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial=NULL, imat=NULL){
   
   ### DEFINE SOME FUNCTIONS ###
   

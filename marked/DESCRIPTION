@@ -75,3 +75,4 @@ Collate:
     'fitHMM.r'
     'simHMM.r'
     'InitialDistribution_functions.r'
+    'probitMsCJS.R'
