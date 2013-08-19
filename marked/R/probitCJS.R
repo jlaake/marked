@@ -44,11 +44,13 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   make.ztilde.idx <- function(id, zvec){
   	.Call("makeZtildeIdx", ID=id, zvec=zvec, PACKAGE="marked")
   	}
+  
+  browser()
+  
+  
   ### Initial values
-  if(is.null(initial))
-	  beta <- cjs.initial(dml,imat=imat,link="probit")
-  else
-	  beta <- set.initial(c("Phi","p"),dml,initial)
+  if(is.null(initial)) beta <- cjs.initial(dml$fe,imat=imat,link="probit")
+  else beta <- set.initial(c("Phi","p"),dml,initial)
   beta.z <- beta$Phi	
   beta.y <- beta$p	  
   ### DATA MANIPULATION ###
