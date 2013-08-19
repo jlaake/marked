@@ -306,25 +306,64 @@ if("nlminb"%in%method)control$eval.max=itnmax
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
-else
-    if(model=="JS")
-          runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+if(model=="JS")
+    runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	else 
-	   if(model=="MSCJS")
-		   runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+if(model=="MSCJS")
+	runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
-	   else{ 
-		  ddl$p$Y=ddl$p$Y-1
-	      if(is.null(initial)){
-		      imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
-		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
-				               imat=imat,iter=iter,burnin=burnin)
-	      }else
-			 
-		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
-				               initial=initial,iter=iter,burnin=burnin)
-	    }
+if(model=="PROBITCJS")
+{
+	ddl$p$Y=ddl$p$Y-1
+	if(is.null(initial))
+	{
+	    imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
+	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+		               imat=imat,iter=iter,burnin=burnin)
+    }else
+	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+					   initial=initial,iter=iter,burnin=burnin)	   
+}
+if(toupper(substr(model,1,3))=="HMM")
+{
+	ptype=NULL
+	par=NULL
+	total.npar=0
+	beta.labels=list()
+	for(parname in names(parameters))
+	{
+		beta.labels[[parname]]=reals(parname,ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters,compute=FALSE)
+		npar=length(beta.labels[[parname]])
+		total.npar=total.npar+npar
+		ptype=c(ptype,rep(parname,npar))	
+		if(!is.null(initial))
+		{
+			if(!is.null(initial[[parname]]))
+			{
+				if(length(initial[[parname]])==npar)
+					par=c(par,initial[[parname]])
+				else
+				{
+					warning("Incorrect number of initial values for ",parname," need", npar, " Setting all to 0.\n")
+					par=c(par,rep(0,npar))
+				}
+			} else
+				par=c(par,rep(0,npar))
+		}	
+	}
+	if(is.null(initial))par=rep(0,total.npar)
+	runmodel=optim(par,loglikelihood,type=ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
+				method=method,debug=debug,hessian=hessian)
+	par=split(runmodel$par,ptype)
+	for(p in names(par))
+	{
+		if(is.null(model.parameters[[p]]$formula))
+			names(par[[p]])="(Intercept)"
+		else
+			names(par[[p]])=beta.labels[[p]]
+	}
+}
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
 if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
@@ -336,7 +375,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 }
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS")
+if(!re & model!="MSCJS"& toupper(substr(model,1,3))!="HMM")
 for(parx in names(parameters))
 {
 	object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)
