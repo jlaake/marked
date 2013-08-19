@@ -22,18 +22,18 @@ set.initial=function(pars,dml,initial)
 		init=initial[[parx]]
 		if(is.null(init))init=0
 		if(length(init)==1 &is.null(names(init)))
-			par[[parx]]=c(init,rep(0,ncol(dml[[parx]])-1))
+			par[[parx]]=c(init,rep(0,ncol(dml[[parx]]$fe)-1))
 		else
 		{
 			if(is.null(names(init)))
 			{
-				if(length(init)!=ncol(dml[[parx]]))
+				if(length(init)!=ncol(dml[[parx]]$fe))
 					stop(paste("For",parx,",length of initial vector does not match number of parameters."))
 				else
 					par[[parx]]=init
 			} else
 			{
-				beta.names=colnames(dml[[parx]])
+				beta.names=colnames(dml[[parx]]$fe)
 				par[[parx]]=rep(0,length(beta.names))
 				par[[parx]][beta.names%in%names(init)]=init[which(names(init)%in%beta.names)]
 			}

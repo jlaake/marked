@@ -221,12 +221,27 @@
 #' \donttest{
 #' mark(dipper,model="POPAN",groups="sex",
 #'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
+#' library(RMark)
+#' data(dipper)
+#' data(mstrata)
+#' mark(dipper,model.parameters=list(p=list(formula=~time)),output=FALSE)$results$beta
+#' mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),output=FALSE)$results$beta
+#' detach("package:RMark")
+#' ##CJS example
+#' crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))
+#' ##MSCJS example
+#' ms=process.data(mstrata,model="hmmMSCJS")
+#' ms.ddl=make.design.data(ms)
+#' ms.ddl$Psi$fix=NA
+#' ms.ddl$Psi$fix[ms.ddl$Psi$stratum==ms.ddl$Psi$tostratum]=1
+#' crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,clean=TRUE,...)
 {
+model=toupper(model)
 #if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE
@@ -291,8 +306,38 @@ if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with
 # Create design matrices for each parameter
 #
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
+# If HMM model split parameters and create initial values
+if(substr(model,1,3)=="HMM")
+{
+	ptype=NULL
+	par=NULL
+	total.npar=0
+	beta.labels=list()
+	for(parname in names(parameters))
+	{
+		beta.labels[[parname]]=reals(parname,ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters,compute=FALSE)
+		npar=length(beta.labels[[parname]])
+		total.npar=total.npar+npar
+		ptype=c(ptype,rep(parname,npar))	
+		if(!is.null(initial))
+		{
+			if(!is.null(initial[[parname]]))
+			{
+				if(length(initial[[parname]])==npar)
+					par=c(par,initial[[parname]])
+				else
+				{
+					warning("Incorrect number of initial values for ",parname," need", npar, " Setting all to 0.\n")
+					par=c(par,rep(0,npar))
+				}
+			} else
+				par=c(par,rep(0,npar))
+		}	
+	}
+	if(is.null(initial))par=rep(0,total.npar)
+}
 # if not running, return dml
-if(!run) return(dml)
+if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=list(par=par,ptype=ptype)))
 #
 # Call estimation function
 #
@@ -324,34 +369,8 @@ if(model=="PROBITCJS")
 	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 					   initial=initial,iter=iter,burnin=burnin)	   
 }
-if(toupper(substr(model,1,3))=="HMM")
+if(substr(model,1,3)=="HMM")
 {
-	ptype=NULL
-	par=NULL
-	total.npar=0
-	beta.labels=list()
-	for(parname in names(parameters))
-	{
-		beta.labels[[parname]]=reals(parname,ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters,compute=FALSE)
-		npar=length(beta.labels[[parname]])
-		total.npar=total.npar+npar
-		ptype=c(ptype,rep(parname,npar))	
-		if(!is.null(initial))
-		{
-			if(!is.null(initial[[parname]]))
-			{
-				if(length(initial[[parname]])==npar)
-					par=c(par,initial[[parname]])
-				else
-				{
-					warning("Incorrect number of initial values for ",parname," need", npar, " Setting all to 0.\n")
-					par=c(par,rep(0,npar))
-				}
-			} else
-				par=c(par,rep(0,npar))
-		}	
-	}
-	if(is.null(initial))par=rep(0,total.npar)
 	runmodel=optim(par,loglikelihood,type=ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)

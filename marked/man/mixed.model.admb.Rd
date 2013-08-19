@@ -7,7 +7,7 @@
 \usage{
   mixed.model.admb(formula,data)
 
-  mixed.model(formula,data)
+  mixed.model(formula,data,indices=FALSE)
 
   mixed.model.dat(x,con,idonly,n)
 
@@ -31,6 +31,9 @@
   \item{idonly}{TRUE, if random effects not crossed}
 
   \item{n}{number of capture history records}
+
+  \item{indices}{if TRUE, outputs structure with indices
+  into dm for random effects}
 }
 \value{
   mixed.model.admb returns a list with elements re.dm, a

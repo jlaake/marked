@@ -19,6 +19,7 @@
 #' @param fct_gamma function to create gamma - transition matrix
 #' @param fct_delta function to create initial state distribution
 #' @param ddl design data list of parameters for each id
+#' @param dml list of design matrices; one entry for each parameter; each entry contains fe and re for fixed and random effects
 #' @param parameters formulas for each parameter type
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parname string name of parameter (eg "Phi")
@@ -26,8 +27,8 @@
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
 #' @param compute if TRUE, computes reals; otherwise returns column dimension of design matrix for the parameter
 #' @usage HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-#'        loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,parameters,debug=FALSE)
-#'        reals(parname,ddl,parameters,parlist=NULL,compute=TRUE)
+#'        loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+#'        reals(parname,ddl,dml,parameters,parlist=NULL,compute=TRUE)
 #' @aliases HMMLikelihood loglikelihood reals
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
 #' loglikelihood returns the negative log-likelihood for all of the data. reals
@@ -69,7 +70,7 @@ HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
 	return(lnl)
 }     
 loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
-		fct_delta,ddl,parameters,debug=FALSE)
+		fct_delta,ddl,dml,parameters,debug=FALSE)
 {
 	# Arguments:
 	# par: vector of parameter values for log-likelihood evaluation
@@ -100,7 +101,7 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	# each occasion.
     for(parname in names(parameters))
     {
-        R=reals(parname,ddl=ddl[[parname]],parameters=parameters,parlist=parlist)
+        R=reals(parname,ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters,parlist=parlist)
         pars[[parname]]=laply(split(R,ddl[[parname]]$id),function(x) x)
     }
 	# compute 4-d arrays of id- and occasion-specific 
@@ -141,13 +142,13 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 # Computes real estimates for HMM models using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
 # returns the number of columns in the design matrix (compute=FALSE); handles fixed parameters assigned by non-NA value in field named 
 # fix in the ddl dataframe.
-reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
+reals=function(parname,ddl,dml,parameters,parlist=NULL,compute=TRUE)
 {
-	# create design matrix (dm) for parameter parname
-	dm=model.matrix(parameters[[parname]]$formula,ddl)
+	dm=dml$fe
+	#dm=model.matrix(parameters[[parname]]$formula,ddl)
 	# if some reals are fixed, assign 0 to rows of dm and then
 	# remove any columns (parameters) that are all 0.
-	if(!is.null(ddl$fix))
+	if(!is.null(ddl$fix)&&any(!is.na(ddl$fix)))
 	{
 		dm[!is.na(ddl$fix),]=0
 		dm=dm[,apply(dm,2,function(x) any(x!=0)),drop=FALSE]
@@ -156,9 +157,9 @@ reals=function(parname,ddl,parameters,parlist=NULL,compute=TRUE)
 	if(!compute)return(colnames(dm))
 	# Currently for log or logit link, return the inverse values
 	values=switch(parameters[[parname]]$link,
-	     log=exp(dm%*%parlist[[parname]]),
-		 logit=plogis(dm%*%parlist[[parname]]),
-		 identity=dm%*%parlist[[parname]])
+	     log=exp(as.vector(dm%*%parlist[[parname]])),
+		 logit=plogis(as.vector(dm%*%parlist[[parname]])),
+		 identity=as.vector(dm%*%parlist[[parname]]))
     if(!is.null(ddl$time.interval))values=values^ddl$time.interval
 	# if some reals are fixed, set reals to their fixed values 
 	if(!is.null(ddl$fix))

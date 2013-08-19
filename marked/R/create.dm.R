@@ -6,7 +6,7 @@
 #' @aliases create.dm create.dml
 #' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 #'        
-#'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
+#'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format
@@ -118,26 +118,24 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 }
 create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
 {
-	dml=vector("list",length=2)
-	names(dml)=c("fe","re")
-	dml$fe=vector("list",length(model.parameters))
-	dml$re=vector("list",length(model.parameters))
-	names(dml$fe)=names(model.parameters)
-	names(dml$re)=names(model.parameters)
+	dml=vector("list",length=length(model.parameters))
+	names(dml)=names(model.parameters)
 	for (i in 1:length(model.parameters))
 	{
 		pn=names(model.parameters)[i]
+		dml[[i]]=vector("list",length=2)
+		names(dml[[i]])=c("fe","re")
 		dd=ddl[[pn]]
 		if(restrict)dd=dd[dd$Time>=dd$Cohort,]
 		mlist=proc.form(model.parameters[[i]]$formula)  # parse formula for fixed effects
-		dml$fe[[i]]=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
+		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept)
 		if(!is.null(mlist$re.model))
 		{
 			if(use.admb)
-				dml$re[[i]]=mixed.model.admb(model.parameters[[i]]$formula,dd)
+				dml[[i]]$re=mixed.model.admb(model.parameters[[i]]$formula,dd)
 		    else
-				dml$re[[i]]=mixed.model(model.parameters[[i]]$formula,dd)
+				dml[[i]]$re=mixed.model(model.parameters[[i]]$formula,dd)
 		}
 	}
 	return(dml)

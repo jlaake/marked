@@ -6,7 +6,7 @@
   create.dm(x, formula, time.bins=NULL, cohort.bins=NULL,
     age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
 
-  create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7)
+  create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
 }
 \arguments{
   \item{x}{design dataframe created by
