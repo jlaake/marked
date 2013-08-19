@@ -87,7 +87,7 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 		         p=rep(0,ncol(dml$p)),
 		         S=rep(0,ncol(dml$S)))
 	else
-		par=set.initial(names(dml),dml,initial)
+		par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization
 	model_data=list(S.dm=dml$S,p.dm=dml$p,Psi.dm=dml$Psi,imat=imat,S.fixed=parameters$S$fixed,
 			p.fixed=parameters$p$fixed,Psi.fixed=parameters$Psi$fixed,time.intervals=time.intervals)

@@ -242,7 +242,7 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  strata.labels=NULL,clean=TRUE,...)
 {
 model=toupper(model)
-#if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
+if(model=="JS")accumulate=FALSE
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE
 if(crossed)accumulate=FALSE
@@ -306,38 +306,12 @@ if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with
 # Create design matrices for each parameter
 #
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
-# If HMM model split parameters and create initial values
+# Create vector ptype which enables single par vector to be split into list. Also create beta.labels and initial values
+# if not supplied.
 if(substr(model,1,3)=="HMM")
-{
-	ptype=NULL
-	par=NULL
-	total.npar=0
-	beta.labels=list()
-	for(parname in names(parameters))
-	{
-		beta.labels[[parname]]=reals(parname,ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters,compute=FALSE)
-		npar=length(beta.labels[[parname]])
-		total.npar=total.npar+npar
-		ptype=c(ptype,rep(parname,npar))	
-		if(!is.null(initial))
-		{
-			if(!is.null(initial[[parname]]))
-			{
-				if(length(initial[[parname]])==npar)
-					par=c(par,initial[[parname]])
-				else
-				{
-					warning("Incorrect number of initial values for ",parname," need", npar, " Setting all to 0.\n")
-					par=c(par,rep(0,npar))
-				}
-			} else
-				par=c(par,rep(0,npar))
-		}	
-	}
-	if(is.null(initial))par=rep(0,total.npar)
-}
+	initial.list=set.initial(names(dml),dml,initial)
 # if not running, return dml
-if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=list(par=par,ptype=ptype)))
+if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
 #
 # Call estimation function
 #
@@ -371,17 +345,12 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM")
 {
-	runmodel=optim(par,loglikelihood,type=ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+	runmodel=optim(initial.list$par,loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
-	par=split(runmodel$par,ptype)
+	par=split(runmodel$par,initial.list$ptype)
 	for(p in names(par))
-	{
-		if(is.null(model.parameters[[p]]$formula))
-			names(par[[p]])="(Intercept)"
-		else
-			names(par[[p]])=beta.labels[[p]]
-	}
+		names(par[[p]])=colnames(dml[[p]]$fe)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file

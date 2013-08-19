@@ -88,7 +88,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    if(is.null(initial))
 	   par=cjs.initial(dml,imat)
    else
-       par=set.initial(names(dml),dml,initial)
+       par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization
 	model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
 			p.fixed=parameters$p$fixed,time.intervals=time.intervals)

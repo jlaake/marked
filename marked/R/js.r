@@ -88,7 +88,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  Use specified initial values or create if null
 	if(is.null(initial))
 		initial=cjs.initial(dml,imat)
-	par=set.initial(names(dml),dml,initial)
+	par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
