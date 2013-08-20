@@ -242,7 +242,6 @@ crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters
  strata.labels=NULL,clean=TRUE,...)
 {
 model=toupper(model)
-if(model=="JS")accumulate=FALSE
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE
 if(crossed)accumulate=FALSE
@@ -290,6 +289,7 @@ par.list=setup.parameters(data.proc$model,check=TRUE)
 if(!valid.parameters(model,model.parameters)) stop()
 parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 parameters=parameters[par.list]
+# See if any formula contain random effects and set re
 re=FALSE
 for (i in 1:length(parameters))
 {
@@ -297,24 +297,19 @@ for (i in 1:length(parameters))
 	mlist=proc.form(parameters[[i]]$formula)
 	if(!is.null(mlist$re.model))re=TRUE
 }
+# currently if re, then set use.admb to TRUE
 if(re) use.admb=TRUE
-if(use.admb & !re) 
-	crossed=FALSE
+if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
-#
 # Create design matrices for each parameter
-#
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
-# Create vector ptype which enables single par vector to be split into list. Also create beta.labels and initial values
-# if not supplied.
+# For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM")
 	initial.list=set.initial(names(dml),dml,initial)
-# if not running, return dml
+# if not running, return object with data,ddl,dml etc
 if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
-#
-# Call estimation function
-#
+# Depending on method set some values
 if("SANN"%in%method)
 {
 	if(length(method)>1)
@@ -322,11 +317,12 @@ if("SANN"%in%method)
     control$maxit=itnmax
 }
 if("nlminb"%in%method)control$eval.max=itnmax
+# Call estimation function which depends on the model
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
 if(model=="JS")
-    runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+    runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 if(model=="MSCJS")
 	runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,

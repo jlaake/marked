@@ -41,7 +41,7 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 			design.parameters=design.parameters,initial=initial,groups=groups,time.intervals=time.intervals,
 			accumulate=accumulate,run=FALSE,strata.labels=strata.labels)
 	if(nrow(setup$data$data)==1)stop(" Use at least 2 capture histories; unique ch if accumulate=T")
-	parlist=split(setup$results$par,setup$results$ptype)
+	parlist=setup$results$par
 	T=setup$data$nocc
 	m=setup$data$m
 	ch=NULL
