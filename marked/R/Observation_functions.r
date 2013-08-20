@@ -32,15 +32,15 @@ ms_dmat=function(pars,m,T)
 	# which is split across occasions for multiple states; 
 	# each dmat has m+1 rows (0 + m states) and m+1 columns - m states + dead
 	# add first occasion p=1
-	pmat=array(NA,c(nrow(pars$p),T,m+1,m))
+	pmat=array(NA,c(nrow(pars$p),T,m,m))
 	for (i in 1:nrow(pmat))
 	{
 		pdiag=diag(rep(1,m-1))
-		pmat[i,1,,]=cbind(rbind(1-colSums(pdiag),pdiag,colSums(pdiag)),c(1,rep(0,nrow(pdiag)+1)))		
+		pmat[i,1,,]=cbind(rbind(1-colSums(pdiag),pdiag),c(1,rep(0,nrow(pdiag))))		
 		for(j in 1:(T-1))
 		{
 			pdiag=diag(pars$p[i,((j-1)*(m-1)+1):(j*(m-1))])			
-			pmat[i,j+1,,]=cbind(rbind(1-colSums(pdiag),pdiag,colSums(pdiag)),c(1,rep(0,nrow(pdiag)+1)))	
+			pmat[i,j+1,,]=cbind(rbind(1-colSums(pdiag),pdiag),c(1,rep(0,nrow(pdiag))))	
 		}
 	}
 	pmat
