@@ -5,8 +5,8 @@
 \title{Hidden Markov Model likelihood functions}
 \usage{
   HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-    loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,parameters,debug=FALSE)
-    reals(parname,ddl,parameters,parlist=NULL,compute=TRUE)
+    loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+    reals(parname,ddl,dml,parameters,parlist=NULL,compute=TRUE)
 }
 \arguments{
   \item{x}{single observed sequence (capture history) in
@@ -43,6 +43,10 @@
   distribution}
 
   \item{ddl}{design data list of parameters for each id}
+
+  \item{dml}{list of design matrices; one entry for each
+  parameter; each entry contains fe and re for fixed and
+  random effects}
 
   \item{parameters}{formulas for each parameter type}
 

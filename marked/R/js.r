@@ -66,7 +66,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    if(!is.null(ddl$Phi$time.interval))
 	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 # Compute nobstot - total unique critters
-   if(nrow(dml$N)==1) 
+   if(nrow(dml$N$fe)==1) 
       nobstot=sum(x$data$freq)    
    else
      nobstot=tapply(x$data$freq,x$data$group,sum)   
@@ -88,11 +88,11 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  Use specified initial values or create if null
 	if(is.null(initial))
 		initial=cjs.initial(dml,imat)
-	par=set.initial(names(dml),dml,initial)
+	par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
-   model_data=list(Phi.dm=dml$Phi,p.dm=dml$p,pent.dm=dml$pent,N.dm=dml$N,imat=imat,Phi.fixed=parameters$Phi.fixed,
+   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,pent.dm=dml$pent$fe,N.dm=dml$N$fe,imat=imat,Phi.fixed=parameters$Phi.fixed,
 		   p.fixed=parameters$p.fixed,pent.fixed=parameters$pent.fixed,time.intervals=time.intervals)
 #  If data are to be accumulated based on ch and design matrices do so here;
    if(accumulate)

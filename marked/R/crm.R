@@ -221,13 +221,27 @@
 #' \donttest{
 #' mark(dipper,model="POPAN",groups="sex",
 #'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
+#' library(RMark)
+#' data(dipper)
+#' data(mstrata)
+#' mark(dipper,model.parameters=list(p=list(formula=~time)),output=FALSE)$results$beta
+#' mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),output=FALSE)$results$beta
+#' detach("package:RMark")
+#' ##CJS example
+#' crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))
+#' ##MSCJS example
+#' ms=process.data(mstrata,model="hmmMSCJS")
+#' ms.ddl=make.design.data(ms)
+#' ms.ddl$Psi$fix=NA
+#' ms.ddl$Psi$fix[ms.ddl$Psi$stratum==ms.ddl$Psi$tostratum]=1
+#' crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,clean=TRUE,...)
 {
-#if(model=="MSCJS")stop("\nMulti-state CJS not fully supported at this time\n")
+model=toupper(model)
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE
 if(crossed)accumulate=FALSE
@@ -275,6 +289,7 @@ par.list=setup.parameters(data.proc$model,check=TRUE)
 if(!valid.parameters(model,model.parameters)) stop()
 parameters=setup.parameters(data.proc$model,model.parameters,data$nocc,number.of.groups=number.of.groups)
 parameters=parameters[par.list]
+# See if any formula contain random effects and set re
 re=FALSE
 for (i in 1:length(parameters))
 {
@@ -282,20 +297,19 @@ for (i in 1:length(parameters))
 	mlist=proc.form(parameters[[i]]$formula)
 	if(!is.null(mlist$re.model))re=TRUE
 }
+# currently if re, then set use.admb to TRUE
 if(re) use.admb=TRUE
-if(use.admb & !re) 
-	crossed=FALSE
+if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
-#
 # Create design matrices for each parameter
-#
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
-# if not running, return dml
-if(!run) return(dml)
-#
-# Call estimation function
-#
+# For HMM call set.initial to get ptype and set initial values
+if(substr(model,1,3)=="HMM")
+	initial.list=set.initial(names(dml),dml,initial)
+# if not running, return object with data,ddl,dml etc
+if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
+# Depending on method set some values
 if("SANN"%in%method)
 {
 	if(length(method)>1)
@@ -303,28 +317,37 @@ if("SANN"%in%method)
     control$maxit=itnmax
 }
 if("nlminb"%in%method)control$eval.max=itnmax
+# Call estimation function which depends on the model
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
-else
-    if(model=="JS")
-          runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+if(model=="JS")
+    runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
-	else 
-	   if(model=="MSCJS")
-		   runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+if(model=="MSCJS")
+	runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
-	   else{ 
-		  ddl$p$Y=ddl$p$Y-1
-	      if(is.null(initial)){
-		      imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
-		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
-				               imat=imat,iter=iter,burnin=burnin)
-	      }else
-			 
-		      runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
-				               initial=initial,iter=iter,burnin=burnin)
-	    }
+if(model=="PROBITCJS")
+{
+	ddl$p$Y=ddl$p$Y-1
+	if(is.null(initial))
+	{
+	    imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
+	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+		               imat=imat,iter=iter,burnin=burnin)
+    }else
+	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
+					   initial=initial,iter=iter,burnin=burnin)	   
+}
+if(substr(model,1,3)=="HMM")
+{
+	runmodel=optim(initial.list$par,loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
+				method=method,debug=debug,hessian=hessian)
+	par=split(runmodel$par,initial.list$ptype)
+	for(p in names(par))
+		names(par[[p]])=colnames(dml[[p]]$fe)
+}
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
 if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
@@ -336,7 +359,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 }
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS")
+if(!re & model!="MSCJS"& toupper(substr(model,1,3))!="HMM")
 for(parx in names(parameters))
 {
 	object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)

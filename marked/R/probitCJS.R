@@ -49,8 +49,15 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   
   
   ### Initial values
+<<<<<<< HEAD
   if(is.null(initial)) beta <- cjs.initial(dml$fe,imat=imat,link="probit")
   else beta <- set.initial(c("Phi","p"),dml,initial)
+=======
+  if(is.null(initial))
+	  beta <- cjs.initial(dml,imat=imat,link="probit")
+  else
+	  beta <- set.initial(c("Phi","p"),dml,initial)$par
+>>>>>>> ba90b70a8a1bbfc3beee44b711f9c491dd5a7325
   beta.z <- beta$Phi	
   beta.y <- beta$p	  
   ### DATA MANIPULATION ###
@@ -59,9 +66,9 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   ddl$p <- ddl$p[ddl$p$Time>=ddl$p$Cohort,]
   yvec <- ddl$p$Y
   n <- length(yvec)
-  Xy <- as.matrix(restricted.dml$p)
+  Xy <- as.matrix(restricted.dml$p$fe)
   pn.p <- colnames(Xy)
-  Xz <- as.matrix(restricted.dml$Phi)
+  Xz <- as.matrix(restricted.dml$Phi$fe)
   pn.phi <- colnames(Xz)
   id <- ddl$p$id
   ###  PRIOR DISTRIBUTIONS ###
@@ -153,7 +160,7 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
 		  CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])  
   res=list(beta.mcmc=list(Phi= phibeta.mcmc,p= pbeta.mcmc), 
 		   beta=list(Phi=beta.phi,p=beta.p),
-		   model_data=list(Phi.dm=dml$Phi,p.dm=dml$p))
+		   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe))
   class(res)=c("crm","mcmc","probitCJS")
   return(res)
 }	### END OF FUNCTION ###

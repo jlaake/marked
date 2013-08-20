@@ -47,7 +47,7 @@ probitMsCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initi
   if(is.null(initial))
 	  beta <- cjs.initial(dml,imat=imat,link="probit")
   else
-	  beta <- set.initial(c("Phi","p"),dml,initial)
+	  beta <- set.initial(c("Phi","p"),dml,initial)$par
   beta.z <- beta$Phi	
   beta.y <- beta$p	  
   ### DATA MANIPULATION ###

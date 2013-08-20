@@ -76,7 +76,7 @@ setup.parameters <-
 #
 #  Create valid parameter list depending on model.
 #
-	parameter_definitions=parameter_definitions[parameter_definitions$model==model,]
+	parameter_definitions=parameter_definitions[toupper(parameter_definitions$model)==model,]
 	par.list=parameter_definitions$parname
 #
 #  If this is just a parameter check, return par.list

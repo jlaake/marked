@@ -18,7 +18,7 @@
 #' 
 #' @usage mixed.model.admb(formula,data)
 #' 
-#'        mixed.model(formula,data)
+#'        mixed.model(formula,data,indices=FALSE)
 #' 
 #'        mixed.model.dat(x,con,idonly,n)
 #' 
@@ -32,6 +32,7 @@
 #' @param id vector of factor values used to split the data up by individual capture history
 #' @param idonly TRUE, if random effects not crossed
 #' @param n number of capture history records
+#' @param indices if TRUE, outputs structure with indices into dm for random effects
 #' @return mixed.model.admb returns a list with elements re.dm, a combined design matrix for all of the random effects; and 
 #' re.indices, matrix of indices into a single vector of random effects to be applied to the 
 #' design matrix location.
@@ -101,7 +102,7 @@ mixed.model=function(formula,data,indices=FALSE)
         {
 		  if(indices)
 		  {
-			  zz=Matrix(model.matrix(as.formula(mlist$re.model[[i]]$sub),data))
+			  zz=model.matrix(as.formula(mlist$re.model[[i]]$sub),data)
 			  used.columns=which(colSums(zz)>0)
 			  nre=length(used.columns)
 			  indices=rowSums(zz*col(zz))

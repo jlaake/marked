@@ -37,11 +37,11 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		design.parameters=list(),initial=NULL,groups=NULL,time.intervals=NULL,accumulate=TRUE,strata.labels=NULL)
 { 
 	# call fitHMM to use its code to setup quantities but not fitting model
-	setup=fitHMM(data=data,ddl=ddl,begin.time=begin.time,model=model,title=title,model.parameters=model.parameters,
+	setup=crm(data=data,ddl=ddl,begin.time=begin.time,model=model,title=title,model.parameters=model.parameters,
 			design.parameters=design.parameters,initial=initial,groups=groups,time.intervals=time.intervals,
 			accumulate=accumulate,run=FALSE,strata.labels=strata.labels)
 	if(nrow(setup$data$data)==1)stop(" Use at least 2 capture histories; unique ch if accumulate=T")
-	parlist=split(setup$par,setup$ptype)
+	parlist=setup$results$par
 	T=setup$data$nocc
 	m=setup$data$m
 	ch=NULL
@@ -49,12 +49,12 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	# compute real parameters
 	pars=list()
 	for(parname in names(setup$model.parameters))
-		pars[[parname]]=laply(split(reals(parname,ddl=setup$ddl[[parname]],parameters=setup$model.parameters,
+		pars[[parname]]=laply(split(reals(parname,ddl=setup$ddl[[parname]],dml=setup$dml[[parname]],parameters=setup$model.parameters,
 							parlist=parlist),setup$ddl[[parname]]$id),function(x) x)
 	# compute arrays of observation and transition matrices using parameter values
 	dmat=setup$data$fct_dmat(pars,m,T)
 	gamma=setup$data$fct_gamma(pars,m,T)
-    delta=setup$data$fct_delta(pars,m,T,setup$start)
+    delta=setup$data$fct_delta(pars,m,T,setup$data$start)
 	# loop over each capture history
 	for (id in as.numeric(setup$data$data$id))
 	{
@@ -62,20 +62,20 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 		history=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
 		state=matrix(0,nrow=setup$data$data$freq[id],ncol=T)
 		# create initial state and encounter history value
-		state[,setup$start[id,2]]=apply(rmultinom(setup$data$data$freq[id],1,delta[id,]),
+		state[,setup$data$start[id,2]]=apply(rmultinom(setup$data$data$freq[id],1,delta[id,]),
 				                                2,function(x)which(x==1))
 		for(k in 1:m)
 		{
-			instate=sum(state[,setup$start[id,2]]==k)
+			instate=sum(state[,setup$data$start[id,2]]==k)
 			if(instate>0)
 			{
 				rmult=rmultinom(instate,1,dmat[id,1,,k])
-				history[state[,setup$start[id,2]]==k,setup$start[id,2]]= 
+				history[state[,setup$data$start[id,2]]==k,setup$data$start[id,2]]= 
 						setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
 			}
 		}
 		# loop over each remaining occasion after the initial occasion 
-		for(j in (setup$start[id,2]+1):T)
+		for(j in (setup$data$start[id,2]+1):T)
 		{
 			for(k in 1:m)
 			{

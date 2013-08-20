@@ -86,11 +86,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    imat=process.ch(ch,freq,all=FALSE)
 #  Use specified initial values or create if null
    if(is.null(initial))
-	   par=cjs.initial(dml$fe,imat)
+	   par=cjs.initial(dml,imat)
    else
-       par=set.initial(names(dml$fe),dml$fe,initial)
+       par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization
-	model_data=list(Phi.dm=dml$fe$Phi,p.dm=dml$fe$p,imat=imat,Phi.fixed=parameters$Phi$fixed,
+	model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
 			p.fixed=parameters$p$fixed,time.intervals=time.intervals)
 #   If data are to be accumulated based on ch and design matrices do so here;
 	if(accumulate)
@@ -108,8 +108,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
    if(use.admb)scale=1
-   scale=set.scale(names(dml$fe),model_data,scale)
+   scale=set.scale(names(dml),model_data,scale)
    model_data=scale.dm(model_data,scale)
+########################################################################
+#   CJS with R
+########################################################################
    if(!use.admb)
    {
 	   par=scale.par(par,scale)
@@ -134,13 +137,6 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   mod=as.list(summary(mod, order="value")[1, ])
 		   convergence=mod$convcode
 		   lnl=mod$value
-				   
-	#	   objfct=unlist(mod$fvalues)
-	#	   bestmin=which.min(objfct)
-	#	   par= mod$par[[bestmin]]
-	#	   convergence=mod$conv[[bestmin]]
-	#	   counts=mod$itns[[length(mod$itns)]]
-	#	   lnl=mod$value
 	   }
 	   #  Rescale parameter vector 
 	   cjs.beta=unscale.par(par,scale)
@@ -158,6 +154,9 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   } 
    } else
    {
+########################################################################
+#      CJS with ADMB
+########################################################################
 	   if(R.Version()$os=="mingw32")
 		   ext=".exe"
        else
@@ -303,13 +302,6 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   convergence=attr(xx,"status")
 	   if(is.null(convergence))convergence=0
 	   res=read_admb(tpl)
-#	   cjs.beta.fixed=unscale.par(res$coefficients[1:(ncol(model_data$Phi.dm)+ncol(model_data$p.dm))],scale)
-#	   if(re)
-#	   {
-#		   cjs.beta.random=res$coefficients[(ncol(model_data$Phi.dm)+ncol(model_data$p.dm)+1):length(coef(res))]
-#		   names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
-#	   }
-	   
 	   cjs.beta.fixed=unscale.par(c(res$coeflist$phi_beta,res$coeflist$p_beta),scale)
 	   cjs.beta.random=c(Phi=res$coeflist$phi_sigma,p=res$coeflist$p_sigma)
 	   if(!is.null(cjs.beta.random))names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
