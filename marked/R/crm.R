@@ -341,7 +341,7 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM")
 {
-	runmodel=optim(initial.list$par,loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+	runmodel=optim(unlist(initial.list$par),loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
 	par=split(runmodel$par,initial.list$ptype)
