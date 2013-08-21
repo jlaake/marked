@@ -16,8 +16,11 @@ proc.form <- function(f){
 	if(length(fix.var)==0) 
 		fix.model="~1"
 	else
-		fix.model <- paste("~ ",paste(fix.var, collapse=" + "))
-	re.lst <- tms.lst[sapply(tms.lst, "length")==2]
+		if(length(grep("-1",f))==0)
+			fix.model <- paste("~ ",paste(fix.var, collapse=" + "))
+	    else
+			fix.model <- paste("~ -1 +",paste(fix.var, collapse=" + "))
+		re.lst <- tms.lst[sapply(tms.lst, "length")==2]
 	if(length(re.lst)==0) re.model <- NULL
 	else{
 		re.model <- lapply(re.lst, function(x){list(model=paste("~",x[1]), sub=paste("~",x[2],"-1", collapse=""))})
