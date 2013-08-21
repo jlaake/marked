@@ -92,6 +92,7 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	#
 	# Create list of parameter matrices from single input parameter vector
 	# Firs split parameter vector by prameter type (type) 
+	ptm=proc.time()
 	parlist=split(par,type)
 	pars=list()
 	# For each parameter type call function reals to compute vector
@@ -105,10 +106,10 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	#observation and transition matrices using parameter values
-	dmat=fct_dmat(pars,m,T)
-	gamma=fct_gamma(pars,m,T)
+	dmat=fct_dmat(pars,m,F=start[,2],T)
+	gamma=fct_gamma(pars,m,F=start[,2],T)
 	# compute matrix of initial state distribution for each id
-	delta=fct_delta(pars,m,T,start)
+	delta=fct_delta(pars,m,F=start[,2],T,start)
 #	browser()
 #	xx=hmm.lnl(x,start,m,T,dmat,gamma,delta)
 	# loop over each encounter history in sapply and 
@@ -136,6 +137,7 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 		}
 		
 	}
+	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	return(neglnl)
 }
 # Computes real estimates for HMM models using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
