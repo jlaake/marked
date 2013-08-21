@@ -130,6 +130,13 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 		mlist=proc.form(model.parameters[[i]]$formula)  # parse formula for fixed effects
 		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept)
+		# if some reals are fixed, assign 0 to rows of dm and then
+		# remove any columns (parameters) that are all 0.
+		if(!is.null(dd$fix)&&any(!is.na(dd$fix)))
+		{
+			dml[[i]]$fe[!is.na(dd$fix),]=0
+			dml[[i]]$fe=dml[[i]]$fe[,apply(dml[[i]]$fe,2,function(x) any(x!=0)),drop=FALSE]
+		}
 		if(!is.null(mlist$re.model))
 		{
 			if(use.admb)
