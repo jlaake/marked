@@ -145,29 +145,43 @@ full.design.data=vector("list",length=length(parameters))
 		  if("Y" %in% names(full.design.data[[i]]))
 			  full.design.data[[i]]$Y=NULL
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
+      # the code now handles parameters for 2iMSCJS where strata are in levels (eg states,areas)
+      labels=data$strata.labels
+	  if(parameters[[i]]$whichlevel==1)labels=data$strata.list$states
+	  if(parameters[[i]]$whichlevel==2)
+	  {
+		  oth.index=which("states"!=names(data$strata.list))
+		  labels=data$strata.list[[oth.index]]
+	  } 
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {
 		  if(is.null(parameters[[i]]$subtract.stratum)) 
 		  {
 			  if(parameters[[i]]$whichlevel==0)
-				  parameters[[i]]$subtract.stratum=data$strata.labels
+			  {
+				  field="stratum"
+			  	  parameters[[i]]$subtract.stratum=data$strata.labels
+			  }
 			  else
 			      if(parameters[[i]]$whichlevel==1)
+				  {
+					  field="state"  
 					  parameters[[i]]$subtract.stratum=data$strata.list$states
+				  }
 				  else
 				  {
-					  oth.index=which("states"!=names(x$strata.list))
+					  field=names(data$strata.list)[oth.index]
 					  parameters[[i]]$subtract.stratum=data$strata.list[[oth.index]]
 				  }
 		  }	  	  
 		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
 		  {
 			  full.design.data[[i]]$fix=NA
-			  if(length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
-			  for(j in 1:length(data$strata.labels))
+			  if(parameters[[i]]$whichlevel==0&length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
+			  for(j in 1:length(labels))
 			  {
-				  if(!parameters[[i]]$subtract.stratum[j]%in%data$strata.labels) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
-				  full.design.data[[i]]$fix[full.design.data[[i]]$stratum==data$strata.labels[j] & full.design.data[[i]]$tostratum==parameters[[i]]$subtract.stratum[j]]=1
+				  if(parameters[[i]]$whichlevel==0&&!parameters[[i]]$subtract.stratum[j]%in%data$strata.labels) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
+				  full.design.data[[i]]$fix[full.design.data[[i]][field]==labels[j] & full.design.data[[i]][paste("to",field,sep="")]==parameters[[i]]$subtract.stratum[j]]=1
 			  } 
 		  }		  
 	  }
