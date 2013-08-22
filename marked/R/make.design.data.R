@@ -147,7 +147,19 @@ full.design.data=vector("list",length=length(parameters))
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {
-		  if(is.null(parameters[[i]]$subtract.stratum)) parameters[[i]]$subtract.stratum=data$strata.labels
+		  if(is.null(parameters[[i]]$subtract.stratum)) 
+		  {
+			  if(parameters[[i]]$whichlevel==0)
+				  parameters[[i]]$subtract.stratum=data$strata.labels
+			  else
+			      if(parameters[[i]]$whichlevel==1)
+					  parameters[[i]]$subtract.stratum=data$strata.list$states
+				  else
+				  {
+					  oth.index=which("states"!=names(x$strata.list))
+					  parameters[[i]]$subtract.stratum=data$strata.list[[oth.index]]
+				  }
+		  }	  	  
 		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
 		  {
 			  full.design.data[[i]]$fix=NA
