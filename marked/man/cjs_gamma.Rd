@@ -3,13 +3,15 @@
 \alias{ms_gamma}
 \title{HMM Transition matrix functions}
 \usage{
-  cjs_gamma(pars, m, T)
+  cjs_gamma(pars, m, F, T)
 }
 \arguments{
   \item{pars}{list of real parameter values for each type
   of parameter}
 
   \item{m}{number of states}
+
+  \item{F}{initial occasion vector}
 
   \item{T}{number of occasions}
 }

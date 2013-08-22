@@ -1,4 +1,4 @@
-' Mixed effect model formula parser
+#' Mixed effect model formula parser
 #' 
 #' Parses a mixed effect model in the lme4 structure of  ~fixed +(re1|g1) +...+(ren|gn)
 #' 
@@ -34,9 +34,9 @@ proc.form <- function(f){
 #' functions.
 #' 
 #'  @param mlist a named list created from \code{\link{proc.form}}
-#'  @return A list containing design matrices for each randome effect in the model processed 
+#'  @return A list containing design matrices for each random effect in the model processed 
 #'  by \code{proc.form}.
-#'  @author Devin Johnson <devin.johnson@noaa.gov>
+#'  @author Devin Johnson <devin.johnson@@noaa.gov>
 
 re.design.mat<-function(mlist, data){
 	require(Matrix)
