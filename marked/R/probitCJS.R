@@ -49,7 +49,7 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   
   
   ### Initial values
-  if(is.null(initial)) beta <- cjs.initial(dml$fe,imat=imat,link="probit")
+  if(is.null(initial)) beta <- cjs.initial(dml,imat=imat,link="probit")
   else beta <- set.initial(c("Phi","p"),dml,initial)
   beta.z <- beta$Phi	
   beta.y <- beta$p	  
@@ -79,6 +79,29 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
 	  tau.b.y <- parameters$p$prior$tau
 	  mu.b.y <- parameters$p$prior$mu
   }
+  if(!is.null(dml$Phi$re)){
+    n.Phi.re=length(dml$Phi$re)
+    if(is.null(parameters$Phi$priors$re)){
+      a.phi=rep(2,n.Phi.re)
+      b.phi=rep(1.0E-4,n.Phi.re)
+    }
+    else{
+      a.phi=parameters$Phi$priors$re$a.phi
+      b.phi=parameters$Phi$priors$re$b.phi
+    }
+  }
+  if(!is.null(dml$p$re)){
+    n.p.re=length(dml$p$re)
+    if(is.null(parameters$p$priors$re)){
+      a.p=rep(2,n.p.re)
+      b.p=rep(1.0E-4,n.p.re)
+    }
+    else{
+      a.p=parameters$p$priors$re$a.p
+      b.p=parameters$p$priors$re$b.p
+    }
+  }
+  
 	  
   ### STORAGE ###
   beta.z.stor <- matrix(NA, iter, ncol(Xz))
@@ -123,6 +146,9 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
     m.beta.y <- solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1])+crossprod(Q.b.y,mu.b.y))
     beta.y <- m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))
     if(m>burnin) beta.y.stor[m-burnin,] <- beta.y
+   
+   ### RANDOM EFFECT UPDATES ###
+   
     
     ### TIMING OF SAMPLER ###
     if(m==30){

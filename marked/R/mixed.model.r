@@ -112,8 +112,14 @@ mixed.model=function(formula,data,indices=FALSE)
 			  names(re.list)=names(mlist$re.model)	
 		  }else
 		  {
-			  # code for probitcjs
-			  re.list[[i]]=list(re.dm=1)
+		    sub=strsplit(mlist$re.model[[i]]$sub, "~ ")[[1]][2]
+		    mod=strsplit(mlist$re.model[[i]]$mod, "~ ")[[1]][2]
+		    if(mod=="1") form=formula(paste(c("~", sub), collapse=""))
+		    else form=formula(paste(c("~", mod, ":(", sub, ")"), collapse=""))
+		    dm=model.matrix(form, data)
+		    dm=dm[,colSums(dm)!=0]
+			  re.list[[i]]=Matrix(dm)
+		    names(re.list)[i]=paste(c(mod, "|",strsplit(sub, " -1")), collapse="")
 		  }
         }
       }
