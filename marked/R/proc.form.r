@@ -16,7 +16,10 @@ proc.form <- function(f){
 	if(length(fix.var)==0) 
 		fix.model="~1"
 	else
+	if(length(grep("-1",f))==0)
 		fix.model <- paste("~ ",paste(fix.var, collapse=" + "))
+	else
+		fix.model <- paste("~ -1 +",paste(fix.var, collapse=" + "))
 	re.lst <- tms.lst[sapply(tms.lst, "length")==2]
 	if(length(re.lst)==0) re.model <- NULL
 	else{
@@ -25,31 +28,3 @@ proc.form <- function(f){
 	}
 	return(list(fix.model=fix.model, re.model=re.model))
 }
-
-# ' Create design matrices for random effect models
-# ' 
-# ' Takes output from \code{proc.form} and creates a list of design marices for use in MCMC sampler 
-# ' functions.
-# ' 
-# '  @param mlist a named list created from \code{\link{proc.form}}
-# '  @return A list containing design matrices for each randome effect in the model processed 
-# '  by \code{proc.form}.
-# '  @author Devin Johnson <devin.johnson@noaa.gov>
-
-# re.design.mat(mlist, data){
-#   require(Matrix)
-#   redm.list=vector("list",length(mlist$re))
-#   if(is.null(mlist$re)) return(NULL)
-#   else{
-#     for(i in 1:length(mlist$re)){
-#       sub=strsplit(mlist$re.model[[i]]$sub, "~ ")[[1]][2]
-#       mod=strsplit(mlist$re.model[[i]]$mod, "~ ")[[1]][2]
-#       if(mod=="1") form=formula(paste(c("~", sub), collapse=""))
-#       else form=formula(paste(c("~", mod, ":(", sub, ")"), collapse=""))
-#       dm=model.matrix(form, data)
-#       dm=dm[,colSums(dm)!=0]
-#       redm.list[[i]]=Matrix(dm)
-#       names(redm.list)[i]=paste(c(mod, "|",strsplit(sub, " -1")), collapse="")
-#     }
-#   }
-# }

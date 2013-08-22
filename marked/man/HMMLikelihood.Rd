@@ -6,7 +6,7 @@
 \usage{
   HMMLikelihood(x,first,m,T,dmat,gamma,delta)
     loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
-    reals(parname,ddl,dml,parameters,parlist=NULL,compute=TRUE)
+    reals(ddl,dml,parameters,parlist=NULL)
 }
 \arguments{
   \item{x}{single observed sequence (capture history) in
@@ -60,9 +60,6 @@
 
   \item{start}{for each ch, the first non-zero x value and
   the occasion of the first non-zero value}
-
-  \item{compute}{if TRUE, computes reals; otherwise returns
-  column dimension of design matrix for the parameter}
 }
 \value{
   HMMLikelihood returns log-likelihood for a single

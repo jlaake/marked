@@ -4,13 +4,15 @@
 \alias{ums_dmat}
 \title{HMM Observation Probability matrix functions}
 \usage{
-  cjs_dmat(pars, m, T)
+  cjs_dmat(pars, m, F, T)
 }
 \arguments{
   \item{pars}{list of real parameter matrices (id by
   occasion) for each type of parameter}
 
   \item{m}{number of states}
+
+  \item{F}{initial occasion vector}
 
   \item{T}{number of occasions}
 }

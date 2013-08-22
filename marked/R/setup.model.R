@@ -69,7 +69,7 @@ setupHMM=function(model_def,model,strata.labels)
 	}   
 	if(toupper(model)=="HMMUMSCJS")
 	{
-		model_def$hmm$ObsLevels=c(0,strata.labels,"u")
+		model_def$hmm$ObsLevels=c(0,strata.labels,"U")
 		model_def$hmm$fct_dmat=marked:::ums_dmat
 		model_def$hmm$fct_gamma=marked:::ms_gamma
 		model_def$hmm$fct_delta=marked:::cjs_delta
@@ -80,7 +80,7 @@ setupHMM=function(model_def,model,strata.labels)
 	{
 		if(length(strata.labels)!=2 | !"states"%in%names(strata.labels))
 			stop("structure of strata labels is incorrect; list of 2 character vectors with one named states")
-		obs.states=c(strata.labels$states,"u")
+		obs.states=c(strata.labels$states,"U")
 		strata=strata.labels[[names(strata.labels)[names(strata.labels)!="states"]]]
         model_def$hmm$ObsLevels=c(0,apply(rev(expand.grid(list(obs.states,strata))),1,paste,collapse=""))
 		model_def$hmm$fct_delta=marked:::cjs_delta		

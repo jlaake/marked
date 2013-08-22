@@ -270,10 +270,19 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
         ages[ages<min.age]=min.age
 		Y=x$ehmat[.row,begin.num:(ntimes+begin.num-1)]
 		sl=x$strata.labels
-        if(!is.null(parameter$bystratum)&&parameter$bystratum)
+		if(!is.null(x$strata.list))
 		{
-			if(!is.null(parameter$tostrata)&&parameter$tostrata)
-				newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
+			st.index=which("states"==names(x$strata.list))
+			oth.index=which("states"!=names(x$strata.list))
+			oth.name=names(x$strata.list)[oth.index]
+			oth=rep(x$strata.list[[oth.index]],each=length(x$strata.list$states))
+			states=rep(x$strata.list$states,times=length(zcp$strata.list[[oth.index]]))
+		}
+        if(parameter$bystratum)
+		{
+			if(parameter$tostrata)
+				if(is.null(x$strata.list))
+				    newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
 						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata^2),ntimes),
 						Time=rep(Times,each=nstrata^2),
 						Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
@@ -281,13 +290,43 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 						Age=rep(ages,each=nstrata^2),
 						stratum=factor(rep(rep(sl[1:nstrata],each=nstrata),ntimes)),
 						tostratum=factor(rep(rep(sl[1:nstrata],nstrata),ntimes)))
+		        else
+				{
+					newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
+							cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata^2),ntimes),
+							Time=rep(Times,each=nstrata^2),
+							Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
+							age=rep(factor(ages),each=nstrata^2),
+							Age=rep(ages,each=nstrata^2),
+							stratum=factor(rep(rep(sl[1:nstrata],each=nstrata),ntimes)),
+							oth=factor(rep(rep(oth,each=nstrata),ntimes)),
+							states=factor(rep(rep(states,each=nstrata),ntimes)),
+							tostratum=factor(rep(rep(sl[1:nstrata],nstrata),ntimes)),
+							tooth=factor(rep(rep(oth,nstrata),ntimes)),
+					        tostates=factor(rep(rep(states,nstrata),ntimes)))
+					names(newdm.df)[names(newdm.df)=="oth"]=oth.name
+					names(newdm.df)[names(newdm.df)=="tooth"]=paste("to",oth.name,sep="")
+				}
 			else	
-				newdm.df=data.frame(time=rep(factor.times,each=nstrata),
+			    if(is.null(x$strata.list))
+				    newdm.df=data.frame(time=rep(factor.times,each=nstrata),
 						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
 						Time=rep(Times,each=nstrata),
 						Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
 						age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
 						stratum=factor(rep(sl[1:nstrata],ntimes)))
+			    else
+				{
+					newdm.df=data.frame(time=rep(factor.times,each=nstrata),
+							cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
+							Time=rep(Times,each=nstrata),
+							Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
+							age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
+							stratum=factor(rep(sl[1:nstrata],ntimes)),
+							oth=factor(rep(oth,ntimes)),
+							states=factor(rep(states,ntimes)))
+					names(newdm.df)[names(newdm.df)=="oth"]=oth.name
+				}		
 		}else
 			newdm.df=data.frame(time=factor.times,
 					cohort=rep(factor(cohort,levels=cohort.levels),ntimes),

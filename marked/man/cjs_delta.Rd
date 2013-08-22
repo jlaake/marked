@@ -2,7 +2,7 @@
 \alias{cjs_delta}
 \title{HMM Initial state distribution functions}
 \usage{
-  cjs_delta(pars, m, T, start)
+  cjs_delta(pars, m, F, T, start)
 }
 \arguments{
   \item{pars}{list of real parameter matrices (id by

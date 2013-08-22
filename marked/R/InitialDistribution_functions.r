@@ -12,8 +12,9 @@
 #' @return 2-d array of initial state probability vectors for each id
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
-cjs_delta=function(pars,m,T,start) 
+cjs_delta=function(pars,m,F,T,start) 
 {
+	if(is.list(m))m=m$ns*m$na+1
     delta=matrix(0,nrow=nrow(start),ncol=m)
 	delta[cbind(1:nrow(start),start[,1])]=1
 	delta 

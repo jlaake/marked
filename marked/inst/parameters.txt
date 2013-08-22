@@ -1,34 +1,34 @@
-model	parname	begin	num	default	type	pim.type	link	formula	share	pair	mix	rows	secondary	bystratum	tostrata	sub.stratum	leave.unused	socc	cjs
-NULL	dummy	0	0	0	Triang	all	logit	~1											FALSE
-CJS	Phi	0	-1	1	Triang	all	logit	~1											FALSE
-CJS	p	1	-1	0	Triang	all	logit	~1											FALSE
-JS	Phi	0	-1	1	Square	all	logit	~1											FALSE
-JS	p	0	0	0	Square	all	logit	~1											FALSE
-JS	pent	1	-1	0	Square	all	mlogit	~1											FALSE
-JS	N	0	1		Square	all	log	~1									TRUE		FALSE
-probitCJS	Phi	0	-1	1	Triang	all	probit	~1											FALSE
-probitCJS	p	1	-1	0	Triang	all	probit	~1											FALSE
-probitMsCJS	Phi	0	-1	1	Triang	all	probit	~1											FALSE
-probitMsCJS	p	1	-1	0	Triang	all	probit	~1											FALSE
-probitMsCJS	Psi	1	-1	0	Triang	all	mlogit	~1											FALSE
-MSCJS	S	0	-1	1	Triang	all	logit	~1						TRUE					FALSE
-MSCJS	p	1	-1	0	Triang	all	logit	~1						TRUE					FALSE
-MSCJS	Psi	0	-1	0	Triang	all	mlogit	~1						TRUE	TRUE				FALSE
-hmmCJS	Phi	0	-1	1	Triang	all	logit	~1											FALSE
-hmmCJS	p	1	-1	0	Triang	all	logit	~1											TRUE
-hmmMSCJS	S	0	-1	1	Triang	all	logit	~1						TRUE					FALSE
-hmmMSCJS	p	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmMSCJS	Psi	0	-1	0	Triang	all	log	~1						TRUE	TRUE				FALSE
-hmmuMSCJS	S	0	-1	1	Triang	all	logit	~1						TRUE					FALSE
-hmmuMSCJS	p	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmuMSCJS	delta	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmuMSCJS	Psi	0	-1	0	Triang	all	log	~1						TRUE	TRUE				FALSE
-hmmu2MSCJS	S	0	-1	1	Triang	all	logit	~1						TRUE					FALSE
-hmmu2MSCJS	p	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmu2MSCJS	delta	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmu2MSCJS	Psi	0	-1	0	Triang	all	log	~1						TRUE	TRUE				FALSE
-hmmu2iMSCJS	S	0	-1	1	Triang	all	logit	~1						TRUE					FALSE
-hmmu2iMSCJS	p	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmu2iMSCJS	delta	1	-1	0	Triang	all	logit	~1						TRUE					TRUE
-hmmu2iMSCJS	Psi	0	-1	0	Triang	all	log	~1						TRUE	TRUE				FALSE
-hmmu2iMSCJS	alpha	0	-1	0	Triang	all	log	~1						TRUE	TRUE				FALSE
+model	parname	begin	num	default	type	link	formula	bystratum	tostrata	cjs	whichlevel
+NULL	dummy	0	0	0	Triang	logit	~1	FALSE	FALSE	FALSE	0
+CJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0
+CJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	FALSE	0
+JS	Phi	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0
+JS	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0
+JS	pent	1	-1	0	Square	mlogit	~1	FALSE	FALSE	FALSE	0
+JS	N	0	1		Square	log	~1	FALSE	FALSE	FALSE	0
+probitCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0
+probitCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0
+probitMsCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0
+probitMsCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0
+probitMsCJS	Psi	1	-1	0	Triang	mlogit	~1	FALSE	FALSE	FALSE	0
+MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
+MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	FALSE	0
+MSCJS	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0
+hmmCJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0
+hmmCJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0
+hmmMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
+hmmMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
+hmmuMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
+hmmuMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmuMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmuMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
+hmmu2MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
+hmmu2MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmu2MSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
+hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
+hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
+hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	1
+hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2
