@@ -77,10 +77,15 @@ ms2_gamma=function(pars,m,F,T)
 	{
 		for(j in F[i]:(T-1))
 		{
-			psi=pars$Psi[i,((j-1)*(ns-1)^2+1):(j*(ns-1)^2)]
+			psi=pars$Psi[i,((j-1)*m$ns^2+1):(j*m$ns^2)]
 			psix=matrix(psi,ncol=sqrt(length(psi)),byrow=TRUE)
 			psix=psix/rowSums(psix)
-			psimat[i,j,,]=rbind(cbind(psix,rep(1,nrow(psix))),rep(1,nrow(psix)+1))
+			psix=matrix(rep(apply(psix,2,rep,m$na),m$na),nrow=m$ns*m$na)
+			alpha=pars$alpha[i,((j-1)*m$na^2+1):(j*m$na^2)]
+			alphax=matrix(alpha,ncol=sqrt(length(alpha)),byrow=TRUE)
+			alphax=alphax/rowSums(alphax)
+			alphax=matrix(apply(alphax,2,function(x) rep(rep(x,each=m$ns),times=m$ns)),nrow=m$ns*m$na) 
+			psimat[i,j,,]=rbind(cbind(psix*alphax,rep(1,nrow(psix))),rep(1,nrow(psix)+1))
 		}
 	}
 	# The 4-d arrays are multiplied and returned

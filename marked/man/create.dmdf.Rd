@@ -48,9 +48,9 @@ crm model}
   written by Trent McDonald and how they relate to the
   implementation in \code{\link{cjs}}.  With MARK, animals
   can be placed in groups and the parameters for the model
-  specified via PIMs (parameter information matrices) link
-  the parameters to the specific animals.  For example, if
-  for a particular group the \code{Phi} PIM is
+  specified via PIMs (parameter index matrices) link the
+  parameters to the specific animals.  For example, if for
+  a particular group the \code{Phi} PIM is
 
   \preformatted{ 1 2 3 4 5 6 }
 

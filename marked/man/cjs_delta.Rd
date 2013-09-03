@@ -10,6 +10,8 @@
 
   \item{m}{number of states}
 
+  \item{F}{initial occasion vector}
+
   \item{T}{number of occasions}
 
   \item{start}{matrix with values that are first occasion

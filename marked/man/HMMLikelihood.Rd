@@ -6,7 +6,7 @@
 \usage{
   HMMLikelihood(x,first,m,T,dmat,gamma,delta)
     loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
-    reals(ddl,dml,parameters,parlist=NULL)
+    reals(ddl,dml,parameters,parlist)
 }
 \arguments{
   \item{x}{single observed sequence (capture history) in
@@ -52,8 +52,6 @@
 
   \item{debug}{if TRUE, print out par values and
   -log-likelihood}
-
-  \item{parname}{string name of parameter (eg "Phi")}
 
   \item{parlist}{list of parameter strings used to split
   par vector}

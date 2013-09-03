@@ -1,12 +1,20 @@
-marked 1.1.1/1.1.2 14 Aug 2013
+marked 1.1.3 29 Aug 2013
 -----------------
 
 NEW FEATURES
+
+* use of fix column in ddl is now supported for all models. By assigning a non-NA value, the real parameter is fixed to the assigned value.  If both ddl$fix is assigned and fixed argument is specified these values are merged and the fixed values in the parameter specification will override those in the ddl.
+
+* HMM models are now fitted with crm rather than fitHMM which has been removed. HMM models now include HMMCJS(cjs model),HMMMSCJS (multistate CJS), HMMUMSCJS (multi-state with state uncertainty), HMMU2MSCJS (2 strata level MS with state uncertainty), HMMU2IMSCJS (2 strata level MS with state uncertainty; independent state and second level strata transtions)
+
+* time interval specification can now be assigned via the design data for a parameter if it is not constant across individuals.
+
 
 CHANGES
 
 * model is no longer case-sensitive
 
+* code for creating design data was improved and is now much faster
 
 
 marked 1.1.1/1.1.2 14 Aug 2013

@@ -167,6 +167,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    #  Setup model
    #
    model.list=setup.model(model,nocc,mixtures)
+   if(!model.list$accumulate)accumulate=FALSE
    ch.values=unique(unlist(strsplit(data$ch,",")))
    #  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
@@ -194,14 +195,28 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    num=model.list$num
    if(model.list$IShmm) model.list=setupHMM(model.list,model,strata.labels)
    #
-   #     If time intervals specified make sure there are nocc-1 of them
+   #     If time intervals specified make sure there are nocc-1 of them if a vector
+   #     and if a matrix rows must match number of animals and # cols = nocc+num
    #     If none specified assume they are 1
    #
    if(is.null(time.intervals))
       time.intervals=rep(1,nocc+model.list$num)
    else
-      if(length(time.intervals)!=(nocc+num))
-          stop("Incorrect number of time intervals")
+	   if(is.vector(time.intervals))
+	   {
+		   if(length(time.intervals)!=(nocc+num))
+			   stop("Incorrect number of time intervals")
+	   }else
+	   {
+		   if(is.matrix(time.intervals))
+		   {
+			   if(ncol(time.intervals)!=(nocc+num))
+				   stop(paste("Incorrect number of columns in time.intervals. Should be:",nocc+num))
+			   if(nrow(time.intervals)!=nrow(data))
+				   stop(paste("Incorrect number of rows in time.intervals. Should be:",nrow(data)))
+		   }else
+			   stop("\ntime.intervals must be either a vector or matrix")
+	   }
    mixtures=model.list$mixtures
    #
    #  Get number of factors to create groups
@@ -217,9 +232,14 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    if(model.list$cjs)
    {
 	  chproc=process.ch(data$ch,freq=1,all=FALSE)
-	  data=data[chproc$first!=chproc$nocc,,drop=FALSE]
+	  if(!is.matrix(time.intervals))data=data[chproc$first!=chproc$nocc,,drop=FALSE]
    }	
    if(!is.null(data$Freq)) names(data)[which("Freq"== names(data))]="freq"
+   if(accumulate&is.matrix(time.intervals))
+   {
+	   accumulate=FALSE   
+	   message("ignoring accumulate=TRUE value because time.intervals specified as a matrix")
+   }
    if(accumulate)
     	data=accumulate_data(data)
    else
@@ -263,6 +283,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
        {
           data=add.dummy.data(data,nocc=nocc,group.covariates=NULL)     
           number.of.ch=nrow(data)
+		  data$id=factor(1:nrow(data))
        }
        plist=list(data=data,model=model,mixtures=mixtures,
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
@@ -391,7 +412,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
         #
         if(model=="JS")
           data=add.dummy.data(data,nocc,group.covariates)     
-        data$initial.age=init.ages[data$group]
+	    data$id=factor(1:nrow(data))
+	    data$initial.age=init.ages[data$group]
         plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
@@ -476,7 +498,7 @@ add.dummy.data=function(data,nocc,group.covariates)
 	{
 		data=subset(data,select=c("ch","freq"))
 		dummy.data=data.frame(ch=ch,freq=rep(0,length(ch)))
-		names(dummy.data)=c("ch","freq")             
+		names(dummy.data)=c("ch","freq")     
 	}
 	row.names(dummy.data)=NULL
 	return(rbind(data,dummy.data))

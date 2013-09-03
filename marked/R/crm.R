@@ -255,8 +255,8 @@ if(is.null(data$data))
       warning("Warning: specification of ddl ignored, as data have not been processed")
       ddl=NULL
    }
-   cat("Model: ",model,"\n")
-   cat("Processing data\n")
+   message("Model: ",model,"\n")
+   message("Processing data\n")
    flush.console()
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
@@ -272,7 +272,7 @@ else
 #
 if(is.null(ddl)) 
 {
-	cat("Creating design data. This can take awhile.\n")
+	message("Creating design data.\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 } else
@@ -302,6 +302,8 @@ if(re) use.admb=TRUE
 if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
+#  setup fixed values 
+ddl=set.fixed(ddl,parameters)
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values
@@ -318,6 +320,7 @@ if("SANN"%in%method)
 }
 if("nlminb"%in%method)control$eval.max=itnmax
 # Call estimation function which depends on the model
+message("Fitting model\n")
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
@@ -355,6 +358,12 @@ if(substr(model,1,3)=="HMM")
 	par=split(runmodel$par,initial.list$ptype)
 	for(p in names(par))
 		names(par[[p]])=colnames(dml[[p]]$fe)
+	runmodel$beta=par
+	runmodel$par=NULL
+	runmodel$neg2lnl=2*runmodel$value
+	runmodel$value=NULL
+	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
+	class(runmodel)=c("crm","mle",model)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file

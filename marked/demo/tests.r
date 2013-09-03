@@ -21,7 +21,7 @@ summary(mark(dipper,model="POPAN",output=FALSE,groups="sex",model.parameters=lis
 #MSCJS with HMM
 data(mstrata)
 mod=crm(mstrata,model="hmmMSCJS",model.parameters=list(S=list(formula=~stratum),p=list(formula=~stratum),Psi=list(formula=~-1+stratum:tostratum)))
-mod$results$par
+mod$results$beta
 
 # MSCJS with RMark
 summary(mark(mstrata,model="Multistrata",output=FALSE,model.parameters=list(S=list(formula=~stratum),p=list(formula=~stratum),Psi=list(formula=~-1+stratum:tostratum))))$beta

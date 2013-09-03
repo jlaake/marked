@@ -22,12 +22,11 @@
 #' @param dml list of design matrices; one entry for each parameter; each entry contains fe and re for fixed and random effects
 #' @param parameters formulas for each parameter type
 #' @param debug if TRUE, print out par values and -log-likelihood
-#' @param parname string name of parameter (eg "Phi")
 #' @param parlist list of parameter strings used to split par vector
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
 #' @usage HMMLikelihood(x,first,m,T,dmat,gamma,delta)
 #'        loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
-#'        reals(ddl,dml,parameters,parlist=NULL)
+#'        reals(ddl,dml,parameters,parlist)
 #' @aliases HMMLikelihood loglikelihood reals
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
 #' loglikelihood returns the negative log-likelihood for all of the data. reals

@@ -6,6 +6,7 @@
 #'  
 #' @param pars list of real parameter matrices (id by occasion) for each type of parameter
 #' @param m number of states
+#' @param F initial occasion vector 
 #' @param T number of occasions
 #' @param start matrix with values that are first occasion and for some CJS type models the state of first observation
 #' @aliases cjs_delta 

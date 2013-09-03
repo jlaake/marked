@@ -39,7 +39,6 @@ proc.form <- function(f){
 #'  @author Devin Johnson <devin.johnson@@noaa.gov>
 
 re.design.mat<-function(mlist, data){
-	require(Matrix)
 	redm.list=vector("list",length(mlist$re))
 	if(is.null(mlist$re)) return(NULL)
 	else{

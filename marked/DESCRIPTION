@@ -72,7 +72,7 @@ Collate:
     'HMMLikelihood.r'
     'Transition_functions.r'
     'Observation_functions.r'
-    'fitHMM.r'
     'simHMM.r'
     'InitialDistribution_functions.r'
     'probitMsCJS.R'
+    'set.fixed.R'

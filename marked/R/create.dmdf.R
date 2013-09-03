@@ -15,7 +15,7 @@
 #' package \code{mra} written by Trent McDonald and how they relate to the
 #' implementation in \code{\link{cjs}}.  With MARK, animals can be placed in
 #' groups and the parameters for the model specified via PIMs (parameter
-#' information matrices) link the parameters to the specific animals.  For
+#' index matrices) link the parameters to the specific animals.  For
 #' example, if for a particular group the \code{Phi} PIM is
 #' 
 #' \preformatted{ 
@@ -136,7 +136,8 @@
 #' x=data.frame(ch=c("1001","0111","0011"),stringsAsFactors=FALSE)
 #' beta=c(1,1,1) 
 #' x.proc=process.data(x,model="cjs")
-#' Phi.dmdf=make.design.data(x.proc)$Phi Phi.dm=create.dm(Phi.dmdf,~time)
+#' Phi.dmdf=make.design.data(x.proc)$Phi 
+#' Phi.dm=create.dm(Phi.dmdf,~time)
 #' Phimat=matrix(plogis(Phi.dm%*%beta),nrow=nrow(x),ncol=nocc-1,byrow=TRUE) 
 #' }
 #' 
@@ -222,166 +223,163 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    begin.num=parameter$begin+1
    chp = process.ch(x$data$ch)
    firstseen=chp$first
-   lastseen=chp$last
    if(all(is.na(x$ehmat)))x$ehmat= chp$chmat
-#  requires field in each record called initial.age; if missing set to 0 for a
-#  time since marked field
-   if(is.null(x$data$initial.age)) x$data$initial.age=0
    nocc=x$nocc
-   nstrata=length(x$strata.labels)
    time.intervals=x$time.intervals
-   begin.time=x$begin.time
-#  from begin.time compute time labels which are parameter dependent; time at
-#  beginning of interval for Phi and time of occasion for p; these determine cohort
-#  labels as well.
-   times=begin.time+c(0,cumsum(time.intervals))
-   cohort.levels=levels(factor(times))
-   ntimes=length(times)-last
-   occ=begin.num:(ntimes+begin.num-1)
-   factor.times=factor(times[occ])
+   if(is.null(x$data$begin.time))
+	   begin.time=x$begin.time
+   else
+	   begin.time=x$data$begin.time
+#  create base df
+   df=create.base.dmdf(x,parameter)
+#  add time,age,choort
+   if(length(begin.time)==1 & is.vector(time.intervals))
+   {
+	   timedf=data.frame(occ=1:nocc,time=begin.time+c(0,cumsum(time.intervals)))
+	   df=merge(df,timedf,by="occ")
+	   timedf=data.frame(id=x$data$id,cohort=timedf$time[firstseen])
+	   df=merge(df,timedf,by="id")
+   }else
+   {
+	   if(length(begin.time)==1) 
+		   begin.time=rep(begin.time,nrow(x$data))
+	   if(is.vector(time.intervals)) 
+		   time.intervals=matrix(time.intervals,nrow=nrow(x$data),ncol=length(time.intervals),byrow=TRUE)
+	   time.intervals=t(apply(time.intervals,1,cumsum))
+	   times=begin.time+cbind(rep(0,nrow(x$data)),time.intervals)
+	   cohort=rep(times[cbind(1:nrow(x$data),firstseen)],each=ncol(times))
+	   timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
+			   cohort=cohort,time=as.vector(t(times)))
+	   df$occid=paste(df$occ,df$id,sep="")
+	   df=merge(df,timedf,by="occid")
+	   df$idocc=NULL
+   }
+   df=df[order(df$seq),]
+   df$age=df$time-df$cohort
+   if(!is.null(x$data$initial.age)) df$age=df$age+x$data$initial.age[df$id]
 #  if there are any time varying covariates then construct the data matrix for
 #  those covariates. That matrix is appended to other data in x that is non-time varying
+   times=df$time[df$id==1]
+   occ=1:(nocc+parameter$num)
    tcv=NULL
    if(!is.null(time.varying))
    {
-     for (i in 1:length(time.varying))
-     {
-       vnames=paste(time.varying[i],times[occ],sep="")     
-       if( !all(vnames %in% names(x$data)))
-         stop("Missing time varying variable ",paste(vnames[!vnames%in%names(x$data)],collapse=","))
-       if(i==1) 
-         tcv=data.frame(as.vector(t(as.matrix(x$data[, vnames]))))
-       else
-         tcv=cbind(tcv,as.vector(t(as.matrix(x$data[, vnames]))))
-       x$data=x$data[,!names(x$data)%in%vnames]
-     }  
-     names(tcv)=time.varying
-   }  
-#  create a list of dataframes - one for each entry in x.  The fields time, Time, cohort
-#  Cohort, age and Age are created automatically.  Any time-invariant data in x are
-#  repeated in each row of the data.  There is one row for each modelled occasion.            
-   fx=function(.row){
-        cohort=times[firstseen[.row]]
-        Times=times[begin.num:(ntimes+begin.num-1)]-min(times[begin.num:(ntimes+begin.num-1)])
-        if(firstseen[.row]>1)
-           ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-sum(time.intervals[1:(firstseen[.row]-1)])-times[1]
-        else
-           ages=times[begin.num:(ntimes+begin.num-1)]+x$data$initial.age[.row]-times[1]
-        ages[ages<min.age]=min.age
-		Y=x$ehmat[.row,begin.num:(ntimes+begin.num-1)]
-		sl=x$strata.labels
-		if(!is.null(x$strata.list))
+	   for (i in 1:length(time.varying))
+	   {
+		   vnames=paste(time.varying[i],times[occ],sep="")     
+		   if( !all(vnames %in% names(x$data)))
+			   stop("Missing time varying variable ",paste(vnames[!vnames%in%names(x$data)],collapse=","))
+		   if(i==1) 
+			   tcv=data.frame(as.vector(t(as.matrix(x$data[, vnames]))))
+		   else
+			   tcv=cbind(tcv,as.vector(t(as.matrix(x$data[, vnames]))))
+		   x$data=x$data[,!names(x$data)%in%vnames]
+	   }  
+	   names(tcv)=time.varying
+   }
+   if(!is.null(tcv))  
+      df=cbind(df,tcv)
+ # add static fields
+   if(is.null(fields))
+	   fields=names(x$data)[!names(x$data)%in%c("ch","initial.age")]
+   else
+	   fields=c(fields,"id")
+   df=merge(df,x$data[,fields],by="id") 
+   df=df[order(df$seq),]
+   df$seq=NULL
+   df$Time=df$time-min(df$time)
+   df$Cohort=df$cohort-min(df$cohort)
+   df$Age=df$age-max(0,min(df$age))
+   df$age[df$age<0]=0
+   df$time=factor(df$time) 
+   df$age=factor(df$age) 
+   df$cohort=factor(df$cohort) 
+   if("group"%in%names(df))
+	  levels(df$group)=apply(x$group.covariates,1,paste,collapse="")
+   df$Y=as.vector(t(x$ehmat)[begin.num:(nocc-last+begin.num-1),])
+   return(df)
+}
+
+create.base.dmdf=function(x,parameter)
+{
+	last= -parameter$num
+	begin.num=parameter$begin+1
+	nocc=x$nocc + parameter$num
+	occasions=begin.num:(parameter$begin+nocc)
+	sl=factor(x$strata.labels)
+	nstrata=length(sl)
+	if(!is.null(x$strata.list))
+	{
+		st.index=which("states"==names(x$strata.list))
+		oth.index=which("states"!=names(x$strata.list))
+		oth.name=names(x$strata.list)[oth.index]
+		oth=rep(x$strata.list[[oth.index]],each=length(x$strata.list$states))
+		states=rep(x$strata.list$states,times=length(x$strata.list[[oth.index]]))
+		if(parameter$whichlevel!=0)
 		{
-			st.index=which("states"==names(x$strata.list))
-			oth.index=which("states"!=names(x$strata.list))
-			oth.name=names(x$strata.list)[oth.index]
-			oth=rep(x$strata.list[[oth.index]],each=length(x$strata.list$states))
-			states=rep(x$strata.list$states,times=length(x$strata.list[[oth.index]]))
+			if(parameter$whichlevel==1)
+				sl=factor(x$strata.list$states)
+			else
+				sl=factor(x$strata.list[[oth.index]])
+			nstrata=length(sl)
+			x$strata.list=NULL
+		}
+	}
+	if(!parameter$bystratum)
+	{
+		df=expand.grid(occ=occasions,id=1:nrow(x$data))
+		df$seq=1:nrow(df)
+	}
+	else
+	{
+		if(parameter$tostrata)
+		{
+			df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=1:nrow(x$data))
+			df$seq=1:nrow(df)
+		}
+		else
+		{
+			df=expand.grid(stratum=sl[1:nstrata],occ=occasions,id=1:nrow(x$data))
+			df$seq=1:nrow(df)
+		}
+	    if(!is.null(x$strata.list))
+	    {
+            state.df=data.frame(stratum=sl[1:nstrata],state=states,oth=oth)	
+			df=merge(df,state.df,by="stratum")
+			if(parameter$tostrata)
+			{
+				state.df=data.frame(tostratum=sl[1:nstrata],tostate=states,tooth=oth)	
+				df=merge(df,state.df,by="tostratum")
+			} 
 			if(parameter$whichlevel!=0)
 			{
-				if(parameter$whichlevel==1)
-					sl=x$strata.list$states
-			    else
-					sl=x$strata.list[[oth.index]]
-				nstrata=length(sl)
-				x$strata.list=NULL
+				if(parameter$whichlevel==1){
+					names(df)[names(df)=="stratum"]="state"
+					names(df)[names(df)=="tostratum"]="tostate"
+				} 
+				if(parameter$whichlevel==2) {
+					names(df)[names(df)=="stratum"]=oth.name
+					names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
+				}	 
+			}else
+			{
+				names(df)[names(df)=="oth"]=oth.name
+				names(df)[names(df)=="tooth"]=paste("to",oth.name,sep="")
 			}
-		}
-        if(parameter$bystratum)
-		{
-			if(parameter$tostrata)
-				if(is.null(x$strata.list))
-				{
-				    newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
-						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata^2),ntimes),
-						Time=rep(Times,each=nstrata^2),
-						Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
-						age=rep(factor(ages),each=nstrata^2),
-						Age=rep(ages,each=nstrata^2),
-						stratum=factor(rep(rep(sl[1:nstrata],each=nstrata),ntimes)),
-						tostratum=factor(rep(rep(sl[1:nstrata],nstrata),ntimes)))
-				     if(parameter$whichlevel!=0)
-					 {
-						 if(parameter$whichlevel==1){
-							 names(newdm.df)[names(newdm.df)=="stratum"]="state"
-							 names(newdm.df)[names(newdm.df)=="tostratum"]="tostate"
-						 } 
-						 if(parameter$whichlevel==2) {
-							 names(newdm.df)[names(newdm.df)=="stratum"]=oth.name
-							 names(newdm.df)[names(newdm.df)=="tostratum"]=paste("to",oth.name,sep="")
-						 }	 
-					 }
-			    }   
-		        else
-				{
-					newdm.df=data.frame(time=rep(factor.times,each=nstrata^2),
-							cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata^2),ntimes),
-							Time=rep(Times,each=nstrata^2),
-							Cohort=rep(rep(cohort-begin.time,each=nstrata^2),ntimes),
-							age=rep(factor(ages),each=nstrata^2),
-							Age=rep(ages,each=nstrata^2),
-							stratum=factor(rep(rep(sl[1:nstrata],each=nstrata),ntimes)),
-							oth=factor(rep(rep(oth,each=nstrata),ntimes)),
-							states=factor(rep(rep(states,each=nstrata),ntimes)),
-							tostratum=factor(rep(rep(sl[1:nstrata],nstrata),ntimes)),
-							tooth=factor(rep(rep(oth,nstrata),ntimes)),
-					        tostates=factor(rep(rep(states,nstrata),ntimes)))
-					names(newdm.df)[names(newdm.df)=="oth"]=oth.name
-					names(newdm.df)[names(newdm.df)=="tooth"]=paste("to",oth.name,sep="")
-				}
-			else	
-			    if(is.null(x$strata.list))
-				{
-				    newdm.df=data.frame(time=rep(factor.times,each=nstrata),
-						cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
-						Time=rep(Times,each=nstrata),
-						Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
-						age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
-						stratum=factor(rep(sl[1:nstrata],ntimes)))
-				    if(parameter$whichlevel!=0)
-				    {
-					   if(parameter$whichlevel==1)names(newdm.df)[names(newdm.df)=="stratum"]="state"
-					   if(parameter$whichlevel==2) names(newdm.df)[names(newdm.df)=="stratum"]=oth.name
-					}	 
-				}
-			    else
-				{
-					newdm.df=data.frame(time=rep(factor.times,each=nstrata),
-							cohort=rep(rep(factor(cohort,levels=cohort.levels),each=nstrata),ntimes),
-							Time=rep(Times,each=nstrata),
-							Cohort=rep(rep(cohort-begin.time,each=nstrata),ntimes),
-							age=rep(factor(ages),each=nstrata),Age=rep(ages,each=nstrata),
-							stratum=factor(rep(sl[1:nstrata],ntimes)),
-							oth=factor(rep(oth,ntimes)),
-							states=factor(rep(states,ntimes)))
-					names(newdm.df)[names(newdm.df)=="oth"]=oth.name
-				}		
-		}else
-			newdm.df=data.frame(time=factor.times,
-					cohort=rep(factor(cohort,levels=cohort.levels),ntimes),
-					Time=Times,Cohort=rep(cohort-begin.time,ntimes),age=factor(ages),Age=ages)		
-#       done separately so it won't be turned into factor if character data
-        newdm.df$Y=Y				
-		newdm.df
-   }
-   if(begin.num==1)
-      min.age=min(x$data$initial.age,na.rm=TRUE )
-   else
-      min.age=min(x$data$initial.age+c(time.intervals,max(time.intervals))[firstseen],na.rm=TRUE)  
-#  For each history create design data  
-   dm.df=sapply(1:nrow(x$data),fx,simplify=FALSE)  
-#  Bind all the data into a single dataframe and attach time-varying covariates if any.
-#  return dataframe.
-   res=do.call("rbind",dm.df)
-   if(is.null(fields))
-      res=cbind(res,x$data[rep(1:nrow(x$data),each= nrow(res)/nrow(x$data)),!names(x$data)%in%c("ch"),drop=FALSE])                             
-   else{
-	   fields=c(fields,"id")
-       res=cbind(res,x$data[rep(1:nrow(x$data), nrow(res)/nrow(x$data)),names(x$data)%in%fields,drop=FALSE])
-   }
-   if("group"%in%names(res))
-	   levels(res$group)=apply(x$group.covariates,1,paste,collapse="")
-   if(!is.null(tcv))  
-      res=cbind(res,tcv)
-   return(res)
+	    }else
+	    {
+			if(parameter$whichlevel!=0)
+			{
+				if(parameter$whichlevel==1)names(df)[names(df)=="stratum"]="state"
+				if(parameter$whichlevel==2) names(df)[names(df)=="stratum"]=oth.name
+				if(parameter$whichlevel==1)names(df)[names(df)=="tostratum"]="tostate"
+				if(parameter$whichlevel==2) names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
+			}	 
+  	    }
+	}
+	return(df)
 }
+
+
+
+
