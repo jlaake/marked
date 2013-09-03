@@ -160,7 +160,7 @@ reals=function(ddl,dml,parameters,parlist)
 
 hmm.lnl=function(x,start,m,T,dmat,gamma,delta)
 {
-	browser()
+	P=NULL
 	lnl=.Fortran("hmmlike",as.integer(x),as.integer(nrow(x)),as.integer(m),as.integer(T),
 			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(dmat),
 			as.double(gamma),as.double(delta),lnl=double(lnl),P=double(P),PACKAGE="marked")

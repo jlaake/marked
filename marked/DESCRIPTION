@@ -68,7 +68,6 @@ Collate:
     'set.initial.r'
     'mscjs.r'
     'mixed.model.r'
-    'proc.form.r'
     'HMMLikelihood.r'
     'Transition_functions.r'
     'Observation_functions.r'
@@ -76,3 +75,4 @@ Collate:
     'InitialDistribution_functions.r'
     'probitMsCJS.R'
     'set.fixed.R'
+    'proc.formula.r'
