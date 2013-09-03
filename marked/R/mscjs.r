@@ -59,11 +59,14 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	accumulate=FALSE
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
-#  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$S
-	if(!is.null(ddl$S$time.interval))
-		time.intervals=matrix(ddl$S$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+#  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
+	if(!is.null(ddl$Phi$time.interval))
+		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
+	if(is.vector(x$time.intervals))
 		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+		time.intervals=x$time.intervals
 #  Create fixed matrices in parameters
 	parameters=create.fixed.matrix(ddl,parameters)
 #  Store data from x$data into x

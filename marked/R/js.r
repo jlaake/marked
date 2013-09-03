@@ -65,7 +65,10 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 	if(!is.null(ddl$Phi$time.interval))
 		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
+	if(is.vector(x$time.intervals))
 		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+		time.intervals=x$time.intervals
 #  Create fixed matrices in parameters
    parameters=create.fixed.matrix(ddl,parameters)
    parameters$N$fixed=NULL

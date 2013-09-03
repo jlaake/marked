@@ -251,6 +251,11 @@ crm model}
   combination of factor and numeric variables that are
   either time-invariant or time-varying (and named
   appropriately).
+
+  The behavior of create.dmdf can vary depending on the
+  values of begin.time and time.intervals. An explanation
+  of these values and how they can be used is given in
+  \code{\link{process.data}}.
 }
 \author{
   Jeff Laake

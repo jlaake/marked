@@ -48,8 +48,9 @@
   default fields include cohort, age, time which are factor
   variables and Cohort, Age, and Time which are numeric
   versions of the same fields.  The values of these can be
-  altered by values of begin.time and initial.ages set in
-  the call to process.data. In addition if groups are
+  altered by values of begin.time, time.intervals and
+  initial.ages set in the call to
+  \code{\link{process.data}}. In addition if groups are
   identifed the grouping factor variables are added to the
   design data. Any other fields in the data are repeated on
   each record for the animal(s) (eg weight), unless they

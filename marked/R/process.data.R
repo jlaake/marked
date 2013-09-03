@@ -27,14 +27,33 @@
 #' history values and when invalid entries are given in the capture history.
 #' 
 #' The argument \code{begin.time} specifies the time for the first capture
-#' occasion.  This is used in creating the levels of the time factor variable
+#' occasion and not the first time the particular animal was caught or releaed.  This is used in creating the levels of the time factor variable
 #' in the design data and for labelling parameters. If the \code{begin.time}
-#' varies by group, enter a vector of times with one for each group. Note that
+#' varies by group, enter a vector of times with one for each group. It will add a field
+#' begin.time to the data with the value for each individual.  You can also specify a
+#' begin.time field in the data allowing each animal to have a unique begin.time. Note that
 #' the time values for survivals are based on the beginning of the survival
 #' interval and capture probabilities are labeled based on the time of the
 #' capture occasion.  Likewise, age labels for survival are the ages at the
 #' beginning times of the intervals and for capture probabilities it is the age
-#' at the time of capture/recapture.
+#' at the time of capture/recapture. 
+#' 
+#' The time.intervals argument can either be a vector of lengths of times for each interval between occasions
+#' that is constant for all animals or a matrix which has a row for each animal and a column for each
+#' interval which lets the intervals vary by animals. These intervals are used to construct the design data
+#' and are used for the field time.interval which is used to adjust parameters like Phi and S to a constant per
+#' unit time interval (eg annual survival rates). On occasion it can be useful to leave the time.interval to 
+#' remain at default of 1 or some other vector of time.intervals to construct the design data and then modify the 
+#' time.interval value in the design data.  For example, assume that cohort marking and release is done between
+#' sampling occasions.  The initial survival from release to the next sampling occasion may vary by release
+#' cohort, but the remainder of the surivivals are between sampling occasions.  In that case it is easier to 
+#' let time.interval=1 (assuming unit interval (eg year) between sampling occasions but then modifying ddl$Phi$time.interval
+#' to the value for the first interval after each release to be the partial year from release to next sampling occasion. In
+#' this way everything is labelled with annual quantities but the first partial year survival is adjusted to an annual rate.
+#' 
+#' Note that if you specify time.intervals as a matrix, then accumulate is set to FALSE so that the number of 
+#' rows in the data can be checked against the number of rows in the time.intervals matrix and thus data cannot be
+#' accumulated because at present it doesn't use values of time.intervals to determine which records can be accumulated.
 #' 
 #' \code{groups} is a vector of variable names that are contained in
 #' \code{data}.  Each must be a factor variable. A group is created for each
@@ -51,20 +70,22 @@
 #' \code{groups} represents an age variable.  It could have been named
 #' something different than age. If a variable in \code{groups} is named
 #' \code{age} then it is not necessary to specify \code{age.var}.
-#' \code{initial.age} specifies that the age at first capture of the age levels
-#' is 0,1 and 2 while the age classes were designated as 1,2,3. The actual ages
+#' \code{initial.age} specifies that the age at first capture of the age levels. For example
+#' initial.age=0:2 specifies that the initial.ages are 0,1 and 2 for the age class levels 
+#'  designated as 1,2,3. The actual ages
 #' for the age classes do not have to be sequential or ordered, but ordering
 #' will cause less confusion.  Thus levels 1,2,3 could represent initial ages
 #' of 0,4,6 or 6,0,4. The default for \code{initial.age}
 #' is 0 for each group, in which case, \code{age} represents time since marking
-#' (first capture) rather than the actual age of the animal.
+#' (first capture) rather than the actual age of the animal. If the data contains an initial.age field
+#' then it overrides any other values and lets each animal have a unique initial.age at first capture/release.
 #' 
 #' The following variable names are reserved and should be used as follows:
 #' id (animal id)
 #' ch(capture history)
 #' freq (number of animals with that ch/data)
 #' The following variable names are reserved and should not be used in the data:
-#' age,time,cohort,Age,Time,Cohort,Y,Z
+#' age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval
 #' 
 #' @aliases process.data accumulate_data
 #' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,
@@ -96,8 +117,8 @@
 #' @param age.var An index in vector \code{groups} for a variable (if any) for
 #' age
 #' @param initial.ages A vector of initial ages that contains a value for each
-#' level of the age variable \code{groups[age.var]}
-#' @param time.intervals Vector of lengths of time between capture occasions
+#' level of the age variable \code{groups[age.var]}; if the data contain an initial.age field then it will be used instead.
+#' @param time.intervals Vector of lengths of time between capture occasions or matrix of time intervals with a row for each animal and column for each interval between occasions.
 #' @param nocc number of occasions for Nest type; either nocc or time.intervals
 #' must be specified
 #' @param accumulate if TRUE, aggregates data with same values and creates freq field for count of records
@@ -128,18 +149,6 @@
 #' dipper.process=process.data(dipper)
 #' accumulate_data(dipper)
 #' 
-accumulate_data <- function(data)
-{
-	x <- data[,names(data)!="freq",drop=FALSE]
-	nx <- nrow(x)
-	if(is.null(data$freq))data$freq=rep(1,nrow(data))
-	pasted.data=apply(x, 1, paste, collapse = "")
-	freq=sapply(split(data$freq, pasted.data),sum)
-	x=unique(x[order(pasted.data),,drop=FALSE])
-	x$freq=freq
-	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
-	return(x)	
-}
 process.data <-
 function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,age.var=NULL,
 initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
@@ -285,6 +294,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
           number.of.ch=nrow(data)
 		  data$id=factor(1:nrow(data))
        }
+	   if(length(begin.time)>1)stop("\nbegin.time has more than one value and no groups were specified")
        plist=list(data=data,model=model,mixtures=mixtures,
                    freq=matrix(data$freq,ncol=1,dimnames=list(1:number.of.ch,"group1")),
                    nocc=nocc, nocc.secondary=nocc.secondary,time.intervals=time.intervals,begin.time=begin.time,
@@ -374,12 +384,6 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
         number.of.groups=index-1
       } 
       #
-      #  Check to make sure length of begin.time is either 1 or equal to the
-      #  number of groups
-      #
-      if(length(begin.time)!=1 & length(begin.time)!=number.of.groups)
-         stop("length of begin.time must either be 1 or match number of groups")
-      #
       #  Create group labels
       #  
       labs=expand.grid(faclabs)
@@ -413,7 +417,16 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
         if(model=="JS")
           data=add.dummy.data(data,nocc,group.covariates)     
 	    data$id=factor(1:nrow(data))
-	    data$initial.age=init.ages[data$group]
+	    if(is.null(data$initial.age)) data$initial.age=init.ages[data$group]
+		#
+		#  Check to make sure length of begin.time is either 1 or equal to the
+		#  number of groups
+		#
+		if(length(begin.time)!=1)
+		if(length(begin.time)!=number.of.groups)
+			stop("length of begin.time must either be 1 or match number of groups")
+		else
+		    data$begin.time=begin.time[data$group]
         plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
                    nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
                    initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
@@ -503,3 +516,16 @@ add.dummy.data=function(data,nocc,group.covariates)
 	row.names(dummy.data)=NULL
 	return(rbind(data,dummy.data))
 }
+accumulate_data <- function(data)
+{
+	x <- data[,names(data)!="freq",drop=FALSE]
+	nx <- nrow(x)
+	if(is.null(data$freq))data$freq=rep(1,nrow(data))
+	pasted.data=apply(x, 1, paste, collapse = "")
+	freq=sapply(split(data$freq, pasted.data),sum)
+	x=unique(x[order(pasted.data),,drop=FALSE])
+	x$freq=freq
+	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
+	return(x)	
+}
+

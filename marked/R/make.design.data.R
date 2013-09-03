@@ -10,7 +10,7 @@
 #' For each record in the design data, default data fields are created based on the model. For example,
 #' for CJS, the default fields include cohort, age, time which are factor variables and Cohort, Age, and Time
 #' which are numeric versions of the same fields.  The values of these can be altered by values of 
-#' begin.time and initial.ages set in the call to process.data. In addition if groups are identifed the
+#' begin.time, time.intervals and initial.ages set in the call to \code{\link{process.data}}. In addition if groups are identifed the
 #' grouping factor variables are added to the design data. Any other fields in the data are repeated on each record
 #' for the animal(s) (eg weight), unless they are defined as time.varying in which case the fields should be named
 #' with the convention xn where x is the base name for the variable and n is the time value (eg, td1999, td2000,...).

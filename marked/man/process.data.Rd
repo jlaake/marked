@@ -1,4 +1,4 @@
-\name{accumulate_data}
+\name{process.data}
 \alias{accumulate_data}
 \alias{process.data}
 \title{Process encounter history dataframe for MARK analysis}
@@ -44,10 +44,13 @@
 
   \item{initial.ages}{A vector of initial ages that
   contains a value for each level of the age variable
-  \code{groups[age.var]}}
+  \code{groups[age.var]}; if the data contain an
+  initial.age field then it will be used instead.}
 
   \item{time.intervals}{Vector of lengths of time between
-  capture occasions}
+  capture occasions or matrix of time intervals with a row
+  for each animal and column for each interval between
+  occasions.}
 
   \item{nocc}{number of occasions for Nest type; either
   nocc or time.intervals must be specified}
@@ -123,17 +126,55 @@
   are given in the capture history.
 
   The argument \code{begin.time} specifies the time for the
-  first capture occasion.  This is used in creating the
-  levels of the time factor variable in the design data and
-  for labelling parameters. If the \code{begin.time} varies
-  by group, enter a vector of times with one for each
-  group. Note that the time values for survivals are based
-  on the beginning of the survival interval and capture
-  probabilities are labeled based on the time of the
-  capture occasion.  Likewise, age labels for survival are
-  the ages at the beginning times of the intervals and for
-  capture probabilities it is the age at the time of
+  first capture occasion and not the first time the
+  particular animal was caught or releaed.  This is used in
+  creating the levels of the time factor variable in the
+  design data and for labelling parameters. If the
+  \code{begin.time} varies by group, enter a vector of
+  times with one for each group. It will add a field
+  begin.time to the data with the value for each
+  individual.  You can also specify a begin.time field in
+  the data allowing each animal to have a unique
+  begin.time. Note that the time values for survivals are
+  based on the beginning of the survival interval and
+  capture probabilities are labeled based on the time of
+  the capture occasion.  Likewise, age labels for survival
+  are the ages at the beginning times of the intervals and
+  for capture probabilities it is the age at the time of
   capture/recapture.
+
+  The time.intervals argument can either be a vector of
+  lengths of times for each interval between occasions that
+  is constant for all animals or a matrix which has a row
+  for each animal and a column for each interval which lets
+  the intervals vary by animals. These intervals are used
+  to construct the design data and are used for the field
+  time.interval which is used to adjust parameters like Phi
+  and S to a constant per unit time interval (eg annual
+  survival rates). On occasion it can be useful to leave
+  the time.interval to remain at default of 1 or some other
+  vector of time.intervals to construct the design data and
+  then modify the time.interval value in the design data.
+  For example, assume that cohort marking and release is
+  done between sampling occasions.  The initial survival
+  from release to the next sampling occasion may vary by
+  release cohort, but the remainder of the surivivals are
+  between sampling occasions.  In that case it is easier to
+  let time.interval=1 (assuming unit interval (eg year)
+  between sampling occasions but then modifying
+  ddl$Phi$time.interval to the value for the first interval
+  after each release to be the partial year from release to
+  next sampling occasion. In this way everything is
+  labelled with annual quantities but the first partial
+  year survival is adjusted to an annual rate.
+
+  Note that if you specify time.intervals as a matrix, then
+  accumulate is set to FALSE so that the number of rows in
+  the data can be checked against the number of rows in the
+  time.intervals matrix and thus data cannot be accumulated
+  because at present it doesn't use values of
+  time.intervals to determine which records can be
+  accumulated.
 
   \code{groups} is a vector of variable names that are
   contained in \code{data}.  Each must be a factor
@@ -156,20 +197,26 @@
   than age. If a variable in \code{groups} is named
   \code{age} then it is not necessary to specify
   \code{age.var}. \code{initial.age} specifies that the age
-  at first capture of the age levels is 0,1 and 2 while the
-  age classes were designated as 1,2,3. The actual ages for
-  the age classes do not have to be sequential or ordered,
-  but ordering will cause less confusion.  Thus levels
-  1,2,3 could represent initial ages of 0,4,6 or 6,0,4. The
-  default for \code{initial.age} is 0 for each group, in
-  which case, \code{age} represents time since marking
-  (first capture) rather than the actual age of the animal.
+  at first capture of the age levels. For example
+  initial.age=0:2 specifies that the initial.ages are 0,1
+  and 2 for the age class levels designated as 1,2,3. The
+  actual ages for the age classes do not have to be
+  sequential or ordered, but ordering will cause less
+  confusion.  Thus levels 1,2,3 could represent initial
+  ages of 0,4,6 or 6,0,4. The default for
+  \code{initial.age} is 0 for each group, in which case,
+  \code{age} represents time since marking (first capture)
+  rather than the actual age of the animal. If the data
+  contains an initial.age field then it overrides any other
+  values and lets each animal have a unique initial.age at
+  first capture/release.
 
   The following variable names are reserved and should be
   used as follows: id (animal id) ch(capture history) freq
   (number of animals with that ch/data) The following
   variable names are reserved and should not be used in the
-  data: age,time,cohort,Age,Time,Cohort,Y,Z
+  data:
+  age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval
 }
 \examples{
 data(dipper)

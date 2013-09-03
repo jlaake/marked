@@ -198,6 +198,10 @@
 #' variables that are either time-invariant or time-varying (and named
 #' appropriately).
 #' 
+#' The behavior of create.dmdf can vary depending on the values of begin.time and 
+#' time.intervals. An explanation of these values and how they can be used is given 
+#' in \code{\link{process.data}}.
+#' 
 #' @param x processed dataframe from function \code{\link{process.data}}
 #' @param parameter list with fields defining each values for each parameter;
 #' as created by \code{\link{setup.parameters}}
@@ -236,6 +240,9 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    if(length(begin.time)==1 & is.vector(time.intervals))
    {
 	   timedf=data.frame(occ=1:nocc,time=begin.time+c(0,cumsum(time.intervals)))
+	   if(parameter$interval)
+		   if(!all(time.intervals==1))
+		      timedf$time.interval=c(time.intervals,NA)
 	   df=merge(df,timedf,by="occ")
 	   timedf=data.frame(id=x$data$id,cohort=timedf$time[firstseen])
 	   df=merge(df,timedf,by="id")
@@ -245,11 +252,15 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 		   begin.time=rep(begin.time,nrow(x$data))
 	   if(is.vector(time.intervals)) 
 		   time.intervals=matrix(time.intervals,nrow=nrow(x$data),ncol=length(time.intervals),byrow=TRUE)
-	   time.intervals=t(apply(time.intervals,1,cumsum))
-	   times=begin.time+cbind(rep(0,nrow(x$data)),time.intervals)
+	   cum.time.intervals=t(apply(time.intervals,1,cumsum))
+	   times=begin.time+cbind(rep(0,nrow(x$data)),cum.time.intervals)
 	   cohort=rep(times[cbind(1:nrow(x$data),firstseen)],each=ncol(times))
-	   timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
-			   cohort=cohort,time=as.vector(t(times)))
+	   if(!parameter$interval | all(time.intervals==1))
+	       timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
+			       cohort=cohort,time=as.vector(t(times)))
+	   else
+		   timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
+				   cohort=cohort,time=as.vector(t(times)),time.interval=as.vector(t(cbind(time.intervals,rep(NA,nrow(x$data))))))
 	   df$occid=paste(df$occ,df$id,sep="")
 	   df=merge(df,timedf,by="occid")
 	   df$idocc=NULL
