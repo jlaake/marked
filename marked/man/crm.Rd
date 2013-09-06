@@ -230,28 +230,35 @@
   the real value in the closed unit interval [0,1] for the
   fixed parameter.  This approach is completely general
   allowing you to fix a particular real parameter for a
-  specific animal and occasion but it is a bit kludgy and
-  later some other functionality will be included.  To set
-  all of the real values for a particular occasion you can
-  use the following example with the dipper data as a
-  template:
+  specific animal and occasion but it is a bit kludgy.
+  Alternatively, you can set fixed values by specifying
+  values for a field called fix in the design data for a
+  parameter. If the value of fix is NA the parameter is
+  estimated and if it is not NA then the real parameter is
+  fixed at that value.  If you also specify fixed as
+  decribed above, they will over-ride any values you have
+  also set with fix in the design data. To set all of the
+  real values for a particular occasion you can use the
+  following example with the dipper data as a template:
 
-  \code{model.parameters=list(Phi=list(,fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),}
-  \code{rep(1,nrow(dipper)))))}
+  \code{model.parameters=list(Phi=list(formula=~1,}
+  \code{fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
 
   The above sets \code{Phi} to 1 for the interval between
-  occasions 2 and 3 for all animals. At present there is no
-  modification of the parameter count to address fixing of
-  real parameters.
+  occasions 2 and 3 for all animals.
 
-  Be cautious with this function at present.  It does not
-  include many checks to make sure values are in the
-  specified range of the data.  Normally this would not be
-  a big problem but because \code{\link{cjs.lnl}} calls an
-  external FORTRAN subroutine, if it gets a subscript out
-  of bounds, it will cause R to terminate.  So make sure to
-  save your workspace frequently if you use this function
-  in its current implementation.
+  Alternatively, you could do as follows:
+
+  data(dipper) dp=process.data(dipper)
+  ddl=make.design.data(dp)
+  ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA)
+
+  At present there is no modification of the parameter
+  count to address fixing of real parameters except that if
+  by fixing reals, a beta is not needed in the design it
+  will be dropped. For example, if you were to use ~time
+  for Phi with survival fixed to 1 for time 2, then then
+  beta for that time would not be included.
 
   To use ADMB (use.admb=TRUE), you need to install: 1) the
   R package R2admb, 2) ADMB, and 3) a C++ compiler (I

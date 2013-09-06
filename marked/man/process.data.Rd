@@ -216,7 +216,7 @@
   (number of animals with that ch/data) The following
   variable names are reserved and should not be used in the
   data:
-  age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval
+  occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 }
 \examples{
 data(dipper)

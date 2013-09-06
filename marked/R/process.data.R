@@ -85,7 +85,7 @@
 #' ch(capture history)
 #' freq (number of animals with that ch/data)
 #' The following variable names are reserved and should not be used in the data:
-#' age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval
+#' occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 #' 
 #' @aliases process.data accumulate_data
 #' @usage 	process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,

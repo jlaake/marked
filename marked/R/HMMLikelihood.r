@@ -90,7 +90,7 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	# dmat: array of observation probability matrices - one for each id, time
 	#
 	# Create list of parameter matrices from single input parameter vector
-	# Firs split parameter vector by prameter type (type) 
+	# First split parameter vector by prameter type (type) 
 	ptm=proc.time()
 	parlist=split(par,type)
 	pars=list()
@@ -139,18 +139,19 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	return(neglnl)
 }
-# Computes real estimates for HMM models using inverse of link from design data (ddl) and model for a particular parameter type (parname) or
-# returns the number of columns in the design matrix (compute=FALSE); handles fixed parameters assigned by non-NA value in field named 
-# fix in the ddl dataframe.
 reals=function(ddl,dml,parameters,parlist)
 {
+	# Computes real estimates for HMM models using inverse of 
+	# link from design matrix and for a particular parameter 
+	# type (parname); handles fixed parameters assigned by 
+	# non-NA value in field named fix in the ddl dataframe.
 	dm=dml$fe
-	# Currently for log or logit link, return the inverse values
+	# Currently for log,logit or identity link, return the inverse values
 	values=switch(parameters$link,
-	     log=exp(as.vector(dm%*%parlist)),
-		 logit=plogis(as.vector(dm%*%parlist)),
-		 identity=as.vector(dm%*%parlist))
-    if(!is.null(ddl$time.interval))values=values^ddl$time.interval
+			log=exp(as.vector(dm%*%parlist)),
+			logit=plogis(as.vector(dm%*%parlist)),
+			identity=as.vector(dm%*%parlist))
+	if(!is.null(ddl$time.interval))values=values^ddl$time.interval
 	# if some reals are fixed, set reals to their fixed values 
 	if(!is.null(ddl$fix))
 		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]

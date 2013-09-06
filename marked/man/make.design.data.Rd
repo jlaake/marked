@@ -63,6 +63,25 @@
   variables can be refined for each parameter by including
   argument static with the character vector of static
   fields to include.
+
+  After creating design data, you can create a field in the
+  dataframe for a parameter named fix and it can be
+  assigned values at the real parameter for that
+  occasion/id will be fixed at the value. For parameters
+  that are not supposed to be fixed, the field fix should
+  be assigned NA.  For example,
+  ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA) will assign all
+  real Phi values to 1 for the interval beginning at time
+  2. If there is no field fix, then no parameters are
+  fixed.  For mlogit parameters, a fix field is added
+  automatically and the value 1 is specified for the
+  stratum that is supposed to be computed by subtraction
+  and the remainder are set to NA.  If some Psi are not
+  possible then those values can be changed to 0.
+
+  The following variable names are reserved and should not
+  be used in the data:
+  occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 }
 \examples{
 \donttest{
