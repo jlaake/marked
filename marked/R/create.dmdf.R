@@ -324,8 +324,8 @@ create.base.dmdf=function(x,parameter)
 		st.index=which("states"==names(x$strata.list))
 		oth.index=which("states"!=names(x$strata.list))
 		oth.name=names(x$strata.list)[oth.index]
-		oth=rep(x$strata.list[[oth.index]],each=length(x$strata.list$states))
-		states=rep(x$strata.list$states,times=length(x$strata.list[[oth.index]]))
+		oth=factor(rep(x$strata.list[[oth.index]],each=length(x$strata.list$states)))
+		states=factor(rep(x$strata.list$states,times=length(x$strata.list[[oth.index]])))
 		if(parameter$whichlevel!=0)
 		{
 			if(parameter$whichlevel==1)
