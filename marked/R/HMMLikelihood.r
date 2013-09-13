@@ -105,11 +105,13 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	#observation and transition matrices using parameter values
-	dmat=fct_dmat(pars,m,F=start[,2],T)
+    if(debug) cat("\n time = ",proc.time()-ptm,"\n")
+    dmat=fct_dmat(pars,m,F=start[,2],T)
+	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	gamma=fct_gamma(pars,m,F=start[,2],T)
+	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=start[,2],T,start)
-#	browser()
 #	xx=hmm.lnl(x,start,m,T,dmat,gamma,delta)
 	# loop over each encounter history in sapply and 
 	# create log-likelihood vector - an element for each x
