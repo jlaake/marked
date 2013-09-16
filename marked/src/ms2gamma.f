@@ -4,6 +4,7 @@
        DOUBLE PRECISION PSI(N,MS*MS*(T-1)),TMAT(N,T-1,NS,NS)
        DOUBLE PRECISION PSIMAT(MS,MS),PSIX,ALPHAX,ROWSUM
        DOUBLE PRECISION AMAT(MA,MA),ALPHA(N,MA*MA*(T-1))
+C      Loop over each capture history and T-1 occasions       
        DO 10 I=1,N
        DO 10 J=F(I),T-1
            INDEX=(J-1)*MS*MA

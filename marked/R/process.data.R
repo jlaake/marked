@@ -3,7 +3,7 @@
 #' Prior to analyzing the data, this function initializes several variables
 #' (e.g., number of capture occasions, time intervals) that are often specific
 #' to the capture-recapture model being fitted to the data.  It also is used to
-#' 1) define groups in the data that represent different levels of one or more
+#' 1) define groups in the data that represent different levels of one or morestrata.labels
 #' factor covariates (e.g., sex), 2) define time intervals between capture
 #' occasions (if not 1), and 3) create an age structure for the data, if any.
 #' 
@@ -273,11 +273,20 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    #
    number.of.ch=nrow(data)
    # start - for each ch, the first non-zero x value and the occasion of the first non-zero value
-   start=t(sapply(data$ch,function(x){
+   #  if strata.labels then the first non-zreo x is matched to strata.labels to exclude possible "U" values
+   if(is.null(model.list$hmm$strata.labels))
+       start=t(sapply(data$ch,function(x){
 					xx=strsplit(x,",")[[1]]
 					ich=min(which(strsplit(x,",")[[1]]!="0"))
 					return(c(as.numeric(factor(xx[ich],levels=model.list$hmm$ObsLevels))-1,ich))
 				}))
+   else
+	   start=t(sapply(data$ch,function(x){
+						   xx=strsplit(x,",")[[1]]
+						   ich=min(which(strsplit(x,",")[[1]]!="0"))
+						   return(c(match(xx[ich],model.list$hmm$strata.labels),ich))
+					   }))
+   
    # create encounter history matrix
    ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
    #
@@ -528,4 +537,3 @@ accumulate_data <- function(data)
 	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
 	return(x)	
 }
-

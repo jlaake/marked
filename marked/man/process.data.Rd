@@ -93,10 +93,10 @@
   time intervals) that are often specific to the
   capture-recapture model being fitted to the data.  It
   also is used to 1) define groups in the data that
-  represent different levels of one or more factor
-  covariates (e.g., sex), 2) define time intervals between
-  capture occasions (if not 1), and 3) create an age
-  structure for the data, if any.
+  represent different levels of one or morestrata.labels
+  factor covariates (e.g., sex), 2) define time intervals
+  between capture occasions (if not 1), and 3) create an
+  age structure for the data, if any.
 }
 \details{
   For examples of \code{data}, see \code{\link{dipper}}.

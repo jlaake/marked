@@ -42,6 +42,8 @@ ums2_dmat=function(pars,m,F,T)
 	dim(value$pmat)=c(nrow(pars$p),T,m$na*(m$ns+1)+1,m$ns*m$na+1)
 	value$pmat
 }
+# R versions of the FORTRAN code
+#
 # cjs_dmat=function(pars,m,F,T) 
 # {
 # 	# add first occasion p=1

@@ -1,12 +1,56 @@
 #' Hidden Markov Model likelihood functions
 #' 
-#' Functions HMMLikelihood and loglikelihood which compute the log-likelihood for
-#' a single capture-recapture sequence and for a set of sequences respectively. The
-#' function loglikelihood is called from optimizer and it in turn calls HMMLikelihood for
-#' each sequence in the x matrix. 
+#' Function HMMLikelihood computes the log-likelihood via hmm.like which is a wrapper for the
+#' FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls HMMLikelihood for
+#' each sequence in the x matrix.
+#'  
+#' Below is the deprecated R code for computation of the HMM likelihood
+#' # R version of FORTRAN code hmmlike.f for a single sequence
+#'HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
+#'{  
+#'	# Arguments:
+#'	# x: observed sequence (capture (encounter) history)
+#'	# first: occasion to start sequence
+#'	# m: number of states
+#'	# T: number of occasions; sequence length
+#'	# dmat: array of occasion specific observation probabilty matrices
+#'	# gamma: array of occasion specific transition matrices
+#'	# delta: initial state distribution
+#'	# Other variables:
+#'	# lnl: log likelihood value
+#'	# phi: alpha/sum(alpha) sequence as defined in Zucchini/MacDonald
+#'	# v: temp variable to hold phi calculations
+#'	# u: sum(v)
+#'	# Assign prob state vector for initial observation: delta*p(x_first)
+#'	v=delta%*%diag(dmat[first,x[first],]) 
+#'	# Compute log-likelihood contribution for first observation; for
+#'	# models that condition on first observation u=1,lnl=0
+#'	u=sum(v)
+#'	phi=v/u
+#'	lnl=log(u)
+#'	# Loop over occasions for this encounter history (x)
+#'	for(t in (first+1):T)
+#'	{
+#'		# Compute likelihood contribution for this occasion
+#'		v=phi%*%gamma[t-1,,]%*%diag(dmat[t,x[t],])  
+#'		u=sum(v)
+#'		lnl=lnl+log(u)
+#'		# Compute updated state vector
+#'		phi=v/u
+#'	}
+#'	return(lnl)
+#'}   
+#'  R code that called R version of HMMlikelihood for each sequence
+#' 	# loop over each encounter history in sapply and 
+#' 	# create log-likelihood vector - an element for each x
+#' 	# sum is total log-likelihood across individuals 
+#' 	# return negative log-likelihood
+#' 	neglnl=-sum(freq*sapply(1:nrow(x),function(id) 
+#' 						HMMLikelihood(x[id,],start[id,2],m,T,
+#' 								dmat=dmat[id,,,],gamma=gamma[id,,,],
+#' 								delta=delta[id,])))
 #'  
 #' @param x single observed sequence (capture history) in HMMLikelihood and matrix of observed sequences (row:id; column:occasion/time) in loglikelihood
-#' @param first occasion to initiate likelihood calculation for sequence 
 #' @param m number of states
 #' @param T number of occasions; sequence length
 #' @param dmat observation probability matrices
@@ -24,50 +68,16 @@
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parlist list of parameter strings used to split par vector
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
-#' @usage HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-#'        loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+#' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
-#' @aliases HMMLikelihood loglikelihood reals
+#'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
+#' @aliases HMMLikelihood reals hmm.lnl
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
 #' loglikelihood returns the negative log-likelihood for all of the data. reals
 #' returns either the column dimension of design matrix for parameter or the real parameter vector
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
-HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
-{  
-	# Arguments:
-	# x: observed sequence (capture (encounter) history)
-	# first: occasion to start sequence
-	# m: number of states
-	# T: number of occasions; sequence length
-	# dmat: array of occasion specific observation probabilty matrices
-	# gamma: array of occasion specific transition matrices
-	# delta: initial state distribution
-	# Other variables:
-	# lnl: log likelihood value
-	# phi: alpha/sum(alpha) sequence as defined in Zucchini/MacDonald
-	# v: temp variable to hold phi calculations
-	# u: sum(v)
-	# Assign prob state vector for initial observation: delta*p(x_first)
- 	v=delta%*%diag(dmat[first,x[first],]) 
-	# Compute log-likelihood contribution for first observation; for
-	# models that condition on first observation u=1,lnl=0
-	u=sum(v)
-	phi=v/u
-	lnl=log(u)
-	# Loop over occasions for this encounter history (x)
-	for(t in (first+1):T)
-	{
-		# Compute likelihood contribution for this occasion
-		v=phi%*%gamma[t-1,,]%*%diag(dmat[t,x[t],])  
-		u=sum(v)
-		lnl=lnl+log(u)
-		# Compute updated state vector
-		phi=v/u
-	}
-	return(lnl)
-}     
-loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
+HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 		fct_delta,ddl,dml,parameters,debug=FALSE)
 {
 	# Arguments:
@@ -105,22 +115,13 @@ loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	#observation and transition matrices using parameter values
-    if(debug) cat("\n time = ",proc.time()-ptm,"\n")
     dmat=fct_dmat(pars,m,F=start[,2],T)
-	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	gamma=fct_gamma(pars,m,F=start[,2],T)
 	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=start[,2],T,start)
-#	xx=hmm.lnl(x,start,m,T,dmat,gamma,delta)
-	# loop over each encounter history in sapply and 
-	# create log-likelihood vector - an element for each x
-	# sum is total log-likelihood across individuals 
-	# return negative log-likelihood
-	neglnl=-sum(freq*sapply(1:nrow(x),function(id) 
-						HMMLikelihood(x[id,],start[id,2],m,T,
-								dmat=dmat[id,,,],gamma=gamma[id,,,],
-								delta=delta[id,])))
+	if(is.list(m)) m=m$ns*m$na+1
+	neglnl=hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 	if(debug){
 		cat("\npar \n")
 		print(split(par,type))
@@ -160,13 +161,10 @@ reals=function(ddl,dml,parameters,parlist)
 	# return vector of reals
 	return(values)
 }
-
-hmm.lnl=function(x,start,m,T,dmat,gamma,delta)
+hmm.lnl=function(x,start,m,T,dmat,gamma,delta,freq)
 {
-	P=NULL
 	lnl=.Fortran("hmmlike",as.integer(x),as.integer(nrow(x)),as.integer(m),as.integer(T),
-			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(dmat),
-			as.double(gamma),as.double(delta),lnl=double(lnl),P=double(P),PACKAGE="marked")
-    lnl
+			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(freq),as.double(dmat),
+			as.double(gamma),as.double(delta),lnl=double(1),PACKAGE="marked")$lnl
+    -lnl
 }
-		

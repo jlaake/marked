@@ -1,20 +1,17 @@
 \name{HMMLikelihood}
 \alias{HMMLikelihood}
-\alias{loglikelihood}
+\alias{hmm.lnl}
 \alias{reals}
 \title{Hidden Markov Model likelihood functions}
 \usage{
-  HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-    loglikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+  HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
     reals(ddl,dml,parameters,parlist)
+    hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 }
 \arguments{
   \item{x}{single observed sequence (capture history) in
   HMMLikelihood and matrix of observed sequences (row:id;
   column:occasion/time) in loglikelihood}
-
-  \item{first}{occasion to initiate likelihood calculation
-  for sequence}
 
   \item{m}{number of states}
 
@@ -67,12 +64,45 @@
   the real parameter vector
 }
 \description{
-  Functions HMMLikelihood and loglikelihood which compute
-  the log-likelihood for a single capture-recapture
-  sequence and for a set of sequences respectively. The
-  function loglikelihood is called from optimizer and it in
-  turn calls HMMLikelihood for each sequence in the x
-  matrix.
+  Function HMMLikelihood computes the log-likelihood via
+  hmm.like which is a wrapper for the FORTRAN code
+  hmm_like.f.  The function HMMlikelihood is called from
+  optimizer and it in turn calls HMMLikelihood for each
+  sequence in the x matrix.
+}
+\details{
+  Below is the deprecated R code for computation of the HMM
+  likelihood # R version of FORTRAN code hmmlike.f for a
+  single sequence
+  HMMLikelihood=function(x,first,m,T,dmat,gamma,delta) { #
+  Arguments: # x: observed sequence (capture (encounter)
+  history) # first: occasion to start sequence # m: number
+  of states # T: number of occasions; sequence length #
+  dmat: array of occasion specific observation probabilty
+  matrices # gamma: array of occasion specific transition
+  matrices # delta: initial state distribution # Other
+  variables: # lnl: log likelihood value # phi:
+  alpha/sum(alpha) sequence as defined in
+  Zucchini/MacDonald # v: temp variable to hold phi
+  calculations # u: sum(v) # Assign prob state vector for
+  initial observation: delta*p(x_first)
+  v=delta%*%diag(dmat[first,x[first],]) # Compute
+  log-likelihood contribution for first observation; for #
+  models that condition on first observation u=1,lnl=0
+  u=sum(v) phi=v/u lnl=log(u) # Loop over occasions for
+  this encounter history (x) for(t in (first+1):T) { #
+  Compute likelihood contribution for this occasion
+  v=phi%*%gamma[t-1,,]%*%diag(dmat[t,x[t],]) u=sum(v)
+  lnl=lnl+log(u) # Compute updated state vector phi=v/u }
+  return(lnl) } R code that called R version of
+  HMMlikelihood for each sequence # loop over each
+  encounter history in sapply and # create log-likelihood
+  vector - an element for each x # sum is total
+  log-likelihood across individuals # return negative
+  log-likelihood
+  neglnl=-sum(freq*sapply(1:nrow(x),function(id)
+  HMMLikelihood(x[id,],start[id,2],m,T,
+  dmat=dmat[id,,,],gamma=gamma[id,,,], delta=delta[id,])))
 }
 \author{
   Jeff Laake <jeff.laake@noaa.gov>

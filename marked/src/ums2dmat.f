@@ -4,14 +4,17 @@
        DOUBLE PRECISION PMAT(N,T,MA*(MS+1)+1,MS*MA+1)
        DOUBLE PRECISION P(N,MA*MS*(T-1))
        DOUBLE PRECISION DELTA(N,MS*(T-1))
+C      Zero out values       
        DO 1 I=1,N
        DO 1 J=1,T
        DO 1 K=1,MA*(MS+1)+1
        DO 1 L=1,MS*MA+1
           PMAT(I,J,K,L)=0.0D0
   1    CONTINUE
+C      Loop over each capture history and F(I) to T-1 occasions
        DO 20 I=1,N
        DO 20 J=F(I),T-1
+C         For first release occasion p=1
           IF(J.EQ.F(I)) THEN
               IAREA=0
               DO 5 K=2,MA*(MS+1)+1,MS+1
@@ -22,6 +25,8 @@
   5           CONTINUE
               PMAT(I,J,1,MA*MS+1)=1.0D0
            ENDIF
+C          For each remaining occasion, compute matrix with p and delta values
+C          Each area value has an uncertain state observation.
            INDEX=(J-1)*MS*MA
            IAREA=0
            DO 9 K=2,MA*(MS+1)+1,MS+1

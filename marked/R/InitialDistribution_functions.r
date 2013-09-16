@@ -17,6 +17,7 @@ cjs_delta=function(pars,m,F,T,start)
 {
 	if(is.list(m))m=m$ns*m$na+1
     delta=matrix(0,nrow=nrow(start),ncol=m)
+	if(any(is.na(start[,1])))stop("Unknown initial state")
 	delta[cbind(1:nrow(start),start[,1])]=1
 	delta 
 }
