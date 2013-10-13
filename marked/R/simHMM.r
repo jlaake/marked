@@ -33,6 +33,8 @@
 #' df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),stringsAsFactors=FALSE))
 #' df=simHMM(data.frame(ch=rep("100",100),u=rnorm(100,0,1),freq=rep(1,100),stringsAsFactors=FALSE),
 #'   model.parameters=list(Phi=list(formula=~u),p=list(formula=~time)),initial=list(Phi=c(1,1),p=c(0,1)))
+#' df=simHMM(data.frame(ch=c("1000","0100","0010"),freq=rep(50,3),stringsAsFactors=FALSE),
+#'   model.parameters=list(Phi=list(formula=~1),p=list(formula=~time)),initial=list(Phi=c(1),p=c(0,1,2)))
 simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),
 		design.parameters=list(),initial=NULL,groups=NULL,time.intervals=NULL,accumulate=TRUE,strata.labels=NULL)
 { 
@@ -69,7 +71,8 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 			instate=sum(state[,setup$data$start[id,2]]==k)
 			if(instate>0)
 			{
-				rmult=rmultinom(instate,1,dmat[id,1,,k])
+				rmult=rmultinom(instate,1,dmat[id,setup$data$start[id,2],,k])
+#				rmult=rmultinom(instate,1,dmat[id,1,,k])
 				history[state[,setup$data$start[id,2]]==k,setup$data$start[id,2]]= 
 						setup$data$ObsLevels[apply(rmult,2,function(x) which(x==1))]
 			}
@@ -110,3 +113,4 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
     else
 	   return(cbind(df,df2))
 }
+
