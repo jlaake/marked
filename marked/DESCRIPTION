@@ -40,6 +40,7 @@ Collate:
     'fix.parameters.r'
     'js.lnl.r'
     'js.r'
+    'hmmDemo.r'
     'make.design.data.R'
     'marked-package.R'
     'merge.design.covariates.r'

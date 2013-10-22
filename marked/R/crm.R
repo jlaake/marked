@@ -362,14 +362,19 @@ if(substr(model,1,3)=="HMM")
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
 	}
-	par=split(runmodel$par,initial.list$ptype)
-	for(p in names(par))
-		names(par[[p]])=colnames(dml[[p]]$fe)
+	par=NULL
+	#par=split(runmodel$par,initial.list$ptype)
+	for(p in names(initial.list$par))
+	{
+		par[[p]]=runmodel$par[initial.list$ptype==p]
+		names(par[[p]])=colnames(dml[[p]]$fe)	
+	}
 	runmodel$beta=par
 	runmodel$par=NULL
 	runmodel$neg2lnl=2*runmodel$value
 	runmodel$value=NULL
 	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
+	if(!is.null(runmodel$hessian))runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
 	class(runmodel)=c("crm","mle",model)
 }
 #
