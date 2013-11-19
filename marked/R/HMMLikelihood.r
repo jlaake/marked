@@ -68,7 +68,8 @@
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parlist list of parameter strings used to split par vector
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
-#' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+#' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
+#'                          dml,parameters,debug=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
 #'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 #' @aliases HMMLikelihood reals hmm.lnl
@@ -192,10 +193,10 @@ hmm.lnl=function(x,start,m,T,dmat,gamma,delta,freq)
 #' @param ddl design data list of parameters for each id
 #' @param dml list of design matrices; one entry for each parameter; each entry contains fe and re for fixed and random effects
 #' @param parameters formulas for each parameter type
-#' @param parlist list of parameter strings used to split par vector
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
 #' @usage R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-#'        loglikelihood(par,type,x,id,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters)
+#'        loglikelihood(par,type,x,id,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,
+#'                         ddl,dml,parameters)
 #'        backward_prob(x,first,m,T,dmat,gamma)
 #' @aliases R_HMMLikelihood loglikelihood backward_prob
 #' @return both return log-likelihood, alpha and phi vectors and dmat and gamma matrices for a single sequence

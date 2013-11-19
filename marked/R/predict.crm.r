@@ -3,7 +3,8 @@
 #' Computes real estimates and their var-cov for a particular subset of 
 #' parameters.
 #' 
-#' @usage \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select,...)
+#' @usage \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
+#'                    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
 #' @param object model object
 #' @param newdata a dataframe for crm 
 #' @param ddl list of dataframes for design data; created by call to

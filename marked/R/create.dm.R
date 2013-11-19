@@ -4,9 +4,11 @@
 #' intervals defined for time, cohort and age.
 #' 
 #' @aliases create.dm create.dml
-#' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
+#' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
+#'                   chunk_size=1e7, remove.intercept=NULL)
 #'        
-#'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
+#'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,
+#'              chunk_size=1e7,use.admb=FALSE)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format

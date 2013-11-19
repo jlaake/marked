@@ -38,19 +38,19 @@
 #' data(dipper)
 #' #note id values will not match row numbers in dipper because
 #' #capture histories of "0000001" are removed. But if you process data and
-#' pass it to hmmDemo then it will match dipper.proc$data 
+#' #pass it to hmmDemo then it will match dipper.proc$data 
 #' dipper.proc=process.data(dipper,model="hmmCJS")
 #' x=hmmDemo(dipper.proc,id=45,state.names=c("Alive","Dead"),obs.names=c("Missed","Seen"))
 #' par(mfrow=c(2,1))
-#' barplot(t(x$alpha),beside=T,names.arg=x$chforwardstrings)
-#' barplot(t(x$phi),beside=T,names.arg=x$chforwardstrings)
-#' data(mstrata)
-#' mstrata$freq=1
-#' x=hmmDemo(mstrata,id=1,model="hmmMSCJS")
-#' rowSums(x$alpha*x$beta)
-#' exp(x$lnl)
+#' barplot(t(x$alpha),beside=TRUE,names.arg=x$chforwardstrings)
+#' barplot(t(x$phi),beside=TRUE,names.arg=x$chforwardstrings)
+#' #data(mstrata)
+#' #mstrata$freq=1
+#' #x=hmmDemo(mstrata,id=1,model="hmmMSCJS")
+#' #rowSums(x$alpha*x$beta)
+#' #exp(x$lnl)
 #' # state probabilities given the data
-#' x$alpha*x$beta/exp(x$lnl)
+#' #x$alpha*x$beta/exp(x$lnl)
 hmmDemo <- function(data,id,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
 		groups = NULL, time.intervals = NULL,accumulate=FALSE,chunk_size=1e7, strata.labels=NULL,state.names=NULL,obs.names=NULL,...)
 {

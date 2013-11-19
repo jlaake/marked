@@ -30,5 +30,8 @@ hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
 hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
 hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
 hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
-hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	1	FALSE
+hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
 hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2	FALSE
+HMMStageOcc	Psi0	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+HMMStageOcc	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+HMMStageOcc	Epsilon	1	-1	0	Square	logit	~1	TRUE	FALSE	TRUE	0	TRUE

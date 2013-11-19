@@ -2,7 +2,8 @@
 \alias{predict.crm}
 \title{Compute estimates of real parameters}
 \usage{
-  \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select,...)
+  \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
+    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
 }
 \arguments{
   \item{object}{model object}

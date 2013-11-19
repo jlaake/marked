@@ -334,7 +334,9 @@ library(RMark)
 data(dipper)
 data(mstrata)
 mark(dipper,model.parameters=list(p=list(formula=~time)),output=FALSE)$results$beta
-mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),output=FALSE)$results$beta
+mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),
+ S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),
+ output=FALSE)$results$beta
 detach("package:RMark")
 ##CJS example
 crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))

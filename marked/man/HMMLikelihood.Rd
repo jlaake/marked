@@ -4,7 +4,8 @@
 \alias{reals}
 \title{Hidden Markov Model likelihood functions}
 \usage{
-  HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,dml,parameters,debug=FALSE)
+  HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
+    dml,parameters,debug=FALSE)
     reals(ddl,dml,parameters,parlist)
     hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 }
