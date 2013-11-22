@@ -256,10 +256,10 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 	   times=begin.time+cbind(rep(0,nrow(x$data)),cum.time.intervals)
 	   cohort=rep(times[cbind(1:nrow(x$data),firstseen)],each=ncol(times))
 	   if(!parameter$interval | all(time.intervals==1))
-	       timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
+	       timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=factor(1:nrow(x$data))),1,paste,collapse=""),
 			       cohort=cohort,time=as.vector(t(times)))
 	   else
-		   timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=1:nrow(x$data)),1,paste,collapse=""),
+		   timedf=data.frame(occid=apply(expand.grid(occ=1:nocc,id=factor(1:nrow(x$data))),1,paste,collapse=""),
 				   cohort=cohort,time=as.vector(t(times)),time.interval=as.vector(t(cbind(time.intervals,rep(NA,nrow(x$data))))))
 	   df$occid=paste(df$occ,df$id,sep="")
 	   df=merge(df,timedf,by="occid")
@@ -338,19 +338,19 @@ create.base.dmdf=function(x,parameter)
 	}
 	if(!parameter$bystratum)
 	{
-		df=expand.grid(occ=occasions,id=1:nrow(x$data))
+		df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))
 		df$seq=1:nrow(df)
 	}
 	else
 	{
 		if(parameter$tostrata)
 		{
-			df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=1:nrow(x$data))
+			df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
 			df$seq=1:nrow(df)
 		}
 		else
 		{
-			df=expand.grid(stratum=sl[1:nstrata],occ=occasions,id=1:nrow(x$data))
+			df=expand.grid(stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
 			df$seq=1:nrow(df)
 		}
 	    if(!is.null(x$strata.list))

@@ -1,5 +1,6 @@
 \name{cjs_gamma}
 \alias{cjs_gamma}
+\alias{ms2_gamma}
 \alias{ms_gamma}
 \title{HMM Transition matrix functions}
 \usage{

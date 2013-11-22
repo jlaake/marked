@@ -24,7 +24,10 @@ print.crm=function(x,...)
 {
    if(!is.null(x$results))x=x$results
    if(class(x)[2]=="admb")
-	   R2admb:::print.admb(x)
+   {
+	   class(x)[1]="admb"
+       print(x)
+   }
    else
    {
 	   cat("\ncrm Model Summary\n")
@@ -53,7 +56,10 @@ coef.crm=function(object,...)
    else
    {
        if(class(object)[2]=="admb")
-		   beta=R2admb:::coef.admb(object)
+	   {
+		   class(object)[1]="admb"
+		   beta=coef(object)
+	   }
        else
 	   {
 	       beta=data.frame(Estimate=unlist(object$beta))

@@ -84,13 +84,13 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 		chmat=t(apply(chmat,1,sub,pattern=strata.labels[nlabel],replacement=nlabel))
 #  Use specified initial values or create if null
 	if(is.null(initial))
-		par=list(Psi=rep(0,ncol(dml$Psi)),
-		         p=rep(0,ncol(dml$p)),
-		         S=rep(0,ncol(dml$S)))
+		par=list(Psi=rep(0,ncol(dml$Psi$fe)),
+		         p=rep(0,ncol(dml$p$fe)),
+		         S=rep(0,ncol(dml$S$fe)))
 	else
 		par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization
-	model_data=list(S.dm=dml$S,p.dm=dml$p,Psi.dm=dml$Psi,imat=imat,S.fixed=parameters$S$fixed,
+	model_data=list(S.dm=dml$S$fe,p.dm=dml$p$fe,Psi.dm=dml$Psi$fe,imat=imat,S.fixed=parameters$S$fixed,
 			p.fixed=parameters$p$fixed,Psi.fixed=parameters$Psi$fixed,time.intervals=time.intervals)
 #   If data are to be accumulated based on ch and design matrices do so here;
 	if(accumulate)

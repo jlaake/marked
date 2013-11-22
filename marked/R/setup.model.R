@@ -53,26 +53,26 @@ setupHMM=function(model_def,model,strata.labels)
 	if(toupper(model)%in%c("PROBITCJS","HMMCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,1)
-		model_def$hmm$fct_dmat=marked:::cjs_dmat
-		model_def$hmm$fct_gamma=marked:::cjs_gamma
-		model_def$hmm$fct_delta=marked:::cjs_delta
+		model_def$hmm$fct_dmat=cjs_dmat
+		model_def$hmm$fct_gamma=cjs_gamma
+		model_def$hmm$fct_delta=cjs_delta
 		model_def$hmm$m=2
 	} else
 	if(toupper(model)%in%c("PROBITMSCJS","HMMMSCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,strata.labels)
-		model_def$hmm$fct_dmat=marked:::ms_dmat
-		model_def$hmm$fct_gamma=marked:::ms_gamma
-		model_def$hmm$fct_delta=marked:::cjs_delta
+		model_def$hmm$fct_dmat=ms_dmat
+		model_def$hmm$fct_gamma=ms_gamma
+		model_def$hmm$fct_delta=cjs_delta
 		model_def$hmm$strata.labels=strata.labels
 		model_def$hmm$m=length(strata.labels)+1
 	}   
 	if(toupper(model)=="HMMUMSCJS")
 	{
 		model_def$hmm$ObsLevels=c(0,strata.labels,"U")
-		model_def$hmm$fct_dmat=marked:::ums_dmat
-		model_def$hmm$fct_gamma=marked:::ms_gamma
-		model_def$hmm$fct_delta=marked:::cjs_delta
+		model_def$hmm$fct_dmat=ums_dmat
+		model_def$hmm$fct_gamma=ms_gamma
+		model_def$hmm$fct_delta=cjs_delta
 		model_def$hmm$strata.labels=strata.labels
 		model_def$hmm$m=length(strata.labels)+1
 	}
@@ -83,14 +83,14 @@ setupHMM=function(model_def,model,strata.labels)
 		obs.states=c(strata.labels$states,"U")
 		strata=strata.labels[[names(strata.labels)[names(strata.labels)!="states"]]]
         model_def$hmm$ObsLevels=c(0,apply(rev(expand.grid(list(obs.states,strata))),1,paste,collapse=""))
-		model_def$hmm$fct_delta=marked:::cjs_delta		
-		model_def$hmm$fct_dmat=marked:::ums2_dmat		
-		model_def$hmm$fct_gamma=marked:::ms_gamma
+		model_def$hmm$fct_delta=cjs_delta		
+		model_def$hmm$fct_dmat=ums2_dmat		
+		model_def$hmm$fct_gamma=ms_gamma
 		model_def$hmm$strata.list=strata.labels
 		model_def$hmm$strata.labels=apply(rev(expand.grid(list(strata.labels$states,strata))),1,paste,collapse="")
 		model_def$hmm$m=length(model_def$hmm$strata.labels)+1
 	}
-	if(toupper(model)=="HMMU2IMSCJS") model_def$hmm$fct_gamma=marked:::ms2_gamma
+	if(toupper(model)=="HMMU2IMSCJS") model_def$hmm$fct_gamma=ms2_gamma
 	return(model_def)
 }
 

@@ -264,10 +264,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    if(is.null(data$id))
     	data$id=factor(1:nrow(data))
    else
-   {
- 	    data=data[order(data$id),]
-	    if(!is.factor(data$id))data$id=factor(data$id)
-   }	
+        stop("data argument cannot contain a variable named id. It is reserved.")	
    #
    #  Get number of records in data set
    #
