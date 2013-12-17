@@ -44,14 +44,14 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   make.ztilde.idx <- function(id, zvec){
   	.Call("makeZtildeIdx", ID=id, zvec=zvec, PACKAGE="marked")
   	}
-  ### Initial values
-  if(is.null(initial)) beta <- cjs.initial(dml,imat=imat,link="probit")
-  else beta <- set.initial(c("Phi","p"),dml,initial)$par
-  beta.z <- beta$Phi	
-  beta.y <- beta$p	  
+  
+  browser()
+  
   ### DATA MANIPULATION ###
   ##  restrict design data so Time>=Cohort and recreate design matrices 
-  restricted.dml <- create.dml(ddl,parameters,design.parameters,restrict=TRUE)  
+  restricted.dml <- create.dml(ddl,parameters,design.parameters,restrict=TRUE) 
+  is.phi.re=!is.null(restricted.dml$Phi$re)
+  is.p.re=!is.null(restricted.dml$p$re)
   ddl$p <- ddl$p[ddl$p$Time>=ddl$p$Cohort,]
   yvec <- ddl$p$Y
   n <- length(yvec)
@@ -60,6 +60,14 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   Xz <- as.matrix(restricted.dml$Phi$fe)
   pn.phi <- colnames(Xz)
   id <- ddl$p$id
+  if(is.phi.re){
+    n.phi.re=sapply(restricted.dml$Phi$re$re.list, function(x){dim(x)[2]})
+    K.phi=do.call("cBind", restricted.dml$Phi$re$re.list)
+  }
+  if(is.p.re){
+    n.p.re=sapply(restricted.dml$p$re$re.list, function(x){dim(x)[2]})
+    K.p=do.call("cBind", restricted.dml$p$re$re.list)
+  }
   ###  PRIOR DISTRIBUTIONS ###
   if(is.null(parameters$Phi$prior)){
 	  tau.b.z <- 0.01
@@ -75,36 +83,62 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
 	  tau.b.y <- parameters$p$prior$tau
 	  mu.b.y <- parameters$p$prior$mu
   }
-  if(!is.null(dml$Phi$re)){
-    n.Phi.re=length(dml$Phi$re)
+  if(is.phi.re){
+    n.phi.re=length(dml$Phi$re)
     if(is.null(parameters$Phi$priors$re)){
-      a.phi=rep(2,n.Phi.re)
-      b.phi=rep(1.0E-4,n.Phi.re)
+      a.phi=rep(2,length(n.phi.re))
+      b.phi=rep(1.0E-4,length(n.phi.re))
+      Q.phi=lapply(n.phi.re, function(x){Diagonal(x)})
     }
     else{
       a.phi=parameters$Phi$priors$re$a.phi
       b.phi=parameters$Phi$priors$re$b.phi
+      Q.phi=parameters$Phi$priors$re$Q.phi
     }
+    Q.phi=.bdiag(Q.phi)
   }
-  if(!is.null(dml$p$re)){
+  if(is.p.re){
     n.p.re=length(dml$p$re)
     if(is.null(parameters$p$priors$re)){
       a.p=rep(2,n.p.re)
       b.p=rep(1.0E-4,n.p.re)
+      Q.p=lapply(n.p.re, function(x){Diagonal(x)})
     }
     else{
       a.p=parameters$p$priors$re$a.p
       b.p=parameters$p$priors$re$b.p
+      Q.p=parameters$Phi$priors$re$Q.p
     }
+    Q.p=.bdiag(Q.p)
   }
   
-	  
+  ### Initial values
+  if(is.null(initial)) beta <- cjs.initial(dml,imat=imat,link="probit")
+  else beta <- set.initial(c("Phi","p"),dml,initial)$par
+  beta.z <- beta$Phi  
+  beta.y <- beta$p
+  alpha.phi = rep(0,ncol(K.phi))
+  eta.phi=as.vector(K.phi%*%alpha.phi)
+  alpha.p = rep(0,ncol(K.p))
+  eta.p=as.vector(K.p%*%alpha.p)
+  if(is.re.phi){
+    tau.phi=rep(1,length(n.phi.re))
+    Tau.mat=Diagonal(x=rep(tau.phi, n.phi.re))
+  }
+  
   ### STORAGE ###
   beta.z.stor <- matrix(NA, iter, ncol(Xz))
   beta.y.stor <- matrix(NA, iter, ncol(Xy))
   colnames(beta.z.stor) <- pn.phi
   colnames(beta.y.stor) <- pn.p
-  
+  if(is.phi.re){
+    vc.phi.stor=matrix(NA, iter, n.phi.re)
+    colnames(vc.phi.stor)=names(re.phi)
+  }
+  if(is.p.re){
+    vc.p.stor=matrix(NA, iter, n.p.re)
+    colnames(vc.p.stor)=names(re.p)
+  }
   ### BEGIN MCMC ###
   cat("probitCJS MCMC beginning...\n")
   cat("p model = ", as.character(parameters$p$formula),"\n")
@@ -116,35 +150,39 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   for(m in 1:tot.iter){
     
     ### UPDATE Z ###
-   zvec <- sample.z(id=id, mu.y=Xy%*%beta.y, mu.z=Xz%*%beta.z, yvec)
+   zvec <- sample.z(id=id, mu.y=Xy%*%beta.y+eta.p, mu.z=Xz%*%beta.z+eta.phi, yvec)
     
     ### UPDATE Z.TILDE ### 
     a <- ifelse(zvec==0, -Inf, 0)
     b <- ifelse(zvec==0, 0, Inf)
-    z.tilde <- rtruncnorm(n, a=a, b=b, mean=Xz%*%beta.z, sd=1)
+    z.tilde <- rtruncnorm(n, a=a, b=b, mean=Xz%*%beta.z+eta.phi, sd=1)
     
     ### BETA.Z UPDATE ###
     idx.z.tilde <- make.ztilde.idx(id, zvec)
     Q.b.z <- tau.b.z*crossprod(Xz[idx.z.tilde,])
     V.beta.z.inv <- crossprod(Xz[idx.z.tilde,]) + Q.b.z
-    m.beta.z <- solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]) + crossprod(Q.b.z,mu.b.z))
+    m.beta.z <- solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]-eta.phi[idx.z.tilde]) + crossprod(Q.b.z,mu.b.z))
     beta.z <- m.beta.z + solve(chol(V.beta.z.inv), rnorm(ncol(Xz),0,1))
     if(m>burnin)beta.z.stor[m-burnin,] <- beta.z
     
     ### UPDATE Y.TILDE ### 
     a <- ifelse(yvec==0, -Inf, 0)
     b <- ifelse(yvec==0, 0, Inf)
-    y.tilde <- rtruncnorm(n, a=a, b=b, mean=Xy%*%beta.y, sd=1)
+    y.tilde <- rtruncnorm(n, a=a, b=b, mean=Xy%*%beta.y+eta.p, sd=1)
     
     ### BETA.Y UPDATE ###
     Q.b.y <- tau.b.y*crossprod(Xy[zvec==1,])
     V.beta.y.inv <- crossprod(Xy[zvec==1,]) + Q.b.y
-    m.beta.y <- solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1])+crossprod(Q.b.y,mu.b.y))
+    m.beta.y <- solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1]-eta.p[zvec==1])+crossprod(Q.b.y,mu.b.y))
     beta.y <- m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))
     if(m>burnin) beta.y.stor[m-burnin,] <- beta.y
    
    ### RANDOM EFFECT UPDATES ###
-   
+   if(is.phi.re){
+     for(k in 1:n.phi.re){
+       
+     }
+   }
     
     ### TIMING OF SAMPLER ###
     if(m==30){
