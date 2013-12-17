@@ -67,15 +67,16 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    if(use.admb)accumulate=FALSE
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
-#  so that the initial time interval can vary by animal; use default of 1 if none are in Phi.dmdf
-   time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+#  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
    if(!is.null(ddl$Phi$time.interval))
 	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
-#  If no fixed real parameters are specified, assign dummy unused ones with negative indices and 0 value
-   if(is.null(parameters$Phi$fixed))
-	   parameters$Phi$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
-   if(is.null(parameters$p$fixed))
-	   parameters$p$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
+   else
+	   if(is.vector(x$time.intervals))
+	       time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	   else
+		   time.intervals=x$time.intervals
+#  Create fixed matrices in parameters
+   parameters=create.fixed.matrix(ddl,parameters)
 #  Store data from x into x
    x=x$data
 #  set default frequencies if not used

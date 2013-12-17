@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.1.3
-Date: 2013-8-14
+Date: 2013-11-22
 Title: R Code for mark-recapture analysis
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
@@ -40,6 +40,7 @@ Collate:
     'fix.parameters.r'
     'js.lnl.r'
     'js.r'
+    'hmmDemo.r'
     'make.design.data.R'
     'marked-package.R'
     'merge.design.covariates.r'
@@ -68,11 +69,11 @@ Collate:
     'set.initial.r'
     'mscjs.r'
     'mixed.model.r'
-    'proc.form.r'
     'HMMLikelihood.r'
     'Transition_functions.r'
     'Observation_functions.r'
-    'fitHMM.r'
     'simHMM.r'
     'InitialDistribution_functions.r'
     'probitMsCJS.R'
+    'set.fixed.R'
+    'proc.formula.r'

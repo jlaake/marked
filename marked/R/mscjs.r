@@ -59,15 +59,16 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	accumulate=FALSE
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
-#  so that the initial time interval can vary by animal; use default of 1 if none are in S.dmdf
-	time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
-	if(!is.null(ddl$S$time.interval))
-		time.intervals=matrix(ddl$S$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
-#  If no fixed real parameters are specified, assign dummy unused ones with negative indices and 0 value
-	if(is.null(parameters$S$fixed))
-		parameters$S$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
-	if(is.null(parameters$p$fixed))
-		parameters$p$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
+#  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
+	if(!is.null(ddl$Phi$time.interval))
+		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+	if(is.vector(x$time.intervals))
+		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+		time.intervals=x$time.intervals
+#  Create fixed matrices in parameters
+	parameters=create.fixed.matrix(ddl,parameters)
 #  Store data from x$data into x
 	strata.labels=x$strata.labels
 	uS=x$unobserved
@@ -83,13 +84,13 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 		chmat=t(apply(chmat,1,sub,pattern=strata.labels[nlabel],replacement=nlabel))
 #  Use specified initial values or create if null
 	if(is.null(initial))
-		par=list(Psi=rep(0,ncol(dml$Psi)),
-		         p=rep(0,ncol(dml$p)),
-		         S=rep(0,ncol(dml$S)))
+		par=list(Psi=rep(0,ncol(dml$Psi$fe)),
+		         p=rep(0,ncol(dml$p$fe)),
+		         S=rep(0,ncol(dml$S$fe)))
 	else
 		par=set.initial(names(dml),dml,initial)$par
 #  Create list of model data for optimization
-	model_data=list(S.dm=dml$S,p.dm=dml$p,Psi.dm=dml$Psi,imat=imat,S.fixed=parameters$S$fixed,
+	model_data=list(S.dm=dml$S$fe,p.dm=dml$p$fe,Psi.dm=dml$Psi$fe,imat=imat,S.fixed=parameters$S$fixed,
 			p.fixed=parameters$p$fixed,Psi.fixed=parameters$Psi$fixed,time.intervals=time.intervals)
 #   If data are to be accumulated based on ch and design matrices do so here;
 	if(accumulate)

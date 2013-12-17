@@ -92,24 +92,31 @@
 #' occasion 1. The third element in the row is the real value in the closed
 #' unit interval [0,1] for the fixed parameter.  This approach is completely
 #' general allowing you to fix a particular real parameter for a specific
-#' animal and occasion but it is a bit kludgy and later some other
-#' functionality will be included.  To set all of the real values for a
+#' animal and occasion but it is a bit kludgy. Alternatively, you can set fixed
+#' values by specifying values for a field called fix in the design data for a parameter.
+#' If the value of fix is NA the parameter is estimated and if it is not NA then the real
+#' parameter is fixed at that value.  If you also specify fixed as decribed above, they will over-ride any 
+#' values you have also set with fix in the design data. To set all of the real values for a
 #' particular occasion you can use the following example with the dipper data
 #' as a template:
 #' 
-#' \code{model.parameters=list(Phi=list(,fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),}
-#' \code{rep(1,nrow(dipper)))))}
+#' \code{model.parameters=list(Phi=list(formula=~1,}
+#' \code{fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
 #' 
 #' The above sets \code{Phi} to 1 for the interval between occasions 2 and 3
-#' for all animals. At present there is no modification of the parameter count
-#' to address fixing of real parameters.
+#' for all animals. 
 #' 
-#' Be cautious with this function at present.  It does not include many checks
-#' to make sure values are in the specified range of the data.  Normally this
-#' would not be a big problem but because \code{\link{cjs.lnl}} calls an
-#' external FORTRAN subroutine, if it gets a subscript out of bounds, it will
-#' cause R to terminate.  So make sure to save your workspace frequently if you
-#' use this function in its current implementation.
+#' Alternatively, you could do as follows:
+#' 
+#' data(dipper)
+#' dp=process.data(dipper)
+#' ddl=make.design.data(dp)
+#' ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA)
+#' 
+#' At present there is no modification of the parameter count
+#' to address fixing of real parameters except that if by fixing reals, a beta is not needed in the design it will be dropped.
+#' For example, if you were to use ~time for Phi with survival fixed to 1 for time 2, then then beta for that time would not
+#' be included.
 #' 
 #' To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
 #' The following are instructions for installation with Windows. For other operating systems see (http://www.admb-project.org/downloads) and 
@@ -225,7 +232,9 @@
 #' data(dipper)
 #' data(mstrata)
 #' mark(dipper,model.parameters=list(p=list(formula=~time)),output=FALSE)$results$beta
-#' mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),output=FALSE)$results$beta
+#' mark(mstrata,model="Multistrata",model.parameters=list(p=list(formula=~1),
+#'  S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),
+#'  output=FALSE)$results$beta
 #' detach("package:RMark")
 #' ##CJS example
 #' crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))
@@ -255,8 +264,8 @@ if(is.null(data$data))
       warning("Warning: specification of ddl ignored, as data have not been processed")
       ddl=NULL
    }
-   cat("Model: ",model,"\n")
-   cat("Processing data\n")
+   message("Model: ",model,"\n")
+   message("Processing data\n")
    flush.console()
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
@@ -272,7 +281,7 @@ else
 #
 if(is.null(ddl)) 
 {
-	cat("Creating design data. This can take awhile.\n")
+	message("Creating design data.\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 } else
@@ -302,6 +311,8 @@ if(re) use.admb=TRUE
 if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
+#  setup fixed values 
+ddl=set.fixed(ddl,parameters)
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values
@@ -318,6 +329,7 @@ if("SANN"%in%method)
 }
 if("nlminb"%in%method)control$eval.max=itnmax
 # Call estimation function which depends on the model
+message("Fitting model\n")
 if(model=="CJS")
     runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
@@ -342,19 +354,30 @@ if(model=="PROBITCJS")
 if(substr(model,1,3)=="HMM")
 {
 	if(is.null(data.proc$strata.list))		
-	   runmodel=optim(unlist(initial.list$par),loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+	   runmodel=optim(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
     else
 	{
 		m=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
-		runmodel=optim(unlist(initial.list$par),loglikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+		runmodel=optim(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
 	}
-	par=split(runmodel$par,initial.list$ptype)
-	for(p in names(par))
-		names(par[[p]])=colnames(dml[[p]]$fe)
+	par=vector("list",length=length(names(initial.list$par)))
+	#par=split(runmodel$par,initial.list$ptype)
+	for(p in names(initial.list$par))
+	{
+		par[[p]]=runmodel$par[initial.list$ptype==p]
+		names(par[[p]])=colnames(dml[[p]]$fe)	
+	}
+	runmodel$beta=par
+	runmodel$par=NULL
+	runmodel$neg2lnl=2*runmodel$value
+	runmodel$value=NULL
+	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
+	if(!is.null(runmodel$hessian))runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
+	class(runmodel)=c("crm","mle",model)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file

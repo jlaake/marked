@@ -91,14 +91,17 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	np=ncol(model_data$p.dm)
 	beta.phi=par[1:nphi]
 	beta.p=par[(nphi+1):(nphi+np)]
-	#construct parameter matrices (1 row for each capture history and a column for each occasion)
-	Phis=get.Phi(beta.phi,model_data$Phi.dm,nocc=ncol(model_data$imat$chmat),model_data$imat$Fplus)
+	#construct parameter matrices (1 row for each capture history and a column
+ #for each occasion)
+	Phis=get.Phi(beta.phi,model_data$Phi.dm,nocc=ncol(model_data$imat$chmat),
+                          model_data$imat$Fplus)
 	if(!is.null(model_data$time.intervals))
 	{
 		exponent=cbind(rep(1,nrow(Phis)),model_data$time.intervals)
 		Phis=Phis^exponent
 	}
-	ps=get.p(beta.p,model_data$p.dm,nocc=ncol(model_data$imat$chmat),model_data$imat$Fplus)
+	ps=get.p(beta.p,model_data$p.dm,nocc=ncol(model_data$imat$chmat),
+           model_data$imat$Fplus)
 	if(debug)cat("\\npar = ",par)
 	# Compute probability of dying in interval from Phis
 	M=cbind((1-Phis)[,-1],rep(1,nrow(Phis)))

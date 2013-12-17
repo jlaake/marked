@@ -1,6 +1,7 @@
 \name{cjs_dmat}
 \alias{cjs_dmat}
 \alias{ms_dmat}
+\alias{ums2_dmat}
 \alias{ums_dmat}
 \title{HMM Observation Probability matrix functions}
 \usage{

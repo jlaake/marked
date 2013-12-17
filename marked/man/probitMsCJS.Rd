@@ -1,8 +1,8 @@
-\name{probitCJS}
-\alias{probitCJS}
+\name{probitMsCJS}
+\alias{probitMsCJS}
 \title{Perform MCMC analysis of a CJS model}
 \usage{
-  probitCJS(ddl, dml, parameters, design.parameters,
+  probitMsCJS(ddl, dml, parameters, design.parameters,
     burnin, iter, initial = NULL, imat = NULL)
 }
 \arguments{
@@ -47,18 +47,18 @@
 }
 \description{
   Takes design data list created with the function
-  \link{make.design.data} for model "probitCJS" and draws a
-  sample from the posterior distribution using a Gibbs
+  \link{make.design.data} for model "probitMsCJS" and draws
+  a sample from the posterior distribution using a Gibbs
   sampler.
 }
 \examples{
 \donttest{
 # Analysis of the dipper data
 data(dipper)
-# following example uses unrealistically low values for burnin and
-# iteration to reduce package testing time
+# following example uses unrealistically low values for burnin and iteration
+# to reduce package testing time
 fit1 <- crm(dipper,model="probitCJS",model.parameters=list(Phi=list(formula=~time*sex),
- p=list(formula=~time+sex)), burnin=100, iter=1000)
+p=list(formula=~time+sex)), burnin=100, iter=1000)
 fit1
 # Real parameter summary
 fit1$results$reals

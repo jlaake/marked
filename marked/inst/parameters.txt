@@ -1,34 +1,37 @@
-model	parname	begin	num	default	type	link	formula	bystratum	tostrata	cjs	whichlevel
-NULL	dummy	0	0	0	Triang	logit	~1	FALSE	FALSE	FALSE	0
-CJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0
-CJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	FALSE	0
-JS	Phi	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0
-JS	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0
-JS	pent	1	-1	0	Square	mlogit	~1	FALSE	FALSE	FALSE	0
-JS	N	0	1		Square	log	~1	FALSE	FALSE	FALSE	0
-probitCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0
-probitCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0
-probitMsCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0
-probitMsCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0
-probitMsCJS	Psi	1	-1	0	Triang	mlogit	~1	FALSE	FALSE	FALSE	0
-MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
-MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	FALSE	0
-MSCJS	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0
-hmmCJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0
-hmmCJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0
-hmmMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
-hmmMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
-hmmuMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
-hmmuMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmuMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmuMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
-hmmu2MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
-hmmu2MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmu2MSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0
-hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0
-hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0
-hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	1
-hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2
+model	parname	begin	num	default	type	link	formula	bystratum	tostrata	cjs	whichlevel	interval
+NULL	dummy	0	0	0	Triang	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+CJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE
+CJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+JS	Phi	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	TRUE
+JS	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+JS	pent	1	-1	0	Square	mlogit	~1	FALSE	FALSE	FALSE	0	FALSE
+JS	N	0	1		Square	log	~1	FALSE	FALSE	FALSE	0	FALSE
+probitCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE
+probitCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE
+probitMsCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE
+probitMsCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE
+probitMsCJS	Psi	1	-1	0	Triang	mlogit	~1	FALSE	FALSE	FALSE	0	FALSE
+MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
+MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	FALSE	0	FALSE
+MSCJS	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0	FALSE
+hmmCJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE
+hmmCJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0	FALSE
+hmmMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
+hmmMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
+hmmuMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
+hmmuMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmuMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmuMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
+hmmu2MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
+hmmu2MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmu2MSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
+hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE
+hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE
+hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE
+hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2	FALSE
+HMMStageOcc	Psi0	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+HMMStageOcc	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE
+HMMStageOcc	Epsilon	1	-1	0	Square	logit	~1	TRUE	FALSE	TRUE	0	TRUE

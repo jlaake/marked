@@ -61,22 +61,22 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 {
     nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
-#  so that the initial time interval can vary by animal
-   time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
-   if(!is.null(ddl$Phi$time.interval))
-	   time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+#  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
+	if(!is.null(ddl$Phi$time.interval))
+		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+	if(is.vector(x$time.intervals))
+		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	else
+		time.intervals=x$time.intervals
+#  Create fixed matrices in parameters
+   parameters=create.fixed.matrix(ddl,parameters)
+   parameters$N$fixed=NULL
 # Compute nobstot - total unique critters
    if(nrow(dml$N$fe)==1) 
       nobstot=sum(x$data$freq)    
    else
      nobstot=tapply(x$data$freq,x$data$group,sum)   
-#  If no fixed real parameters are specified, assign dummy unused ones with negative indices and 0 value
-   if(is.null(parameters$Phi.fixed))
-	   parameters$Phi.fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
-   if(is.null(parameters$p.fixed))
-	   parameters$p.fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
-   if(is.null(parameters$pent.fixed))
-	   parameters$pent.fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)  
 #  Store data from x into x
    x=x$data
 #  set default frequencies if not used
@@ -92,8 +92,8 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  Create list of model data for optimization; if passed as an argument create model_data.save 
 #  and use model_data (accumulated values); otherwise create model_data, save it and accumulate it
 #  if requested.
-   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,pent.dm=dml$pent$fe,N.dm=dml$N$fe,imat=imat,Phi.fixed=parameters$Phi.fixed,
-		   p.fixed=parameters$p.fixed,pent.fixed=parameters$pent.fixed,time.intervals=time.intervals)
+   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,pent.dm=dml$pent$fe,N.dm=dml$N$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
+		   p.fixed=parameters$p$fixed,pent.fixed=parameters$pent$fixed,time.intervals=time.intervals)
 #  If data are to be accumulated based on ch and design matrices do so here;
    if(accumulate)
    {

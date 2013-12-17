@@ -48,8 +48,9 @@
   default fields include cohort, age, time which are factor
   variables and Cohort, Age, and Time which are numeric
   versions of the same fields.  The values of these can be
-  altered by values of begin.time and initial.ages set in
-  the call to process.data. In addition if groups are
+  altered by values of begin.time, time.intervals and
+  initial.ages set in the call to
+  \code{\link{process.data}}. In addition if groups are
   identifed the grouping factor variables are added to the
   design data. Any other fields in the data are repeated on
   each record for the animal(s) (eg weight), unless they
@@ -62,6 +63,25 @@
   variables can be refined for each parameter by including
   argument static with the character vector of static
   fields to include.
+
+  After creating design data, you can create a field in the
+  dataframe for a parameter named fix and it can be
+  assigned values at the real parameter for that
+  occasion/id will be fixed at the value. For parameters
+  that are not supposed to be fixed, the field fix should
+  be assigned NA.  For example,
+  ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA) will assign all
+  real Phi values to 1 for the interval beginning at time
+  2. If there is no field fix, then no parameters are
+  fixed.  For mlogit parameters, a fix field is added
+  automatically and the value 1 is specified for the
+  stratum that is supposed to be computed by subtraction
+  and the remainder are set to NA.  If some Psi are not
+  possible then those values can be changed to 0.
+
+  The following variable names are reserved and should not
+  be used in the data:
+  occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 }
 \examples{
 \donttest{

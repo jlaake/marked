@@ -10,13 +10,23 @@
 #' For each record in the design data, default data fields are created based on the model. For example,
 #' for CJS, the default fields include cohort, age, time which are factor variables and Cohort, Age, and Time
 #' which are numeric versions of the same fields.  The values of these can be altered by values of 
-#' begin.time and initial.ages set in the call to process.data. In addition if groups are identifed the
+#' begin.time, time.intervals and initial.ages set in the call to \code{\link{process.data}}. In addition if groups are identifed the
 #' grouping factor variables are added to the design data. Any other fields in the data are repeated on each record
 #' for the animal(s) (eg weight), unless they are defined as time.varying in which case the fields should be named
 #' with the convention xn where x is the base name for the variable and n is the time value (eg, td1999, td2000,...).
 #' For time varying fields the variable name in the design data is the base name and the value for the record is
 #' the one for that occasion(time). The variables can be refined for each parameter by including argument static with the
 #' character vector of static fields to include.
+#' 
+#' After creating design data, you can create a field in the dataframe for a parameter named fix and it can be assigned values
+#' at the real parameter for that occasion/id will be fixed at the value. For parameters that are not supposed to be fixed, the field
+#' fix should be assigned NA.  For example, ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA) will assign all real Phi values to 1 for the interval
+#' beginning at time 2. If there is no field fix, then no parameters are fixed.  For mlogit parameters, a fix field is added automatically and
+#' the value 1 is specified for the stratum that is supposed to be computed by subtraction and the remainder are set to NA.  If some Psi are not possible
+#' then those values can be changed to 0.
+#' 
+#' The following variable names are reserved and should not be used in the data:
+#' occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 #' 
 #' @param data Processed data list; resulting value from process.data
 #' @param parameters Optional list containing a list for each type of parameter
@@ -145,17 +155,43 @@ full.design.data=vector("list",length=length(parameters))
 		  if("Y" %in% names(full.design.data[[i]]))
 			  full.design.data[[i]]$Y=NULL
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
+      # the code now handles parameters for 2iMSCJS where strata are in levels (eg states,areas)
+      labels=data$strata.labels
+	  if(parameters[[i]]$whichlevel==1)labels=data$strata.list$states
+	  if(parameters[[i]]$whichlevel==2)
+	  {
+		  oth.index=which("states"!=names(data$strata.list))
+		  labels=data$strata.list[[oth.index]]
+	  } 
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {
-		  if(is.null(parameters[[i]]$subtract.stratum)) parameters[[i]]$subtract.stratum=data$strata.labels
+		  if(is.null(parameters[[i]]$subtract.stratum)) 
+		  {
+			  if(parameters[[i]]$whichlevel==0)
+			  {
+				  field="stratum"
+			  	  parameters[[i]]$subtract.stratum=data$strata.labels
+			  }
+			  else
+			      if(parameters[[i]]$whichlevel==1)
+				  {
+					  field="state"  
+					  parameters[[i]]$subtract.stratum=data$strata.list$states
+				  }
+				  else
+				  {
+					  field=names(data$strata.list)[oth.index]
+					  parameters[[i]]$subtract.stratum=data$strata.list[[oth.index]]
+				  }
+		  }	  	  
 		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
 		  {
 			  full.design.data[[i]]$fix=NA
-			  if(length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
-			  for(j in 1:length(data$strata.labels))
+			  if(parameters[[i]]$whichlevel==0&length(parameters[[i]]$subtract.stratum)!=length(data$strata.labels)) stop("\nlength of subtract.stratum does not match number of strata")
+			  for(j in 1:length(labels))
 			  {
-				  if(!parameters[[i]]$subtract.stratum[j]%in%data$strata.labels) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
-				  full.design.data[[i]]$fix[full.design.data[[i]]$stratum==data$strata.labels[j] & full.design.data[[i]]$tostratum==parameters[[i]]$subtract.stratum[j]]=1
+				  if(parameters[[i]]$whichlevel==0&&!parameters[[i]]$subtract.stratum[j]%in%data$strata.labels) stop("\n invalid value of subtract.stratum: ",parameters[[i]]$subtract.stratum[j])
+				  full.design.data[[i]]$fix[full.design.data[[i]][field]==labels[j] & full.design.data[[i]][paste("to",field,sep="")]==parameters[[i]]$subtract.stratum[j]]=1
 			  } 
 		  }		  
 	  }
