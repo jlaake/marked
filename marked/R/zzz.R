@@ -21,3 +21,7 @@ print.marked.version <- function()
   cat("\nBye-Bye from marked\n\n")
   return(invisible())
 }
+
+### setMethods for Matrix package
+setMethod(f="%*%", signature=signature(x="ddiMatrix", y="dtTMatrix"), function(x,y) Matrix:::diagCspprod(as(x, "CsparseMatrix"), y))
+

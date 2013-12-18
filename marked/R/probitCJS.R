@@ -22,7 +22,7 @@
 #' \item{beta}{list with elements Phi and p which contain summary of MCMC iterations for each beta parameter} 
 #' \item{reals}{list with elements Phi and p which contain summary of MCMC iterations for each real parameter} 
 #' @export
-#' @import coda truncnorm
+#' @import coda truncnorm Matrix
 #' @author Devin Johnson
 #' @examples
 #' \donttest{
@@ -47,7 +47,7 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   	.Call("makeZtildeIdx", ID=id, zvec=zvec, PACKAGE="marked")
   	}
   
-  browser()
+  #browser()
   
   ### DATA MANIPULATION ###
   ##  restrict design data so Time>=Cohort and recreate design matrices 
@@ -86,7 +86,7 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
 	  mu.b.y <- parameters$p$prior$mu
   }
   if(is.phi.re){
-    n.phi.re=length(dml$Phi$re)
+    #n.phi.re=length(dml$Phi$re)
     if(is.null(parameters$Phi$priors$re)){
       a.phi=rep(2,length(n.phi.re))
       b.phi=rep(1.0E-4,length(n.phi.re))
@@ -100,13 +100,12 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
     Q.phi=.bdiag(Q.phi)
   }
   if(is.p.re){
-    n.p.re=length(dml$p$re)
+    #n.p.re=length(dml$p$re)
     if(is.null(parameters$p$priors$re)){
-      a.p=rep(2,n.p.re)
-      b.p=rep(1.0E-4,n.p.re)
+      a.p=rep(2,length(n.p.re))
+      b.p=rep(1.0E-4,length(n.p.re))
       Q.p=lapply(n.p.re, function(x){Diagonal(x)})
-    }
-    else{
+    }else{
       a.p=parameters$p$priors$re$a.p
       b.p=parameters$p$priors$re$b.p
       Q.p=parameters$Phi$priors$re$Q.p
@@ -115,18 +114,28 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   }
   
   ### Initial values
-  if(is.null(initial)) beta <- cjs.initial(dml,imat=imat,link="probit")
-  else beta <- set.initial(c("Phi","p"),dml,initial)$par
+  if(is.null(initial)) {
+    beta <- cjs.initial(dml,imat=imat,link="probit")
+  } else beta <- set.initial(c("Phi","p"),dml,initial)$par
   beta.z <- beta$Phi  
   beta.y <- beta$p
-  alpha.phi = rep(0,ncol(K.phi))
-  eta.phi=as.vector(K.phi%*%alpha.phi)
-  alpha.p = rep(0,ncol(K.p))
-  eta.p=as.vector(K.p%*%alpha.p)
-  if(is.re.phi){
-    tau.phi=rep(1,length(n.phi.re))
-    Tau.mat=Diagonal(x=rep(tau.phi, n.phi.re))
-  }
+  
+  browser()
+  
+  if(is.phi.re){
+    alpha.phi = rep(0,ncol(K.phi))
+    eta.phi=as.vector(K.phi%*%alpha.phi)
+    tau.phi=a.phi/b.phi
+    Tau.phi.mat=Diagonal(x=rep(tau.phi, n.phi.re))
+    Q.alpha.phi=Tau.phi.mat%*%Q.phi
+  } else eta.phi=rep(0,nrow(Xz))
+  if(is.p.re){
+    alpha.p = rep(0,ncol(K.p))
+    eta.p=as.vector(K.p%*%alpha.p)
+    tau.p=a.p/b.p
+    Tau.p.mat=Diagonal(x=rep(tau.p, n.p.re))
+    Q.alpha.p=Tau.p.mat%*%Q.p
+  } else eta.p=rep(0,nrow(Xy))
   
   ### STORAGE ###
   beta.z.stor <- matrix(NA, iter, ncol(Xz))
@@ -134,12 +143,14 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
   colnames(beta.z.stor) <- pn.phi
   colnames(beta.y.stor) <- pn.p
   if(is.phi.re){
-    vc.phi.stor=matrix(NA, iter, n.phi.re)
-    colnames(vc.phi.stor)=names(re.phi)
+    alpha.phi.stor=matrix(NA, iter, length(alpha.phi))
+    colnames(alpha.phi.stor)=colnames(K.phi)
+    eta.phi.stor=matrix(NA, iter, length(eta.phi))
   }
   if(is.p.re){
-    vc.p.stor=matrix(NA, iter, n.p.re)
-    colnames(vc.p.stor)=names(re.p)
+    alpha.p.stor=matrix(NA, iter, n.p.re)
+    colnames(alpha.p.stor)=colnames(K.p)
+    eta.p.stor=matrix(NA, iter, length(eta.p))
   }
   ### BEGIN MCMC ###
   cat("probitCJS MCMC beginning...\n")
@@ -181,9 +192,7 @@ probitCJS <- function(ddl,dml,parameters,design.parameters,burnin, iter, initial
    
    ### RANDOM EFFECT UPDATES ###
    if(is.phi.re){
-     for(k in 1:n.phi.re){
-       
-     }
+     
    }
     
     ### TIMING OF SAMPLER ###
