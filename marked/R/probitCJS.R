@@ -134,7 +134,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   beta.z = beta$Phi  
   beta.y = beta$p
   
-  browser()
+  #browser()
   
   if(is.phi.re){
     alpha.phi = rep(0,ncol(K.phi))
