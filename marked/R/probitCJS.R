@@ -174,17 +174,19 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   cat("phi model = ", as.character(parameters$Phi$formula),"\n")
   flush.console()
   
+ # browser()
+  
   tot.iter = burnin + iter
   st = Sys.time()
   for(m in 1:tot.iter){
     
     ### UPDATE Z ###
-   zvec = sample.z(id=id, mu.y=Xy%*%beta.y+eta.p, mu.z=Xz%*%beta.z+eta.phi, yvec)
+   zvec = sample.z(id=id, mu.y=as.vector(Xy%*%beta.y+eta.p), mu.z=as.vector(Xz%*%beta.z+eta.phi), yvec)
     
     ### UPDATE Z.TILDE ### 
     a = ifelse(zvec==0, -Inf, 0)
     b = ifelse(zvec==0, 0, Inf)
-    z.tilde = rtruncnorm(n, a=a, b=b, mean=Xz%*%beta.z+eta.phi, sd=1)
+    z.tilde = rtruncnorm(n, a=a, b=b, mean=as.vector(Xz%*%beta.z+eta.phi), sd=1)
     
     ### BETA.Z UPDATE ###
     idx.z.tilde = make.ztilde.idx(id, zvec)
@@ -197,7 +199,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     ### UPDATE Y.TILDE ### 
     a = ifelse(yvec==0, -Inf, 0)
     b = ifelse(yvec==0, 0, Inf)
-    y.tilde = rtruncnorm(n, a=a, b=b, mean=Xy%*%beta.y+eta.p, sd=1)
+    y.tilde = rtruncnorm(n, a=a, b=b, mean=as.vector(Xy%*%beta.y+eta.p), sd=1)
     
     ### BETA.Y UPDATE ###
     Q.b.y = tau.b.y*crossprod(Xy[zvec==1,])
@@ -220,9 +222,9 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
      Tau.phi.mat = Diagonal(x=rep(tau.phi, n.phi.re))
      Q.alpha.phi = Tau.phi.mat%*%Q.phi
      if(m>burnin) {
-       alpha.phi.stor[m-burnin,] = alpha.phi
-       eta.phi.stor[m-burnin,] = eta.phi
-       tau.phi.stor[m-burnin,] = tau.phi
+       alpha.phi.stor[m-burnin,] = as.vector(alpha.phi)
+       eta.phi.stor[m-burnin,] = as.vector(eta.phi)
+       tau.phi.stor[m-burnin,] = as.vector(tau.phi)
      }
    }
    if(is.p.re){
@@ -238,9 +240,9 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
      Tau.p.mat = Diagonal(x=rep(tau.p, n.p.re))
      Q.alpha.p = Tau.p.mat%*%Q.p
      if(m>burnin) {
-       alpha.p.stor[m-burnin,] = alpha.p
-       eta.p.stor[m-burnin,] = eta.p
-       tau.p.stor[m-burnin,] = tau.p
+       alpha.p.stor[m-burnin,] = as.vector(alpha.p)
+       eta.p.stor[m-burnin,] = as.vector(eta.p)
+       tau.p.stor[m-burnin,] = as.vector(tau.p)
      }
    }
    
@@ -280,7 +282,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     
   } else {
     vc.phi.mcmc=NULL
-    vc.phi.df
+    vc.phi.df=NULL
   }
   if(is.p.re){
     vc.p=mcmc(1/tau.p.stor)
@@ -302,6 +304,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   res=list(beta.mcmc=list(Phi= phibeta.mcmc,p= pbeta.mcmc), var.comp.mcmc=var.comp.mcmc, 
 		   beta=list(Phi=beta.phi,p=beta.p), var.comp=var.comp,
 		   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe))
+  #Make Phi.dm equal to cBind(dml$Phi$fe, K.phi) and include alpha.phi with the mcmc output
   class(res)=c("crm","mcmc","probitCJS")
   return(res)
 }	### END OF FUNCTION ###
