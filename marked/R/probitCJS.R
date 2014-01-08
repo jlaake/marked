@@ -127,12 +127,6 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     Q.p=.bdiag(Q.p)
   }
   
-  if(is.phi.re | is.p.re){
-     cat("Setting up some linear algebra methods for random effects...\n")
-#     testInheritedMethods(f="%*%")
- #    setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), callNextMethod())
-  }
-  
   ### Initial values
   if(is.null(initial)) {
     beta = cjs.initial(dml,imat=imat,link="probit")
@@ -147,14 +141,14 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     eta.phi = as.vector(K.phi%*%alpha.phi)
     tau.phi = a.phi/b.phi
     Tau.phi.mat = Matrix(diag(x=rep(tau.phi, n.phi.re)))
-    Q.alpha.phi = Tau.phi.mat%*%Q.phi
+    Q.alpha.phi = suppressMessages(Tau.phi.mat%*%Q.phi)
   } else eta.phi = rep(0,nrow(Xz))
   if(is.p.re){
     alpha.p = rep(0,ncol(K.p))
     eta.p = as.vector(K.p%*%alpha.p)
     tau.p = a.p/b.p
     Tau.p.mat = Diagonal(x=rep(tau.p, n.p.re))
-    Q.alpha.p = Tau.p.mat%*%Q.p
+    Q.alpha.p = suppressMessages(Tau.p.mat%*%Q.p)
   } else eta.p = rep(0,nrow(Xy))
   
   ### STORAGE ###
@@ -214,6 +208,8 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     beta.y = m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))
     if(m>burnin) beta.y.stor[m-burnin,] = beta.y
    
+   #browser()
+   
    ### RANDOM EFFECT UPDATES ###
    if(is.phi.re){
      ### ALPHA.PHI UPDATE ###
@@ -223,7 +219,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
      alpha.phi = m.alpha.phi + solve(chol(V.alpha.phi.inv), rnorm(ncol(K.phi),0,1))
      eta.phi = K.phi%*%alpha.phi
      ### TAU.PHI UPDATE
-     quad.phi = crossprod(m.phi.re*alpha.phi,Q.phi)%*%(m.phi.re*alpha.phi)/2
+     quad.phi = suppressMessages(crossprod(m.phi.re*alpha.phi,Q.phi))%*%(m.phi.re*alpha.phi)/2
      tau.phi = rgamma(length(n.phi.re), rnks.phi/2 + a.phi, as.numeric(quad.phi) + b.phi)
      Tau.phi.mat = Diagonal(x=rep(tau.phi, n.phi.re))
      Q.alpha.phi = Tau.phi.mat%*%Q.phi
