@@ -7,24 +7,25 @@
 #' re.model contains elements sub, the grouping formula and model the design formula for the
 #' random effect. Each formula is of type character and must be wrapped with as.formula in use with model.matrix
 #' @author Devin Johnson <devin.johnson@@noaa.gov>
+#' @importFrom lme4 nobars findbars
 #' 
 proc.form <- function(f){
-	tms <- terms(f)
-	tms.lab <- attr(tms, "term.labels")
-	tms.lst <- strsplit(tms.lab, rep(" | ",length(tms.lab)), fixed=TRUE)
-	fix.var <- attr(tms, "term.labels")[sapply(tms.lst, "length")==1]
-	if(length(fix.var)==0) 
-		fix.model="~1"
-	else
-	if(length(grep("-1",f))==0)
-		fix.model <- paste("~ ",paste(fix.var, collapse=" + "))
-	else
-		fix.model <- paste("~ -1 +",paste(fix.var, collapse=" + "))
-	re.lst <- tms.lst[sapply(tms.lst, "length")==2]
-	if(length(re.lst)==0) re.model <- NULL
-	else{
-		re.model <- lapply(re.lst, function(x){list(model=paste("~",x[1]), sub=paste("~",x[2],"-1", collapse=""))})
-		names(re.model) <- sapply(re.lst, function(x) x[2])
+  fix.model = deparse(lme4::nobars(f))
+  if(fix.model=="NULL") fix.model="~ 1"
+  re.lst = lme4::findbars(f)
+	if(length(re.lst)==0){
+    re.model <- NULL
+	} else{
+		re.model <- lapply(re.lst, reSplit)
+		names(re.model) <- sapply(re.lst, function(x){deparse(x)})
 	}
 	return(list(fix.model=fix.model, re.model=re.model))
+}
+
+
+reSplit = function(x){
+  s=strsplit(deparse(x), " | ")[[1]][-2]
+  model=paste("~", s[1])
+  sub=paste("~", s[2], "- 1")
+  return(list(model=model, sub=sub))
 }

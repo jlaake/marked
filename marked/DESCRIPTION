@@ -19,7 +19,8 @@ Imports:
     Matrix,
     numDeriv,
     Rcpp (>= 0.9.13),
-    plyr
+    plyr,
+    lme4
 LinkingTo: Rcpp
 Suggests:
     RMark
@@ -28,52 +29,3 @@ SystemRequirements: ADMB version 11 (http://admb-project.org/) for
 LazyLoad: yes
 License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
-Collate:
-    'cjs.accumulate.R'
-    'cjs.initial.R'
-    'cjs.lnl.r'
-    'cjs.R'
-    'create.dm.R'
-    'create.dmdf.R'
-    'create.links.r'
-    'crm.R'
-    'fix.parameters.r'
-    'js.lnl.r'
-    'js.r'
-    'hmmDemo.r'
-    'make.design.data.R'
-    'marked-package.R'
-    'merge.design.covariates.r'
-    'print.crm.r'
-    'process.ch.R'
-    'process.data.R'
-    'setup.model.R'
-    'setup.parameters.R'
-    'utility.R'
-    'valid.parameters.R'
-    'zzz.R'
-    'probitCJS.R'
-    'splitCH.R'
-    'cjs.hessian.r'
-    'extract.fcts.r'
-    'summary.fcts.R'
-    'crm.wrapper.R'
-    'js.hessian.R'
-    'js.accumulate.R'
-    'compute.real.R'
-    'convert.link.to.real.r'
-    'deriv.inverse.link.R'
-    'inverse.link.R'
-    'predict.crm.r'
-    'scale.r'
-    'set.initial.r'
-    'mscjs.r'
-    'mixed.model.r'
-    'HMMLikelihood.r'
-    'Transition_functions.r'
-    'Observation_functions.r'
-    'simHMM.r'
-    'InitialDistribution_functions.r'
-    'probitMsCJS.R'
-    'set.fixed.R'
-    'proc.formula.r'

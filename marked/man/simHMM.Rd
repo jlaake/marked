@@ -2,11 +2,10 @@
 \alias{simHMM}
 \title{Simulates data from Hidden Markov Model}
 \usage{
-  simHMM(data, ddl = NULL, begin.time = 1,
-    model = "hmmCJS", title = "",
-    model.parameters = list(), design.parameters = list(),
-    initial = NULL, groups = NULL, time.intervals = NULL,
-    accumulate = TRUE, strata.labels = NULL)
+simHMM(data, ddl = NULL, begin.time = 1, model = "hmmCJS", title = "",
+  model.parameters = list(), design.parameters = list(), initial = NULL,
+  groups = NULL, time.intervals = NULL, accumulate = TRUE,
+  strata.labels = NULL)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -48,27 +47,27 @@
   unobserved strata p=0..}
 }
 \value{
-  dataframe with simulated data
+dataframe with simulated data
 }
 \description{
-  Creates a set of data from a specified HMM model for
-  capture-recapture data.
+Creates a set of data from a specified HMM model for
+capture-recapture data.
 }
 \details{
-  The specification for the simulation includes a set of
-  data with at least 2 unique ch and freq value to specify
-  the number of ch values to simulate that start at the
-  specified occasion. For example, 1000 50 0100 50 0010 50
-  would simulate 150 capture histories with 50 starting at
-  each of occasions 1 2 and 3. The data can also contain
-  other fields used to generate the model probabilities and
-  each row can have freq=1 to use individual covariates.
-  Either a dataframe (data) is provided and it is processed
-  and the design data list are created or the processed
-  dataframe and design data list are provided. Formula for
-  the model parameters for generating the data are provided
-  in model.parameters and parameter values are provided in
-  initial.
+The specification for the simulation includes a set of data
+with at least 2 unique ch and freq value to specify the
+number of ch values to simulate that start at the specified
+occasion. For example, 1000 50 0100 50 0010 50 would
+simulate 150 capture histories with 50 starting at each of
+occasions 1 2 and 3. The data can also contain other fields
+used to generate the model probabilities and each row can
+have freq=1 to use individual covariates. Either a
+dataframe (data) is provided and it is processed and the
+design data list are created or the processed dataframe and
+design data list are provided. Formula for the model
+parameters for generating the data are provided in
+model.parameters and parameter values are provided in
+initial.
 }
 \examples{
 # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
@@ -83,6 +82,6 @@ df=simHMM(data.frame(ch=c("1000","0100","0010"),freq=rep(50,3),stringsAsFactors=
     initial=list(Phi=c(1),p=c(0,1,2)))
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 

@@ -2,7 +2,7 @@
 \alias{create.fixed.matrix}
 \title{Create parameters with fixed matrix}
 \usage{
-  create.fixed.matrix(ddl, parameters)
+create.fixed.matrix(ddl, parameters)
 }
 \arguments{
   \item{ddl}{design data list}
@@ -10,13 +10,13 @@
   \item{parameters}{parameter specififcation list}
 }
 \value{
-  parameters with fixed matrix set
+parameters with fixed matrix set
 }
 \description{
-  Creates fixed matrix in parameters from ddl$fix values
+Creates fixed matrix in parameters from ddl$fix values
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \keyword{utility}
 

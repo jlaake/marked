@@ -127,6 +127,12 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     Q.p=.bdiag(Q.p)
   }
   
+  if(is.phi.re | is.p.re){
+     cat("Setting up some linear algebra methods for random effects...\n")
+#     testInheritedMethods(f="%*%")
+ #    setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), callNextMethod())
+  }
+  
   ### Initial values
   if(is.null(initial)) {
     beta = cjs.initial(dml,imat=imat,link="probit")
@@ -134,13 +140,13 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   beta.z = beta$Phi  
   beta.y = beta$p
   
-  #browser()
+  # browser()
   
   if(is.phi.re){
     alpha.phi = rep(0,ncol(K.phi))
     eta.phi = as.vector(K.phi%*%alpha.phi)
     tau.phi = a.phi/b.phi
-    Tau.phi.mat = Diagonal(x=rep(tau.phi, n.phi.re))
+    Tau.phi.mat = Matrix(diag(x=rep(tau.phi, n.phi.re)))
     Q.alpha.phi = Tau.phi.mat%*%Q.phi
   } else eta.phi = rep(0,nrow(Xz))
   if(is.p.re){
@@ -279,10 +285,20 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     vc.phi.df=data.frame(mode=apply(vc.phi, 2, mcmc_mode),mean=apply(vc.phi, 2, mean),
                        sd=apply(vc.phi,2,sd),
                        CI.lower=HPDinterval(vc.phi)[,1], CI.upper=HPDinterval(vc.phi)[,2])
+    re.struc.Phi=list(K=K.phi, Q=Q.phi)
+    phialpha.mcmc=mcmc(alpha.phi.stor)
+    hpd.phi = HPDinterval(phialpha.mcmc)
+    alpha.phi = data.frame( mode = apply(alpha.phi.stor, 2, mcmc_mode), 
+                         mean=apply(alpha.phi.stor, 2, mean), 
+                         sd=apply(alpha.phi.stor,2,sd),
+                         CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])  
     
   } else {
     vc.phi.mcmc=NULL
     vc.phi.df=NULL
+    re.struc.Phi=NULL
+    alpha.phi=NULL
+    phialpha.mcmc=NULL
   }
   if(is.p.re){
     vc.p=mcmc(1/tau.p.stor)
@@ -290,20 +306,30 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     vc.p.df=data.frame(mode=apply(vc.p, 2, mcmc_mode),mean=apply(vc.p, 2, mean),
                        sd=apply(vc.p,2,sd),
                        CI.lower=HPDinterval(vc.p)[,1], CI.upper=HPDinterval(vc.p)[,2])
+    re.struc.p=list(K=K.p, Q=Q.p)
+    palpha.mcmc=mcmc(alpha.p.stor)
+    hpd.p = HPDinterval(phialpha.mcmc)
+    alpha.p = data.frame( mode = apply(alpha.p.stor, 2, mcmc_mode), 
+                            mean=apply(alpha.p.stor, 2, mean), 
+                            sd=apply(alpha.p.stor,2,sd),
+                            CI.lower=hpd.p[,1], CI.upper=hpd.p[,2])  
+    
   } else {
     vc.p=NULL
     vc.p.df=NULL
+    re.struc.p=NULL
+    alpha.p=NULL
+    palpha.mcmc=NULL
   }
-  if(is.phi.re | is.p.re) {
-    var.comp.mcmc=list(Phi=vc.phi, p=vc.p)
-    var.comp=list(Phi=vc.phi.df, p=vc.p.df)
-  } else {
-    var.comp.mcmc=NULL
-    var.comp=NULL
-  }
-  res=list(beta.mcmc=list(Phi= phibeta.mcmc,p= pbeta.mcmc), var.comp.mcmc=var.comp.mcmc, 
-		   beta=list(Phi=beta.phi,p=beta.p), var.comp=var.comp,
-		   model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe))
+  res=list(beta=list(Phi=beta.phi,p=beta.p),
+           alpha=list(Phi=alpha.phi,p=alpha.p),
+           var.comp=list(Phi=vc.phi.df, p=vc.p.df),
+           beta.mcmc=list(Phi=phibeta.mcmc, p=pbeta.mcmc), 
+           alpha.mcmc=list(Phi=phialpha.mcmc, p=palpha.mcmc),
+           var.comp.mcmc=list(Phi=vc.phi, p=vc.p), 
+           model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe), 
+           re.struct=list(Phi=re.struc.Phi, p=re.struc.p)
+       )
   #Make Phi.dm equal to cBind(dml$Phi$fe, K.phi) and include alpha.phi with the mcmc output
   class(res)=c("crm","mcmc","probitCJS")
   return(res)
