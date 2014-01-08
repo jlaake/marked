@@ -2,3 +2,6 @@
 .Rhistory
 .RData
 mcmcTesting.R
+*.Rproj
+*.o
+*.so
