@@ -1,0 +1,11181 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\begin_preamble
+
+\usepackage{epsfig}\usepackage{psfrag}\usepackage{amsmath}
+
+
+%\setlength{\evensidemargin}{0in} \setlength{\oddsidemargin}{0in}
+%\setlength{\topmargin}{0.0in} \setlength{\textwidth}{6.5in}
+%\setlength{\textheight}{9in} \setlength{\topskip}{0in}
+%\setlength{\headheight}{0in} \setlength{\headsep}{0in}
+\usepackage[labelfont=bf,labelsep=period]{caption}
+\usepackage{rotating}
+\usepackage{fancyhdr}
+\renewcommand{\headrulewidth}{0 in}
+\renewcommand{\footrulewidth}{0 in}
+\end_preamble
+\use_default_options false
+\begin_modules
+customHeadersFooters
+knitr
+\end_modules
+\maintain_unincluded_children false
+\begin_local_layout
+Style Bibliography
+TopSep                4
+LabelString           "CITATIONS"
+       Align                 Center
+LabelFont
+  Series              Bold
+  Size                 Large
+EndFont
+End
+\end_local_layout
+\language english
+\language_package none
+\inputencoding latin9
+\fontencoding default
+\font_roman times
+\font_sans default
+\font_typewriter default
+\font_default_family rmdefault
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize 12
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_amsmath 2
+\use_esint 1
+\use_mhchem 0
+\use_mathdots 0
+\cite_engine natbib_authoryear
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 0
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle fancy
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%% TITLE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset FormulaMacro
+\newcommand{\baselinestretch}{1.8}
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+CAPTURE-RECAPTURE ANALYSIS 
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+WITH HIDDEN MARKOV MODELS
+\size default
+
+\begin_inset VSpace 1in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+Jeffrey L.
+ Laake
+\size default
+
+\begin_inset VSpace 2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align center
+ 
+\end_layout
+
+\begin_layout Standard
+\align center
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.25}
+\end_inset
+
+ 
+\size large
+National Marine Mammal Laboratory 
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+Alaska Fisheries Science Center
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+National Marine Fisheries Service, NOAA
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+7600 Sand Point Way NE Seattle WA 98115
+\end_layout
+
+\begin_layout Standard
+\align center
+
+\size large
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+em
+\end_layout
+
+\end_inset
+
+ Email:
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+ jeff.laake@noaa.gov
+\size default
+ 
+\begin_inset VSpace 1in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+Dec 2013
+\end_layout
+
+\begin_layout Center Footer
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+roman{page}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Left Footer
+
+\end_layout
+
+\begin_layout Right Footer
+
+\end_layout
+
+\begin_layout Left Header
+
+\end_layout
+
+\begin_layout Center Header
+
+\end_layout
+
+\begin_layout Right Header
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{2}
+\end_inset
+
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%  make sure that the document has 25 lines per page (it is 12 pt)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+textheight}{575pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+
+\backslash
+setlength{
+\backslash
+baselineskip}{24pt}
+\end_layout
+
+\end_inset
+
+ 
+\begin_inset ERT
+status collapsed
+
+\begin_layout Plain Layout
+
+%think this may do doublespacing (required for submission I think)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+ 
+\series bold
+\size normal
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "ABSTRACT"
+
+\end_inset
+
+ABSTRACT
+\series default
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align block
+Hidden Markov models (HMM) provide a simple, elegant and general structure
+ for development of existing and new models for capture-recapture analysis.
+ These models have been used recently for relatively complex capture-recapture
+ settings and the simplicity and generality of HMMs could be easily missed
+ amongst the model details.
+ To illustrate the simplicity and generality of HMMs, I describe how HMMs
+ can be used to fit capture-recapture models starting with the simple Cormack-Jo
+lly-Seber (CJS) model and extend to multi-state models with state uncertainty.
+ I demonstrate the HMM algorithm for likelihood computation and explain
+ R code that can be used to fit HMMs to make this very useful algorithm
+ more accessible to analysts of capture-recapture data.
+ Development of models to allow for tag loss, hierarchy of state transitions,
+ and second-order Markov processes for breeding-feeding area transitions
+ are relatively easily done with this framework.
+ 
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align block
+
+\series bold
+\size normal
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+ 
+\size normal
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+\size normal
+CONTENTS
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Abstract
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+ iii
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Introduction
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "INTRODUCTION"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Background
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "Hidden Markov Model Likelihood and Algorithm"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Cormack-Jolly-Seber Models
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "CJS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Multi-state Models
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "MS models"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Multi-state Models with State Uncertainty
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "MS models-uncertain"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Summary
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "Summary"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Acknowledgments
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "ACKNOWLEDGMENTS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Citations
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "CITATIONS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align left
+Appendix
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+dotfill
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand pageref
+reference "Appendix"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+\size normal
+\begin_inset Newpage newpage
+\end_inset
+
+
+\begin_inset Newpage pagebreak
+\end_inset
+
+INTRODUCTION
+\begin_inset CommandInset label
+LatexCommand label
+name "INTRODUCTION"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+
+\size normal
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.0}
+\end_inset
+
+ 
+\begin_inset FormulaMacro
+\renewcommand{\baselinestretch}{1.0}
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+setcounter{page}{1}
+\end_layout
+
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thispagestyle{empty}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Center Footer
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+thepage
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+data(mstrata)
+\end_layout
+
+\begin_layout Plain Layout
+
+detach(package:RMark)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Pradel (2005) describes the use of hidden Markov models (HMM) for multi-state
+ capture-recapture models with uncertain states.
+ His work was followed by similar applications by Ford et al.
+ (2012), Kendall et al.
+ (2012), and Langrock and King (2013).
+ In each case, the models were fairly complex and the simplicity and generality
+ of HMMs could be easily missed amongst the model details.
+ I will attempt to elucidate both the simplicity and generality of HMMs
+ for capture-recapture models by starting with a fairly simple example and
+ showing how a variety of more complex models are easily derived.
+ Hopefully this will make this very useful algorithm more accessible to
+ analysts of capture-recapture data.
+ I assume that the reader has a basic understanding and knowledge of capture-rec
+apture models and statistical concepts.
+ A table of notation is provided in the Appendix I.
+\end_layout
+
+\begin_layout Standard
+An HMM is defined as an unobserved sequence 
+\begin_inset Formula $\left\{ C_{t}:\: t=1,2,...T\right\} $
+\end_inset
+
+ that satisfies the Markov property, Pr
+\begin_inset Formula $(C_{t}\,|\, C_{t-1},..,C_{1})$
+\end_inset
+
+ = Pr
+\begin_inset Formula $(C_{t}\,|\, C_{t-1}$
+\end_inset
+
+) which generates an observable state-dependent sequence 
+\begin_inset Formula $\left\{ X_{t}:\: t=1,2,...,T\right\} $
+\end_inset
+
+(Zucchini and MacDonald 2009).
+ For many types of capture-recapture models, the observed values of the
+ sequence (capture-history)
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+can include the typically unknown state values (
+\begin_inset Formula $C_{t}$
+\end_inset
+
+).
+ I will focus on those types of applications including Cormack-Jolly-Seber
+ (CJS) and extensions that include multiple states and state uncertainty.
+ Each of these models will be conditioned on the initial release in a known
+ state but this can easily be generalized (Kendall et al.
+ 2012).
+ 
+\end_layout
+
+\begin_layout Standard
+The models and code are in the 
+\family sans
+R 
+\family default
+\size normal
+(R Core Development Team 2012)
+\size default
+ package 
+\family sans
+'marked'
+\family default
+ (Laake et al.
+ 2013).
+ I will fit examples of each model using function 
+\family sans
+crm.
+
+\family default
+ In doing so I will refer to other functions (e.g., 
+\family sans
+process.data
+\family default
+, 
+\family sans
+make.design.data
+\family default
+) in 
+\family sans
+'marked'
+\family default
+ but will not describe those functions in detail.
+ See Laake et al.
+ (2013) and the help in 
+\family sans
+'marked'
+\family default
+ for further function documentation.
+ Here I will focus on the the algorithm used to fit HMMs and the code needed
+ to specify each of the models.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+Hidden Markov Model Likelihood and Algorithm
+\size normal
+
+\begin_inset CommandInset label
+LatexCommand label
+name "Hidden Markov Model Likelihood and Algorithm"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+For a detailed explanation of HMMs see Zucchini and MacDonald (2009) from
+ which this material was drawn.
+ Here I will provide an overview of the HMM likelihood in the specific context
+ of capture-recapture models which are a sequence of discrete observations
+ that typically do not assume a stationary state distribution.
+ Let 
+\begin_inset Formula $C_{t}$
+\end_inset
+
+ be an integer from 1 to 
+\shape italic
+m
+\shape default
+ representing the true states and 
+\begin_inset Formula $x_{t}$
+\end_inset
+
+ be an integer from 1 to 
+\shape italic
+s
+\shape default
+ representing the observations.
+ The integers can be attached to state labels (e.g., A or Alive for 1 and
+ D or Dead for 2) or observation labels (e.g., 1: not seen with label 0, and
+ 2: seen with label 1).
+ In describing the HMM algorithm I will use the simple Cormack-Jolly-Seber
+ (CJS) model which is used to estimate survival.
+ For the CJS model, there are 
+\shape italic
+m
+\shape default
+ = 2 states: Alive (1 = A) and Dead (2 = D).
+ The 
+\shape italic
+s
+\shape default
+ = 2 possible observations are 0 when an animal is not seen at an occasion
+ and the state is unknown and 1 when the animal is seen at an occasion and
+ thus known to be alive.
+ 
+\end_layout
+
+\begin_layout Standard
+For CJS with a single release occasion followed by five recapture occasions,
+ a realization of the state sequence 
+\begin_inset Formula $\left\{ C_{t}:\: t=1,2,...T=6\right\} $
+\end_inset
+
+ might be AAAADD.
+ The animal was released alive on the first occasion but died in the interval
+ between the 4th and 5th occasions.
+ The true state sequence is assumed to be first-order Markov.
+ For CJS, this means that at each occasion the probability the animal is
+ alive or dead depends only on the state at the previous occasion.
+ Typically in CJS 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is used to represent apparent survival probability recognizing that it
+ includes permanent emigration.
+ However, I will use S for survival because later 
+\begin_inset Formula $\phi$
+\end_inset
+
+ is used to describe the HMM algorithm.
+ If survival probability (
+\begin_inset Formula $S$
+\end_inset
+
+) is constant, the four possible transition probabilities are Pr
+\begin_inset Formula $(C_{t}=\textrm{A}\,|\, C_{t-1}=\textrm{A})=S$
+\end_inset
+
+, Pr
+\begin_inset Formula $(C_{t}=\mathtt{\textrm{D}}\,|\, C_{t-1}=\textrm{A})=1-S$
+\end_inset
+
+, Pr
+\begin_inset Formula $(C_{t}=\textrm{D}\,|\, C_{t-1}=\textrm{D})=1$
+\end_inset
+
+, and Pr
+\begin_inset Formula $(C_{t}=\textrm{A}\,|\, C_{t-1}=\textrm{D})=0$
+\end_inset
+
+.
+ These state transition probabilities are the elements of the 
+\shape italic
+
+\begin_inset Formula $m\,\times m$
+\end_inset
+
+
+\shape default
+ transition probability matrix 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+.
+ The 
+\begin_inset Formula $jk^{th}$
+\end_inset
+
+ element of 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+, 
+\begin_inset Formula $\gamma_{jk}$
+\end_inset
+
+ is the probability of transitioning from state 
+\shape italic
+j
+\shape default
+ to state 
+\shape italic
+k
+\shape default
+.
+ The rows of 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+ must sum to 1 (
+\begin_inset Formula $\sum_{k=1}^{m}\gamma_{jk}=1$
+\end_inset
+
+ for all 
+\shape italic
+j
+\shape default
+).
+ For CJS, 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+ is:
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+: Transition Matrix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Alive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Alive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+.
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Unless we can observe the animal at each occasion, we only partially observe
+ the true state sequence.
+ When the animal is seen we know it is alive, but it could be either alive
+ or dead if it is not seen.
+ In principle there could be 
+\begin_inset Formula $2^{5}$
+\end_inset
+
+ realizations of the 0-1 observation sequences but the number of possible
+ realizations is less because for some states 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+some observations are not possible (e.g., Pr
+\begin_inset Formula $(X_{t}=1|C_{t}=\textrm{D})=0$
+\end_inset
+
+)
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ .
+ For example, one possible observation sequence might be 110100.
+ The first 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ implies that the animal was released.
+ The animal was subsequently seen (recaptured) on the second and fourth
+ occasions but not on the third occasion.
+ It cannot be seen on the fifth and sixth occasions because the animal is
+ dead (
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Pr
+\begin_inset Formula $(X_{t}=1|\mathrm{\textrm{D}})=0$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+) and the CJS model does not use recoveries of dead animals.
+ These conditional probabilities of the observations given the state are
+ used in the state-dependent probability matrix 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ which has 
+\shape italic
+s
+\shape default
+ rows and 
+\shape italic
+m
+\shape default
+ columns where the element 
+\begin_inset Formula $d_{ij}$
+\end_inset
+
+ is the Pr(
+\begin_inset Formula $X_{t}=i\,|\, C_{t}=j)$
+\end_inset
+
+ and the columns sum to 1 (
+\begin_inset Formula $\sum_{i=1}^{s}d_{ij}=1$
+\end_inset
+
+ for all 
+\shape italic
+j
+\shape default
+).
+ For CJS, 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ is
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ : State-dependent Probability Matrix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="3" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Alive
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Dead
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0(not seen)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1(seen)
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+.
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The rows of 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ are extracted to create an 
+\shape italic
+
+\begin_inset Formula $m\,\times m$
+\end_inset
+
+
+\shape default
+ diagonal matrix 
+\begin_inset Formula $\boldsymbol{P}(x_{t})$
+\end_inset
+
+ where the 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ diagonal value is 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Pr
+\begin_inset Formula $(X_{t}=x_{t}|\mathrm{C_{t}=i})$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ For CJS, 
+\family default
+\series default
+\shape italic
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+s
+\shape default
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+= 2.
+ There are two values, 0 (not seen) and 1 (seen) for 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $x_{t}$
+\end_inset
+
+, so there are only two possible values of 
+\begin_inset Formula $\boldsymbol{P}(x_{t})$
+\end_inset
+
+ which are
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{P}(0)=\left[\begin{array}{cc}
+1-p & 0\\
+0 & 1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\boldsymbol{P}(1)=\left[\begin{array}{cc}
+p & 0\\
+0 & 0
+\end{array}\right]\,.
+\]
+
+\end_inset
+
+
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In addition to 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{P}(x_{t})$
+\end_inset
+
+, the other quantity used to calculate the likelihood is 
+\begin_inset Formula $\delta$
+\end_inset
+
+, the row vector of 
+\shape italic
+m
+\shape default
+ values for the initial state probability distribution, For CJS, 
+\shape italic
+m
+\shape default
+ = 2 so 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+is the row vector with elements 1 for Alive and 0 for Dead, (e.g.,
+\begin_inset Formula $\delta=[1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ 0]) because the animal is released alive.
+ The likelihood for a single sequence (e.g., a single capture history) is
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+L_{T}=\delta\boldsymbol{P}_{1}(x_{1})\mathbf{\boldsymbol{\Gamma}}_{1}\boldsymbol{P}_{2}(x_{2})\mathbf{\boldsymbol{\Gamma}}_{2}\boldsymbol{P}_{3}(x_{3})...\mathbf{\boldsymbol{\Gamma}}_{T-1}\boldsymbol{P}_{T}(x_{T}\mathbf{\mathrm{)}}\boldsymbol{1}^{\prime}\,.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+This differs slightly from Equation 2.12 in Zucchini and MacDonald (2009)
+ in that 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{P}(x_{t})$
+\end_inset
+
+ have subscripts to recognize the possibility of time dependent matrices.
+ The notation 
+\begin_inset Formula $\boldsymbol{1}^{\prime}$
+\end_inset
+
+ is a column vector of 1s which when multiplied by the resulting final probabili
+ty state vector, sums the probabilities of all states.
+\end_layout
+
+\begin_layout Standard
+The HMM algorithm (Zucchini and MacDonald 2009) recursively computes the
+ likelihood value by traversing along the capture history maintaining a
+ current state row vector 
+\begin_inset Formula $\alpha_{t}$
+\end_inset
+
+ (forward probabilities) where the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ element 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+is the joint probability Pr
+\begin_inset Formula $(X_{1}=x_{1},...X_{t}=x_{t},C_{t}=j)$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+ These forward probabilities are a sequence of vectors 
+\begin_inset Formula $\alpha_{1},\alpha_{2},...,\alpha_{T}$
+\end_inset
+
+ where 
+\begin_inset Formula $\alpha_{1}=\delta\boldsymbol{P}_{1}(x_{1})$
+\end_inset
+
+ and
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Formula 
+\[
+\alpha_{t}=\delta\boldsymbol{P}_{1}(x_{1})\mathbf{\boldsymbol{\Gamma}}_{1}\boldsymbol{P}_{2}(x_{2})\mathbf{\boldsymbol{\Gamma}}_{2}\boldsymbol{P}_{3}(x_{3})...\mathbf{\boldsymbol{\Gamma}}_{T-1}\boldsymbol{P}_{T}(x_{T}\mathbf{\mathrm{)\,.}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+It follows that 
+\begin_inset Formula $\alpha_{t}=\alpha_{t-1}\mathbf{\boldsymbol{\Gamma}}_{t-1}\boldsymbol{P}_{t}(x_{t})$
+\end_inset
+
+ and 
+\begin_inset Formula $L_{T}=\alpha_{T}\boldsymbol{1}^{\prime}$
+\end_inset
+
+.
+ To demonstrate these calculations I will show them for two simple CJS capture
+ histories sequences with 
+\shape italic
+T
+\shape default
+ = 3 and constant survival (
+\begin_inset Formula $S$
+\end_inset
+
+) and capture probability (
+\begin_inset Formula $p$
+\end_inset
+
+) to simplify the notation.
+ 
+\end_layout
+
+\begin_layout Standard
+For CJS, the animal is released alive so 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta=$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ [1 0] and because the animal is released and not recaptured on the first
+ occasion, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\boldsymbol{P}_{1}(1)$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ is by definition:
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Formula 
+\[
+\boldsymbol{P}_{1}(1)=\left[\begin{array}{cc}
+1 & 0\\
+0 & 0
+\end{array}\right]\,,
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+so 
+\begin_inset Formula $\alpha_{1}=\delta\boldsymbol{P}_{1}(1)=$
+\end_inset
+
+ [1 0] for each history.
+ First consider a capture history 100 in which the animal was released and
+ never seen again.
+ Because 
+\begin_inset Formula $x_{2}=0$
+\end_inset
+
+ and 
+\begin_inset Formula $x_{3}=0$
+\end_inset
+
+ we only need 
+\begin_inset Formula $\boldsymbol{\Gamma}_{t}\boldsymbol{P}_{t}(0)$
+\end_inset
+
+ which is the same for each occasion because 
+\begin_inset Formula $S$
+\end_inset
+
+ and 
+\begin_inset Formula $p$
+\end_inset
+
+ do not change over time:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\Gamma\boldsymbol{P}(0)=\left[\begin{array}{cc}
+S & 1-S\\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+1-p & 0\\
+0 & 1
+\end{array}\right]=\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]\,.
+\]
+
+\end_inset
+
+
+\shape default
+\size default
+The value of 
+\begin_inset Formula $\alpha_{2}$
+\end_inset
+
+ is computed by multiplying the row vector 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\alpha_{1}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and matrix 
+\begin_inset Formula $\boldsymbol{\Gamma}\boldsymbol{P}(0)$
+\end_inset
+
+:
+\shape italic
+\size footnotesize
+
+\begin_inset Formula 
+\[
+\alpha_{2}=\alpha_{1}\Gamma\boldsymbol{P}(0)=\left[\begin{array}{cc}
+1 & 0\end{array}\right]\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]=\left[\begin{array}{cc}
+s(1-p)\;\, & 1-S\end{array}\right]\,.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+The value of 
+\begin_inset Formula $\alpha_{3}$
+\end_inset
+
+ is computed by multiplying 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\alpha_{2}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}\boldsymbol{P}(0)$
+\end_inset
+
+: 
+\shape italic
+\size footnotesize
+
+\begin_inset Formula 
+\[
+\alpha_{3}=\alpha_{2}\Gamma\boldsymbol{P}(0)=\left[\begin{array}{cc}
+S(1-p)\;\, & 1-S\end{array}\right]\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]=\left[\begin{array}{cc}
+S^{2}(1-p)^{2}\;\, & (1-S)S(1-p)+1-S\end{array}\right]\,.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+The sum of the elements of 
+\begin_inset Formula $\alpha_{3}$
+\end_inset
+
+ is the probability of observing the capture history 100 which is described
+ in Lebreton et al.
+ (1992) with recursive 
+\begin_inset Formula $\chi$
+\end_inset
+
+ calculations for the tail (ending 0s) probability.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+Now consider a more interesting example capture history with a value of
+ 101.
+ The value of 
+\begin_inset Formula $\alpha_{2}$
+\end_inset
+
+ is the same as the previous capture history because each starts with 10.
+ At occasion 2, there is a non-zero probability that the animal is dead
+ because it was not seen.
+ However, this is updated with the data at occasion 3.
+ To compute, 
+\begin_inset Formula $\alpha_{3}$
+\end_inset
+
+ we need 
+\begin_inset Formula $\boldsymbol{\Gamma}\boldsymbol{P}(1)$
+\end_inset
+
+ which is:
+\shape italic
+\size footnotesize
+
+\begin_inset Formula 
+\[
+\Gamma\boldsymbol{P}(1)=\left[\begin{array}{cc}
+S & 1-S\\
+0 & 1
+\end{array}\right]\left[\begin{array}{cc}
+p & 0\\
+0 & 0
+\end{array}\right]=\left[\begin{array}{cc}
+Sp & 0\\
+0 & 0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+and 
+\begin_inset Formula $\alpha_{3}$
+\end_inset
+
+ is computed by multiplying 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\alpha_{2}$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and 
+\begin_inset Formula $\boldsymbol{\Gamma}\boldsymbol{P}(1)$
+\end_inset
+
+:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{3}=\alpha_{2}\Gamma\boldsymbol{P}(1)=\left[\begin{array}{cc}
+S(1-p) & \;\,1-S\end{array}\right]\left[\begin{array}{cc}
+Sp & 0\\
+0 & 0
+\end{array}\right]=\left[\begin{array}{cc}
+S^{2}p(1-p) & \;\,0\end{array}\right]\,.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+With the addition of the last observation, the probability the animal is
+ dead is 0 and the probability of observing the capture history 101 is 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $S^{2}p(1-p)$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+ Only the forward probabilities are needed for the likelihood calculation
+ but for predictions of the most likely state at a point in time the backward
+ probabilities are needed.
+ These are described in the Appendix II using these same CJS sequences.
+ 
+\end_layout
+
+\begin_layout Standard
+While the above algorithm will work, it is possible for the computations
+ to underflow numerically in computing the product of probabilities for
+ longer sequences.
+ Zucchini and MacDonald (2009) suggested scaling the likelihood and using
+ an alternate algorithm to compute the logarithm of 
+\begin_inset Formula $L_{T}$
+\end_inset
+
+.
+ They define 
+\begin_inset Formula $\phi_{t}=\alpha_{t}/(\alpha_{t}\boldsymbol{1}^{\prime})$
+\end_inset
+
+ for 
+\shape italic
+t
+\shape default
+ = 1,...
+\shape italic
+T .
+
+\shape default
+ Thus, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula 
+\[
+\phi_{1}=\delta\boldsymbol{P}_{1}(x_{1})/(\delta\boldsymbol{P}_{1}(x_{1})\boldsymbol{\boldsymbol{1}^{\prime}})\,,
+\]
+
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+and 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula 
+\[
+\phi_{t}=\phi_{t-1}\boldsymbol{\Gamma_{\mathrm{t-1}}}\boldsymbol{P}_{t}(x_{t})/(\phi_{t-1}\boldsymbol{\Gamma_{\mathrm{t-1}}}\boldsymbol{P}_{t}(x_{t})\boldsymbol{1}^{\prime})\,,
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+and
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\,\log L_{T}=\log(\delta\boldsymbol{P}_{1}(x_{1})\boldsymbol{\boldsymbol{1}^{\prime}})+\sum_{t=2}^{T}\log\left(\phi_{t-1}\boldsymbol{\Gamma_{\mathrm{t-1}}}\boldsymbol{P}_{t}(x_{t})1^{\prime}\right)\,.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+In Appendix III, I describe R code that implements the above equations using
+ the algorithm described on page 47 of Zucchini and MacDonald (2009) for
+ their Equation 2.12 which does not assume that 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ is the stationary distribution of the Markov chain.
+ 
+\end_layout
+
+\begin_layout Standard
+The HMM algorithm is generic in the sense that it works for any model with
+ an arbitrary number of states (
+\shape italic
+m
+\shape default
+) and observations (
+\shape italic
+s
+\shape default
+) as long as the vector 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and matrices 
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma}}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ are defined properly.
+ The generic nature of HMM provides a generalizable platform for developing
+ existing and new models for capture-recapture analysis.
+ Below I will describe the development of some currently existing models
+ and a new model that is a special case of the model described by Kendall
+ et al.
+ (2012).
+ However, to make the models useful for describing real data, I need to
+ introduce some additional notation.
+ Not all capture histories will have the same length.
+ For example, with a CJS model a cohort of new animals may be released at
+ each occasion.
+ Thus for the first cohort, the capture history from 
+\shape italic
+t
+\shape default
+ = 1,...
+\shape italic
+T
+\shape default
+ is used in the likelihood but for the remaining cohorts the capture history
+ will be shorter.
+ I define 
+\shape italic
+t
+\shape default
+* to be the first occasion used in the likelihood (e.g., 
+\shape italic
+t
+\shape default
+* = 2 for the second release cohort).
+ For general models, we will want the various parameters to vary by occasion
+ and by individual animal.
+ Letting 
+\shape italic
+i
+\shape default
+ index individuals and 
+\shape italic
+t
+\shape default
+ index occasions, we can use a subscripted transition matrix 
+\begin_inset Formula $\boldsymbol{\Gamma}_{it}$
+\end_inset
+
+ and state-dependent probability matrix 
+\begin_inset Formula $\boldsymbol{D}_{it}$
+\end_inset
+
+.
+ In computer code, these become four dimensional (4-d) arrays which are
+ named 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+dmat
+\family default
+ in the R code.
+ These have dimensions 
+\shape italic
+n
+\shape default
+,
+\shape italic
+ T
+\shape default
+,
+\shape italic
+ m
+\shape default
+,
+\shape italic
+ m
+\shape default
+ and 
+\shape italic
+n
+\shape default
+,
+\shape italic
+ T
+\shape default
+,
+\shape italic
+ s
+\shape default
+,
+\shape italic
+ m
+\shape default
+ respectively where 
+\shape italic
+n
+\shape default
+ is the number of animals or number of capture histories if they are grouped.
+ Allowing for the possibility of an estimated initial distribution that
+ varies by animal at occasion 
+\shape italic
+t
+\shape default
+*, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta_{i}(x_{t*})$
+\end_inset
+
+ becomes a matrix with dimension 
+\family default
+\series default
+\shape italic
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+n
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+,
+\family default
+\series default
+\shape italic
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ m 
+\shape default
+\size normal
+named 
+\family sans
+\size default
+delta
+\family default
+\size normal
+ in the R code.
+ 
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+Developing an HMM model only requires creating code to produce the
+\family sans
+\size default
+ gamma,
+\family default
+ 
+\family sans
+dmat 
+\family default
+and
+\family sans
+ delta 
+\family default
+quantities from the specified parameters.
+ In the 
+\family sans
+'marked'
+\family default
+ package, the models described below are 
+\begin_inset Quotes eld
+\end_inset
+
+hmmCJS
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+hmmMSCJS
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+hmmuMSCJS
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For each of these models there is a function that creates
+\family sans
+ gamma,
+\family default
+ 
+\family sans
+dmat 
+\family default
+and
+\family sans
+ delta
+\family default
+ from the model-specific parameters.
+ In MARK terminology (White and Burnham 1999), parameters like survival
+ (
+\shape italic
+S
+\shape default
+) and capture probability (
+\shape italic
+p
+\shape default
+) are called 
+\begin_inset Quotes eld
+\end_inset
+
+real
+\begin_inset Quotes erd
+\end_inset
+
+ parameters and these are computed via an inverse-link transformation from
+ the 
+\begin_inset Quotes eld
+\end_inset
+
+beta
+\begin_inset Quotes erd
+\end_inset
+
+ parameters.
+ Zucchini and MacDonald (2009) refer to these as 
+\begin_inset Quotes eld
+\end_inset
+
+natural
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+working
+\begin_inset Quotes erd
+\end_inset
+
+ parameters respectively.
+ The link function is used to bound real parameters such as probabilities
+ in the interval 0 to 1 from the beta parameters.
+ In 
+\family sans
+marked 
+\family default
+a logit link is used for probabilities such as 
+\shape italic
+S
+\shape default
+ and 
+\shape italic
+p
+\shape default
+ and a multinomial logit (mlogit) link is used for a set of probabilities
+ that are constrained to sum to one.
+ If 
+\begin_inset Formula $\theta_{j}$
+\end_inset
+
+ is a real parameter and 
+\begin_inset Formula $\beta_{j}$
+\end_inset
+
+ is a working parameter, for a logit link 
+\begin_inset Formula $\theta_{j}=1/(1+\textrm{exp}(-\beta_{j}))$
+\end_inset
+
+ and for an mlogit link 
+\begin_inset Formula $\theta_{j}=\textrm{exp}(\beta_{j})/\sum_{k}\textrm{exp}(\beta_{k})$
+\end_inset
+
+ where 
+\begin_inset Formula $\sum_{j}\theta_{j}=1$
+\end_inset
+
+ and one of the 
+\begin_inset Formula $\beta_{j}$
+\end_inset
+
+ must be set to 0 to have identifiable parameters.
+ In 
+\family sans
+'marked'
+\family default
+ for HMM models, the mlogit link is implemented with an intermediate parameter
+ 
+\begin_inset Formula $\lambda_{j}$
+\end_inset
+
+ and a log-link (
+\begin_inset Formula $\lambda_{j}=\mathtt{\textrm{exp}}(\beta_{j})$
+\end_inset
+
+) and setting 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\lambda_{j}=1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ for one of the probabilities and then normalizing by the sum (i.e., 
+\begin_inset Formula $\theta_{j}=\lambda_{j}/\sum_{k}\lambda_{k}$
+\end_inset
+
+).
+ Using that approach provides complete flexibility for the user in setting
+ which real parameter is computed by subtraction (i.e., for which 
+\shape italic
+j
+\shape default
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\textrm{exp}(\beta_{j})=1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+).
+ The beta parameters are related to the real parameters through a design
+ matrix which is created from a formula and a design data frame for the
+ parameter (Laake et al.
+ 2013).
+ The design data frames contain a row for each animal-occasion, which enables
+ animal and occasion-specific variation in the parameters.
+ As an example, I will describe the design data, formula and design matrix
+ for 
+\shape italic
+p
+\shape default
+ with a small example with 
+\shape italic
+n
+\shape default
+ = 2 and 
+\shape italic
+T
+\shape default
+ = 3 and then show how this is used to populate 
+\family sans
+dmat
+\family default
+.
+ The simplest set of design data might be
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter no.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+time
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\size default
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+where Id specifies the animal and time is a factor variable for occasion
+ 2 and 3 (for occasion 1 
+\shape italic
+p
+\shape default
+ = 1 and is not estimated).
+ If the formula for 
+\shape italic
+p
+\shape default
+ was ~time, the design matrix would be
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="3">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter no.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Intercept
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+time
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+4
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+.
+\size default
+
+\begin_inset VSpace defskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+Let the working parameters be 
+\begin_inset Formula $\beta_{1}$
+\end_inset
+
+ and 
+\begin_inset Formula $\beta_{2}$
+\end_inset
+
+ for 
+\shape italic
+p
+\shape default
+.
+ Then values of 
+\shape italic
+p
+\shape default
+ are
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Parameter no.
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1/(1+exp(-\beta_{1})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1/(1+exp(-\beta_{1}-\beta_{2})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1/(1+exp(-\beta_{1})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1/(1+exp(-\beta_{1}-\beta_{2})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset Newpage newpage
+\end_inset
+
+From these parameters, 
+\family sans
+dmat 
+\family default
+is a 
+\begin_inset Formula $2\times2$
+\end_inset
+
+ set of 
+\begin_inset Formula $2\times2$
+\end_inset
+
+ matrices as shown below
+\family sans
+:
+\family default
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="9" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Id
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+time
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{4}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" bottomline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \space{}
+\end_inset
+
+.
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The first two dimensions will be much larger for real data.
+ Something similar is done for S to construct 
+\family sans
+gamma.
+ 
+\family default
+Models will have various different parameters but the general process is
+ the same.
+ Now I will describe some of these types of HMM models and show an example
+ of fitting a model with 
+\family sans
+'marked'.
+\family default
+\size normal
+
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+CORMACK-JOLLY-SEBER MODELS
+\size normal
+
+\begin_inset CommandInset label
+LatexCommand label
+name "CJS"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align block
+The CJS model has been described already and I will not repeat its description
+ other than to mention that in the R code survival probability (
+\shape italic
+S
+\shape default
+ ) is named Phi to be consistent with MARK (White and Burnham 1999).
+ The CJS model is rather simple and thus the code to compute 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ (
+\family sans
+cjs_gamma
+\family default
+), 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ (
+\family sans
+cjs_dmat
+\family default
+) and 
+\begin_inset Formula $\delta$
+\end_inset
+
+ (
+\family sans
+cjs_delta
+\family default
+) given in Appendix III is simple as well.
+ Each function is passed an argument named 
+\family sans
+pars
+\family default
+ which is a list structure containing a matrix for Phi and p.
+ The values of 
+\family sans
+pars
+\family default
+ are used to fill the four dimensional with id and occasion-specific transition
+ and state-dependent probability matrices.
+ The code sets 
+\shape italic
+p
+\shape default
+ = 1 for the initial release occasion 
+\shape italic
+t
+\shape default
+* (
+\family sans
+F[i]
+\family default
+ in the R code) for each animal.
+ The 
+\family sans
+cjs_delta
+\family default
+ function assigns an initial state distribution for each capture history
+ that contains a 1 for the observed state and 0 elsewhere.
+ For CJS the observed state is Alive.
+ The 
+\family sans
+cjs_delta
+\family default
+ function is also used for the remaining models described here because in
+ each case the likelihood is conditioned on the first known state of release.
+\end_layout
+
+\begin_layout Standard
+The European dipper (
+\shape italic
+Cinclus cinclus
+\shape default
+) data described by Lebreton et al.
+ (1992) are used below as an example for fitting a model in which survival
+ is constant and capture probability varies by time.
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=FALSE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(marked)
+\end_layout
+
+\begin_layout Plain Layout
+
+data(dipper)
+\end_layout
+
+\begin_layout Plain Layout
+
+crm(dipper,model="hmmCJS",
+\end_layout
+
+\begin_layout Plain Layout
+
+      model.parameters=list(Phi=list(formula=~1),
+\end_layout
+
+\begin_layout Plain Layout
+
+                            p=list(formula=~time)))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The steps that 
+\family sans
+crm
+\family default
+ performed are the same as in 
+\family sans
+RMark
+\family default
+ (Laake 2013) and can be done separately:
+\end_layout
+
+\begin_layout Standard
+\noindent
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=FALSE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dp=process.data(dipper,model="hmmCJS")
+\end_layout
+
+\begin_layout Plain Layout
+
+# show names of list elements
+\end_layout
+
+\begin_layout Plain Layout
+
+names(dp)
+\end_layout
+
+\begin_layout Plain Layout
+
+# notice functions and ObsLevels which define the model
+\end_layout
+
+\begin_layout Plain Layout
+
+dp$ObsLevels
+\end_layout
+
+\begin_layout Plain Layout
+
+# make the design data for the parameters
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(dp)
+\end_layout
+
+\begin_layout Plain Layout
+
+# show design data for first 10 records
+\end_layout
+
+\begin_layout Plain Layout
+
+# value of p=1 when cohort=time - release occasion
+\end_layout
+
+\begin_layout Plain Layout
+
+head(ddl$p,10)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The 
+\family sans
+process.data
+\family default
+ step returns a list with the data and various attributes set for the chosen
+ model including the code for the functions used to create 
+\family sans
+dmat
+\family default
+, 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+delta
+\family default
+.
+ The 
+\family sans
+make.design.data
+\family default
+ function creates a list with a design data frame for each parameter in
+ the model.
+ Design data can be added or a field named 
+\family sans
+fix
+\family default
+ can be added or modified to fix real parameters.
+ If the value of
+\family sans
+ fix
+\family default
+ is NA the real parameter is estimated, otherwise it set to the specified
+ value.
+ The processed data list and the design data can then be passed as arguments
+ to 
+\family sans
+crm
+\family default
+ as shown below:
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=FALSE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+crm(dp,ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+      model.parameters=list(Phi=list(formula=~time),
+\end_layout
+
+\begin_layout Plain Layout
+
+                            p=list(formula=~1)))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\size normal
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+\size normal
+MULTI-STATE MODELS
+\begin_inset CommandInset label
+LatexCommand label
+name "MS models"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\align block
+A multi-state model as an extension to CJS simply extends the possible states
+ in which an animal is alive and incorporates transitions between the states.
+ The total number of states, 
+\shape italic
+m
+\shape default
+, is the number of alive states plus one for dead.
+ The initial probability vector 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta(x_{t*})$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ is 1 for the element of the first observed state and as with the CJS model
+ the capture probability for the first occasion is fixed to 1 to condition
+ on the first observation in the sequence.
+ To describe the 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ matrices I will use 
+\shape italic
+m = s
+\shape default
+ = 4 and assume state-specific survival probability 
+\begin_inset Formula $S_{j}\: j=1,3$
+\end_inset
+
+ and state-specific capture probability 
+\begin_inset Formula $p_{j}\: j=1,3$
+\end_inset
+
+ but they can vary by occasion and individual as well.
+\end_layout
+
+\begin_layout Standard
+The probability of transitioning from alive state 
+\shape italic
+j
+\shape default
+ to alive state 
+\shape italic
+k
+\shape default
+ (
+\begin_inset Formula $\gamma_{jk}$
+\end_inset
+
+), is the product of survival probability (
+\begin_inset Formula $S_{j}$
+\end_inset
+
+) in state j and the transition probability 
+\begin_inset Formula $\psi_{jk}$
+\end_inset
+
+.
+ If the animal does not transition to an alive state, it dies with probability
+ 
+\begin_inset Formula $1-S_{j}$
+\end_inset
+
+ and death is an absorbing state.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+: Transition Matrix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}\psi_{11}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}\psi_{12}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}\psi_{13}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}\psi_{21}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}\psi_{22}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}\psi_{23}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}\psi_{31}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}\psi_{32}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}\psi_{33}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The animal is observed to be in state 
+\shape italic
+j
+\shape default
+ with probability 
+\begin_inset Formula $p_{j}$
+\end_inset
+
+ and is not seen with probability 
+\begin_inset Formula $1-p_{j}$
+\end_inset
+
+ and a dead animal is never 
+\begin_inset Quotes eld
+\end_inset
+
+seen
+\begin_inset Quotes erd
+\end_inset
+
+ because any dead recoveries are not used in this model.
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ : State-dependent Probability Matrix
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This is a slightly more complicated model and the code to compute 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ shown below must accommodate parameters varying by stratum.
+ The parameter list 
+\family sans
+pars
+\family default
+ contains matrices for 
+\begin_inset Formula $S$
+\end_inset
+
+, 
+\begin_inset Formula $p$
+\end_inset
+
+ and 
+\begin_inset Formula $\psi$
+\end_inset
+
+.
+ The latter uses an mlogit link to ensure 
+\begin_inset Formula $\sum_{j=1}^{m-1}\psi_{ij}=1$
+\end_inset
+
+ but 
+\family sans
+pars
+\family default
+ only contains 
+\family sans
+exp(x)
+\family default
+ (inverse log link) and these are normalized by dividing by the sum.
+ Also, in 
+\family sans
+ms_gamma
+\family default
+ two matrices are composed as shown below and then multiplied element wise
+ together to compute 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-S_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 1in
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{11}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{12}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{13}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{21}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{22}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{23}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{31}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{32}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{33}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+\noindent
+As with CJS, both 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ (
+\family sans
+gamma
+\family default
+ from 
+\family sans
+ms_gamma
+\family default
+) and 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ (
+\family sans
+dmat
+\family default
+ from 
+\family sans
+ms_dmat
+\family default
+) are returned as four dimensional arrays with id and occasion-specific
+ transition and state-dependent probability matrices.
+ The 
+\family sans
+cjs_delta
+\family default
+ function described above is used to create 
+\family sans
+delta
+\family default
+.
+ The code is in Appendix III.
+\end_layout
+
+\begin_layout Standard
+As an example of a MS model, I will use the data mstrata in 
+\family sans
+RMark,
+\family default
+ which has three alive states: A, B and C.
+ I will fit the model with constant 
+\family sans
+S
+\family default
+ and 
+\family sans
+p
+\family default
+ and constant transition probability matrix that can vary for each of the
+ nine possible transitions.
+ When the design data are created for 
+\family sans
+Psi
+\family default
+, a fixed value of 1 is assigned when 
+\family sans
+stratum
+\family default
+ =
+\family sans
+ tostratum
+\family default
+ which fixes the transition probability for staying in the same state such
+ that it is 1 minus the sum of the other probabilities in the 
+\family sans
+mlogit
+\family default
+ link function.
+ The value that is used can be set with 
+\family sans
+subtract.stratum
+\family default
+ argument for 
+\family sans
+Psi
+\family default
+ in 
+\family sans
+make.design.data
+\family default
+ or can be arbitrarily selected by setting the values of 
+\family sans
+fix
+\family default
+ for Psi.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=FALSE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+dp=process.data(mstrata,model="hmmMSCJS")
+\end_layout
+
+\begin_layout Plain Layout
+
+# make the design data for the parameters
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(dp)
+\end_layout
+
+\begin_layout Plain Layout
+
+# show design data for first 10 records of Psi
+\end_layout
+
+\begin_layout Plain Layout
+
+# value of Psi=1 for staying in same state for
+\end_layout
+
+\begin_layout Plain Layout
+
+# identifiability with mlogit.
+\end_layout
+
+\begin_layout Plain Layout
+
+head(ddl$Psi[,c(1:8,12)],10)
+\end_layout
+
+\begin_layout Plain Layout
+
+# fit model
+\end_layout
+
+\begin_layout Plain Layout
+
+crm(dp,ddl,
+\end_layout
+
+\begin_layout Plain Layout
+
+      model.parameters=list(S=list(formula=~1),
+\end_layout
+
+\begin_layout Plain Layout
+
+                            p=list(formula=~1),
+\end_layout
+
+\begin_layout Plain Layout
+
+                            Psi=list(formula=~-1+stratum:tostratum)))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\size normal
+
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+\align center
+
+\series bold
+\size normal
+MULTI-STATE MODELS WITH STATE UNCERTAINTY
+\begin_inset CommandInset label
+LatexCommand label
+name "MS models-uncertain"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+If animals are seen but their state cannot always be determined with certainty,
+ then we can introduce an observation recorded as 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+ like in the implementation of the Kendall et al.
+ (2012) model in MARK (White and Burnham 1999).
+ For this model following Kendall et al.
+ (2012), we need to introduce an additional parameter 
+\begin_inset Formula $\delta_{j}$
+\end_inset
+
+ (different from 
+\begin_inset Formula $\delta$
+\end_inset
+
+ used in HMM algorithm) which is the probability that the animal in state
+ 
+\shape italic
+j
+\shape default
+ is observed to be in state 
+\shape italic
+j
+\shape default
+.
+ Thus, an animal in state 
+\shape italic
+j
+\shape default
+ is recorded as 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+ with probability 
+\begin_inset Formula $1-\delta_{j}$
+\end_inset
+
+.
+ For this model, 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ (
+\family sans
+gamma
+\family default
+) is unchanged from the MS model and only 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ (
+\family sans
+dmat
+\family default
+ from function 
+\family sans
+ums_dmat
+\family default
+) changes.
+ Following on with the example above we add a row to 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ (
+\shape italic
+s
+\shape default
+ = 5) for the 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+ observation.
+ The matrix 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ is similar to an MS model except now the probability that state j is recorded
+ is 
+\begin_inset Formula $p_{j}\delta_{j}$
+\end_inset
+
+ and the probability of being seen in state 
+\shape italic
+j
+\shape default
+ but recorded as an unknown state is 
+\begin_inset Formula $p_{j}(1-\delta_{j})$
+\end_inset
+
+.
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ : State-dependent Probability Matrix
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}\delta_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}\delta_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}\delta_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}(1-\delta_{1})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}(1-\delta_{2})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}(1-\delta_{3})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing double
+A simple example is observations of weaning in sea lions (
+\shape italic
+Zalophus californianus
+\shape default
+).
+ There are three states (
+\shape italic
+m
+\shape default
+ = 3): 1) S: suckling; 2) W: weaned; and 3) D: dead.
+ Transition from suckling to weaned is considered permanent so 
+\begin_inset Formula $\psi_{WW}=1$
+\end_inset
+
+.
+ There are four possible observation values (
+\shape italic
+s
+\shape default
+ = 4), 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+S
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+W
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+.
+ However, we can only observe suckling behavior (
+\begin_inset Quotes eld
+\end_inset
+
+S
+\begin_inset Quotes erd
+\end_inset
+
+) and we never know for certain when the animal is weaned (
+\begin_inset Formula $\delta_{W}=0$
+\end_inset
+
+).
+ Thus, all observations of weaned pups will be recorded as 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+.
+ For this model, 
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+ and 
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ are
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\boldsymbol{\Gamma}$
+\end_inset
+
+: Transition Matrix
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Tabular
+<lyxtabular version="3" rows="4" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\psi_{SW})\phi_{S}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\psi_{SW}\phi_{S}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi_{S})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi_{W}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $(1-\phi_{W})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Formula $\boldsymbol{D}$
+\end_inset
+
+ : State-dependent Probability Matrix
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Tabular
+<lyxtabular version="3" rows="5" columns="4">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{S}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{W}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+S
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{S}\delta_{S}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+W
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{S}(1-\delta_{S})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{W}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The construction of 
+\family sans
+dmat
+\family default
+ is done with 
+\family sans
+ums_dmat 
+\family default
+(code in Appendix III).
+ It also uses two matrices which are constructed and then multiplied together
+ element wise.
+ In this case the matrices are:
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset space \hspace{}
+\length 1in
+\end_inset
+
+
+\begin_inset Tabular
+<lyxtabular version="3" rows="6" columns="5">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<column alignment="center" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+D
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+0
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\delta_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+2
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\delta_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+3
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\delta_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+u
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\delta_{1}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\delta_{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $1-\delta_{3}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+1
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+For occasion 1 and for the first occasion of each release cohort 
+\begin_inset Formula $p_{j}=1$
+\end_inset
+
+ and 
+\begin_inset Formula $\delta_{j}=1$
+\end_inset
+
+ for all 
+\shape italic
+j
+\shape default
+ to make the likelihood conditional on first release.
+ The initial distribution is also set with 
+\family sans
+cjs_delta
+\family default
+.
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+As an example, I will create some simulated data from a specified model
+ using 
+\family sans
+simHMM
+\family default
+ and then fit the same model to the simulated data.
+ I will use the suckling-weaning example with three states (
+\shape italic
+m
+\shape default
+ = 3).
+ In this case, the W stratum will never be observed so it is necessary to
+ specify the strata (state) labels for the alive states.
+ Below I define the attributes of the simulated data by processing the data
+ and creating and manipulating design data and specifying formula as if
+ I was fitting the model.
+ Once the processed data list and design data list are created a call to
+ 
+\family sans
+simHMM
+\family default
+ generates a realization from the specified model.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=TRUE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# simulate a single release cohort of 200 animals with 1 release 
+\end_layout
+
+\begin_layout Plain Layout
+
+# and 10 recapture occasions; at least 2 unique ch are needed in simHMM
+\end_layout
+
+\begin_layout Plain Layout
+
+simd=data.frame(ch=c("S0000000000","SS000000000"),freq=c(100,100),stringsAsFactor
+s=F)
+\end_layout
+
+\begin_layout Plain Layout
+
+# define simulation/fitting model; default for non-specified parameters
+ is ~1
+\end_layout
+
+\begin_layout Plain Layout
+
+modelspec=list(p=list(formula=~stratum))
+\end_layout
+
+\begin_layout Plain Layout
+
+# process data with S,W strata; S=1 and W=2
+\end_layout
+
+\begin_layout Plain Layout
+
+sd=process.data(simd,model="hmmuMSCJS",strata.labels=c("S","W"))
+\end_layout
+
+\begin_layout Plain Layout
+
+# create design data
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl=make.design.data(sd)
+\end_layout
+
+\begin_layout Plain Layout
+
+# set Psi transition for weaned to suckling to 0; fix is created automatically
+ for
+\end_layout
+
+\begin_layout Plain Layout
+
+# Psi to fix one of the transitions to 1 for mlogit.
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+# default is to set Psi-xx to 1 (staying in same state)
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl$Psi$fix[ddl$Psi$stratum==2&ddl$Psi$tostratum==1]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+# set delta(W) to 0; non-fixed contain NA
+\end_layout
+
+\begin_layout Plain Layout
+
+ddl$delta$fix=ifelse(ddl$delta$stratum==2,0,NA)
+\end_layout
+
+\begin_layout Plain Layout
+
+# set initial parameter values for model S=~1,p=~stratum,Psi=~1,delta=~1
+\end_layout
+
+\begin_layout Plain Layout
+
+initial=list(S=log(.99/.01),p=c(0,-3),delta=log(.5/.5),Psi=log(0.07/.93))
+\end_layout
+
+\begin_layout Plain Layout
+
+# call simmHMM to get a single realization
+\end_layout
+
+\begin_layout Plain Layout
+
+realization=simHMM(sd,ddl,model.parameters=modelspec,initial=initial)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Now the same model used to generate the data is used to fit the data using
+ the same steps but this time calling 
+\family sans
+crm
+\family default
+.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<cache=FALSE,tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+# take that realization and process data and fix parameters in design data
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+sd=process.data(realization,model="hmmuMSCJS",strata.labels=c("S","W"))
+\end_layout
+
+\begin_layout Plain Layout
+
+rddl=make.design.data(sd)
+\end_layout
+
+\begin_layout Plain Layout
+
+rddl$Psi$fix[rddl$Psi$stratum==2&rddl$Psi$tostratum==1]=0
+\end_layout
+
+\begin_layout Plain Layout
+
+rddl$delta$fix=ifelse(rddl$delta$stratum==2,0,NA)
+\end_layout
+
+\begin_layout Plain Layout
+
+# fit model
+\end_layout
+
+\begin_layout Plain Layout
+
+crm(sd,rddl,initial=initial,model.parameters=modelspec)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\size normal
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+SUMMARY
+\begin_inset CommandInset label
+LatexCommand label
+name "Summary"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The hidden Markov modeling approach provides a simple, elegant, and general
+ structure for development of existing and new models for capture-recapture
+ analysis.
+ The code described here provides a prototype in R but most of these functions
+ have been converted to FORTRAN in the 
+\family sans
+'marked'
+\family default
+ package to improve execution times.
+ Conversion to Automatic Differentiation Model Builder (ADMB) (Fournier
+ et al.
+ 2012) would likely provide further improvements because numerical derivative
+ computations would not be needed.
+ Development of models to allow tag loss, hierarchy of state transitions,
+ and second-order Markov processes for breeding-feeding area transitions
+ are relatively easily done with this framework.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\size normal
+\begin_inset VSpace 0.2in
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+ACKNOWLEDGMENTS
+\begin_inset CommandInset label
+LatexCommand label
+name "ACKNOWLEDGMENTS"
+
+\end_inset
+
+
+\begin_inset Newline newline
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+I appreciate the reviews of Tomo Eguchi and Devin Johnson which provided
+ very useful improvements to the manuscript.
+  A big thanks to Gary Duker and Christine Baier for their excellent editorial
+ skills.
+\begin_inset Newpage pagebreak
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+CITATIONS
+\begin_inset CommandInset label
+LatexCommand label
+name "CITATIONS"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+ Ford, J.
+ H., M.
+ V.
+ Bravington, and J.
+ Robbins.
+ 2012.
+ Incorporating individual variability into mark-recapture models.
+ Methods Ecol.
+ Evol.
+ 3:1047–1054.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+Fournier, D.
+ A., H.
+ J.
+ Skaug, J.
+ Ancheta, A.
+ Magnusson, M.
+ N.
+ Maunder, A.
+ Nielsen, and J.
+ Sibert.
+ 2012.
+ Optimization methods and software AD model builder : using automatic differenti
+ation for statistical inference of highly parameterized complex nonlinear
+ models.
+ Optim.
+ Methods Softw.
+ 27:233–249.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+ Kendall, W.
+ L., G.
+ C.
+ White, J.
+ E.
+ Hines, C.
+ A.
+ Langtimm, and J.
+ Yoshizaki.
+ 2012.
+ Estimating parameters of hidden Markov models based on marked individuals:
+ use of robust design data.
+ Ecology 93:913–920.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+ Laake, J.
+ L.
+ 2013.
+ RMark : an R interface for analysis of capture-recapture data with MARK.
+ AFSC Processed Rep.
+ 2013-01, 25p.
+ Alaska Fish.
+ Sci.
+ Cent., NOAA, Natl.
+ Mar.
+ Fish.
+ Serv., 7600 Sand Point Way NE, Seattle WA 98115.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+Laake, J.
+ L., D.
+ S.
+ Johnson, and P.
+ B.
+ Conn.
+ 2013.
+ marked: An R package for maximum-likelihood and MCMC analysis of capture-recapt
+ure data.
+ Methods Ecol.
+ Evol.
+ 4:885–890.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+ Langrock, R., King, R.
+ 2013.
+ Maximum likelihood estimation of mark-recapture-recovery models in the
+ presence of continuous covariates.
+ Ann.
+ Appl.
+ Stat.
+ 7:1709-1732
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+Lebreton, J.
+ D., K.
+ P.
+ Burnham, J.
+ Clobert, and D.
+ R.
+ Anderson.
+ 1992.
+ Modeling survival and testing biological hypotheses using marked animals:
+ a unified approach with case studies.
+ Ecol.
+ Monogr.
+ 62:67–118.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+ Pradel, R.
+ 2005.
+ Multievent: An extension of multistate capture-recapture models to uncertain
+ states.
+ Biometrics 61:442–447.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+R Core Development Team.
+ 2012.
+ R: A Language and Environment for Statistical Computing.
+ R Foundation for Statistical Computing, Vienna, Austria.
+ URL http: //www.R-project.org/.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+
+\size normal
+White, G.
+ C.
+ and K.
+ P.
+ Burnham.
+ 1999.
+ Program MARK: survival estimation from populations of marked animals.
+ Bird Study 46:120-139.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+hangindent=0.6in
+\end_layout
+
+\end_inset
+
+Zucchini, W.
+ and I.
+ MacDonald.
+ 2009.
+ Hidden Markov models for time series: An introduction using R.
+ Chapman & Hall/CRC.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\size normal
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+APPENDIX I
+\begin_inset CommandInset label
+LatexCommand label
+name "Appendix"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Notation 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Tabular
+<lyxtabular version="3" rows="16" columns="2">
+<features tabularvalignment="middle">
+<column alignment="center" valignment="top" width="0">
+<column alignment="left" valignment="top" width="0">
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Symbol
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+Definition
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+m
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of states
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+s
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+number of observation values
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+t
+\shape default
+,
+\shape italic
+ t*
+\shape default
+,
+\shape italic
+ T
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="center" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+t
+\shape default
+ is used to index time from 
+\shape italic
+t
+\shape default
+ = 1,...
+\shape italic
+T
+\shape default
+ or t=
+\shape italic
+t*,...T
+\shape default
+ when sequences vary in length
+\shape italic
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $C_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+state occupied by Markov chain at time 
+\shape italic
+t
+\shape default
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\boldsymbol{D}(t)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+s
+\shape default
+ x 
+\shape italic
+m 
+\shape default
+matrix with 
+\begin_inset Formula $ij^{th}$
+\end_inset
+
+ element 
+\begin_inset Formula $d_{ij}$
+\end_inset
+
+ = Pr(
+\begin_inset Formula $X_{t}=i\,|\, C_{t}=j)$
+\end_inset
+
+ 
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula $\boldsymbol{\Gamma}_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+m
+\shape default
+ x 
+\shape italic
+m
+\shape default
+ transition probability matrix with 
+\begin_inset Formula $jk^{th}$
+\end_inset
+
+ element 
+\begin_inset Formula $\gamma_{jk}$
+\end_inset
+
+ = Pr(
+\begin_inset Formula $C_{t+1}=k\,|\, C_{t}=j)$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $L_{T}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+likelihood
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\boldsymbol{P}_{t}(x_{t})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+
+\shape italic
+m
+\shape default
+ x 
+\shape italic
+m
+\shape default
+ diagonal matrix; 
+\begin_inset Formula $i^{th}$
+\end_inset
+
+ diagonal value 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+Pr
+\begin_inset Formula $(X_{t}=x_{t}|\mathrm{C_{t}=i})$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $X_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+observation at time 
+\shape italic
+t
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\alpha_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+row vector of forward probabilities
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\beta_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+row vector of backward probabilities; 
+\begin_inset Formula $\beta$
+\end_inset
+
+ also used for working parameters
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\delta$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+initial distribution of Markov chain
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $\phi_{t}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+normalized row vector of forward probabilities
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $p$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+capture probability
+\end_layout
+
+\end_inset
+</cell>
+</row>
+<row>
+<cell alignment="center" valignment="top" topline="true" bottomline="true" leftline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+\begin_inset Formula $S$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+</cell>
+<cell alignment="left" valignment="top" topline="true" bottomline="true" leftline="true" rightline="true" usebox="none">
+\begin_inset Text
+
+\begin_layout Plain Layout
+survival probability; word Phi is used in code for S in CJS
+\end_layout
+
+\end_inset
+</cell>
+</row>
+</lyxtabular>
+
+\end_inset
+
+
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+APPENDIX II
+\end_layout
+
+\begin_layout Subsection*
+\paragraph_spacing onehalf
+Backward Probabilities and State Prediction
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+Only forward probabilities are needed for the likelihood calculation but
+ to compute predictions of the most likely state at a point in time the
+ backward probabilities are needed.
+ Like their counterparts, the backward probabilities are computed recursively
+ which start with 
+\begin_inset Formula $\beta_{3}^{\prime}=\mathbf{1^{\prime}}$
+\end_inset
+
+ and then are defined recursively as 
+\shape italic
+\size footnotesize
+
+\begin_inset Formula 
+\[
+\beta_{t-1}^{\prime}=\Gamma\mathbf{P}(x_{t})\beta_{t}^{\prime}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+Using a capture history of 100, we get 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\beta_{2}^{\prime}=\Gamma\mathbf{P}(0)\beta_{3}^{\prime}=\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]\left[\begin{array}{c}
+1\\
+1
+\end{array}\right]=\left[\begin{array}{c}
+S(1-p)+1-S\\
+1
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\noindent
+and
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\beta_{1}^{\prime}=\Gamma\mathbf{P}(0)\beta_{2}^{\prime}=\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]\left[\begin{array}{c}
+S(1-p)+1-S\\
+1
+\end{array}\right]=\left[\begin{array}{c}
+S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S\\
+1
+\end{array}\right]\quad.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\noindent
+Now, using the forward and backward probabilities, you can predict the most
+ likely state (alive/dead) for each occasion.
+ For occasion 
+\shape italic
+t, 
+\shape default
+the 
+\begin_inset Formula $j^{th}$
+\end_inset
+
+ element of:
+\begin_inset Formula 
+\[
+\alpha_{t}\beta_{t}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\noindent
+is 
+\begin_inset Formula $Pr(C_{t}=j|X_{1}=x_{1},...,X_{T}=x_{T})$
+\end_inset
+
+ where vector multiplication 
+\begin_inset Formula $\alpha_{t}\beta_{t}$
+\end_inset
+
+ is element wise.
+ The values for a capture history of 100 are:
+\shape italic
+\size footnotesize
+
+\begin_inset Formula 
+\[
+\alpha_{1}^{\prime}\beta_{1}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]\left[\begin{array}{c}
+S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S\\
+1
+\end{array}\right]/S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{2}^{\prime}\beta_{2}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+S(1-p)\\
+1-S
+\end{array}\right]\left[\begin{array}{c}
+S(1-p)+1-S\\
+1
+\end{array}\right]/S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{3}^{\prime}\beta_{3}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+S^{2}(1-p)^{2}\\
+(1-S)S(1-p)+1-S
+\end{array}\right]\left[\begin{array}{c}
+1\\
+1
+\end{array}\right]/S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\noindent
+Expanding these out yields: probability it was alive at time 1 is: 
+\begin_inset Formula 
+\[
+Pr(C_{1}=1|X_{1}=1,X_{2}=0,X_{3}=0)=1\qquad,
+\]
+
+\end_inset
+
+probability it was alive at time 2 is: 
+\begin_inset Formula 
+\[
+Pr(C_{2}=1|X_{1}=x_{1},...,X_{T}=x_{T})=[S^{2}(1-p)^{2}+S(1-p)(1-S)]/[S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S]\qquad,
+\]
+
+\end_inset
+
+and probability it was alive at time 3 is:
+\begin_inset Formula 
+\[
+Pr(C_{3}=1|X_{1}=x_{1},...,X_{T}=x_{T})=[S^{2}(1-p)^{2}]/[S^{2}(1-p)^{2}+S(1-p)(1-S)+1-S]\qquad.
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\noindent
+The values for a capture history of 101 are simpler:
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\beta_{2}^{\prime}=\Gamma\mathbf{P}(1)\beta_{3}^{\prime}=\left[\begin{array}{cc}
+Sp & 0\\
+0 & 0
+\end{array}\right]\left[\begin{array}{c}
+1\\
+1
+\end{array}\right]=\left[\begin{array}{c}
+Sp\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\begin_inset Formula 
+\[
+\beta_{1}^{\prime}=\Gamma\mathbf{P}(0)\beta_{2}^{\prime}=\left[\begin{array}{cc}
+S(1-p) & 1-S\\
+0 & 1
+\end{array}\right]\left[\begin{array}{c}
+Sp\\
+0
+\end{array}\right]=\left[\begin{array}{c}
+S^{2}p(1-p)\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{1}^{\prime}\beta_{1}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]\left[\begin{array}{c}
+S^{2}p(1-p)\\
+1
+\end{array}\right]/S^{2}p(1-p)=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{2}^{\prime}\beta_{2}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+S(1-p)\\
+1-S
+\end{array}\right]\left[\begin{array}{c}
+Sp\\
+0
+\end{array}\right]/S^{2}p(1-p)=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\shape italic
+\size footnotesize
+\begin_inset Formula 
+\[
+\alpha_{3}^{\prime}\beta_{3}^{\prime}/\left(\alpha_{T}\mathbf{1}^{\prime}\right)=\left[\begin{array}{c}
+S^{2}p(1-p)\\
+0
+\end{array}\right]\left[\begin{array}{c}
+1\\
+1
+\end{array}\right]/S^{2}p(1-p)=\left[\begin{array}{c}
+1\\
+0
+\end{array}\right]
+\]
+
+\end_inset
+
+
+\shape default
+\size default
+
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\noindent
+The values are all the same because the animal was seen on the last occasion
+ and thus alive the entire time.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Newpage newpage
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\align center
+
+\series bold
+\size normal
+APPENDIX III
+\end_layout
+
+\begin_layout Subsection*
+R code for Hidden Markov Models
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The code shown here is written in R and was originally used in 
+\family sans
+'marked'
+\family default
+ but has been replaced by FORTRAN code to speed up execution time.
+ It is shown here because most will find it more readable than the FORTRAN
+ code.
+ All current code for 
+\family sans
+'marked'
+\family default
+ can be found at https://github.com/jlaake/marked.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+
+\family sans
+HMMLikelihood
+\family default
+ implements the algorithm described on page 47 of Zucchini and MacDonald
+ (2009) for their Equation 2.12 which does not assume that the initial distributi
+on is the stationary distribution of the Markov chain.
+ 
+\family sans
+HMMLikelihood
+\family default
+ computes the log-likelihood for a single sequence (
+\family sans
+x
+\family default
+) from 
+\family sans
+first
+\family default
+ which can be greater than 1 to its length 
+\family sans
+T
+\family default
+.
+ Its arguments 
+\family sans
+gamma
+\family default
+ (
+\begin_inset Formula $\mathbf{\boldsymbol{\Gamma_{\mathrm{t}}}}$
+\end_inset
+
+ for 
+\begin_inset Formula $t=1,...,T-1$
+\end_inset
+
+), 
+\family sans
+dmat (
+\family default
+
+\begin_inset Formula $\boldsymbol{D_{t}}$
+\end_inset
+
+ for 
+\begin_inset Formula $t=1,...,T$
+\end_inset
+
+
+\family sans
+)
+\family default
+ and 
+\family sans
+delta (
+\begin_inset Formula $\delta$
+\end_inset
+
+)
+\family default
+ are arrays computed for this sequence from the current parameter vector.
+
+\shape italic
+ 
+\shape default
+The steps in the algorithm are:
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Assign initial 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\phi_{t*}=\delta\boldsymbol{P}_{t*}(x_{t*})/(\delta\mathrm{\boldsymbol{P}_{t*}(x_{t*})}\boldsymbol{\boldsymbol{1}^{\prime}})$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and 
+\family sans
+lnl
+\family default
+ = 
+\begin_inset Formula $\log((\delta\mathrm{\boldsymbol{P}_{t*}(x_{t*})}\boldsymbol{\boldsymbol{1}^{\prime}}))$
+\end_inset
+
+
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Loop over remaining occasions 
+\shape italic
+t = t*+1,T
+\shape default
+ doing the following: 
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Compute 
+\family sans
+v
+\family default
+ which is a product of vector 
+\begin_inset Formula $\phi_{t-1}$
+\end_inset
+
+, the matrix 
+\begin_inset Formula $\boldsymbol{\Gamma_{t-1}}$
+\end_inset
+
+ (
+\family sans
+gamma[t-1,,]
+\family default
+ element 
+\shape italic
+t
+\shape default
+-1 in the 
+\family sans
+gamma
+\family default
+ array) and 
+\family sans
+diag(dmat[t,x[t],])
+\family default
+ which is 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\boldsymbol{P}_{t}(x_{t})$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+, a diagonal matrix with the diagonal elements being row 
+\family sans
+x[t] 
+\family default
+of 
+\begin_inset Formula $\boldsymbol{D_{t}}$
+\end_inset
+
+ from element 
+\shape italic
+t
+\shape default
+ in the
+\family sans
+ dmat
+\family default
+ array.
+ The arrays 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+dmat
+\family default
+ are only 3-d because they are for a specific animal.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Sum values of 
+\family sans
+v
+\family default
+ into 
+\family sans
+u
+\family default
+ and sum log-likelihood value 
+\family sans
+log(u)
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Update 
+\begin_inset Formula $\phi_{t}=v/u$
+\end_inset
+
+.
+\end_layout
+
+\end_deeper
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
+\end_layout
+
+\begin_layout Plain Layout
+
+{  
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Arguments:
+\end_layout
+
+\begin_layout Plain Layout
+
+	# x: observed sequence (capture (encounter) history)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# first: occasion to start sequence
+\end_layout
+
+\begin_layout Plain Layout
+
+	# m: number of states
+\end_layout
+
+\begin_layout Plain Layout
+
+	# T: number of occasions; sequence length
+\end_layout
+
+\begin_layout Plain Layout
+
+	# dmat: array of occasion specific observation probabilty matrices
+\end_layout
+
+\begin_layout Plain Layout
+
+	# gamma: array of occasion specific transition matrices
+\end_layout
+
+\begin_layout Plain Layout
+
+	# delta: initial state distribution
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Other variables:
+\end_layout
+
+\begin_layout Plain Layout
+
+	# lnl: log likelihood value
+\end_layout
+
+\begin_layout Plain Layout
+
+	# phi: alpha/sum(alpha) sequence as defined in Zucchini/MacDonald
+\end_layout
+
+\begin_layout Plain Layout
+
+	# v: temp variable to hold phi calculations
+\end_layout
+
+\begin_layout Plain Layout
+
+	# u: sum(v)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Assign prob state vector for initial observation: delta*p(x_first)
+\end_layout
+
+\begin_layout Plain Layout
+
+ 	v=delta%*%diag(dmat[first,x[first],]) 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Compute log-likelihood contribution for first observation; for
+\end_layout
+
+\begin_layout Plain Layout
+
+	# models that condition on first observation u=1,lnl=0
+\end_layout
+
+\begin_layout Plain Layout
+
+	u=sum(v)
+\end_layout
+
+\begin_layout Plain Layout
+
+	phi=v/u
+\end_layout
+
+\begin_layout Plain Layout
+
+	lnl=log(u)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Loop over occasions for this encounter history (x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	for(t in (first+1):T)
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+		# Compute likelihood contribution for this occasion
+\end_layout
+
+\begin_layout Plain Layout
+
+		v=phi%*%gamma[t-1,,]%*%diag(dmat[t,x[t],])  
+\end_layout
+
+\begin_layout Plain Layout
+
+		u=sum(v)
+\end_layout
+
+\begin_layout Plain Layout
+
+		lnl=lnl+log(u)
+\end_layout
+
+\begin_layout Plain Layout
+
+		# Compute updated state vector
+\end_layout
+
+\begin_layout Plain Layout
+
+		phi=v/u
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(lnl)
+\end_layout
+
+\begin_layout Plain Layout
+
+}     
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The log-likelihood for a set of capture-histories is the sum of the individual
+ history log-likelihoods multiplied by the number of individuals with that
+ history (freq).
+ The R function 
+\family sans
+loglikelihood
+\family default
+ does the following:
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Computes a model-specific set of real parameters at the current parameter
+ values (
+\family sans
+par
+\family default
+ vector) using the function 
+\family sans
+reals,
+\family default
+ which multiplies the parameter vector and design matrix and applies the
+ inverse link function for that type of parameter.
+ It also assigns any fixed real parameters in 
+\family sans
+ddl[[parname]]$fix
+\family default
+.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Calls model-specific functions to compute 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+dmat,
+\family default
+ four dimensional arrays which contain id and occasion-specific transition
+ and state-dependent probability matrices, and 
+\family sans
+delta,
+\family default
+ 2-d array containing id-specific initial state distribution.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Calls 
+\family sans
+HMMLikelihood
+\family default
+ for each capture history (animal) (
+\family sans
+x
+\family default
+) passing the history-specific three dimensional arrays 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+dmat
+\family default
+ arrays and vector 
+\family sans
+delta
+\family default
+ to compute the log-likelihood.
+\end_layout
+
+\begin_layout Enumerate
+\paragraph_spacing onehalf
+Returns total negative log-likelihood after multiplying by frequency of
+ capture history.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+loglikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
+\end_layout
+
+\begin_layout Plain Layout
+
+		fct_delta,ddl,dml,parameters,debug=FALSE)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Arguments:
+\end_layout
+
+\begin_layout Plain Layout
+
+	# par: vector of parameter values for log-likelihood evaluation
+\end_layout
+
+\begin_layout Plain Layout
+
+	# type: vector of parameter names used to split par vector into types
+\end_layout
+
+\begin_layout Plain Layout
+
+	# x: matrix of observed sequences (row:id; column:occasion/time)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# start: matrix with a row for each id and two columns 
+\end_layout
+
+\begin_layout Plain Layout
+
+	#        1) first observed state, 2) first occasion observed
+\end_layout
+
+\begin_layout Plain Layout
+
+	# m: number of states
+\end_layout
+
+\begin_layout Plain Layout
+
+	# T: number of occasions; sequence length
+\end_layout
+
+\begin_layout Plain Layout
+
+	# freq: vector of history frequencies or 1 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# fct_dmat: function to create D from parameters
+\end_layout
+
+\begin_layout Plain Layout
+
+	# fct_gamma: function to create gamma - transition matrix
+\end_layout
+
+\begin_layout Plain Layout
+
+	# fct_delta: function to create initial state probability distribution
+ matrix
+\end_layout
+
+\begin_layout Plain Layout
+
+	# ddl: design data list of parameters for each id
+\end_layout
+
+\begin_layout Plain Layout
+
+	# model: formulas for each parameter type
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Other variables:
+\end_layout
+
+\begin_layout Plain Layout
+
+	# parlist: list of parameter vectors split by type (eg Phi, p in CJS)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# gamma: array of transition matrices - one for each id, time
+\end_layout
+
+\begin_layout Plain Layout
+
+	# dmat: array of observation probability matrices - one for each id, time
+\end_layout
+
+\begin_layout Plain Layout
+
+	#
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Create list of parameter matrices from single input parameter vector
+\end_layout
+
+\begin_layout Plain Layout
+
+	# First split parameter vector by prameter type (type) 
+\end_layout
+
+\begin_layout Plain Layout
+
+	parlist=split(par,type)
+\end_layout
+
+\begin_layout Plain Layout
+
+	pars=list()
+\end_layout
+
+\begin_layout Plain Layout
+
+	# For each parameter type call function reals to compute vector
+\end_layout
+
+\begin_layout Plain Layout
+
+	# of real parameter values; then use laply and split to create
+\end_layout
+
+\begin_layout Plain Layout
+
+	# a matrix of parameter values with a row for each id and column for
+\end_layout
+
+\begin_layout Plain Layout
+
+	# each occasion.
+\end_layout
+
+\begin_layout Plain Layout
+
+	for(parname in names(parameters))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    R=reals(ddl=ddl[[parname]],dml=dml[[parname]],
+\end_layout
+
+\begin_layout Plain Layout
+
+                parameters=parameters[[parname]],parlist=parlist[[parname]])
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pars[[parname]]=laply(split(R,ddl[[parname]]$id),function(x) x)
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	# compute four dimensional arrays of id- and occasion-specific 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# observation and transition matrices using parameter values
+\end_layout
+
+\begin_layout Plain Layout
+
+	dmat=fct_dmat(pars,m,F=start[,2],T)
+\end_layout
+
+\begin_layout Plain Layout
+
+	gamma=fct_gamma(pars,m,F=start[,2],T)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# compute matrix of initial state distribution for each id
+\end_layout
+
+\begin_layout Plain Layout
+
+	delta=fct_delta(pars,m,F=start[,2],T,start)
+\end_layout
+
+\begin_layout Plain Layout
+
+	# loop over each encounter history in sapply and 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create log-likelihood vector - an element for each x
+\end_layout
+
+\begin_layout Plain Layout
+
+	# sum is total log-likelihood across individuals 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# return negative log-likelihood
+\end_layout
+
+\begin_layout Plain Layout
+
+	neglnl=-sum(freq*sapply(1:nrow(x),function(id) 
+\end_layout
+
+\begin_layout Plain Layout
+
+	            HMMLikelihood(x[id,],start[id,2],m,T,
+\end_layout
+
+\begin_layout Plain Layout
+
+	                         dmat=dmat[id,,,],gamma=gamma[id,,,],
+\end_layout
+
+\begin_layout Plain Layout
+
+	                         delta=delta[id,])))
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(neglnl)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+reals=function(ddl,dml,parameters,parlist)
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+    # Computes real estimates for HMM models using inverse of 
+\end_layout
+
+\begin_layout Plain Layout
+
+    # link from design matrix and for a particular parameter 
+\end_layout
+
+\begin_layout Plain Layout
+
+    # type (parname); handles fixed parameters assigned by 
+\end_layout
+
+\begin_layout Plain Layout
+
+    # non-NA value in field named fix in the ddl dataframe.
+\end_layout
+
+\begin_layout Plain Layout
+
+	dm=dml$fe
+\end_layout
+
+\begin_layout Plain Layout
+
+	# Currently for log,logit or identity link, return the inverse values
+\end_layout
+
+\begin_layout Plain Layout
+
+	values=switch(parameters$link,
+\end_layout
+
+\begin_layout Plain Layout
+
+	     log=exp(as.vector(dm%*%parlist)),
+\end_layout
+
+\begin_layout Plain Layout
+
+		 logit=plogis(as.vector(dm%*%parlist)),
+\end_layout
+
+\begin_layout Plain Layout
+
+		 identity=as.vector(dm%*%parlist))
+\end_layout
+
+\begin_layout Plain Layout
+
+    if(!is.null(ddl$time.interval))values=values^ddl$time.interval
+\end_layout
+
+\begin_layout Plain Layout
+
+	# if some reals are fixed, set reals to their fixed values 
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(!is.null(ddl$fix))
+\end_layout
+
+\begin_layout Plain Layout
+
+		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]
+\end_layout
+
+\begin_layout Plain Layout
+
+	# return vector of reals
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(values)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The above algorithm and code for computing the likelihood remains unchanged
+ for any model, which makes generalization quite easy.
+ Fitting a particular type of model (e.g., CJS, Multistate CJS) only requires
+ the development of the functions 
+\family sans
+fct_dmat
+\family default
+, 
+\family sans
+fct_gamma
+\family default
+ and 
+\family sans
+fct_delta 
+\family default
+to create the required arrays from the parameter values.
+ Here I will be considering models where the initial release state is known
+ and the likelihood is conditioned on that first known state (e.g., release
+ of a live animal in CJS).
+ If an animal is observed in state 
+\shape italic
+j 
+\shape default
+at occasion 
+\begin_inset Formula $t*$
+\end_inset
+
+, then 
+\begin_inset Formula $\delta$
+\end_inset
+
+ is a vector of 0s except the 
+\shape italic
+j
+\begin_inset script superscript
+
+\begin_layout Plain Layout
+th
+\end_layout
+
+\end_inset
+
+
+\shape default
+ element is 1 where 
+\shape italic
+j 
+\shape default
+is the initial known state value 
+\begin_inset Formula $x_{t*}$
+\end_inset
+
+.
+ Also the diagonal matrix, 
+\begin_inset Formula $\boldsymbol{P}_{t*}(x_{t*})$
+\end_inset
+
+ has all zeros on the diagonal except for the element corresponding to observati
+on of state 
+\shape italic
+j 
+\shape default
+is 1.
+ Thus, 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\delta(x_{t*})\boldsymbol{P}_{1}(x_{t*})\boldsymbol{\boldsymbol{1}^{\prime}}=1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+ and its logarithm is thus 0.
+ For these conditional models, if 
+\shape italic
+t* = T
+\shape default
+, there is no information in the sequence.
+ 
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The functions to create 
+\family sans
+dmat
+\family default
+, 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+delta
+\family default
+ for the CJS model (hmmCJS) are 
+\family sans
+cjs_dmat
+\family default
+, 
+\family sans
+cjs_gamma
+\family default
+ and 
+\family sans
+cjs_delta
+\family default
+ as shown below.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+cjs_dmat=function(pars,m,F,T) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# add first occasion p=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	pmat=array(NA,c(nrow(pars$p),T,2,2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(pmat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pmat[i,F[i],,]=matrix(c(0,1,1,0),nrow=2,ncol=2,byrow=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        p=pars$p[i,j]
+\end_layout
+
+\begin_layout Plain Layout
+
+	        pmat[i,j+1,,]=matrix(c(1-p,1,p,0),nrow=2,ncol=2,byrow=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	pmat
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+cjs_gamma=function(pars,m,F,T) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create four dimensional (4-d) array with a matrix for each id and occasion
+\end_layout
+
+\begin_layout Plain Layout
+
+	# from pars$Phi which is a matrix of id by occasion survival probabilities
+ 	
+\end_layout
+
+\begin_layout Plain Layout
+
+	phimat=array(NA,c(nrow(pars$Phi),T-1,m,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(phimat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        phi=pars$Phi[i,j]
+\end_layout
+
+\begin_layout Plain Layout
+
+	        phimat[i,j,,]=matrix(c(phi,1-phi,0,1),nrow=2,ncol=2,byrow=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	phimat
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+cjs_delta=function(pars,m,F,T,start) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(is.list(m))m=m$ns*m$na+1
+\end_layout
+
+\begin_layout Plain Layout
+
+	delta=matrix(0,nrow=nrow(start),ncol=m)
+\end_layout
+
+\begin_layout Plain Layout
+
+	delta[cbind(1:nrow(start),start[,1])]=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	delta 
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset VSpace bigskip
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+The functions to create 
+\family sans
+dmat
+\family default
+, 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+delta
+\family default
+ for the Multi-state CJS model (hmmMSCJS) are 
+\family sans
+ms_dmat
+\family default
+, 
+\family sans
+ms_gamma 
+\family default
+and 
+\family sans
+cjs_delta
+\family default
+.
+ The former two functions are shown below.
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ms_dmat=function(pars,m,F,T) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create four dimensional (4-d) array with a matrix for each id and occasion
+ from
+\end_layout
+
+\begin_layout Plain Layout
+
+	# from pars$p which is a matrix of id by occasion x state capture probabilities
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# which is split across occasions for multiple states; 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# each dmat has m+1 rows (0 + m states) and m+1 columns - m states + dead
+\end_layout
+
+\begin_layout Plain Layout
+
+	# add first occasion p=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	pmat=array(NA,c(nrow(pars$p),T,m,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(pmat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pdiag=diag(rep(1,m-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pmat[i,F[i],,]=cbind(rbind(1-colSums(pdiag),pdiag),c(1,rep(0,nrow(pdiag))))
+		
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        pdiag=diag(pars$p[i,((j-1)*(m-1)+1):(j*(m-1))])			
+\end_layout
+
+\begin_layout Plain Layout
+
+	        pmat[i,j+1,,]=cbind(rbind(1-colSums(pdiag),pdiag),c(1,rep(0,nrow(pdiag)
+)))	
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	pmat
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+ms_gamma=function(pars,m,F,T) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create an four dimensional (4-d) array with a matrix for each id and
+ occasion for S from pars$S 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# which is a matrix of id by occasion x state survival probabilities
+\end_layout
+
+\begin_layout Plain Layout
+
+	if(is.list(m))m=m$ns*m$na+1
+\end_layout
+
+\begin_layout Plain Layout
+
+	phimat=array(NA,c(nrow(pars$S),T-1,m,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(phimat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        s=pars$S[i,((j-1)*(m-1)+1):(j*(m-1))]
+\end_layout
+
+\begin_layout Plain Layout
+
+	        smat=matrix(s,ncol=length(s),nrow=length(s))
+\end_layout
+
+\begin_layout Plain Layout
+
+	        phimat[i,j,,]=rbind(cbind(smat,1-s),c(rep(0,length(s)),1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create a 4-d array from pars$Psi which is a matrix of id by occasion
+ x state^2 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# non-normalized Psi probabilities which are normalized to sum to 1.
+ 			
+\end_layout
+
+\begin_layout Plain Layout
+
+	psimat=array(NA,c(nrow(pars$Psi),T-1,m,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(psimat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        psi=pars$Psi[i,((j-1)*(m-1)^2+1):(j*(m-1)^2)]
+\end_layout
+
+\begin_layout Plain Layout
+
+	        psix=matrix(psi,ncol=sqrt(length(psi)),byrow=TRUE)
+\end_layout
+
+\begin_layout Plain Layout
+
+	        psix=psix/rowSums(psix)
+\end_layout
+
+\begin_layout Plain Layout
+
+	        psimat[i,j,,]=rbind(cbind(psix,rep(1,nrow(psix))),rep(1,nrow(psix)+1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	# The 4-d arrays are multiplied and returned
+\end_layout
+
+\begin_layout Plain Layout
+
+	phimat*psimat
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\begin_inset VSpace bigskip
+\end_inset
+
+The functions to create 
+\family sans
+dmat
+\family default
+, 
+\family sans
+gamma
+\family default
+ and 
+\family sans
+delta 
+\family default
+for the Multi-state CJS model with state uncertainty (hmmuMSCJS) are 
+\family sans
+ums_dmat
+\family default
+, 
+\family sans
+ms_gamma
+\family default
+ and 
+\family sans
+cjs_delta
+\family default
+.
+ The function 
+\family sans
+ums_dmat
+\family default
+ is shown below.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+{
+\backslash
+footnotesize
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<tidy=FALSE>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+ums_dmat=function(pars,m,F,T) 
+\end_layout
+
+\begin_layout Plain Layout
+
+{
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create 4-d array with a p matrix for each id and occasion 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# from pars$p which is a matrix of id by occasion x state capture probabilities
+ 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# which is split across occasions for multiple states; 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# also and a 4-d array with delta and
+\end_layout
+
+\begin_layout Plain Layout
+
+	# then return their product; splits across occasion for multiple states
+\end_layout
+
+\begin_layout Plain Layout
+
+	# add first occasion p=1
+\end_layout
+
+\begin_layout Plain Layout
+
+	pmat=array(NA,c(nrow(pars$p),T,m+1,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(pmat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pdiag=diag(rep(1,m-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    pmat[i,F[i],,]=cbind(rbind(1-colSums(pdiag),pdiag,colSums(pdiag)),
+\end_layout
+
+\begin_layout Plain Layout
+
+	                         c(1,rep(0,nrow(pdiag)+1)))		
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        pdiag=diag(pars$p[i,((j-1)*(m-1)+1):(j*(m-1))])			
+\end_layout
+
+\begin_layout Plain Layout
+
+	        pmat[i,j+1,,]=cbind(rbind(1-colSums(pdiag),pdiag,colSums(pdiag)),
+\end_layout
+
+\begin_layout Plain Layout
+
+	                        c(1,rep(0,nrow(pdiag)+1)))	
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	# create 4-d array with a delta matrix for each id and occasion 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# from pars$delta which is a matrix of id by occasion-state of 
+\end_layout
+
+\begin_layout Plain Layout
+
+	# probabilities of identifying state
+\end_layout
+
+\begin_layout Plain Layout
+
+	# which is split across occasions for multiple states;
+\end_layout
+
+\begin_layout Plain Layout
+
+	# add first occasion delta=1 for known state at release
+\end_layout
+
+\begin_layout Plain Layout
+
+	deltamat=array(NA,c(nrow(pars$delta),T,m+1,m))
+\end_layout
+
+\begin_layout Plain Layout
+
+	for (i in 1:nrow(deltamat))
+\end_layout
+
+\begin_layout Plain Layout
+
+	{
+\end_layout
+
+\begin_layout Plain Layout
+
+	    delta=rep(1,m-1)
+\end_layout
+
+\begin_layout Plain Layout
+
+	    deltax=matrix(1,ncol=length(delta),nrow=length(delta))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    diag(deltax)=delta
+\end_layout
+
+\begin_layout Plain Layout
+
+	    deltamat[i,F[i],,]=cbind(rbind(rep(1,ncol(deltax)),deltax,1-delta),
+\end_layout
+
+\begin_layout Plain Layout
+
+	                              rep(1,length(delta)+2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    for(j in F[i]:(T-1))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    {
+\end_layout
+
+\begin_layout Plain Layout
+
+	        delta=pars$delta[i,((j-1)*(m-1)+1):(j*(m-1))]			
+\end_layout
+
+\begin_layout Plain Layout
+
+	        deltax=matrix(1,ncol=length(delta),nrow=length(delta))
+\end_layout
+
+\begin_layout Plain Layout
+
+	        diag(deltax)=delta
+\end_layout
+
+\begin_layout Plain Layout
+
+	        deltamat[i,j+1,,]=cbind(rbind(rep(1,ncol(deltax)),deltax,1-delta),
+\end_layout
+
+\begin_layout Plain Layout
+
+	                                rep(1,length(delta)+2))
+\end_layout
+
+\begin_layout Plain Layout
+
+	    }
+\end_layout
+
+\begin_layout Plain Layout
+
+	}
+\end_layout
+
+\begin_layout Plain Layout
+
+	# return the product of the 4-d arrays
+\end_layout
+
+\begin_layout Plain Layout
+
+	return(pmat*deltamat)
+\end_layout
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\paragraph_spacing onehalf
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+}
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
