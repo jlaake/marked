@@ -2,25 +2,25 @@
 \alias{proc.form}
 \title{Mixed effect model formula parser}
 \usage{
-proc.form(f)
+  proc.form(f)
 }
 \arguments{
   \item{f}{formula for mixed effect mode in the form used
   in lme4; ~fixed +(re1|g1) +...+(ren|gn)}
 }
 \value{
-A list with elements fix.model and re.model. fix.model
-contains the formula for the fixed effects; re.model
-contains elements sub, the grouping formula and model the
-design formula for the random effect. Each formula is of
-type character and must be wrapped with as.formula in use
-with model.matrix
+  A list with elements fix.model and re.model. fix.model
+  contains the formula for the fixed effects; re.model
+  contains elements sub, the grouping formula and model the
+  design formula for the random effect. Each formula is of
+  type character and must be wrapped with as.formula in use
+  with model.matrix
 }
 \description{
-Parses a mixed effect model in the lme4 structure of ~fixed
-+(re1|g1) +...+(ren|gn)
+  Parses a mixed effect model in the lme4 structure of
+  ~fixed +(re1|g1) +...+(ren|gn)
 }
 \author{
-Devin Johnson <devin.johnson@noaa.gov>
+  Devin Johnson <devin.johnson@noaa.gov>
 }
 

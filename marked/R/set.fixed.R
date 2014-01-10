@@ -13,7 +13,7 @@ set.fixed=function(ddl,parameters)
    for(parx in names(parameters))
    {
 	   if(!is.null(parameters[[parx]]$fixed))
-		   ddl[[parx]][ddl[[parx]]$id%in%parameters[[parx]]$fixed[,1]&as.numeric(ddl[[parx]]$time)%in%parameters[[parx]]$fixed[,2]]$fix=parameters[[parx]]$fixed[,3]
+		   ddl[[parx]]$fix[ddl[[parx]]$id%in%parameters[[parx]]$fixed[,1]&as.numeric(ddl[[parx]]$time)%in%parameters[[parx]]$fixed[,2]]=parameters[[parx]]$fixed[,3]
    }
    return(ddl)
 }
@@ -30,10 +30,10 @@ create.fixed.matrix=function(ddl,parameters)
 {
 	for(parx in names(parameters))
 	{
-		if(!is.null(parameters[[parx]]$fixed))
+		if(!is.null(ddl[[parx]]$fix))
 		{
 			select=!is.na(ddl[[parx]]$fix)
-			parameters[[parx]]$fixed=cbind(as.numeric(ddl[[parx]]$id[select]),as.numeric(ddl[[parx]]$time[select]),ddl[[parx]]$fix[select])
+			parameters[[parx]]$fixed=cbind(as.numeric(ddl[[parx]]$id[select]),as.numeric(ddl[[parx]]$time[select])+1,ddl[[parx]]$fix[select])
 		} else
 		    parameters[[parx]]$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
 	}	

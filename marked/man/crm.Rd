@@ -2,14 +2,16 @@
 \alias{crm}
 \title{Capture-recapture model fitting function}
 \usage{
-crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
-  model.parameters = list(), design.parameters = list(), initial = NULL,
-  groups = NULL, time.intervals = NULL, debug = FALSE, method = "BFGS",
-  hessian = FALSE, accumulate = TRUE, chunk_size = 1e+07,
-  control = NULL, refit = 1, itnmax = 5000, scale = NULL, run = TRUE,
-  burnin = 100, iter = 1000, use.admb = FALSE, crossed = NULL,
-  reml = FALSE, compile = FALSE, extra.args = NULL,
-  strata.labels = NULL, clean = TRUE, ...)
+  crm(data, ddl = NULL, begin.time = 1, model = "CJS",
+    title = "", model.parameters = list(),
+    design.parameters = list(), initial = NULL,
+    groups = NULL, time.intervals = NULL, debug = FALSE,
+    method = "BFGS", hessian = FALSE, accumulate = TRUE,
+    chunk_size = 1e+07, control = NULL, refit = 1,
+    itnmax = 5000, scale = NULL, run = TRUE, burnin = 100,
+    iter = 1000, use.admb = FALSE, crossed = NULL,
+    reml = FALSE, compile = FALSE, extra.args = NULL,
+    strata.labels = NULL, clean = TRUE, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -101,195 +103,198 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   optimx}
 }
 \value{
-crm model object with class=("crm",submodel) where submodel
-is either "CJS" or "JS" at present.
+  crm model object with class=("crm",submodel) where
+  submodel is either "CJS" or "JS" at present.
 }
 \description{
-Fits user specified models to some types of
-capture-recapture wholly in R and not with MARK.  A single
-function that processes data, creates the design data,
-makes the crm model and runs it
+  Fits user specified models to some types of
+  capture-recapture wholly in R and not with MARK.  A
+  single function that processes data, creates the design
+  data, makes the crm model and runs it
 }
 \details{
-This function is operationally similar to the function
-\code{mark in RMark} in that is is a shell that calls
-several other functions to perform the following steps: 1)
-\code{\link{process.data}} to setup data and parameters and
-package them into a list (processed data),2)
-\code{\link{make.design.data}} to create the design data
-for each parameter in the specified model, 3)
-\code{\link{create.dm}} to create the design matrices for
-each parameter based on the formula provided for each
-parameter, 4) call to the specific function for model
-fitting (now either \code{\link{cjs}} or \code{\link{js}}).
-As with \code{mark} the calling arguments for \code{crm}
-are a compilation of the calling arguments for each of the
-functions it calls (with some arguments renamed to avoid
-conflicts). If data is a processed dataframe (see
-\code{\link{process.data}}) then it expects to find a value
-for \code{ddl}.  Likewise, if the data have not been
-processed, then \code{ddl} should be NULL.  This dual
-calling structure allows either a single call approach for
-each model or alternatively for the data to be processed
-and the design data (\code{ddl}) to be created once and
-then a whole series of models can be analyzed without
-repeating those steps.
+  This function is operationally similar to the function
+  \code{mark in RMark} in that is is a shell that calls
+  several other functions to perform the following steps:
+  1) \code{\link{process.data}} to setup data and
+  parameters and package them into a list (processed
+  data),2) \code{\link{make.design.data}} to create the
+  design data for each parameter in the specified model, 3)
+  \code{\link{create.dm}} to create the design matrices for
+  each parameter based on the formula provided for each
+  parameter, 4) call to the specific function for model
+  fitting (now either \code{\link{cjs}} or
+  \code{\link{js}}). As with \code{mark} the calling
+  arguments for \code{crm} are a compilation of the calling
+  arguments for each of the functions it calls (with some
+  arguments renamed to avoid conflicts). If data is a
+  processed dataframe (see \code{\link{process.data}}) then
+  it expects to find a value for \code{ddl}.  Likewise, if
+  the data have not been processed, then \code{ddl} should
+  be NULL.  This dual calling structure allows either a
+  single call approach for each model or alternatively for
+  the data to be processed and the design data (\code{ddl})
+  to be created once and then a whole series of models can
+  be analyzed without repeating those steps.
 
-There are some optional arguments that can be used to set
-initial values and control other aspects of the
-optimization.  The optimization is done with the R
-package/function \code{optimx} and the arguments
-\code{method} and \code{hessian} are described with the
-help for that function.  In addition, any arguments not
-matching those for \code{cjs} (the ...) are passed to
-\code{optimx} allowing any of the other parameters to be
-set.  If you set \code{debug=TRUE}, then at each function
-evaluation (\code{\link{cjs.lnl}} the current values of the
-parameters and -2*log-likelihood value are output.
+  There are some optional arguments that can be used to set
+  initial values and control other aspects of the
+  optimization.  The optimization is done with the R
+  package/function \code{optimx} and the arguments
+  \code{method} and \code{hessian} are described with the
+  help for that function.  In addition, any arguments not
+  matching those for \code{cjs} (the ...) are passed to
+  \code{optimx} allowing any of the other parameters to be
+  set.  If you set \code{debug=TRUE}, then at each function
+  evaluation (\code{\link{cjs.lnl}} the current values of
+  the parameters and -2*log-likelihood value are output.
 
-In the current implementation, a logit link is used to
-constrain the parameters in the unit interval (0,1) except
-for probability of entry which uses an mlogit and N which
-uses a log link. For the probitCJS model, a probit link is
-used for the parameters. These could be generalized to use
-other link functions. Following the notation of MARK, the
-parameters in the link space are referred to as \code{beta}
-and those in the actual parameter space of \code{Phi} and
-\code{p} as reals.
+  In the current implementation, a logit link is used to
+  constrain the parameters in the unit interval (0,1)
+  except for probability of entry which uses an mlogit and
+  N which uses a log link. For the probitCJS model, a
+  probit link is used for the parameters. These could be
+  generalized to use other link functions. Following the
+  notation of MARK, the parameters in the link space are
+  referred to as \code{beta} and those in the actual
+  parameter space of \code{Phi} and \code{p} as reals.
 
-Initial values can be set in 2 ways.  To set a baseline
-intial value for the intercept of \code{Phi} \code{p} set
-those arguments to some real value in the open interval
-(0,1). All non-intercept beta parameters are set to zero.
-Alternatively, you can specify in \code{initial}, a vector
-of initial values for the beta parameters (on the logit
-scale).  This is most easily done by passing the results
-from a previous model run using the result list element
-\code{beta} as described below.  The code will match the
-names of the current design matrix to the names in
-\code{beta} and use the appropriate initial values. Any
-non-specified values are set to 0.  If there are no names
-associated with the \code{initial} vector then they are
-simply used in the specified order. If you do not specify
-initial values it is equivalent to setting \code{Phi} and
-\code{p} to 0.5.
+  Initial values can be set in 2 ways.  To set a baseline
+  intial value for the intercept of \code{Phi} \code{p} set
+  those arguments to some real value in the open interval
+  (0,1). All non-intercept beta parameters are set to zero.
+  Alternatively, you can specify in \code{initial}, a
+  vector of initial values for the beta parameters (on the
+  logit scale).  This is most easily done by passing the
+  results from a previous model run using the result list
+  element \code{beta} as described below.  The code will
+  match the names of the current design matrix to the names
+  in \code{beta} and use the appropriate initial values.
+  Any non-specified values are set to 0.  If there are no
+  names associated with the \code{initial} vector then they
+  are simply used in the specified order. If you do not
+  specify initial values it is equivalent to setting
+  \code{Phi} and \code{p} to 0.5.
 
-If you have a study with unequal time intervals between
-capture occasions, then these can be specified with the
-argument \code{time.intervals}.
+  If you have a study with unequal time intervals between
+  capture occasions, then these can be specified with the
+  argument \code{time.intervals}.
 
-The argument \code{accumulate} defaults to \code{TRUE}.
-When it is \code{TRUE} it will accumulate common capture
-histories that also have common design and common fixed
-values (see below) for the parameters.  This will speed up
-the analysis because in the calculation of the likelihood
-(\code{\link{cjs.lnl}} it loops over the unique values. In
-general the default will be the best unless you have many
-capture histories and are using many individual
-covariate(s) in the formula that would make each entry
-unique. In that case there will be no effect of
-accumulation but the code will still try to accumulate. In
-that particular case by setting \code{accumulate=FALSE} you
-can skip the code run for accumulation.
+  The argument \code{accumulate} defaults to \code{TRUE}.
+  When it is \code{TRUE} it will accumulate common capture
+  histories that also have common design and common fixed
+  values (see below) for the parameters.  This will speed
+  up the analysis because in the calculation of the
+  likelihood (\code{\link{cjs.lnl}} it loops over the
+  unique values. In general the default will be the best
+  unless you have many capture histories and are using many
+  individual covariate(s) in the formula that would make
+  each entry unique. In that case there will be no effect
+  of accumulation but the code will still try to
+  accumulate. In that particular case by setting
+  \code{accumulate=FALSE} you can skip the code run for
+  accumulation.
 
-Most of the arguments controlling the fitted model are
-contained in lists in the arguments \code{model.parameters}
-and \code{design.parameters} which are similar to their
-counterparts in \code{mark inb RMark}. Each is a named list
-with the names being the parameters in the model (e.g., Phi
-and p in "cjs" and "Phi","p","pent","N" in "js"). Each
-named element is also a list containing various values
-defining the design data and model for the parameter. The
-elements of \code{model.parameters} can include
-\code{formula} which is an R formula to create the design
-matrix for the parameter and \code{fixed} is a matrix of
-fixed values as described below. The elements of
-\code{design.parameters} can include \code{time.varying},
-\code{fields}, \code{time.bins},\code{age.bins}, and
-\code{cohort.bins}. See \code{\link{create.dmdf}} for a
-description of the first 2 and \code{\link{create.dm}} for
-a description of the last 3.
+  Most of the arguments controlling the fitted model are
+  contained in lists in the arguments
+  \code{model.parameters} and \code{design.parameters}
+  which are similar to their counterparts in \code{mark inb
+  RMark}. Each is a named list with the names being the
+  parameters in the model (e.g., Phi and p in "cjs" and
+  "Phi","p","pent","N" in "js"). Each named element is also
+  a list containing various values defining the design data
+  and model for the parameter. The elements of
+  \code{model.parameters} can include \code{formula} which
+  is an R formula to create the design matrix for the
+  parameter and \code{fixed} is a matrix of fixed values as
+  described below. The elements of \code{design.parameters}
+  can include \code{time.varying}, \code{fields},
+  \code{time.bins},\code{age.bins}, and \code{cohort.bins}.
+  See \code{\link{create.dmdf}} for a description of the
+  first 2 and \code{\link{create.dm}} for a description of
+  the last 3.
 
-Real parameters can be set to fixed values using
-\code{fixed=x} where x is a matrix with 3 columns and any
-number of rows.  The first column specifies the particular
-animal (capture history) as the row number in the dataframe
-\code{x}.  The second specifies the capture occasion number
-for the real parameter to be fixed.  For \code{Phi} and
-\code{pent} these are 1 to \code{nocc}-1 and for \code{p}
-they are 2 to \code{nocc} for "cjs" and 1 to \code{nocc}
-for "js". This difference is due to the parameter labeling
-by the beginning of the interval for Phi (e.g., survival
-from occasion 1 to 2) and by the occasion for \code{p}.
-For "cjs" \code{p} is not estimated for occasion 1. The
-third element in the row is the real value in the closed
-unit interval [0,1] for the fixed parameter.  This approach
-is completely general allowing you to fix a particular real
-parameter for a specific animal and occasion but it is a
-bit kludgy. Alternatively, you can set fixed values by
-specifying values for a field called fix in the design data
-for a parameter. If the value of fix is NA the parameter is
-estimated and if it is not NA then the real parameter is
-fixed at that value.  If you also specify fixed as decribed
-above, they will over-ride any values you have also set
-with fix in the design data. To set all of the real values
-for a particular occasion you can use the following example
-with the dipper data as a template:
+  Real parameters can be set to fixed values using
+  \code{fixed=x} where x is a matrix with 3 columns and any
+  number of rows.  The first column specifies the
+  particular animal (capture history) as the row number in
+  the dataframe \code{x}.  The second specifies the capture
+  occasion number for the real parameter to be fixed.  For
+  \code{Phi} and \code{pent} these are 1 to \code{nocc}-1
+  and for \code{p} they are 2 to \code{nocc} for "cjs" and
+  1 to \code{nocc} for "js". This difference is due to the
+  parameter labeling by the beginning of the interval for
+  Phi (e.g., survival from occasion 1 to 2) and by the
+  occasion for \code{p}.  For "cjs" \code{p} is not
+  estimated for occasion 1. The third element in the row is
+  the real value in the closed unit interval [0,1] for the
+  fixed parameter.  This approach is completely general
+  allowing you to fix a particular real parameter for a
+  specific animal and occasion but it is a bit kludgy.
+  Alternatively, you can set fixed values by specifying
+  values for a field called fix in the design data for a
+  parameter. If the value of fix is NA the parameter is
+  estimated and if it is not NA then the real parameter is
+  fixed at that value.  If you also specify fixed as
+  decribed above, they will over-ride any values you have
+  also set with fix in the design data. To set all of the
+  real values for a particular occasion you can use the
+  following example with the dipper data as a template:
 
-\code{model.parameters=list(Phi=list(formula=~1,}
-\code{fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
+  \code{model.parameters=list(Phi=list(formula=~1,}
+  \code{fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
 
-The above sets \code{Phi} to 1 for the interval between
-occasions 2 and 3 for all animals.
+  The above sets \code{Phi} to 1 for the interval between
+  occasions 2 and 3 for all animals.
 
-Alternatively, you could do as follows:
+  Alternatively, you could do as follows:
 
-data(dipper) dp=process.data(dipper)
-ddl=make.design.data(dp)
-ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA)
+  data(dipper) dp=process.data(dipper)
+  ddl=make.design.data(dp)
+  ddl$Phi$fix=ifelse(ddl$Phi$time==2,1,NA)
 
-At present there is no modification of the parameter count
-to address fixing of real parameters except that if by
-fixing reals, a beta is not needed in the design it will be
-dropped. For example, if you were to use ~time for Phi with
-survival fixed to 1 for time 2, then then beta for that
-time would not be included.
+  At present there is no modification of the parameter
+  count to address fixing of real parameters except that if
+  by fixing reals, a beta is not needed in the design it
+  will be dropped. For example, if you were to use ~time
+  for Phi with survival fixed to 1 for time 2, then then
+  beta for that time would not be included.
 
-To use ADMB (use.admb=TRUE), you need to install: 1) the R
-package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend
-gcc compiler). The following are instructions for
-installation with Windows. For other operating systems see
-(http://www.admb-project.org/downloads) and
-(http://www.admb-project.org/tools/gcc/).
+  To use ADMB (use.admb=TRUE), you need to install: 1) the
+  R package R2admb, 2) ADMB, and 3) a C++ compiler (I
+  recommend gcc compiler). The following are instructions
+  for installation with Windows. For other operating
+  systems see (http://www.admb-project.org/downloads) and
+  (http://www.admb-project.org/tools/gcc/).
 
-Windows Instructions:
+  Windows Instructions:
 
-1) In R use install.packages function or choose
-Packages/Install Packages from menu and select R2admb.
+  1) In R use install.packages function or choose
+  Packages/Install Packages from menu and select R2admb.
 
-2) Install ADMB 11:
-http://admb-project.googlecode.com/files/admb-11-mingw-gcc4.5-32bit.exe.
-Put the software in C:/admb to avoid problems with spaces
-in directory name and for the function below to work.
+  2) Install ADMB 11:
+  http://admb-project.googlecode.com/files/admb-11-mingw-gcc4.5-32bit.exe.
+  Put the software in C:/admb to avoid problems with spaces
+  in directory name and for the function below to work.
 
-3) Install gcc 4.5 from:
-http://www.admb-project.org/tools/gcc/gcc452-win32.zip/view.
-Put in c:/MinGW
+  3) Install gcc 4.5 from:
+  http://www.admb-project.org/tools/gcc/gcc452-win32.zip/view.
+  Put in c:/MinGW
 
-I use the following function in R to setup R2admb to access
-ADMB rather than adding to my path so gcc versions with
-Rtools don't conflict.
+  I use the following function in R to setup R2admb to
+  access ADMB rather than adding to my path so gcc versions
+  with Rtools don't conflict.
 
-prepare_admb=function() { Sys.setenv(PATH =
-paste("c:/admb/bin;c:admb/utilities;c:/MinGW/bin;",
-Sys.getenv("PATH"), sep = ";")) Sys.setenv(ADMB_HOME =
-"c:/admb") invisible() } To use different locations you'll
-need to change the values used above
+  prepare_admb=function() { Sys.setenv(PATH =
+  paste("c:/admb/bin;c:admb/utilities;c:/MinGW/bin;",
+  Sys.getenv("PATH"), sep = ";")) Sys.setenv(ADMB_HOME =
+  "c:/admb") invisible() } To use different locations
+  you'll need to change the values used above
 
-Before running crm with use.admb=T, execute the function
-prepare_admb().  You could put this function or the code it
-contains in your .First or .Rprofile so it runs each time
-you start R.
+  Before running crm with use.admb=T, execute the function
+  prepare_admb().  You could put this function or the code
+  it contains in your .First or .Rprofile so it runs each
+  time you start R.
 }
 \examples{
 # cormack-jolly-seber model
@@ -344,11 +349,11 @@ crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 }
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \seealso{
-\code{\link{cjs}}, \code{\link{js}},
-\code{\link{make.design.data}},\code{\link{process.data}}
+  \code{\link{cjs}}, \code{\link{js}},
+  \code{\link{make.design.data}},\code{\link{process.data}}
 }
 \keyword{models}
 

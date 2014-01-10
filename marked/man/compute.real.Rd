@@ -2,8 +2,9 @@
 \alias{compute.real}
 \title{Compute estimates of real parameters}
 \usage{
-compute.real(model, parameter, ddl = NULL, unique = TRUE, vcv = FALSE,
-  se = FALSE, chat = 1, subset, select, showDesign = FALSE)
+  compute.real(model, parameter, ddl = NULL, unique = TRUE,
+    vcv = FALSE, se = FALSE, chat = 1, subset, select,
+    showDesign = FALSE)
 }
 \arguments{
   \item{model}{model object}
@@ -34,16 +35,17 @@ compute.real(model, parameter, ddl = NULL, unique = TRUE, vcv = FALSE,
   data}
 }
 \value{
-A data frame (\code{real}) is returned if \code{vcv=FALSE};
-otherwise, a list is returned also containing vcv.real:
-\item{real}{ data frame containing estimates, and if
-vcv=TRUE it also contains standard errors and confidence
-intervals} \item{vcv.real}{variance-covariance matrix of
-real estimates}
+  A data frame (\code{real}) is returned if
+  \code{vcv=FALSE}; otherwise, a list is returned also
+  containing vcv.real: \item{real}{ data frame containing
+  estimates, and if vcv=TRUE it also contains standard
+  errors and confidence intervals}
+  \item{vcv.real}{variance-covariance matrix of real
+  estimates}
 }
 \description{
-Computes real estimates and their var-cov for a particular
-subset of parameters.
+  Computes real estimates and their var-cov for a
+  particular subset of parameters.
 }
 \examples{
 data(dipper)
@@ -54,7 +56,7 @@ mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,
 xx=compute.real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \keyword{utility}
 
