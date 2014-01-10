@@ -3,12 +3,12 @@
 \alias{process.data}
 \title{Process encounter history dataframe for MARK analysis}
 \usage{
-process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,
-                       allgroups=FALSE,age.var=NULL,initial.ages=c(0),
-                       time.intervals=NULL,nocc=NULL,accumulate=TRUE,
-                       strata.labels=NULL)
+  process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,
+    allgroups=FALSE,age.var=NULL,initial.ages=c(0),
+    time.intervals=NULL,nocc=NULL,accumulate=TRUE,
+    strata.labels=NULL)
 
-         accumulate_data(data)
+  accumulate_data(data)
 }
 \arguments{
   \item{data}{A data frame with at least one field named
@@ -64,152 +64,159 @@ process.data(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,
   unobserved strata p=0.}
 }
 \value{
-from \code{process.data} processed.data (a list with the
-following elements) \item{data}{original raw dataframe with
-group factor variable added if groups were defined}
-\item{model}{type of analysis model (eg, "cjs" or "js")}
-\item{freq}{a dataframe of frequencies (same # of rows as
-data, number of columns is the number of groups in the
-data. The column names are the group labels representing
-the unique groups that have one or more capture histories.}
-\item{nocc}{number of capture occasions}
-\item{time.intervals}{length of time intervals between
-capture occasions} \item{begin.time}{time of first capture
-occasion} \item{initial.ages}{an initial age for each group
-in the data; Note that this is not the original argument
-but is a vector with the initial age for each group. In the
-first example below \code{proc.example.data$initial.ages}
-is a vector with 16 elements as follows 0 1 1 2 0 1 1 2 0 1
-1 2 0 1 1 2} \item{group.covariates}{factor covariates used
-to define groups} from accumulate_data a dataframe with
-same column structure as argument with addition of freq (if
-not any) and reduced to unique rows with freq accumulating
-number of records.
+  from \code{process.data} processed.data (a list with the
+  following elements) \item{data}{original raw dataframe
+  with group factor variable added if groups were defined}
+  \item{model}{type of analysis model (eg, "cjs" or "js")}
+  \item{freq}{a dataframe of frequencies (same # of rows as
+  data, number of columns is the number of groups in the
+  data. The column names are the group labels representing
+  the unique groups that have one or more capture
+  histories.} \item{nocc}{number of capture occasions}
+  \item{time.intervals}{length of time intervals between
+  capture occasions} \item{begin.time}{time of first
+  capture occasion} \item{initial.ages}{an initial age for
+  each group in the data; Note that this is not the
+  original argument but is a vector with the initial age
+  for each group. In the first example below
+  \code{proc.example.data$initial.ages} is a vector with 16
+  elements as follows 0 1 1 2 0 1 1 2 0 1 1 2 0 1 1 2}
+  \item{group.covariates}{factor covariates used to define
+  groups} from accumulate_data a dataframe with same column
+  structure as argument with addition of freq (if not any)
+  and reduced to unique rows with freq accumulating number
+  of records.
 }
 \description{
-Prior to analyzing the data, this function initializes
-several variables (e.g., number of capture occasions, time
-intervals) that are often specific to the capture-recapture
-model being fitted to the data.  It also is used to 1)
-define groups in the data that represent different levels
-of one or morestrata.labels factor covariates (e.g., sex),
-2) define time intervals between capture occasions (if not
-1), and 3) create an age structure for the data, if any.
+  Prior to analyzing the data, this function initializes
+  several variables (e.g., number of capture occasions,
+  time intervals) that are often specific to the
+  capture-recapture model being fitted to the data.  It
+  also is used to 1) define groups in the data that
+  represent different levels of one or morestrata.labels
+  factor covariates (e.g., sex), 2) define time intervals
+  between capture occasions (if not 1), and 3) create an
+  age structure for the data, if any.
 }
 \details{
-For examples of \code{data}, see \code{\link{dipper}}. The
-structure of the encounter history and the analysis depends
-on the analysis model to some extent. Thus, it is necessary
-to process a dataframe with the encounter history
-(\code{ch}) and a chosen \code{model} to define the
-relevant values. For example, number of capture occasions
-(\code{nocc}) is automatically computed based on the length
-of the encounter history (\code{ch}) in \code{data}.
-Currently, only 2 types of models are accepted in marked:
-cjs and js. The default time interval is unit time (1) and
-if this is adequate, the function will assign the
-appropriate length.  A processed data frame can only be
-analyzed using the model that was specified.  The
-\code{model} value is used by the functions
-\code{\link{make.design.data}} and \code{\link{crm}} to
-define the model structure as it relates to the data. Thus,
-if the data are going to be analysed with different
-underlying models, create different processed data sets
-with the model name as an extension.  For example,
-\code{dipper.cjs=process.data(dipper)}.
+  For examples of \code{data}, see \code{\link{dipper}}.
+  The structure of the encounter history and the analysis
+  depends on the analysis model to some extent. Thus, it is
+  necessary to process a dataframe with the encounter
+  history (\code{ch}) and a chosen \code{model} to define
+  the relevant values. For example, number of capture
+  occasions (\code{nocc}) is automatically computed based
+  on the length of the encounter history (\code{ch}) in
+  \code{data}. Currently, only 2 types of models are
+  accepted in marked: cjs and js. The default time interval
+  is unit time (1) and if this is adequate, the function
+  will assign the appropriate length.  A processed data
+  frame can only be analyzed using the model that was
+  specified.  The \code{model} value is used by the
+  functions \code{\link{make.design.data}} and
+  \code{\link{crm}} to define the model structure as it
+  relates to the data. Thus, if the data are going to be
+  analysed with different underlying models, create
+  different processed data sets with the model name as an
+  extension.  For example,
+  \code{dipper.cjs=process.data(dipper)}.
 
-This function will report inconsistencies in the lengths of
-the capture history values and when invalid entries are
-given in the capture history.
+  This function will report inconsistencies in the lengths
+  of the capture history values and when invalid entries
+  are given in the capture history.
 
-The argument \code{begin.time} specifies the time for the
-first capture occasion and not the first time the
-particular animal was caught or releaed.  This is used in
-creating the levels of the time factor variable in the
-design data and for labelling parameters. If the
-\code{begin.time} varies by group, enter a vector of times
-with one for each group. It will add a field begin.time to
-the data with the value for each individual.  You can also
-specify a begin.time field in the data allowing each animal
-to have a unique begin.time. Note that the time values for
-survivals are based on the beginning of the survival
-interval and capture probabilities are labeled based on the
-time of the capture occasion.  Likewise, age labels for
-survival are the ages at the beginning times of the
-intervals and for capture probabilities it is the age at
-the time of capture/recapture.
+  The argument \code{begin.time} specifies the time for the
+  first capture occasion and not the first time the
+  particular animal was caught or releaed.  This is used in
+  creating the levels of the time factor variable in the
+  design data and for labelling parameters. If the
+  \code{begin.time} varies by group, enter a vector of
+  times with one for each group. It will add a field
+  begin.time to the data with the value for each
+  individual.  You can also specify a begin.time field in
+  the data allowing each animal to have a unique
+  begin.time. Note that the time values for survivals are
+  based on the beginning of the survival interval and
+  capture probabilities are labeled based on the time of
+  the capture occasion.  Likewise, age labels for survival
+  are the ages at the beginning times of the intervals and
+  for capture probabilities it is the age at the time of
+  capture/recapture.
 
-The time.intervals argument can either be a vector of
-lengths of times for each interval between occasions that
-is constant for all animals or a matrix which has a row for
-each animal and a column for each interval which lets the
-intervals vary by animals. These intervals are used to
-construct the design data and are used for the field
-time.interval which is used to adjust parameters like Phi
-and S to a constant per unit time interval (eg annual
-survival rates). On occasion it can be useful to leave the
-time.interval to remain at default of 1 or some other
-vector of time.intervals to construct the design data and
-then modify the time.interval value in the design data.
-For example, assume that cohort marking and release is done
-between sampling occasions.  The initial survival from
-release to the next sampling occasion may vary by release
-cohort, but the remainder of the surivivals are between
-sampling occasions.  In that case it is easier to let
-time.interval=1 (assuming unit interval (eg year) between
-sampling occasions but then modifying ddl$Phi$time.interval
-to the value for the first interval after each release to
-be the partial year from release to next sampling occasion.
-In this way everything is labelled with annual quantities
-but the first partial year survival is adjusted to an
-annual rate.
+  The time.intervals argument can either be a vector of
+  lengths of times for each interval between occasions that
+  is constant for all animals or a matrix which has a row
+  for each animal and a column for each interval which lets
+  the intervals vary by animals. These intervals are used
+  to construct the design data and are used for the field
+  time.interval which is used to adjust parameters like Phi
+  and S to a constant per unit time interval (eg annual
+  survival rates). On occasion it can be useful to leave
+  the time.interval to remain at default of 1 or some other
+  vector of time.intervals to construct the design data and
+  then modify the time.interval value in the design data.
+  For example, assume that cohort marking and release is
+  done between sampling occasions.  The initial survival
+  from release to the next sampling occasion may vary by
+  release cohort, but the remainder of the surivivals are
+  between sampling occasions.  In that case it is easier to
+  let time.interval=1 (assuming unit interval (eg year)
+  between sampling occasions but then modifying
+  ddl$Phi$time.interval to the value for the first interval
+  after each release to be the partial year from release to
+  next sampling occasion. In this way everything is
+  labelled with annual quantities but the first partial
+  year survival is adjusted to an annual rate.
 
-Note that if you specify time.intervals as a matrix, then
-accumulate is set to FALSE so that the number of rows in
-the data can be checked against the number of rows in the
-time.intervals matrix and thus data cannot be accumulated
-because at present it doesn't use values of time.intervals
-to determine which records can be accumulated.
+  Note that if you specify time.intervals as a matrix, then
+  accumulate is set to FALSE so that the number of rows in
+  the data can be checked against the number of rows in the
+  time.intervals matrix and thus data cannot be accumulated
+  because at present it doesn't use values of
+  time.intervals to determine which records can be
+  accumulated.
 
-\code{groups} is a vector of variable names that are
-contained in \code{data}.  Each must be a factor variable.
-A group is created for each unique combination of the
-levels of the factor variables.  In the first example given
-below \code{groups=c("sex","age","region")}. which creates
-groups defined by the levels of \code{sex}, \code{age} and
-\code{region}. There should be
-2(sexes)*3(ages)*4(regions)=24 groups but in actuality
-there are only 16 in the data because there are only 2 age
-groups for each sex. Age group 1 and 2 for M and age groups
-2 and 3 for F.  This was done to demonstrate that the code
-will only use groups that have 1 or more capture histories
-unless \code{allgroups=TRUE}.
+  \code{groups} is a vector of variable names that are
+  contained in \code{data}.  Each must be a factor
+  variable. A group is created for each unique combination
+  of the levels of the factor variables.  In the first
+  example given below
+  \code{groups=c("sex","age","region")}. which creates
+  groups defined by the levels of \code{sex}, \code{age}
+  and \code{region}. There should be
+  2(sexes)*3(ages)*4(regions)=24 groups but in actuality
+  there are only 16 in the data because there are only 2
+  age groups for each sex. Age group 1 and 2 for M and age
+  groups 2 and 3 for F.  This was done to demonstrate that
+  the code will only use groups that have 1 or more capture
+  histories unless \code{allgroups=TRUE}.
 
-The argument \code{age.var=2} specifies that the second
-grouping variable in \code{groups} represents an age
-variable.  It could have been named something different
-than age. If a variable in \code{groups} is named
-\code{age} then it is not necessary to specify
-\code{age.var}. \code{initial.age} specifies that the age
-at first capture of the age levels. For example
-initial.age=0:2 specifies that the initial.ages are 0,1 and
-2 for the age class levels designated as 1,2,3. The actual
-ages for the age classes do not have to be sequential or
-ordered, but ordering will cause less confusion.  Thus
-levels 1,2,3 could represent initial ages of 0,4,6 or
-6,0,4. The default for \code{initial.age} is 0 for each
-group, in which case, \code{age} represents time since
-marking (first capture) rather than the actual age of the
-animal. If the data contains an initial.age field then it
-overrides any other values and lets each animal have a
-unique initial.age at first capture/release.
+  The argument \code{age.var=2} specifies that the second
+  grouping variable in \code{groups} represents an age
+  variable.  It could have been named something different
+  than age. If a variable in \code{groups} is named
+  \code{age} then it is not necessary to specify
+  \code{age.var}. \code{initial.age} specifies that the age
+  at first capture of the age levels. For example
+  initial.age=0:2 specifies that the initial.ages are 0,1
+  and 2 for the age class levels designated as 1,2,3. The
+  actual ages for the age classes do not have to be
+  sequential or ordered, but ordering will cause less
+  confusion.  Thus levels 1,2,3 could represent initial
+  ages of 0,4,6 or 6,0,4. The default for
+  \code{initial.age} is 0 for each group, in which case,
+  \code{age} represents time since marking (first capture)
+  rather than the actual age of the animal. If the data
+  contains an initial.age field then it overrides any other
+  values and lets each animal have a unique initial.age at
+  first capture/release.
 
-The following variable names are reserved and should be
-used as follows: id (animal id) ch(capture history) freq
-(number of animals with that ch/data) The following
-variable names are reserved and should not be used in the
-data:
-occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
+  The following variable names are reserved and should be
+  used as follows: id (animal id) ch(capture history) freq
+  (number of animals with that ch/data) The following
+  variable names are reserved and should not be used in the
+  data:
+  occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 }
 \examples{
 data(dipper)
@@ -217,10 +224,10 @@ dipper.process=process.data(dipper)
 accumulate_data(dipper)
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \seealso{
-\code{\link{dipper}},\code{\link{crm}}
+  \code{\link{dipper}},\code{\link{crm}}
 }
 \keyword{utility}
 

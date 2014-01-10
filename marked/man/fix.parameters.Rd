@@ -2,7 +2,7 @@
 \alias{fix.parameters}
 \title{Fixing real parameters in crm models}
 \usage{
-fix.parameters(x, subset = NULL, occasions, values)
+  fix.parameters(x, subset = NULL, occasions, values)
 }
 \arguments{
   \item{x}{processed data list}
@@ -16,15 +16,15 @@ fix.parameters(x, subset = NULL, occasions, values)
   latter, must match length of occasions}
 }
 \value{
-Matrix with 3 columns: 1) animal row number, 2) occasion,
-3) value for real parameter
+  Matrix with 3 columns: 1) animal row number, 2) occasion,
+  3) value for real parameter
 }
 \description{
-Creates matrix with appropriate structure for fixing real
-parameters in a crm model for a specified set of capture
-histories and occasions.
+  Creates matrix with appropriate structure for fixing real
+  parameters in a crm model for a specified set of capture
+  histories and occasions.
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 

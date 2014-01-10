@@ -2,7 +2,7 @@
 \alias{cjs.initial}
 \title{Computes starting values for CJS p and Phi parameters}
 \usage{
-cjs.initial(dml, imat, link = "logit")
+  cjs.initial(dml, imat, link = "logit")
 }
 \arguments{
   \item{dml}{design matrix list for Phi and p}
@@ -13,16 +13,16 @@ cjs.initial(dml, imat, link = "logit")
   probitCJS)}
 }
 \value{
-list of initial parameter estimates
+  list of initial parameter estimates
 }
 \description{
-Computes starting values for Phi and p parameters from the
-list of design matrices and the summarized data list
-including ch matrix and first and last vectors. If any
-values are missing (NA) or abs(par)>5, they are set to 0.
+  Computes starting values for Phi and p parameters from
+  the list of design matrices and the summarized data list
+  including ch matrix and first and last vectors. If any
+  values are missing (NA) or abs(par)>5, they are set to 0.
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \keyword{utility}
 

@@ -94,6 +94,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
 			p.fixed=parameters$p$fixed,time.intervals=time.intervals)
 #   If data are to be accumulated based on ch and design matrices do so here;
+#   Problems with accumulation and fixed values 10 Jan 2014; turned off accumulate if fixed
+    if(parameters$p$fixed[1,1]>0 | parameters$Phi$fixed[1,1]>0) accumulate=FALSE
 	if(accumulate)
 	{
 		cat("Accumulating capture histories based on design. This can take awhile.\n")

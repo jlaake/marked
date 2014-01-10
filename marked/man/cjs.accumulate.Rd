@@ -2,7 +2,7 @@
 \alias{cjs.accumulate}
 \title{Accumulates common capture history values}
 \usage{
-cjs.accumulate(x, model_data, nocc, freq, chunk_size)
+  cjs.accumulate(x, model_data, nocc, freq, chunk_size)
 }
 \arguments{
   \item{x}{data}
@@ -22,19 +22,19 @@ cjs.accumulate(x, model_data, nocc, freq, chunk_size)
   default set in cjs.}
 }
 \value{
-modified model_data list that is accumulated
+  modified model_data list that is accumulated
 }
 \description{
-To speed up compuation, animals with the same capture
-history and design matrix are accumulated and represented
-by a frequency. Computes starting values for Phi and p
-parameters from the list of design matrices and the
-summarized data list including ch matrix and first and last
-vectors. If any values are missing (NA) or abs(par)>5, they
-are set to 0.
+  To speed up compuation, animals with the same capture
+  history and design matrix are accumulated and represented
+  by a frequency. Computes starting values for Phi and p
+  parameters from the list of design matrices and the
+  summarized data list including ch matrix and first and
+  last vectors. If any values are missing (NA) or
+  abs(par)>5, they are set to 0.
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \keyword{utility}
 
