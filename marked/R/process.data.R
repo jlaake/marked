@@ -531,6 +531,6 @@ accumulate_data <- function(data)
 	freq=sapply(split(data$freq, pasted.data),sum)
 	x=unique(x[order(pasted.data),,drop=FALSE])
 	x$freq=freq
-	cat(nx,"capture histories collapsed into ",nrow(x),"\n")
+	message(nx, " capture histories collapsed into ", nrow(x), "\n", appendLF=FALSE)
 	return(x)	
 }
