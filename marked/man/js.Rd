@@ -3,10 +3,9 @@
 \title{Fitting function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-  js(x, ddl, dml, model_data = NULL, parameters,
-    accumulate = TRUE, initial = NULL, method = "BFGS",
-    hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
-    refit, itnmax = NULL, control = NULL, scale, ...)
+js(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
+  initial = NULL, method = "BFGS", hessian = FALSE, debug = FALSE,
+  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -62,47 +61,47 @@ formulation}
   \code{\link{js.lnl}}}
 }
 \value{
-  The resulting value of the function is a list with the
-  class of crm,js such that the generic functions print and
-  coef can be used. \item{beta}{named vector of parameter
-  estimates} \item{lnl}{-2*log likelihood} \item{AIC}{lnl +
-  2* number of parameters} \item{convergence}{result from
-  \code{optimx}; if 0 \code{optimx} thinks it converged}
-  \item{count}{\code{optimx} results of number of function
-  evaluations} \item{reals}{dataframe of data and real Phi
-  and p estimates for each animal-occasion excluding those
-  that occurred before release} \item{vcv}{var-cov matrix
-  of betas if hessian=TRUE was set}
+The resulting value of the function is a list with the
+class of crm,js such that the generic functions print and
+coef can be used. \item{beta}{named vector of parameter
+estimates} \item{lnl}{-2*log likelihood} \item{AIC}{lnl +
+2* number of parameters} \item{convergence}{result from
+\code{optimx}; if 0 \code{optimx} thinks it converged}
+\item{count}{\code{optimx} results of number of function
+evaluations} \item{reals}{dataframe of data and real Phi
+and p estimates for each animal-occasion excluding those
+that occurred before release} \item{vcv}{var-cov matrix of
+betas if hessian=TRUE was set}
 }
 \description{
-  A function for computing MLEs for a specified Jolly-Seber
-  open population capture-recapture model for processed
-  dataframe \code{x} with user specified formulas in
-  \code{parameters} that create list of design matrices
-  \code{dml}. This function can be called directly but is
-  most easily called from \code{\link{crm}} that sets up
-  needed arguments.
+A function for computing MLEs for a specified Jolly-Seber
+open population capture-recapture model for processed
+dataframe \code{x} with user specified formulas in
+\code{parameters} that create list of design matrices
+\code{dml}. This function can be called directly but is
+most easily called from \code{\link{crm}} that sets up
+needed arguments.
 }
 \details{
-  It is easiest to call \code{js} through the function
-  \code{\link{crm}}. Details are explained there.
+It is easiest to call \code{js} through the function
+\code{\link{crm}}. Details are explained there.
 
-  Be cautious with this function at present.  It does not
-  include many checks to make sure values like fixed values
-  will remain in the specified range of the data.  Normally
-  this would not be a big problem but because
-  \code{\link{js.lnl}} calls an external FORTRAN subroutine
-  via \code{\link{cjs.lnl}}, if it gets a subscirpt out of
-  bounds, it will cause R to terminate.  So make sure to
-  save your workspace frequently if you use this function
-  in its current implementation.
+Be cautious with this function at present.  It does not
+include many checks to make sure values like fixed values
+will remain in the specified range of the data.  Normally
+this would not be a big problem but because
+\code{\link{js.lnl}} calls an external FORTRAN subroutine
+via \code{\link{cjs.lnl}}, if it gets a subscirpt out of
+bounds, it will cause R to terminate.  So make sure to save
+your workspace frequently if you use this function in its
+current implementation.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
-  Schwarz, C. J., and A. N. Arnason. 1996. A general
-  methodology for the analysis of capture-recapture
-  experiments in open populations. Biometrics 52:860-873.
+Schwarz, C. J., and A. N. Arnason. 1996. A general
+methodology for the analysis of capture-recapture
+experiments in open populations. Biometrics 52:860-873.
 }
 

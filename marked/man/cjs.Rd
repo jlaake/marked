@@ -2,12 +2,11 @@
 \alias{cjs}
 \title{Fitting function for CJS models}
 \usage{
-  cjs(x, ddl, dml, model_data = NULL, parameters,
-    accumulate = TRUE, initial = NULL, method,
-    hessian = FALSE, debug = FALSE, chunk_size = 1e+07,
-    refit, itnmax = NULL, control = NULL, scale,
-    use.admb = FALSE, crossed = TRUE, compile = FALSE,
-    extra.args = NULL, reml, clean = TRUE, ...)
+cjs(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
+  initial = NULL, method, hessian = FALSE, debug = FALSE,
+  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
+  use.admb = FALSE, crossed = TRUE, compile = FALSE, extra.args = NULL,
+  reml, clean = TRUE, ...)
 }
 \arguments{
   \item{x}{processed dataframe created by process.data}
@@ -80,47 +79,46 @@
   \code{\link{cjs.lnl}}}
 }
 \value{
-  The resulting value of the function is a list with the
-  class of crm,cjs such that the generic functions print
-  and coef can be used. Elements are 1) beta: named vector
-  of parameter estimatesm 2) lnl: -2*log likelihood, 3)
-  AIC: lnl + 2* number of parameters, 4) convergence:
-  result from \code{optim}; if 0 \code{optim} thinks it
-  converged, 5) count:\code{optim} results of number of
-  function evaluations, 6) reals: dataframe of data and
-  real Phi and p estimates for each animal-occasion
-  excluding those that occurred before release, 7)
-  vcv:var-cov matrix of betas if hessian=TRUE was set.
+The resulting value of the function is a list with the
+class of crm,cjs such that the generic functions print and
+coef can be used. Elements are 1) beta: named vector of
+parameter estimatesm 2) lnl: -2*log likelihood, 3) AIC: lnl
++ 2* number of parameters, 4) convergence: result from
+\code{optim}; if 0 \code{optim} thinks it converged, 5)
+count:\code{optim} results of number of function
+evaluations, 6) reals: dataframe of data and real Phi and p
+estimates for each animal-occasion excluding those that
+occurred before release, 7) vcv:var-cov matrix of betas if
+hessian=TRUE was set.
 }
 \description{
-  A function for computing MLEs for a specified
-  Cormack-Jolly-Seber open population capture-recapture
-  model for processed dataframe \code{x} with user
-  specified formulas in \code{parameters} that create list
-  of design matrices \code{dml}. This function can be
-  called directly but is most easily called from
-  \code{\link{crm}} that sets up needed arguments.
+A function for computing MLEs for a specified
+Cormack-Jolly-Seber open population capture-recapture model
+for processed dataframe \code{x} with user specified
+formulas in \code{parameters} that create list of design
+matrices \code{dml}. This function can be called directly
+but is most easily called from \code{\link{crm}} that sets
+up needed arguments.
 }
 \details{
-  It is easiest to call \code{cjs} through the function
-  \code{\link{crm}}. Details are explained there.
+It is easiest to call \code{cjs} through the function
+\code{\link{crm}}. Details are explained there.
 
-  Be cautious with this function at present.  It does not
-  include many checks to make sure values like fixed values
-  will remain in the specified range of the data.  Normally
-  this would not be a big problem but because
-  \code{\link{cjs.lnl}} calls an external FORTRAN
-  subroutine, if it gets a subscript out of bounds, it will
-  cause R to terminate.  So make sure to save your
-  workspace frequently if you use this function in its
-  current implementation.
+Be cautious with this function at present.  It does not
+include many checks to make sure values like fixed values
+will remain in the specified range of the data.  Normally
+this would not be a big problem but because
+\code{\link{cjs.lnl}} calls an external FORTRAN subroutine,
+if it gets a subscript out of bounds, it will cause R to
+terminate.  So make sure to save your workspace frequently
+if you use this function in its current implementation.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
-  Pledger, S., K. H. Pollock, et al. (2003). Open
-  capture-recapture models with heterogeneity: I.
-  Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
+Pledger, S., K. H. Pollock, et al. (2003). Open
+capture-recapture models with heterogeneity: I.
+Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
 }
 

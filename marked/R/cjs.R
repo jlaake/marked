@@ -98,8 +98,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
     if(parameters$p$fixed[1,1]>0 | parameters$Phi$fixed[1,1]>0) accumulate=FALSE
 	if(accumulate)
 	{
-		cat("Accumulating capture histories based on design. This can take awhile.\n")
-		flush.console()
+		message("Accumulating capture histories based on design. This can take awhile...")
+		#flush.console()
 		model_data.save=model_data   
 		model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
 	}else
@@ -120,8 +120,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
    {
 	   par=scale.par(par,scale)
 	   #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
-	   cat("Starting optimization for ",length(par)," parameters\n")
-	   flush.console()
+	   message("Starting optimization for ",length(par)," parameters...")
+	   #flush.console()
 	   markedfunc_eval=0
 	   cjsenv=environment()
 	   if("SANN"%in%method)
@@ -152,7 +152,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
        # Compute hessian if requested
 	   if(hessian) 
 	   {
-		   cat("Computing hessian\n")
+		   message("Computing hessian...")
 		   res$beta.vcv=cjs.hessian(res)
 	   } 
    } else

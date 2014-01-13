@@ -14,7 +14,7 @@
 cjs.initial=function(dml,imat,link="logit")
 {
 #   Create initial values for p using bernoulli glm with Manly-Parr approach
-	cat("Computing initial parameter estimates\n")
+	message("Computing initial parameter estimates\n")
 	num=nrow(imat$chmat)
 	ind=matrix(c(1:num,imat$first+1,imat$last-1),ncol=3,nrow=num)
 	ind=ind[ind[,2]<=ind[,3],]

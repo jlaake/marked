@@ -265,7 +265,7 @@ if(is.null(data$data))
       ddl=NULL
    }
    message("Model: ",model,"\n")
-   message("Processing data\n")
+   message("Processing data...\n")
    flush.console()
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
@@ -281,7 +281,7 @@ else
 #
 if(is.null(ddl)) 
 {
-	message("Creating design data.\n")
+	message("Creating design data...\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 } else

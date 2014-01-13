@@ -2,7 +2,7 @@
 \alias{cjs_delta}
 \title{HMM Initial state distribution functions}
 \usage{
-  cjs_delta(pars, m, F, T, start)
+cjs_delta(pars, m, F, T, start)
 }
 \arguments{
   \item{pars}{list of real parameter matrices (id by
@@ -19,21 +19,20 @@
   observation}
 }
 \value{
-  2-d array of initial state probability vectors for each
-  id
+2-d array of initial state probability vectors for each id
 }
 \description{
-  Functions that compute the initial probability
-  distribution for the states. Currently only CJS, MS
-  models and MS models with state uncertainty are included
-  and these all use cjs_delta to assign a known state.
+Functions that compute the initial probability distribution
+for the states. Currently only CJS, MS models and MS models
+with state uncertainty are included and these all use
+cjs_delta to assign a known state.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
-  Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov
-  Models for Time Series: An Introduction using R. Chapman
-  and Hall, Boca Raton, FL. 275p.
+Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models
+for Time Series: An Introduction using R. Chapman and Hall,
+Boca Raton, FL. 275p.
 }
 

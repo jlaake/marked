@@ -2,13 +2,11 @@
 \alias{hmmDemo}
 \title{HMM computation demo functions}
 \usage{
-  hmmDemo(data, id, ddl = NULL, begin.time = 1,
-    model = "hmmCJS", title = "",
-    model.parameters = list(), design.parameters = list(),
-    initial = NULL, groups = NULL, time.intervals = NULL,
-    accumulate = FALSE, chunk_size = 1e+07,
-    strata.labels = NULL, state.names = NULL,
-    obs.names = NULL, ...)
+hmmDemo(data, id, ddl = NULL, begin.time = 1, model = "hmmCJS",
+  title = "", model.parameters = list(), design.parameters = list(),
+  initial = NULL, groups = NULL, time.intervals = NULL,
+  accumulate = FALSE, chunk_size = 1e+07, strata.labels = NULL,
+  state.names = NULL, obs.names = NULL, ...)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -64,11 +62,11 @@
   optimx}
 }
 \value{
-  hmm demo list
+hmm demo list
 }
 \description{
-  Uses dataframe and arguments to construct HMM state
-  vectors alpha and phi for demonstration.#'
+Uses dataframe and arguments to construct HMM state vectors
+alpha and phi for demonstration.#'
 }
 \examples{
 # cormack-jolly-seber model
@@ -90,7 +88,7 @@ barplot(t(x$phi),beside=TRUE,names.arg=x$chforwardstrings)
 #x$alpha*x$beta/exp(x$lnl)
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \keyword{models}
 
