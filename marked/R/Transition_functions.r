@@ -22,8 +22,47 @@
 	dim(value$phimat)=c(nrow(pars$Phi),T-1,2,2)
 	value$phimat
 }
+cjs1tl_gamma=function(pars,m,F,T) 
+{
+  	# create 4-d array with a matrix for each id and occasion
+  	# from pars$Phi which is a matrix of id by occasion survival probabilities 	
+  	tmat=array(0,c(nrow(pars$Phi),T-1,m,m))
+  	for (i in 1:nrow(tmat))
+  		for(j in F[i]:(T-1))
+  		{
+  			phi=pars$Phi[i,j]
+			tau=pars$tau[i,j]
+			tmat[i,j,,]=matrix(c(phi*(1-tau),tau*phi,1-phi,0,phi,1-phi,0,0,1),nrow=3,ncol=3,byrow=TRUE)
+  		}
+  	tmat
+}
+cjs2tl_gamma=function(pars,m,F,T) 
+{
+	  # create 4-d array with a matrix for each id and occasion
+	  # from pars$Phi which is a matrix of id by occasion survival probabilities 	
+	  tmat=array(0,c(nrow(pars$Phi),T-1,m,m))
+#     normalize to sum to 1
+	  for (i in 1:nrow(tmat))
+	  {
+		  tau=matrix(pars$tau[i,],ncol=4,byrow=TRUE)
+		  tau=tau/rowSums(tau)
+		  tau0=matrix(0,ncol=2,nrow=nrow(tau))   
+		  tau0[,1]=tau[,4]/(tau[,2]+tau[,4])  
+		  tau0[,2]=tau[,4]/(tau[,3]+tau[,4])  
+		  for(j in F[i]:(T-1))
+		  {
+			  phi=pars$Phi[i,j]
+			  tmat[i,j,,]=matrix(c(phi*tau[j,],1-phi,
+							     0,phi*(1-tau0[j,1]),0,phi*tau0[j,1],1-phi,
+								 0,0,phi*(1-tau0[j,2]),phi*tau0[j,2],1-phi,								 
+								 0,0,0,phi,1-phi,
+								 0,0,0,0,1),nrow=5,ncol=5,byrow=TRUE)
+		  }
+	  }
+	  tmat
+}
 ms_gamma=function(pars,m,F,T) 
- {
+{
 	 # create 4-d array with a matrix for each id and occasion
 	 # from pars$Phi which is a matrix of id by occasion survival probabilities 	
 	if(is.list(m))m=m$ns*m$na+1

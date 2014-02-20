@@ -112,6 +112,7 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
     for(parname in names(parameters))
     {
         R=reals(ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters[[parname]],parlist=parlist[[parname]])
+		R[is.infinite(R)]=1e199*sign(Inf)
         pars[[parname]]=laply(split(R,ddl[[parname]]$id),function(x) x)
     }
 	# compute 4-d arrays of id- and occasion-specific 
@@ -122,7 +123,6 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=start[,2],T,start)
 	if(is.list(m)) m=m$ns*m$na+1
-	neglnl=hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 	if(debug){
 		cat("\npar \n")
 		print(split(par,type))
@@ -131,6 +131,9 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 			cat("\n",parname,"\n")
 			print(pars[[parname]][1,])
 		}
+	}
+	neglnl=hmm.lnl(x,start,m,T,dmat,gamma,delta,rowSums(freq))
+	if(debug){
 		cat(" -lnl= ",neglnl)
 		ps=delta[1,]
 		for(i in 1:(T-1))

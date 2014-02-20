@@ -305,6 +305,7 @@ for (i in 1:length(parameters))
 	if(is.null(parameters[[i]]$formula)) parameters[[i]]$formula=~1
 	mlist=proc.form(parameters[[i]]$formula)
 	if(!is.null(mlist$re.model))re=TRUE
+	if(parameters[[i]]$nointercept)parameters[[i]]$remove.intercept=TRUE
 }
 # currently if re, then set use.admb to TRUE
 if(re) use.admb=TRUE

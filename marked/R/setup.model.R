@@ -57,7 +57,28 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$fct_gamma=cjs_gamma
 		model_def$hmm$fct_delta=cjs_delta
 		model_def$hmm$m=2
-	} else
+	} 
+	if(toupper(model)%in%c("HMMCJS1TL"))
+	{
+		model_def$hmm$ObsLevels=c("+","-","0")
+		model_def$hmm$fct_dmat=cjs1tl_dmat
+		model_def$hmm$fct_gamma=cjs1tl_gamma
+		model_def$hmm$fct_delta=cjs_delta
+		model_def$hmm$strata.labels=c("1","0")
+		model_def$hmm$obs_strata_map=1:2
+		model_def$hmm$m=3
+	}
+	if(toupper(model)%in%c("HMMCJS2TL"))
+	{
+		model_def$hmm$ObsLevels=c("++","+-","-+","--","0")
+		model_def$hmm$fct_dmat=cjs2tl_dmat
+		model_def$hmm$fct_gamma=cjs2tl_gamma
+		model_def$hmm$fct_delta=cjs_delta
+		model_def$hmm$strata.labels=c("11","10","01","00")
+		model_def$hmm$strata_data=data.frame(tag1=c(0,0,1,1),tag2=c(0,1,0,1))
+		model_def$hmm$obs_strata_map=1:4
+		model_def$hmm$m=5
+	}
 	if(toupper(model)%in%c("PROBITMSCJS","HMMMSCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,strata.labels)

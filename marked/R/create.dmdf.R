@@ -308,6 +308,8 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    if("group"%in%names(df))
 	  levels(df$group)=apply(x$group.covariates,1,paste,collapse="")
    df$Y=as.vector(t(x$ehmat)[begin.num:(nocc-last+begin.num-1),])
+   if(!is.null(x$strata_data)&!is.null(df$stratum))
+	   df=cbind(df,x$strata_data)
    return(df)
 }
 

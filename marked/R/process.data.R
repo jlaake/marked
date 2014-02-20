@@ -278,11 +278,18 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 					return(c(as.numeric(factor(xx[ich],levels=model.list$hmm$ObsLevels))-1,ich))
 				}))
    else
-	   start=t(sapply(data$ch,function(x){
+	   if(is.null(model.list$hmm$obs_strata_map))
+	       start=t(sapply(data$ch,function(x){
 						   xx=strsplit(x,",")[[1]]
 						   ich=min(which(strsplit(x,",")[[1]]!="0"))
 						   return(c(match(xx[ich],model.list$hmm$strata.labels),ich))
 					   }))
+       else
+		   start=t(sapply(data$ch,function(x){
+							   xx=strsplit(x,",")[[1]]
+							   ich=min(which(strsplit(x,",")[[1]]!="0"))
+							   return(c(model.list$hmm$obs_strata_map[match(xx[ich],model.list$hmm$ObsLevels)],ich))
+						   }))
    
    # create encounter history matrix
    ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
@@ -433,11 +440,20 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 			stop("length of begin.time must either be 1 or match number of groups")
 		else
 		    data$begin.time=begin.time[data$group]
-        plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
-                   nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
-                   initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
+		plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
+				nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
+				initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
         if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=model.list$strata.labels,unobserved=unobserved))
-        if(!is.null(model.list$hmm)) plist=c(plist,model.list$hmm)
+        if(!is.null(model.list$hmm)) 
+		{
+			if(!is.null(model.list$hmm$strata.labels))
+		    {
+		        plist$strata.labels=model.list$hmm$strata.labels	
+			    plist=c(plist,model.list$hmm[!names(model.list$hmm)%in%"strata.labels"])
+			}
+			else
+				plist=c(plist,model.list$hmm)
+		}
         return(plist) 
     }
 }
@@ -534,3 +550,4 @@ accumulate_data <- function(data)
 	message(nx, " capture histories collapsed into ", nrow(x), "\n", appendLF=FALSE)
 	return(x)	
 }
+
