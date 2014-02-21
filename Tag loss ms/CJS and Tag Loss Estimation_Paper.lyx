@@ -183,8 +183,8 @@ Introduction
 
 \begin_layout Standard
 Developing methods of marking animals that minimize or eliminate mark loss
- are important because mark-recapture estimators assume recaptures of marked
- individuals are always detected (Seber 1982).
+ are important because mark-recapture estimators assume marked individuals
+ remain marked and identifiable (Seber 1982).
  However, current methods of marking many different species indicate that
  problems with mark retention occur with small mammals (Fokidis et al.
  2006), large terrestrial mammals (Fosgate et al.
@@ -194,8 +194,17 @@ Developing methods of marking animals that minimize or eliminate mark loss
  If the assumption that no marks are lost is violated then estimates of
  population parameters (e.g., survival and abundance) will be biased (Arnason
  and Mills 1981, Diefenbach and Alt 1998) because previously marked animals
- that lose all marks are treated as being part of the unmarked population
- in closed population models and as immigrants in open models.
+ that lose all marks are 
+\begin_inset Quotes eld
+\end_inset
+
+apparent
+\begin_inset Quotes erd
+\end_inset
+
+ mortalities for survival estimation and for abundance estimation they are
+ treated as being part of the unmarked population in closed population models
+ and as immigrants in open models.
  Furthermore, even if an estimator is robust to violation of this assumption,
  the loss of marks will reduce the precision of parameter estimates because
  of the apparent reduction in sample size (Rotella and Hines 2005).
@@ -668,12 +677,9 @@ reference "tab:dep_table-logit"
 .
  Their approach is viable but we believe it is preferable to have a model
  with a parameter that controls dependence and with independence specified
- simply as 
-\begin_inset Formula $\alpha=$
-\end_inset
-
-0.
- Also, use of the logit-link allows covariates to be easily incorporated.
+ simply with that parameter set to 0.
+ Also, use of the multinomial logit-link for modelling allows covariates
+ to be easily incorporated.
  
 \end_layout
 
@@ -766,7 +772,11 @@ reference "tab:dep_table-logit"
 
 \end_inset
 
-where 1' is a row vector of ones and 
+ where 
+\begin_inset Formula $1'$
+\end_inset
+
+ is a row vector of ones and 
 \begin_inset Formula $K=1'\exp(X\beta)$
 \end_inset
 

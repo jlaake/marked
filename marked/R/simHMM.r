@@ -104,7 +104,7 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 				}
 			}
 		}
-	    ch=c(ch,apply(history,1,paste,collapse=""))
+	    ch=c(ch,apply(history,1,paste,collapse=","))
 		cols2xclude=-which(names(setup$data$data)%in%c("ch","freq","id"))
 		if(is.null(df2))
 			df2=setup$data$data[rep(id,setup$data$data$freq[id]),cols2xclude,drop=FALSE]
