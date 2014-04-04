@@ -10,7 +10,7 @@
 #' @importFrom lme4 nobars findbars
 #' 
 proc.form <- function(f){
-  fix.model = deparse(lme4::nobars(f))
+  fix.model = paste(deparse(lme4::nobars(f),width.cutoff = 500L),collapse="")
   if(fix.model=="NULL") fix.model="~ 1"
   re.lst = lme4::findbars(f)
 	if(length(re.lst)==0){

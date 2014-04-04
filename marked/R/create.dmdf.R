@@ -348,6 +348,7 @@ create.base.dmdf=function(x,parameter)
 		if(parameter$tostrata)
 		{
 			df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
+			df=df[,c("stratum","tostratum","occ","id")]
 			df$seq=1:nrow(df)
 		}
 		else
