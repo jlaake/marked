@@ -24,17 +24,13 @@
 }
 cjs1tl_gamma=function(pars,m,F,T) 
 {
-  	# create 4-d array with a matrix for each id and occasion
-  	# from pars$Phi which is a matrix of id by occasion survival probabilities 	
-  	tmat=array(0,c(nrow(pars$Phi),T-1,m,m))
-  	for (i in 1:nrow(tmat))
-  		for(j in F[i]:(T-1))
-  		{
-  			phi=pars$Phi[i,j]
-			tau=pars$tau[i,j]
-			tmat[i,j,,]=matrix(c(phi*(1-tau),tau*phi,1-phi,0,phi,1-phi,0,0,1),nrow=3,ncol=3,byrow=TRUE)
-  		}
-  	tmat
+	# create 4-d array with a matrix for each id and occasion
+	# from pars$Phi which is a matrix of id by occasion survival probabilities 	
+	tmat=array(0,c(nrow(pars$Phi),T-1,m,m))
+	value=.Fortran("cjs1tlgam",as.double(pars$Phi),as.double(pars$tau),as.integer(nrow(pars$Phi)),
+			as.integer(F),as.integer(T),tmat=double(nrow(pars$Phi)*(T-1)*m^2),PACKAGE="marked")
+	dim(value$tmat)=c(nrow(pars$Phi),T-1,m,m)
+	value$tmat
 }
 cjs2tl_gamma=function(pars,m,F,T) 
 {
@@ -171,5 +167,19 @@ ms_gamma=function(pars,m,F,T)
 #							0,0,0,0,1),nrow=5,ncol=5,byrow=TRUE)
 #		}
 #	}
+#	tmat
+#}
+#cjs1tl_gamma=function(pars,m,F,T) 
+#{
+#	# create 4-d array with a matrix for each id and occasion
+#	# from pars$Phi which is a matrix of id by occasion survival probabilities 	
+#	tmat=array(0,c(nrow(pars$Phi),T-1,m,m))
+#	for (i in 1:nrow(tmat))
+#		for(j in F[i]:(T-1))
+#		{
+#			phi=pars$Phi[i,j]
+#			tau=pars$tau[i,j]
+#			tmat[i,j,,]=matrix(c(phi*(1-tau),tau*phi,1-phi,0,phi,1-phi,0,0,1),nrow=3,ncol=3,byrow=TRUE)
+#		}
 #	tmat
 #}
