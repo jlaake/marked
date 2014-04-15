@@ -68,6 +68,7 @@
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parlist list of parameter strings used to split par vector
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
+#' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
@@ -79,7 +80,7 @@
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
-		fct_delta,ddl,dml,parameters,debug=FALSE)
+		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE)
 {
 	# Arguments:
 	# par: vector of parameter values for log-likelihood evaluation
@@ -122,6 +123,7 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=start[,2],T,start)
+	if(return.mat)return(list(dmat=dmat,gamma=gamma,delta=delta))
 	if(is.list(m)) m=m$ns*m$na+1
 	if(debug){
 		cat("\npar \n")

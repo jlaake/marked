@@ -2,8 +2,8 @@
 \alias{cjs.lnl}
 \title{Likelihood function for Cormack-Jolly-Seber model}
 \usage{
-cjs.lnl(par, model_data, Phi.links = NULL, p.links = NULL, debug = FALSE,
-  all = FALSE, cjsenv)
+  cjs.lnl(par, model_data, Phi.links = NULL,
+    p.links = NULL, debug = FALSE, all = FALSE, cjsenv)
 }
 \arguments{
   \item{par}{vector of parameter values}
@@ -34,22 +34,22 @@ cjs.lnl(par, model_data, Phi.links = NULL, p.links = NULL, debug = FALSE,
   counter}
 }
 \value{
-either -log likelihood value if \code{all=FALSE} or the
-entire list contents of the call to the FORTRAN subroutine
-if \code{all=TRUE}. The latter is used from
-\code{\link{cjs}} after optimization to extract the real
-parameter estimates at the final beta values.
+  either -log likelihood value if \code{all=FALSE} or the
+  entire list contents of the call to the FORTRAN
+  subroutine if \code{all=TRUE}. The latter is used from
+  \code{\link{cjs}} after optimization to extract the real
+  parameter estimates at the final beta values.
 }
 \description{
-For a given set of parameters and data, it computes -log
-Likelihood value.
+  For a given set of parameters and data, it computes -log
+  Likelihood value.
 }
 \details{
-This function uses a FORTRAN subroutine (cjs.f) to speed up
-computation of the likelihood but the result can also be
-obtained wholly in with a small loss in precision. See
-example for R code. The R and FORTRAN code uses the
-likelihood formulation of Pledger et al.(2003).
+  This function uses a FORTRAN subroutine (cjs.f) to speed
+  up computation of the likelihood but the result can also
+  be obtained wholly in with a small loss in precision. See
+  example for R code. The R and FORTRAN code uses the
+  likelihood formulation of Pledger et al.(2003).
 }
 \examples{
 get.p=function(beta,dm,nocc,Fplus)
@@ -123,11 +123,11 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 }
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \references{
-Pledger, S., K. H. Pollock, et al. (2003). Open
-capture-recapture models with heterogeneity: I.
-Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
+  Pledger, S., K. H. Pollock, et al. (2003). Open
+  capture-recapture models with heterogeneity: I.
+  Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
 }
 

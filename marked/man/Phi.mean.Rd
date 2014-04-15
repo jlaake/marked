@@ -5,13 +5,13 @@
 \alias{p.mean}
 \title{Various utility parameter summary functions}
 \usage{
-Phi.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)
+  Phi.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)
 
-       p.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)
+  p.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)
 
-       Phi.boxplot(x,age=0,time=NULL,sex=NULL)
+  Phi.boxplot(x,age=0,time=NULL,sex=NULL)
 
-       p.boxplot(x,age=0,time=NULL,sex=NULL)
+  p.boxplot(x,age=0,time=NULL,sex=NULL)
 }
 \arguments{
   \item{x}{dataframe of reals contained in model}
@@ -30,16 +30,16 @@ Phi.mean(x,age=0,time=NULL,age.bins=NULL,age.levels=NULL)
   \item{age.levels}{labels for age.bins}
 }
 \value{
-matrix of labelled values for Phi.mean and p.mean or
-boxplot object
+  matrix of labelled values for Phi.mean and p.mean or
+  boxplot object
 }
 \description{
-Several functions have been added to compute mean values
-and boxplots of values. Currently they have only been
-defined for Phi and p for cjs and they are not generic.
+  Several functions have been added to compute mean values
+  and boxplots of values. Currently they have only been
+  defined for Phi and p for cjs and they are not generic.
 }
 \author{
-Jeff Laake
+  Jeff Laake
 }
 \keyword{utility}
 

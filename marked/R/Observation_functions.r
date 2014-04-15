@@ -19,6 +19,13 @@ cjs_dmat=function(pars,m,F,T)
 	dim(value$pmat)=c(nrow(pars$p),T,2,2)
 	value$pmat
 }
+cjs2tl_dmat=function(pars,m,F,T) 
+{
+	value=.Fortran("cjs2tlp",as.double(pars$p),as.integer(nrow(pars$p)),
+			as.integer(F),as.integer(T),pmat=double(nrow(pars$p)*T*25),PACKAGE="marked")
+	dim(value$pmat)=c(nrow(pars$p),T,5,5)
+	value$pmat
+}
 cjs1tl_dmat=function(pars,m,F,T) 
  {
  	pmat=array(0,c(nrow(pars$p),T,3,3))
@@ -32,24 +39,6 @@ cjs1tl_dmat=function(pars,m,F,T)
  		}
  	}
  	pmat
-}
-cjs2tl_dmat=function(pars,m,F,T) 
-{
-	pmat=array(0,c(nrow(pars$p),T,5,5))
-	for (i in 1:nrow(pmat))
-	{
-		pmat[i,F[i],,]=diag(1,5,5)
-		for(j in F[i]:(T-1))
-		{
-			p=pars$p[i,(4*(j-1)+1):(4*j)]
-			pmat[i,j+1,,]=matrix(c(p[1],0,0,0,0,
-							       0,p[2],0,0,0,
-								   0,0,p[3],0,0,
-								   0,0,0,p[4],0,
-								   1-p[1],1-p[2],1-p[3],1-p[4],1),nrow=5,ncol=5,byrow=TRUE)
-		}
-	}
-	pmat
 }
 ms_dmat=function(pars,m,F,T) 
 {
@@ -222,5 +211,23 @@ ums2_dmat=function(pars,m,F,T)
 #	}
 #	# return the product of the 4-d arrays
 #	return(pmat*deltamat)
+#}
+#cjs2tl_dmat=function(pars,m,F,T) 
+#{
+#	pmat=array(0,c(nrow(pars$p),T,5,5))
+#	for (i in 1:nrow(pmat))
+#	{
+#		pmat[i,F[i],,]=diag(1,5,5)
+#		for(j in F[i]:(T-1))
+#		{
+#			p=pars$p[i,(4*(j-1)+1):(4*j)]
+#			pmat[i,j+1,,]=matrix(c(p[1],0,0,0,0,
+#							       0,p[2],0,0,0,
+#								   0,0,p[3],0,0,
+#								   0,0,0,p[4],0,
+#								   1-p[1],1-p[2],1-p[3],1-p[4],1),nrow=5,ncol=5,byrow=TRUE)
+#		}
+#	}
+#	pmat
 #}
 
