@@ -2,8 +2,8 @@
 \alias{predict.crm}
 \title{Compute estimates of real parameters}
 \usage{
-  \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
-    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
+\method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
+                   vcv=FALSE,se=FALSE,chat=1,subset,select,...)
 }
 \arguments{
   \item{object}{model object}
@@ -36,17 +36,16 @@
   \item{...}{generic arguments not used here}
 }
 \value{
-  A data frame (\code{real}) is returned if
-  \code{vcv=FALSE}; otherwise, a list is returned also
-  containing vcv.real: \item{real}{ data frame containing
-  estimates, and if vcv=TRUE it also contains standard
-  errors and confidence intervals}
-  \item{vcv.real}{variance-covariance matrix of real
-  estimates}
+A data frame (\code{real}) is returned if \code{vcv=FALSE};
+otherwise, a list is returned also containing vcv.real:
+\item{real}{ data frame containing estimates, and if
+vcv=TRUE it also contains standard errors and confidence
+intervals} \item{vcv.real}{variance-covariance matrix of
+real estimates}
 }
 \description{
-  Computes real estimates and their var-cov for a
-  particular subset of parameters.
+Computes real estimates and their var-cov for a particular
+subset of parameters.
 }
 \examples{
 data(dipper)
@@ -60,7 +59,7 @@ xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
 xx
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \keyword{utility}
 

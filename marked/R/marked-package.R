@@ -96,7 +96,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #' # get data; the beta parameters used to simulate the data were
-#' # Phi: 2.197, p: -0.4155  Tau:-2,-1,3
+#' # Phi: 2.197, p: -0.4064  Tau:-2,-1,3
 #' data(tagloss)
 #' # process data with double-tag CJS model and use perm field to create groups; 
 #' # one half are permanently marked
@@ -152,7 +152,7 @@ NULL
 #' mod2
 #' # Note in model 3, even though tag-loss specific rates are estimated correctly
 #' # survival is biased low because tag loss was dependent in simulating data
-#' # but was assumed to be independent in fitted model and because there are no 00 observations,
+#' # but was assumed to be independent in fitted model and because there are no -- observations,
 #' # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 #' # negatively biased. Note the data are different and AIC not comparable to other models.
 #' mod3

@@ -5,13 +5,13 @@
 \alias{reindex}
 \title{Mixed effect model contstruction}
 \usage{
-  mixed.model.admb(formula,data)
+mixed.model.admb(formula,data)
 
-  mixed.model(formula,data,indices=FALSE)
+       mixed.model(formula,data,indices=FALSE)
 
-  mixed.model.dat(x,con,idonly,n)
+       mixed.model.dat(x,con,idonly,n)
 
-  reindex(x,id)
+       reindex(x,id)
 }
 \arguments{
   \item{formula}{formula for mixed effect mode in the form
@@ -36,42 +36,41 @@
   into dm for random effects}
 }
 \value{
-  mixed.model.admb returns a list with elements re.dm, a
-  combined design matrix for all of the random effects; and
-  re.indices, matrix of indices into a single vector of
-  random effects to be applied to the design matrix
-  location. mixed.model returns a list (re.list) with an
-  element for each random effect structure. The contents
-  are a standard design matrix (re.dm) if indices==FALSE
-  and a re.dm and re.indices which matches the structure of
-  mixed.model.admb. mixed.model will be more useful with R
-  than ADMB.
+mixed.model.admb returns a list with elements re.dm, a
+combined design matrix for all of the random effects; and
+re.indices, matrix of indices into a single vector of
+random effects to be applied to the design matrix location.
+mixed.model returns a list (re.list) with an element for
+each random effect structure. The contents are a standard
+design matrix (re.dm) if indices==FALSE and a re.dm and
+re.indices which matches the structure of mixed.model.admb.
+mixed.model will be more useful with R than ADMB.
 }
 \description{
-  Functions that develop structures needed for a mixed
-  effect model
+Functions that develop structures needed for a mixed effect
+model
 }
 \details{
-  mixed.model.admb - creates design matrices and supporting
-  index matrices for use of mixed model in ADMB
+mixed.model.admb - creates design matrices and supporting
+index matrices for use of mixed model in ADMB
 
-  mixed.model - creates design matrices and supporting
-  index matrices in an alternate list format that is not as
-  easily used in ADMB
+mixed.model - creates design matrices and supporting index
+matrices in an alternate list format that is not as easily
+used in ADMB
 
-  mixed.model.dat - writes to data file (con) for fixed and
-  random effect stuctures
+mixed.model.dat - writes to data file (con) for fixed and
+random effect stuctures
 
-  reindex - creates indices for random effects that are
-  specific to the individual capture history; it takes
-  re.indices, splits them by id and creates a ragged array
-  by id (used.indices) with the unique values for that id.
-  index.counts is the number of indices per id to read in
-  ragged array. It then changes re.indices to be an index
-  to the indices within the id from 1 to the number of
-  indices within the id.
+reindex - creates indices for random effects that are
+specific to the individual capture history; it takes
+re.indices, splits them by id and creates a ragged array by
+id (used.indices) with the unique values for that id.
+index.counts is the number of indices per id to read in
+ragged array. It then changes re.indices to be an index to
+the indices within the id from 1 to the number of indices
+within the id.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 

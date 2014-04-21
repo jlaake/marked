@@ -7,38 +7,37 @@
 each bird} \item{perm}{a factor variable indicating whether the animal is
 permanently marked ("yes") or not ("no") }}}
 \description{
-  A simulated data set of double tag loss with 1/2 of the
-  animals with a permanent mark. The data are simulated
-  with tag-specific loss rates and dependence.
+A simulated data set of double tag loss with 1/2 of the
+animals with a permanent mark. The data are simulated with
+tag-specific loss rates and dependence.
 }
 \note{
-  { Data were simulated with the following code:
-  \preformatted{ # simulate some double-tag data for 1000
-  animals
+{ Data were simulated with the following code:
+\preformatted{ # simulate some double-tag data for 1000
+animals
 
-  # over 5 cohorts and 6 sampling occasions; loss rate
-  varies
+# over 5 cohorts and 6 sampling occasions; loss rate varies
 
-  # across tags and tag loss is dependent (beta=3)
-  set.seed(299811)
-  simdata=simHMM(data=data.frame(ch=c("++,0,0,0,0,0","0,++,0,0,0,0","0,0,++,0,0,0",
-  "0,0,0,++,0,0","0,0,0,0,++,+-"),
-  freq=rep(1000/5,5)),model="hmmcjs2tl",
-  model.parameters=list(tau=list(formula=~tag1+tag2+tag1:tag2)),
-  initial=list(Phi=log(9),p=log(.666),tau=c(-2,-1,3)))
+# across tags and tag loss is dependent (beta=3)
+set.seed(299811)
+simdata=simHMM(data=data.frame(ch=c("++,0,0,0,0,0","0,++,0,0,0,0","0,0,++,0,0,0",
+"0,0,0,++,0,0","0,0,0,0,++,+-"),
+freq=rep(1000/5,5)),model="hmmcjs2tl",
+model.parameters=list(tau=list(formula=~tag1+tag2+tag1:tag2)),
+initial=list(Phi=log(9),p=log(.666),tau=c(-2,-1,3)))
 
-  # treat every other animal as permanently marked; # 00
-  observations are possible
-  simdata$perm=as.factor(rep(c("no","yes"),500)) # for
-  non-permanently marked animals change # "--" observations
-  to "0" because # they could not be detected
-  simdata$ch[simdata$perm=="no"]=gsub("--","0",simdata$ch[simdata$perm=="no"])
-  # save data tagloss=simdata
-  save(tagloss,file="tagloss.rda") } }
+# treat every other animal as permanently marked; # 00
+observations are possible
+simdata$perm=as.factor(rep(c("no","yes"),500)) # for
+non-permanently marked animals change # "--" observations
+to "0" because # they could not be detected
+simdata$ch[simdata$perm=="no"]=gsub("--","0",simdata$ch[simdata$perm=="no"])
+# save data tagloss=simdata
+save(tagloss,file="tagloss.rda") } }
 }
 \examples{
 # get data; the beta parameters used to simulate the data were
-# Phi: 2.197, p: -0.4155  Tau:-2,-1,3
+# Phi: 2.197, p: -0.4064  Tau:-2,-1,3
 data(tagloss)
 # process data with double-tag CJS model and use perm field to create groups;
 # one half are permanently marked
@@ -94,7 +93,7 @@ mod1
 mod2
 # Note in model 3, even though tag-loss specific rates are estimated correctly
 # survival is biased low because tag loss was dependent in simulating data
-# but was assumed to be independent in fitted model and because there are no 00 observations,
+# but was assumed to be independent in fitted model and because there are no -- observations,
 # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 # negatively biased. Note the data are different and AIC not comparable to other models.
 mod3

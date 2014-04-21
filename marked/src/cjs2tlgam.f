@@ -13,8 +13,16 @@ C      Loop over each capture history and from F(I) to T-1 occasions
            TAUVEC(2)=TAU(I,FIRST+1)/TAUSUM
            TAUVEC(3)=TAU(I,FIRST+2)/TAUSUM
            TAUVEC(4)=TAU(I,FIRST+3)/TAUSUM
-           TAU0(1)=TAUVEC(4)/(TAUVEC(2)+TAUVEC(4))
-           TAU0(2)=TAUVEC(4)/(TAUVEC(3)+TAUVEC(4))
+           IF((TAUVEC(2)+TAUVEC(4))>0) THEN
+              TAU0(1)=TAUVEC(4)/(TAUVEC(2)+TAUVEC(4))
+           ELSE
+              TAU0(1)=0.0D0
+           ENDIF
+           IF((TAUVEC(3)+TAUVEC(4))>0) THEN
+              TAU0(2)=TAUVEC(4)/(TAUVEC(3)+TAUVEC(4))
+           ELSE
+              TAU0(2)=0.0D0
+           ENDIF
            DO 1 K=1,5
            DO 1 L=1,5
               TMAT(I,J,K,L)=0.0D0

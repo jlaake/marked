@@ -2,21 +2,21 @@
 \alias{cjs.hessian}
 \title{Compute variance-covariance matrix for fitted CJS model}
 \usage{
-  cjs.hessian(model)
+cjs.hessian(model)
 }
 \arguments{
   \item{model}{fitted CJS model from function crm}
 }
 \value{
-  variance-covariance matrix for specified model or the
-  model object with the stored vcv depending on whether the
-  model has already been run
+variance-covariance matrix for specified model or the model
+object with the stored vcv depending on whether the model
+has already been run
 }
 \description{
-  A wrapper function that sets up call to hessian function
-  to compute and then invert the hessian.
+A wrapper function that sets up call to hessian function to
+compute and then invert the hessian.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 

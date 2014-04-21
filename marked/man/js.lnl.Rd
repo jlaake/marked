@@ -3,7 +3,7 @@
 \title{Likelihood function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-  js.lnl(par, model_data, debug = FALSE, nobstot, jsenv)
+js.lnl(par, model_data, debug = FALSE, nobstot, jsenv)
 }
 \arguments{
   \item{par}{vector of parameter values}
@@ -36,28 +36,28 @@ formulation}
   counter}
 }
 \value{
-  -log likelihood value, excluding data (ui) factorials
-  which are added in js after optimization to match MARK
+-log likelihood value, excluding data (ui) factorials which
+are added in js after optimization to match MARK
 }
 \description{
-  For a given set of parameters and data, it computes
-  -2*log Likelihood value but does not include data
-  factorials. Factorials for unmarked are not needed but
-  are included in final result by \code{\link{js}} so the
-  result matches output from MARK for the POPAN model.
+For a given set of parameters and data, it computes -2*log
+Likelihood value but does not include data factorials.
+Factorials for unmarked are not needed but are included in
+final result by \code{\link{js}} so the result matches
+output from MARK for the POPAN model.
 }
 \details{
-  This functions uses \code{\link{cjs.lnl}} and then
-  supplements with the remaining calculations to compute
-  the likelihood for the POPAN formulation (Arnason and
-  Schwarz 1996) of the Jolly-Seber model.
+This functions uses \code{\link{cjs.lnl}} and then
+supplements with the remaining calculations to compute the
+likelihood for the POPAN formulation (Arnason and Schwarz
+1996) of the Jolly-Seber model.
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \references{
-  Schwarz, C. J., and A. N. Arnason. 1996. A general
-  methodology for the analysis of capture-recapture
-  experiments in open populations. Biometrics 52:860-873.
+Schwarz, C. J., and A. N. Arnason. 1996. A general
+methodology for the analysis of capture-recapture
+experiments in open populations. Biometrics 52:860-873.
 }
 

@@ -2,7 +2,7 @@
 \alias{set.initial}
 \title{Set initial values}
 \usage{
-  set.initial(pars, dml, initial)
+set.initial(pars, dml, initial)
 }
 \arguments{
   \item{pars}{character vector of parameter names}
@@ -14,12 +14,12 @@
   values}
 }
 \value{
-  List of initial values for each parameter in the model
+List of initial values for each parameter in the model
 }
 \description{
-  Sets initial values specified in a list.
+Sets initial values specified in a list.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 

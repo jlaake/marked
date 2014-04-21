@@ -9,7 +9,8 @@ Description: This package provides a framework for handling
     Currently it is limited to Cormack-Jolly-Seber and
     Jolly-Seber models.
 Depends:
-    R (>= 2.15.0)
+    R (>= 2.15.0),
+    lme4
 Imports:
     R2admb,
     truncnorm,
@@ -29,52 +30,3 @@ SystemRequirements: ADMB version 11 (http://admb-project.org/) for
 LazyLoad: yes
 License: GPL (>=2)
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
-Collate:
-    'HMMLikelihood.r'
-    'InitialDistribution_functions.r'
-    'Observation_functions.r'
-    'Transition_functions.r'
-    'cjs.R'
-    'cjs.accumulate.R'
-    'cjs.hessian.r'
-    'cjs.initial.R'
-    'cjs.lnl.r'
-    'compute.real.R'
-    'convert.link.to.real.r'
-    'create.dm.R'
-    'create.dmdf.R'
-    'create.links.r'
-    'crm.R'
-    'crm.wrapper.R'
-    'deriv.inverse.link.R'
-    'extract.fcts.r'
-    'fix.parameters.r'
-    'hmmDemo.r'
-    'inverse.link.R'
-    'js.accumulate.R'
-    'js.hessian.R'
-    'js.lnl.r'
-    'js.r'
-    'make.design.data.R'
-    'marked-package.R'
-    'merge.design.covariates.r'
-    'mixed.model.r'
-    'mscjs.r'
-    'predict.crm.r'
-    'print.crm.r'
-    'probitCJS.R'
-    'probitMsCJS.R'
-    'proc.formula.r'
-    'process.ch.R'
-    'process.data.R'
-    'scale.r'
-    'set.fixed.R'
-    'set.initial.r'
-    'setup.model.R'
-    'setup.parameters.R'
-    'simHMM.r'
-    'splitCH.R'
-    'summary.fcts.R'
-    'utility.R'
-    'valid.parameters.R'
-    'zzz.R'

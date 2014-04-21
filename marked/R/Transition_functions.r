@@ -155,8 +155,8 @@ ms_gamma=function(pars,m,F,T)
 #		tau=matrix(pars$tau[i,],ncol=4,byrow=TRUE)
 #		tau=tau/rowSums(tau)
 #		tau0=matrix(0,ncol=2,nrow=nrow(tau))   
-#		tau0[,1]=tau[,4]/(tau[,2]+tau[,4])  
-#		tau0[,2]=tau[,4]/(tau[,3]+tau[,4])  
+#		tau0[,1]=ifelse((tau[,2]+tau[,4])>0,tau[,4]/(tau[,2]+tau[,4]),0)  
+#		tau0[,2]=ifelse((tau[,3]+tau[,4])>0,tau[,4]/(tau[,3]+tau[,4]),0)  
 #		for(j in F[i]:(T-1))
 #		{
 #			phi=pars$Phi[i,j]

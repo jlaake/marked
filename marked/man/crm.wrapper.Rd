@@ -5,13 +5,13 @@
 \alias{model.table}
 \title{Automation of model runs}
 \usage{
-  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,...)
+crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,...)
 
-  create.model.list(parameters)
+create.model.list(parameters)
 
-  model.table(model.list)
+model.table(model.list)
 
-  load.model(x)
+load.model(x)
 }
 \arguments{
   \item{data}{Either the raw data which is a dataframe with
@@ -42,42 +42,41 @@
   \item{x}{filename of externally stored model}
 }
 \value{
-  create.model.list returns a matrix for crm.wrapper;
-  crm.wrapper runs and stores models externally and
-  retrurns a list of model results and a model selection
-  table; load.model returns model object that is stored
-  externally
+create.model.list returns a matrix for crm.wrapper;
+crm.wrapper runs and stores models externally and retrurns
+a list of model results and a model selection table;
+load.model returns model object that is stored externally
 }
 \description{
-  Some functions that help automate running a set of crm
-  models based on parameter specifications.
+Some functions that help automate running a set of crm
+models based on parameter specifications.
 }
 \details{
-  create.model.list creates all combinations of model
-  specifications for the specified set of parameters.  In
-  the calling environment it looks for objects named
-  parameter.xxxxxx where xxxxxx can be anything. It creates
-  a matrix with a column for each parameter and as many
-  rows needed to create all combinations. This can be used
-  as input to crm.wrapper.
+create.model.list creates all combinations of model
+specifications for the specified set of parameters.  In the
+calling environment it looks for objects named
+parameter.xxxxxx where xxxxxx can be anything. It creates a
+matrix with a column for each parameter and as many rows
+needed to create all combinations. This can be used as
+input to crm.wrapper.
 
-  crm.wrapper runs a sequence of crm models by constructing
-  the call with the arguments and the parameter
-  specifications.  The parameter specifications can either
-  be in the local environment or in the environment of the
-  named function models. The advantage of the latter is
-  that it is self-contained such that sets of parameter
-  specifications can be selected without possibility of
-  being over-written or accidentally changed whereas with
-  the former the set must be identified via a script and
-  any in the environment will be used which requires
-  removing/recreating the set to be used.
+crm.wrapper runs a sequence of crm models by constructing
+the call with the arguments and the parameter
+specifications.  The parameter specifications can either be
+in the local environment or in the environment of the named
+function models. The advantage of the latter is that it is
+self-contained such that sets of parameter specifications
+can be selected without possibility of being over-written
+or accidentally changed whereas with the former the set
+must be identified via a script and any in the environment
+will be used which requires removing/recreating the set to
+be used.
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \seealso{
-  \code{\link{crm}}
+\code{\link{crm}}
 }
 \keyword{models}
 

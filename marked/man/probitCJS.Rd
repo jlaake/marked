@@ -2,8 +2,8 @@
 \alias{probitCJS}
 \title{Perform MCMC analysis of a CJS model}
 \usage{
-  probitCJS(ddl, dml, parameters, design.parameters,
-    burnin, iter, initial = NULL, imat = NULL)
+probitCJS(ddl, dml, parameters, design.parameters, burnin, iter,
+  initial = NULL, imat = NULL)
 }
 \arguments{
   \item{ddl}{list of dataframes for design data; created by
@@ -35,21 +35,21 @@
   \code{\link{process.ch}} from the capture history data}
 }
 \value{
-  A list with MCMC iterations and summarized output:
-  \item{beta.mcmc}{list with elements Phi and p which
-  contain MCMC iterations for each beta parameter}
-  \item{real.mcmc}{list with elements Phi and p which
-  contain MCMC iterations for each real parameter}
-  \item{beta}{list with elements Phi and p which contain
-  summary of MCMC iterations for each beta parameter}
-  \item{reals}{list with elements Phi and p which contain
-  summary of MCMC iterations for each real parameter}
+A list with MCMC iterations and summarized output:
+\item{beta.mcmc}{list with elements Phi and p which contain
+MCMC iterations for each beta parameter}
+\item{real.mcmc}{list with elements Phi and p which contain
+MCMC iterations for each real parameter} \item{beta}{list
+with elements Phi and p which contain summary of MCMC
+iterations for each beta parameter} \item{reals}{list with
+elements Phi and p which contain summary of MCMC iterations
+for each real parameter}
 }
 \description{
-  Takes design data list created with the function
-  \link{make.design.data} for model "probitCJS" and draws a
-  sample from the posterior distribution using a Gibbs
-  sampler.
+Takes design data list created with the function
+\link{make.design.data} for model "probitCJS" and draws a
+sample from the posterior distribution using a Gibbs
+sampler.
 }
 \examples{
 \donttest{
@@ -65,6 +65,6 @@ fit1$results$reals
 }
 }
 \author{
-  Devin Johnson
+Devin Johnson
 }
 

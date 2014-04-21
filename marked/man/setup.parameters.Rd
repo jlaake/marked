@@ -2,8 +2,8 @@
 \alias{setup.parameters}
 \title{Setup parameter structure specific to model (internal use)}
 \usage{
-  setup.parameters(model, parameters = list(), nocc = NULL,
-    check = FALSE, number.of.groups = 1)
+setup.parameters(model, parameters = list(), nocc = NULL, check = FALSE,
+  number.of.groups = 1)
 }
 \arguments{
   \item{model}{type of model ("CJS", "Burnham" etc)}
@@ -20,61 +20,60 @@
   data}
 }
 \value{
-  The return value depends on the argument \code{check}. If
-  it is TRUE then the return value is a vector of the names
-  of the parameters used in the specified type of model.
-  For example, if \code{model="CJS"} then the return value
-  is \code{c("Phi","p")}.  This is used by the function
-  \code{\link{valid.parameters}} to make sure that
-  parameter specifications are valid for the model (i.e.,
-  specifying recovery rate r for "CJS" would give an
-  error).  If the function is called with the default of
-  \code{check=FALSE}, the function returns a list of
-  parameter specifications which is a modification of the
-  argument \code{parameters} which adds parameters not
-  specified and default values for all types of parameters
-  that were not specified. The list length and names of the
-  list elements depends on the type of model. Each element
-  of the list is itself a list with varying numbers of
-  elements which depend on the type of parameter although
-  some elements are the same for all parameters.  Below the
-  return value list is shown generically with parameters
-  named p1,...,pk.  \tabular{ll}{ \code{p1} \tab List of
-  specifications for parameter 1 \cr \code{p2} \tab List of
-  specifications for parameter 2 \cr . \tab \cr .  \tab \cr
-  .  \tab \cr \code{pk} \tab List of specifications for
-  parameter k \cr }
+The return value depends on the argument \code{check}. If
+it is TRUE then the return value is a vector of the names
+of the parameters used in the specified type of model. For
+example, if \code{model="CJS"} then the return value is
+\code{c("Phi","p")}.  This is used by the function
+\code{\link{valid.parameters}} to make sure that parameter
+specifications are valid for the model (i.e., specifying
+recovery rate r for "CJS" would give an error).  If the
+function is called with the default of \code{check=FALSE},
+the function returns a list of parameter specifications
+which is a modification of the argument \code{parameters}
+which adds parameters not specified and default values for
+all types of parameters that were not specified. The list
+length and names of the list elements depends on the type
+of model. Each element of the list is itself a list with
+varying numbers of elements which depend on the type of
+parameter although some elements are the same for all
+parameters.  Below the return value list is shown
+generically with parameters named p1,...,pk.  \tabular{ll}{
+\code{p1} \tab List of specifications for parameter 1 \cr
+\code{p2} \tab List of specifications for parameter 2 \cr .
+\tab \cr .  \tab \cr .  \tab \cr \code{pk} \tab List of
+specifications for parameter k \cr }
 
-  The elements for each parameter list all include:
-  \tabular{ll}{ \code{begin} \tab 0 or 1; beginning time
-  for the first \cr \tab parameter relative to first
-  occasion \cr \code{num} \tab 0 or -1; number of
-  parameters relative to \cr \tab number of occassions \cr
-  \code{type} \tab type of PIM structure; either "Triang"
-  or "Square" \cr \code{formula} \tab formula for parameter
-  model (e.g., \code{~time}) \cr \code{link} \tab link
-  function for parameter (e.g., \code{"logit"}) \cr }
+The elements for each parameter list all include:
+\tabular{ll}{ \code{begin} \tab 0 or 1; beginning time for
+the first \cr \tab parameter relative to first occasion \cr
+\code{num} \tab 0 or -1; number of parameters relative to
+\cr \tab number of occassions \cr \code{type} \tab type of
+PIM structure; either "Triang" or "Square" \cr
+\code{formula} \tab formula for parameter model (e.g.,
+\code{~time}) \cr \code{link} \tab link function for
+parameter (e.g., \code{"logit"}) \cr }
 
-  and may include: \tabular{ll}{ \code{share} \tab only
-  valid for p in closed capture models; \cr \tab if TRUE p
-  and c models shared \cr \code{mix} \tab only valid for
-  closed capture heterogeneity \cr \tab models; if TRUE
-  mixtures are used \cr \code{rows} \tab only valid for
-  closed capture heterogeneity models \cr \code{fixed} \tab
-  fixed values specified by user and \cr \tab not used
-  modified in this function \cr }
+and may include: \tabular{ll}{ \code{share} \tab only valid
+for p in closed capture models; \cr \tab if TRUE p and c
+models shared \cr \code{mix} \tab only valid for closed
+capture heterogeneity \cr \tab models; if TRUE mixtures are
+used \cr \code{rows} \tab only valid for closed capture
+heterogeneity models \cr \code{fixed} \tab fixed values
+specified by user and \cr \tab not used modified in this
+function \cr }
 }
 \description{
-  Defines list of parameters used in the specified type of
-  model (\code{model}) and adds default values for each
-  parameter to the list of user specified values (eg
-  formula, link etc).
+Defines list of parameters used in the specified type of
+model (\code{model}) and adds default values for each
+parameter to the list of user specified values (eg formula,
+link etc).
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \seealso{
-  \code{\link{setup.model}},\code{\link{valid.parameters}}
+\code{\link{setup.model}},\code{\link{valid.parameters}}
 }
 \keyword{utility}
 

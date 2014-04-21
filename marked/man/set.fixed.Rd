@@ -2,7 +2,7 @@
 \alias{set.fixed}
 \title{Set fixed real parameter values in ddl}
 \usage{
-  set.fixed(ddl, parameters)
+set.fixed(ddl, parameters)
 }
 \arguments{
   \item{ddl}{design data list}
@@ -10,16 +10,16 @@
   \item{parameters}{parameter specififcation list}
 }
 \value{
-  design data list with fixed values
+design data list with fixed values
 }
 \description{
-  Merges fixed real parameter values in parameter
-  specification with those specified with fix in the design
-  data list and returns the fixed values in the design data
-  list.
+Merges fixed real parameter values in parameter
+specification with those specified with fix in the design
+data list and returns the fixed values in the design data
+list.
 }
 \author{
-  Jeff Laake
+Jeff Laake
 }
 \keyword{utility}
 

@@ -4,10 +4,10 @@
 \alias{loglikelihood}
 \title{Hidden Markov Functions}
 \usage{
-  R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-    loglikelihood(par,type,x,id,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,
-    ddl,dml,parameters)
-    backward_prob(x,first,m,T,dmat,gamma)
+R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
+       loglikelihood(par,type,x,id,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,
+                        ddl,dml,parameters)
+       backward_prob(x,first,m,T,dmat,gamma)
 }
 \arguments{
   \item{x}{single observed sequence (capture history)}
@@ -55,23 +55,23 @@
   the occasion of the first non-zero value}
 }
 \value{
-  both return log-likelihood, alpha and phi vectors and
-  dmat and gamma matrices for a single sequence
+both return log-likelihood, alpha and phi vectors and dmat
+and gamma matrices for a single sequence
 }
 \description{
-  R implementation of HMMs described in processed report.
-  Function HMMLikelihood renamed to R_HMMLikelihood and
-  loglikelihood modified to work with a single x and to
-  return lnl, alpha, phi, v, dmat, and gamma values.
-  backward_prob returns the backward probabilities. These
-  are not used by the fitting code.
+R implementation of HMMs described in processed report.
+Function HMMLikelihood renamed to R_HMMLikelihood and
+loglikelihood modified to work with a single x and to
+return lnl, alpha, phi, v, dmat, and gamma values.
+backward_prob returns the backward probabilities. These are
+not used by the fitting code.
 }
 \author{
-  Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
-  Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov
-  Models for Time Series: An Introduction using R. Chapman
-  and Hall, Boca Raton, FL. 275p.
+Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models
+for Time Series: An Introduction using R. Chapman and Hall,
+Boca Raton, FL. 275p.
 }
 
