@@ -51,16 +51,26 @@ predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,v
 			stop("Invalid newdata")
 	}
 	if(is.null(ddl))
-		return(object$results$reals)
-	else
 	{
-		if(is.null(parameter) )
-		{
-			results=NULL
-			for (parameter in names(object$model.parameters))
-				results[[parameter]]=compute.real(object,parameter,ddl,unique,vcv,se,chat,subset=substitute(subset),select)
-			return(results)
-		} else
-			return(compute.real(object,parameter,ddl,unique,vcv,se,chat,subset=substitute(subset),select))		
-	}
+		if(!is.null(object$results$reals))
+		   return(object$results$reals)
+        else{
+			if(!is.null(object$results$model_data$ddl))
+				ddl=object$results$model_data$ddl
+			else
+				stop("No ddl or real values available")
+		}
+	}	   
+	if(!is.null(object$results$model_data$ddl))
+		dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=ddl$design.parameters,chunk_size=1e7)  
+	else
+		dml=NULL
+	if(is.null(parameter))
+	{
+		results=NULL
+		for (parameter in names(object$model.parameters))
+			results[[parameter]]=compute.real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include)
+		return(results)
+	} else
+		return(compute.real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include))	
 }

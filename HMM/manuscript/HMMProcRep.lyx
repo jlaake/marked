@@ -7665,7 +7665,7 @@ modelspec=list(p=list(formula=~stratum))
 
 \begin_layout Plain Layout
 
-# process data with S,W strata; S=1 and W=2
+# process data with S,W strata
 \end_layout
 
 \begin_layout Plain Layout
@@ -7702,7 +7702,7 @@ ddl=make.design.data(sd)
 
 \begin_layout Plain Layout
 
-ddl$Psi$fix[ddl$Psi$stratum==2&ddl$Psi$tostratum==1]=0
+ddl$Psi$fix[ddl$Psi$stratum=="W"&ddl$Psi$tostratum=="S"]=0
 \end_layout
 
 \begin_layout Plain Layout
@@ -7712,7 +7712,7 @@ ddl$Psi$fix[ddl$Psi$stratum==2&ddl$Psi$tostratum==1]=0
 
 \begin_layout Plain Layout
 
-ddl$delta$fix=ifelse(ddl$delta$stratum==2,0,NA)
+ddl$delta$fix=ifelse(ddl$delta$stratum=="W",0,NA)
 \end_layout
 
 \begin_layout Plain Layout
@@ -7737,6 +7737,7 @@ realization=simHMM(sd,ddl,model.parameters=modelspec,initial=initial)
 
 \begin_layout Plain Layout
 
+#
 \end_layout
 
 \begin_layout Plain Layout
@@ -7818,12 +7819,12 @@ rddl=make.design.data(sd)
 
 \begin_layout Plain Layout
 
-rddl$Psi$fix[rddl$Psi$stratum==2&rddl$Psi$tostratum==1]=0
+rddl$Psi$fix[rddl$Psi$stratum=="W"&rddl$Psi$tostratum=="S"]=0
 \end_layout
 
 \begin_layout Plain Layout
 
-rddl$delta$fix=ifelse(rddl$delta$stratum==2,0,NA)
+rddl$delta$fix=ifelse(rddl$delta$stratum=="W",0,NA)
 \end_layout
 
 \begin_layout Plain Layout
@@ -7834,6 +7835,11 @@ rddl$delta$fix=ifelse(rddl$delta$stratum==2,0,NA)
 \begin_layout Plain Layout
 
 crm(sd,rddl,initial=initial,model.parameters=modelspec)
+\end_layout
+
+\begin_layout Plain Layout
+
+#
 \end_layout
 
 \begin_layout Plain Layout

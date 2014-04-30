@@ -371,6 +371,7 @@ if(substr(model,1,3)=="HMM")
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	}
 	par=vector("list",length=length(names(initial.list$par)))
+	names(par)=names(initial.list$par)
 	#par=split(runmodel$par,initial.list$ptype)
 	for(p in names(initial.list$par))
 	{
@@ -382,8 +383,14 @@ if(substr(model,1,3)=="HMM")
 	runmodel$neg2lnl=2*runmodel$value
 	runmodel$value=NULL
 	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
-	if(!is.null(runmodel$hessian))runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
+	if(!is.null(runmodel$hessian))
+	{
+		runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
+		colnames(runmodel$beta.vcv)=names(unlist(runmodel$beta))
+		rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
+	}
 	class(runmodel)=c("crm","mle",model)
+	runmodel$model_data=list(ddl=ddl)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
@@ -394,13 +401,12 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 	if(is.null(msg)) msg="Exceeded maximum number of iterations"
 	warning(msg)
 }
+
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS"& toupper(substr(model,1,3))!="HMM")
-for(parx in names(parameters))
-{
-	object$results$reals[[parx]]=predict(object,ddl=ddl,parameter=parx,unique=TRUE,se=hessian)
-}
+#if(!re & model!="MSCJS"& toupper(substr(model,1,3))!="HMM")
+if(!re & model!="MSCJS")
+   object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }

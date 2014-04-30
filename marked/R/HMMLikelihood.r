@@ -155,12 +155,17 @@ reals=function(ddl,dml,parameters,parlist)
 	# type (parname); handles fixed parameters assigned by 
 	# non-NA value in field named fix in the ddl dataframe.
 	dm=dml$fe
-	# Currently for log,logit or identity link, return the inverse values
-	values=switch(parameters$link,
-			log=exp(as.vector(dm%*%parlist)),
-			logit=plogis(as.vector(dm%*%parlist)),
-			identity=as.vector(dm%*%parlist))
-	if(!is.null(ddl$time.interval))values=values^ddl$time.interval
+	if(ncol(dm)!=0)
+	{	
+		# Currently for log,logit or identity link, return the inverse values
+		values=switch(parameters$link,
+				log=exp(as.vector(dm%*%parlist)),
+				logit=plogis(as.vector(dm%*%parlist)),
+				identity=as.vector(dm%*%parlist))
+		if(!is.null(ddl$time.interval))values=values^ddl$time.interval
+	}
+	else
+		values=rep(NA,nrow(dm))
 	# if some reals are fixed, set reals to their fixed values 
 	if(!is.null(ddl$fix))
 		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]

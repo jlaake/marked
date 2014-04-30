@@ -42,7 +42,7 @@ print.crm=function(x,...)
        cat("\n\nBeta\n")
        print(coef(x))
    }
-   return(NULL)
+   invisible(x)
 }
 coef.crm=function(object,...)
 {

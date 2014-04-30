@@ -72,7 +72,7 @@ setup.parameters <-
 	fdir=file.path(fdir,"parameters.txt")	
 	parameter_definitions=read.delim(fdir,header=TRUE,
 			colClasses=c("character","character",rep("numeric",3),rep("character",3),
-					rep("logical",3),"numeric","logical","logical"))
+					rep("logical",3),"numeric","logical","logical","character","character"))
 #
 #  Create valid parameter list depending on model.
 #
@@ -105,6 +105,14 @@ setup.parameters <-
 		if(is.null(pars[[par.list[i]]]$num))pars[[par.list[i]]]$num=NA
 		if(!is.na(pars[[par.list[i]]]$num)&&pars[[par.list[i]]]$num==1)pars[[par.list[i]]]$num=-(nocc-1)
 		if(!is.null(pars[[par.list[i]]]$share) && pars[[par.list[i]]]$share && is.null(pars[[par.list[i]]]$pair)) pars[[par.list[i]]]$share=NULL
+#
+#       if include or mlogit have multiple values turn into a vector
+#
+		if(!is.null(pars[[par.list[i]]]$include))
+			pars[[par.list[i]]]$include=strsplit(pars[[par.list[i]]]$include,",")[[1]]
+		if(!is.null(pars[[par.list[i]]]$mlogit))
+			pars[[par.list[i]]]$mlogit=strsplit(pars[[par.list[i]]]$mlogit,",")[[1]]
+		
 	}
 	return(pars)
 }
