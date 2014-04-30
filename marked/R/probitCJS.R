@@ -290,8 +290,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
                          CI.lower=hpd.phi[,1], CI.upper=hpd.phi[,2])  
     
   } else {
-    vc.phi.mcmc=NULL
-	vc.phi=NULL
+    vc.phi=NULL
     vc.phi.df=NULL
     re.struc.Phi=NULL
     alpha.phi=NULL
