@@ -1,3 +1,18 @@
+marked 1.1.5 9 May 2014
+-----------------
+NEW FEATURES
+
+* Real parameters are now created for HMM models with predict.crm
+
+CHANGES
+
+* marked now depends on lme4 rather than imports; only way that Rscript would work
+
+* ehmat (encounter history matrix) is now stored with ddl in make.design.data
+
+* Model BayesMSCJS which also contains uncertain state was added to models.txt in anticipation of its inclusion
+
+
 marked 1.1.4 10 Jan 2014
 -----------------
 NEW FEATURES

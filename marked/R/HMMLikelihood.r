@@ -328,8 +328,8 @@ loglikelihood=function(par,type,x,id,start,m,T,freq=1,fct_dmat,fct_gamma,
 	object=R_HMMLikelihood(x[id,],start[id,2],m,T,
 								dmat=dmat[id,,,],gamma=gamma[id,,,],
 								delta=delta[id,])
-	object$beta=backward_prob(x[id,],start[id,2],m,T,
-								dmat=dmat[id,,,],gamma=gamma[id,,,])
+#	object$beta=backward_prob(x[id,],start[id,2],m,T,
+#								dmat=dmat[id,,,],gamma=gamma[id,,,])
 	return(object)
 }
 

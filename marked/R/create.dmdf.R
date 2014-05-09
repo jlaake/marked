@@ -227,7 +227,6 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    begin.num=parameter$begin+1
    chp = process.ch(x$data$ch)
    firstseen=chp$first
-   if(all(is.na(x$ehmat)))x$ehmat= chp$chmat
    nocc=x$nocc
    time.intervals=x$time.intervals
    if(is.null(x$data$begin.time))

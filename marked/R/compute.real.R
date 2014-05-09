@@ -99,13 +99,26 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   }
 # Next select the variables to be extracted for the real parameter calculations; by default this is the variables in the 
 # model formula and if any variables for this parameter are needed for mlogit parameter setup (include) these are also selected.
-  df=data
+  if(!is.null(ulink))
+	  df=cbind(data,fixed=fixedvalues,link=ulink)
+  else
+	  df=cbind(data,fixed=fixedvalues)
   if(missing(select))
   {
 	  if(unique)
-	      {df=df[,c(include,all.vars(model$model.parameters[[parameter]]$formula)),drop=FALSE]}
-  } else
-	      df=df[,c(include,select),drop=FALSE]	  
+	  {
+		  if(!is.null(ulink))		  
+		     df=df[,c(include,all.vars(model$model.parameters[[parameter]]$formula),"fixed","link"),drop=FALSE]
+	      else
+			  df=df[,c(include,all.vars(model$model.parameters[[parameter]]$formula),"fixed"),drop=FALSE]
+	  } else
+	  {
+		  if(!is.null(ulink))		  
+			  df=df[,c(include,select,"fixed","link"),drop=FALSE]	  
+		  else
+			  df=df[,c(include,select,"fixed"),drop=FALSE]	  
+	  }
+  }
 # Check to make sure dimensions of beta and design matrix match
   results=model$results
   beta=results$beta[[parameter]]
@@ -173,7 +186,13 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   real=real[indices]
   fixedparms=fixedparms[indices]
   fixedvalues=fixedvalues[indices]
-  if(!is.null(ulink))ulink=ulink[indices]
+  if(!is.null(ulink))
+  {
+	  ulink=ulink[indices]
+	  sums=by(real,ulink,sum)
+	  sums=sums[match(ulink,names(sums))]
+	  reals=real/sums
+  }	  
   if(showDesign)
 	  reals=cbind(design,reals)
   else

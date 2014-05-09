@@ -70,7 +70,6 @@ function(data,parameters=list())
           number.of.groups=dim(data$freq)[2])
   parameters=parameters[par.list]
   model.list=setup.model(data$model,data$nocc,data$mixtures)
-#
 # Create data for the each parameter in the model with age, year and cohort for each index
 # This data matrix (design.data) is used below to create the design matrix from the formulas
 # If age,cohort or year bins are given, use those.  Otherwise each is treated as a factor 
@@ -151,7 +150,7 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
-	  if(!toupper(data$model)%in%c("PROBITCJS","PROBITMSCJS","NULL"))
+	  if(!toupper(data$model)%in%c("PROBITCJS","NULL"))
 		  if("Y" %in% names(full.design.data[[i]]))
 			  full.design.data[[i]]$Y=NULL
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
@@ -210,6 +209,7 @@ full.design.data=vector("list",length=length(parameters))
    }
    names(full.design.data)=names(parameters)
    full.design.data[["design.parameters"]]=parameters
+   full.design.data$ehmat=data$ehmat
    return(full.design.data)
 }
 

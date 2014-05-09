@@ -292,7 +292,10 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 						   }))
    
    # create encounter history matrix
-   ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
+   if(model.list$IShmm)
+      ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
+   else
+	  ehmat=process.ch(data$ch)$chmat
    #
    #  If there are no factors then
    #     if already has freq variable return the input data set as a list
