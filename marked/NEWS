@@ -4,6 +4,8 @@ NEW FEATURES
 
 * Real parameters are now created for HMM models with predict.crm
 
+* Added tag loss models HMMCJS1TL and HMMCJS2TL
+
 CHANGES
 
 * marked now depends on lme4 rather than imports; only way that Rscript would work
