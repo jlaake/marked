@@ -53,10 +53,13 @@ setupHMM=function(model_def,model,strata.labels)
 	if(toupper(model)%in%c("PROBITCJS","HMMCJS"))
 	{
 		model_def$hmm$ObsLevels=c(0,1)
-		model_def$hmm$fct_dmat=cjs_dmat
-		model_def$hmm$fct_gamma=cjs_gamma
-		model_def$hmm$fct_delta=cjs_delta
 		model_def$hmm$m=2
+		if(toupper(model)=="HMMCJS")
+		{
+			model_def$hmm$fct_dmat=cjs_dmat
+			model_def$hmm$fct_gamma=cjs_gamma
+			model_def$hmm$fct_delta=cjs_delta
+		}
 	} 
 	if(toupper(model)%in%c("HMMCJS1TL"))
 	{
