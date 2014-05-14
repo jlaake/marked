@@ -150,9 +150,9 @@ full.design.data=vector("list",length=length(parameters))
               full.design.data[[i]]=data.frame(N=1)
          }     
       } 
-	  if(!toupper(data$model)%in%c("PROBITCJS","NULL"))
-		  if("Y" %in% names(full.design.data[[i]]))
-			  full.design.data[[i]]$Y=NULL
+#	  if(!toupper(data$model)%in%c("PROBITCJS","NULL"))
+#		  if("Y" %in% names(full.design.data[[i]]))
+#			  full.design.data[[i]]$Y=NULL
 	  # assign subtract.stratum and fix values to 1 unless subtract.stratum=="NONE"
       # the code now handles parameters for 2iMSCJS where strata are in levels (eg states,areas)
       labels=data$strata.labels

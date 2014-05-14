@@ -154,7 +154,6 @@ function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,ag
 initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 {
    model=toupper(model)
-   if(model%in%c("probitCJS","probitMsCJS"))accumulate=FALSE
    dataname=substitute(data)
   #
   #  Compute number of occasions and check validity of model
@@ -176,6 +175,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    #  Setup model
    #
    model.list=setup.model(model,nocc,mixtures)
+   # regardless of user input for accumulate if it is FALSE in model.list set to FALSE;
+   # the bayesian models cannot deal with accumulation
    if(!model.list$accumulate)accumulate=FALSE
    ch.values=unique(unlist(strsplit(data$ch,",")))
    #  If no strata in model then only 0,1 are acceptable values

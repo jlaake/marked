@@ -342,7 +342,6 @@ if(model=="MSCJS")
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
 if(model=="PROBITCJS")
 {
-	ddl$p$Y=ddl$p$Y-1
 	if(is.null(initial))
 	{
 	    imat=process.ch(data.proc$data$ch,data.proc$data$freq,all=FALSE)
