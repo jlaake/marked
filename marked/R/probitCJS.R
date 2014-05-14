@@ -54,9 +54,10 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   restricted.dml = create.dml(ddl,parameters,design.parameters,restrict=TRUE) 
   is.phi.re=!is.null(restricted.dml$Phi$re)
   is.p.re=!is.null(restricted.dml$p$re)
+  yvec = as.vector(t(ddl$ehmat[,-1]))
+  yvec=yvec[ddl$p$Time>=ddl$p$Cohort]
+  n=length(yvec)
   ddl$p = ddl$p[ddl$p$Time>=ddl$p$Cohort,]
-  yvec = ddl$p$Y
-  n = length(yvec)
   Xy = as.matrix(restricted.dml$p$fe)
   pn.p = colnames(Xy)
   Xz = as.matrix(restricted.dml$Phi$fe)
