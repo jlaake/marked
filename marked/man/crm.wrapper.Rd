@@ -35,6 +35,9 @@ load.model(x)
   \item{external}{if TRUE, model results are stored
   externally; otherwise they are stored in crmlist}
 
+  \item{run}{if TRUE, fit models; otherwise just create dml
+  to test if model data are correct for formula}
+
   \item{...}{aditional arguments passed to crm}
 
   \item{parameters}{character vector of parameter names}

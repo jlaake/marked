@@ -34,6 +34,7 @@
 #' @param models a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables
 #' @param base base value for model names
 #' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
+#' @param run if TRUE, fit models; otherwise just create dml to test if model data are correct for formula
 #' @param ... aditional arguments passed to crm
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
@@ -46,7 +47,7 @@
 #' @export load.model
 #' @seealso \code{\link{crm}}
 #' @keywords models
-crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,...)
+crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 {
 	results=vector("list",length=nrow(model.list)+1)
 	results.names=NULL
@@ -72,7 +73,7 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		}
 		model.name=paste(model.list[i,],collapse=".")
 		cat(model.name,"\n")
-		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,...)
+		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,run=run,...)
 		if(external)
 		{
 			assign(as.character(as.name(model.name)),mymodel)
@@ -83,17 +84,23 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		results.names=c(results.names,paste(model.list[i,],collapse="."))
 		formulae=sapply(model.parameters,function(x){return(paste(x$formula,collapse=""))})
 		formulae=paste(paste(names(formulae),"(",formulae,")",sep=""),collapse="")
-		df=data.frame(model=formulae,npar=sum(sapply(mymodel$results$beta,length)),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
-		model.table=rbind(model.table,df)
+		if(run)
+		{
+			df=data.frame(model=formulae,npar=sum(sapply(mymodel$results$beta,length)),AIC=mymodel$results$AIC,neg2lnl=mymodel$results$neg2lnl,convergence=mymodel$results$convergence)
+			model.table=rbind(model.table,df)
+		}
 	}
 	names(results)=results.names
-	model.table$DeltaAIC=model.table$AIC-min(model.table$AIC)
-	model.table$weight=exp(-.5*model.table$DeltaAIC)
-	model.table$weight=model.table$weight/sum(model.table$weight)
-	model.table=model.table[order(model.table$DeltaAIC),c("model","npar","AIC","DeltaAIC","weight","neg2lnl","convergence")]
-	results[[length(results)]]=model.table
-	names(results)=c(results.names,"model.table")
-    class(results)="crmlist"
+	if(run)
+	{
+		model.table$DeltaAIC=model.table$AIC-min(model.table$AIC)
+		model.table$weight=exp(-.5*model.table$DeltaAIC)
+		model.table$weight=model.table$weight/sum(model.table$weight)
+		model.table=model.table[order(model.table$DeltaAIC),c("model","npar","AIC","DeltaAIC","weight","neg2lnl","convergence")]
+		results[[length(results)]]=model.table
+		names(results)=c(results.names,"model.table")
+		class(results)="crmlist"
+	}
     return(results)
 }
 model.table=function(model.list=NULL)
