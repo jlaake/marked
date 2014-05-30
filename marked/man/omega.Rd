@@ -1,0 +1,26 @@
+\name{omega}
+\alias{omega}
+\title{Compute 1 to k-step transition proportions}
+\usage{
+omega(x, k = NULL, labels = NULL)
+}
+\arguments{
+  \item{x}{either a transition matrix or 3-d array ( a set
+  of transition matrices)}
+
+  \item{k}{if x is a transition matrix, this is number of
+  steps 1 to k}
+
+  \item{labels}{labels for states except for last which is
+  always dead and is added at end}
+}
+\description{
+Computes 1 to k-step forward transition proportions in each
+state with a single transition matrix or a 3-d array of
+transition matrices.
+}
+\author{
+Jeff Laake
+}
+\keyword{utility}
+

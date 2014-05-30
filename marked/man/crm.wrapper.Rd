@@ -5,7 +5,7 @@
 \alias{model.table}
 \title{Automation of model runs}
 \usage{
-crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,...)
+crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 
 create.model.list(parameters)
 

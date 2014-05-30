@@ -69,6 +69,7 @@ ddl$p$fix[ddl$p$perm=="no"&ddl$p$tag1==1&ddl$p$tag2==1]=0
 # model.
 mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
         initial=list(Phi=2,p=.3,tau=c(-2)),hessian=TRUE)
+\dontrun{
 # now fit a model allowing different loss rates for each tag but still independent
 mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
         initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
@@ -97,7 +98,7 @@ mod2
 # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 # negatively biased. Note the data are different and AIC not comparable to other models.
 mod3
-library(expm)
+require(expm)
 tag_status=function(k,x)
 {
 	mat=t(sapply(1:k,function(k,x) (x\%^\%k)[1,] ,x=x))
@@ -106,10 +107,11 @@ tag_status=function(k,x)
 	return(mat)
 }
 par(mfrow=c(1,4))
-barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),beside=T,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),args.legend=list(x=20,y=.9))
-barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=T,ylim=c(0,1),main="mod1")
-barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=T,ylim=c(0,1),main="mod2")
-barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=T,ylim=c(0,1),main="mod3")
+barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),args.legend=list(x=20,y=.9))
+barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod1")
+barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod2")
+barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod3")
+}
 }
 \keyword{datasets}
 

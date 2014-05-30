@@ -13,11 +13,10 @@
 #' This function differs from compute.real in RMark because it only computes the values for a single parameter whereas the function 
 #' with the same name in RMark can compute estimates from multiple parameters (eg Phi and p). 
 #' 
-#' Note that the vector indices has 3 different meanings in the code as the code progresses.
-#' 
 #' @param model model object
 #' @param parameter name of real parameter to be computed (eg "Phi" or "p")
 #' @param ddl list of design data 
+#' @param dml design matrix list
 #' @param unique TRUE if only unique values should be returned
 #' @param vcv logical; if TRUE, computes and returns v-c matrix of real estimates
 #' @param se logical; if TRUE, computes std errors and conf itervals of real estimates
@@ -26,6 +25,7 @@
 #' @param select character vector of field names in real that you want to include 
 #' @param showDesign if TRUE, show design matrix instead of data 
 #' @param include vector of field names always to be included even when select or unique specified
+#' @param uselink default FALSE; if TRUE uses link values in evaluating uniqueness
 #' @export
 #' @return A data frame (\code{real}) is returned if \code{vcv=FALSE};
 #' otherwise, a list is returned also containing vcv.real: \item{real}{ data
@@ -41,8 +41,9 @@
 #'  model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
 #' xx=compute.real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 #' @keywords utility
-compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset,select,showDesign=FALSE,include=NULL)
+compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE)
 {
+#  Note that the vector indices has 3 different meanings in the code as the code progresses.
 # if ddl not specified return results stored in model
   if(is.null(ddl))return(model$results$reals)
 # set mcmc value
@@ -103,22 +104,26 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  df=cbind(data,fixed=fixedvalues,link=ulink)
   else
 	  df=cbind(data,fixed=fixedvalues)
-  if(missing(select))
+  if(unique)
   {
-	  if(unique)
-	  {
-		  if(!is.null(ulink))		  
-		     df=df[,c(include,all.vars(model$model.parameters[[parameter]]$formula),"fixed","link"),drop=FALSE]
-	      else
-			  df=df[,c(include,all.vars(model$model.parameters[[parameter]]$formula),"fixed"),drop=FALSE]
-	  } else
-	  {
-		  if(!is.null(ulink))		  
-			  df=df[,c(include,select,"fixed","link"),drop=FALSE]	  
-		  else
-			  df=df[,c(include,select,"fixed"),drop=FALSE]	  
-	  }
+	  if(!is.null(ulink)&uselink)
+  	     varnames=c(select,include,all.vars(model$model.parameters[[parameter]]$formula),"occ","fixed","link")
+	 else
+ 	     varnames=c(select,include,all.vars(model$model.parameters[[parameter]]$formula),"occ","fixed")
+  } else
+  {
+	  if(!is.null(ulink)$uselink)	
+  	      varnames=c(include,select,"fixed","link")
+	  else
+	      varnames=c(include,select,"fixed")
   }
+  varnames=unique(varnames)
+  if(any(!varnames%in%names(df))) 
+  {
+	  warning(paste("These variable names not in data for real estimates: ",paste(varnames[!varnames%in%names(df)],collapse=""),sep=""))
+	  varnames=varnames[varnames%in%names(df)]
+  }
+  df=df[,varnames,drop=FALSE]
 # Check to make sure dimensions of beta and design matrix match
   results=model$results
   beta=results$beta[[parameter]]
@@ -154,8 +159,8 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	reals=data.frame(estimate=real)
 	rownames(reals)=NULL
   }
-# If subset argument is missing (default) skip all subsetting
-  if(!missing(subset))
+  # If subset argument is missing (default) skip all subsetting
+  if(!is.null(subset))
   {
 #   If subset non-blank use it to subset rows
 	if(subset!="")
@@ -166,16 +171,25 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 			sub=subset
 		indices = eval(sub, data)
     }
+	
 #   If subset is blank, then if unique is TRUE, use only rows where all values in
 #   df are unique.  If not unique, also use all rows.
-	else
-	{
+  }	else
 		if(unique)
-			indices=which(!duplicated(apply(df,1,paste,collapse="")))
+		{
+			if(is.null(select)|| !"occ"%in%select)
+   			   indices=which(!duplicated(apply(df[,!names(df)%in%"occ",drop=FALSE],1,paste,collapse="")))
+			else
+				indices=which(!duplicated(apply(df,1,paste,collapse="")))
+		}
 		else
 			indices = TRUE
-	}
-  }
+# modify indices to make sure and include complete set in mlogit
+  if(!is.null(ulink))
+  {
+	   tlink=unique(ulink[indices])
+	   indices=which(ulink%in%tlink)
+  } 	   
 # subset df, design, link, ulink, reals, real, fixedparms and fixedvalues with the 
 # indices from the subsetted rows.
   df=df[indices,,drop=FALSE]	  
@@ -186,6 +200,7 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   real=real[indices]
   fixedparms=fixedparms[indices]
   fixedvalues=fixedvalues[indices]
+#  normalize mlogit parameters
   if(!is.null(ulink))
   {
 	  ulink=ulink[indices]
@@ -193,6 +208,7 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  sums=sums[match(ulink,names(sums))]
 	  reals=real/sums
   }	  
+  df=df[,!names(df)%in%"fixed",drop=FALSE]
   if(showDesign)
 	  reals=cbind(design,reals)
   else
@@ -282,10 +298,10 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  reals=cbind(reals,data.frame(se=se.real,lcl=real.lcl,ucl=real.ucl))   
     }   
 #  Setup subset or get unique records 
-	reals=reals[do.call(order, reals),]
+	#reals=reals[do.call(order, reals),]
 	rownames(reals)=NULL
 	if(vcv)
-		return(list(real=reals,vcv=vcv.real[indices,indices]))
+		return(list(real=reals,vcv=vcv.real))
     else
         return(reals)
 }

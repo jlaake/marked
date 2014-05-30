@@ -1,0 +1,20 @@
+\name{compute_matrices}
+\alias{compute_matrices}
+\title{Compute HMM matrices}
+\usage{
+compute_matrices(x, ddl)
+}
+\arguments{
+  \item{x}{fitted crm model (must be an HMM model)}
+
+  \item{ddl}{design data list}
+}
+\description{
+Computes gamma, dmat and intial matrices(arrays) and
+returns them in a list.
+}
+\author{
+Jeff Laake
+}
+\keyword{utility}
+

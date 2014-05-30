@@ -1,18 +1,20 @@
-marked 1.1.5 9 May 2014
+marked 1.1.5 30 May 2014
 -----------------
 NEW FEATURES
 
-* Real parameters are now created for HMM models with predict.crm
+* Real parameters are now created for HMM models with predict.crm; modified compute.real so reduction to unique real parameters occurs before computation of v-c matrix; also certain fields are added (eg occ) so that a full set of real parameters is displayed. That includes showing all parameters in an mlogit set.
 
 * Added tag loss models HMMCJS1TL and HMMCJS2TL
 
+* Added switch (remove.unused.columns) to create.dml and create.dm functions that controls whether unused columns in the design matrix are removed or not. The default is TRUE. 
+
 CHANGES
 
-* marked now depends on lme4 rather than imports; only way that Rscript would work
+* marked now depends on lme4 rather than imports; only way that Rscript would work. Also added methods to depends.
 
 * ehmat (encounter history matrix) is now stored with ddl in make.design.data
 
-* Model BayesMSCJS which also contains uncertain state was added to models.txt in anticipation of its inclusion
+* Model BayesMSCJS which also contains uncertain state was added to models.txt in anticipation of its inclusion and probitMsCJS was never used and was removed.
 
 
 marked 1.1.4 10 Jan 2014

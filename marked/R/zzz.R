@@ -21,7 +21,7 @@ print.marked.version <- function()
   cat("\nBye-Bye from marked\n\n")
   return(invisible())
 }
-
+#' @import methods
 ### setMethods for Matrix package
 setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), function(x,y) callNextMethod())
 

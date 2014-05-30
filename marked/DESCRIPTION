@@ -10,7 +10,8 @@ Description: This package provides a framework for handling
     Jolly-Seber models.
 Depends:
     R (>= 2.15.0),
-    lme4
+    lme4,
+    methods
 Imports:
     R2admb,
     truncnorm,
@@ -20,11 +21,11 @@ Imports:
     Matrix,
     numDeriv,
     Rcpp (>= 0.9.13),
-    plyr,
-    lme4
+    plyr
 LinkingTo: Rcpp
 Suggests:
-    RMark
+    RMark,
+    expm
 SystemRequirements: ADMB version 11 (http://admb-project.org/) for
     use.admb=TRUE; see readme.txt
 LazyLoad: yes

@@ -70,7 +70,7 @@
 #' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
-#'                          dml,parameters,debug=FALSE)
+#'                          dml,parameters,debug=FALSE,return.mat=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
 #'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
 #' @aliases HMMLikelihood reals hmm.lnl
@@ -79,7 +79,7 @@
 #' returns either the column dimension of design matrix for parameter or the real parameter vector
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
-HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
+HMMLikelihood=function(par,type=NULL,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE)
 {
 	# Arguments:
@@ -104,7 +104,10 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	# Create list of parameter matrices from single input parameter vector
 	# First split parameter vector by prameter type (type) 
 	ptm=proc.time()
-	parlist=split(par,type)
+	if(is.null(type))
+		parlist=par
+	else
+	    parlist=split(par,type)
 	pars=list()
 	# For each parameter type call function reals to compute vector
 	# of real parameter values; then use laply and split to create
@@ -127,7 +130,7 @@ HMMLikelihood=function(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	if(is.list(m)) m=m$ns*m$na+1
 	if(debug){
 		cat("\npar \n")
-		print(split(par,type))
+		print(parlist)
 		for(parname in names(parameters))
 		{
 			cat("\n",parname,"\n")

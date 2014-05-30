@@ -3,8 +3,8 @@
 \title{Compute estimates of real parameters}
 \usage{
 compute.real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
-  vcv = FALSE, se = FALSE, chat = 1, subset, select, showDesign = FALSE,
-  include = NULL)
+  vcv = FALSE, se = FALSE, chat = 1, subset = NULL, select = NULL,
+  showDesign = FALSE, include = NULL, uselink = FALSE)
 }
 \arguments{
   \item{model}{model object}
@@ -13,6 +13,8 @@ compute.real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
   (eg "Phi" or "p")}
 
   \item{ddl}{list of design data}
+
+  \item{dml}{design matrix list}
 
   \item{unique}{TRUE if only unique values should be
   returned}
@@ -36,6 +38,9 @@ compute.real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
 
   \item{include}{vector of field names always to be
   included even when select or unique specified}
+
+  \item{uselink}{default FALSE; if TRUE uses link values in
+  evaluating uniqueness}
 }
 \value{
 A data frame (\code{real}) is returned if \code{vcv=FALSE};
@@ -70,9 +75,6 @@ This function differs from compute.real in RMark because it
 only computes the values for a single parameter whereas the
 function with the same name in RMark can compute estimates
 from multiple parameters (eg Phi and p).
-
-Note that the vector indices has 3 different meanings in
-the code as the code progresses.
 }
 \examples{
 data(dipper)

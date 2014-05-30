@@ -5,10 +5,10 @@
 #' 
 #' @aliases create.dm create.dml
 #' @usage create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
-#'                   chunk_size=1e7, remove.intercept=NULL)
+#'                   chunk_size=1e7, remove.intercept=NULL,remove.unused.columns=TRUE)
 #'        
 #'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,
-#'              chunk_size=1e7,use.admb=FALSE)
+#'              chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format
@@ -26,6 +26,7 @@
 #' @param model.parameters List of model parameter specifications 
 #' @param restrict if TRUE, only use design data with Time >= Cohort
 #' @param use.admb if TRUE uses mixed.model.admb for random effects; otherwise mixed.model
+#' @param remove.unused.columns if TRUE, unused columns are removed; otherwise they are left
 #' @return create.dm returns a fixed effect design matrix constructed with the design dataframe and the
 #' formula for a single parametre.  It excludes any columns that are all 0. create.dml returns a list with an element for
 #' for each parameter with a sub-list for the fixed effect (fe) and random effects. The re structure depends
@@ -34,7 +35,7 @@
 #' that random effect (eg (1|id) + (1|time) would produce elements for id and time. 
 #' 
 #' @author Jeff Laake
-create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL)
+create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, chunk_size=1e7, remove.intercept=NULL, remove.unused.columns=TRUE)
 ##############################################################################
 # create.dm - create design matrix with nch*(nocc-1) rows
 #             where nch is number of capture histories and nocc is number of
@@ -109,16 +110,22 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
    }
    if(upper<nrow(x))
 	   dm[(upper+1):nrow(x),]=as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")    
-#  Remove any unused columns; this is slower but uses less memory
-   select=vector("logical",length=npar)
-	for (i in 1:npar)
-	   select[i]=any(dm[,i]!=0)
-   if(!is.null(remove.intercept)&&remove.intercept)select[1]=FALSE 
-#  Return dm with selected columns
    colnames(dm)=colnames(mm)
-   return(dm[,select,drop=FALSE])
+#  Remove any unused columns; this is slower but uses less memory
+   if(remove.unused.columns)
+   {
+	   select=vector("logical",length=npar)
+	   for (i in 1:npar)
+		   select[i]=any(dm[,i]!=0)
+	   if(!is.null(remove.intercept)&&remove.intercept)select[1]=FALSE 
+#      Return dm with selected columns
+	   return(dm[,select,drop=FALSE])
+   } else
+   {
+	   return(dm)
+   }
 }
-create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE)
+create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
 {
 	dml=vector("list",length=length(model.parameters))
 	names(dml)=names(model.parameters)
@@ -131,7 +138,8 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 		if(restrict)dd=dd[dd$Time>=dd$Cohort,]
 		mlist=proc.form(model.parameters[[i]]$formula)  # parse formula for fixed effects
 		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
-				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept)
+				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept,
+			    remove.unused.columns=remove.unused.columns)
 		# if some reals are fixed, assign 0 to rows of dm and then
 		# remove any columns (parameters) that are all 0.
 		if(!is.null(dd$fix)&&any(!is.na(dd$fix)))

@@ -4,10 +4,10 @@
 \title{Creates a design matrix for a parameter}
 \usage{
 create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL,
-                  chunk_size=1e7, remove.intercept=NULL)
+                  chunk_size=1e7, remove.intercept=NULL,remove.unused.columns=TRUE)
 
        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,
-             chunk_size=1e7,use.admb=FALSE)
+             chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
 }
 \arguments{
   \item{x}{design dataframe created by
@@ -42,6 +42,9 @@ create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL,
 
   \item{use.admb}{if TRUE uses mixed.model.admb for random
   effects; otherwise mixed.model}
+
+  \item{remove.unused.columns}{if TRUE, unused columns are
+  removed; otherwise they are left}
 }
 \value{
 create.dm returns a fixed effect design matrix constructed

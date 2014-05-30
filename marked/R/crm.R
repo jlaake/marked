@@ -277,16 +277,6 @@ else
 	model=data$model
 }
 #
-# If the design data have not been constructed, do so now
-#
-if(is.null(ddl)) 
-{
-	message("Creating design data...\n")
-	flush.console()
-	ddl=make.design.data(data.proc,design.parameters)
-} else
-	design.parameters=ddl$design.parameters
-#
 # Setup parameter list
 #
 number.of.groups=1
@@ -312,8 +302,17 @@ if(re) use.admb=TRUE
 if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
-#  setup fixed values 
-ddl=set.fixed(ddl,parameters)
+#
+# If the design data have not been constructed, do so now
+#
+if(is.null(ddl)) 
+{
+	message("Creating design data...\n")
+	flush.console()
+	ddl=make.design.data(data.proc,design.parameters)
+	ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
+} else
+	design.parameters=ddl$design.parameters
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values
@@ -325,7 +324,8 @@ if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,desi
 if("SANN"%in%method)
 {
 	if(length(method)>1)
-		warning("***SANN can only used by itself; other methods ignored.")
+		warning("***SANN can only be used by itself; other methods ignored.")
+	method="SANN"
     control$maxit=itnmax
 }
 if("nlminb"%in%method)control$eval.max=itnmax
@@ -366,8 +366,8 @@ if(substr(model,1,3)=="HMM")
 		runmodel=optim(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian)
-		runmodel$mat=HMMLikelihood(par=runmodel$par,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
+#		runmodel$mat=HMMLikelihood(par=runmodel$par,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+#				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	}
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
@@ -389,7 +389,7 @@ if(substr(model,1,3)=="HMM")
 		rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
 	}
 	class(runmodel)=c("crm","mle",model)
-	runmodel$model_data=list(ddl=ddl)
+#	runmodel$model_data=list(ddl=ddl)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
