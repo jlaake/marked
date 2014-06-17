@@ -1,4 +1,10 @@
-marked 1.1.5 30 May 2014
+marked 1.1.6 17 June 2014
+-----------------
+CHANGES
+
+* Modification to documentation to avoid overflow on pdf
+
+marked 1.1.5 16 June 2014
 -----------------
 NEW FEATURES
 

@@ -107,7 +107,9 @@ tag_status=function(k,x)
 	return(mat)
 }
 par(mfrow=c(1,4))
-barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),args.legend=list(x=20,y=.9))
+barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),
+ beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),
+ args.legend=list(x=20,y=.9))
 barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod1")
 barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod2")
 barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod3")
