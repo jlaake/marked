@@ -36,6 +36,7 @@ simdata$ch[simdata$perm=="no"]=gsub("--","0",simdata$ch[simdata$perm=="no"])
 save(tagloss,file="tagloss.rda") } }
 }
 \examples{
+\donttest{
 # get data; the beta parameters used to simulate the data were
 # Phi: 2.197, p: -0.4064  Tau:-2,-1,3
 data(tagloss)
@@ -69,6 +70,7 @@ ddl$p$fix[ddl$p$perm=="no"&ddl$p$tag1==1&ddl$p$tag2==1]=0
 # model.
 mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
         initial=list(Phi=2,p=.3,tau=c(-2)),hessian=TRUE)
+}
 \dontrun{
 # now fit a model allowing different loss rates for each tag but still independent
 mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),

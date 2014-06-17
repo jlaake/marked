@@ -7,8 +7,6 @@ Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
 Maintainer: Jeff Laake <Jeff.Laake@noaa.gov>
 Description: This package provides a framework for handling
     data and analysis for mark-recapture.
-    Currently it is limited to Cormack-Jolly-Seber and
-    Jolly-Seber models.
 Depends:
     R (>= 2.15.0),
     lme4,
