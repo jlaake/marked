@@ -22,7 +22,6 @@
 #' standard errors and confidence intervals} \item{vcv.real}{variance-covariance matrix of
 #' real estimates}
 #' @author Jeff Laake
-#' @S3method predict crm
 #' @export
 #' @examples
 #' data(dipper)

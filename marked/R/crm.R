@@ -310,9 +310,9 @@ if(is.null(ddl))
 	message("Creating design data...\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
-	ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 } else
 	design.parameters=ddl$design.parameters
+ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values

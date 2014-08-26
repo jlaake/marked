@@ -6,9 +6,6 @@
 #' @usage \method{coef}{crm}(object,...)
 #'        \method{print}{crm}(x,...)
 #'        \method{print}{crmlist}(x,...)
-#' @S3method coef crm
-#' @S3method print crm
-#' @S3method print crmlist
 #' @aliases print.crm coef.crm print.crmlist
 #' @param x crm model result or list of model results
 #' @param object crm model result
@@ -17,7 +14,7 @@
 #' returns NULL. \code{coef} returns a dataframe with estimates and standard
 #' errors and confidence intervals if hessian=TRUE on model run.
 #' @author Jeff Laake
-#' @export 
+#' @export coef.crm print.crm print.crmlist
 #' @seealso \code{\link{crm}}
 #' @keywords utility
 print.crm=function(x,...)
