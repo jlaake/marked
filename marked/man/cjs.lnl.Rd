@@ -112,6 +112,8 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	if(debug)cat("\\n-2lnl = ",2*lnl)
 	return(lnl)
 }
+
+cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv,nc,cl)
 }
 \author{
 Jeff Laake

@@ -15,10 +15,13 @@
 #' be selected without possibility of being over-written or accidentally changed whereas 
 #' with the former the set must be identified via a script and any in the environment will
 #' be used which requires removing/recreating the set to be used.
+#' 
+#' crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus
 #'  
 #' @aliases  crm.wrapper create.model.list model.table load.model
 #' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 #' 
+#' crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 #' create.model.list(parameters)
 #' 
 #' model.table(model.list)
@@ -31,6 +34,7 @@
 #' @param ddl Design data list which contains a list element for each parameter
 #' type; if NULL it is created
 #' @param model.list matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name
+#' @param nc number of cpus to use for parallel model runs. Will not let you to use more than are available.
 #' @param models a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables
 #' @param base base value for model names
 #' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
@@ -45,10 +49,13 @@
 #' @export crm.wrapper
 #' @export model.table
 #' @export load.model
+#' @export crm.wrapper.parallel
+#' @import parallel
 #' @seealso \code{\link{crm}}
 #' @keywords models
-crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
+crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,...)
 {
+	if(is.null(env))env=parent.frame()
 	results=vector("list",length=nrow(model.list)+1)
 	results.names=NULL
 	model.table=NULL
@@ -59,13 +66,13 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		{
 			for(j in 1:ncol(model.list))
 			{
-				if(!is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-					model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame())
+				if(!is.list(eval(parse(text=model.list[i,j]),envir=env)[[1]]))
+					model.parameters[[names(model.list)[j]]]=eval(parse(text=(as.character(model.list[i,j]))),envir=env)
 			}
 			for(j in 1:ncol(model.list))
 			{
-				if(is.list(eval(parse(text=model.list[i,j]),envir=parent.frame())[[1]]))
-					model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=parent.frame()))
+				if(is.list(eval(parse(text=model.list[i,j]),envir=env)[[1]]))
+					model.parameters=c(model.parameters,eval(parse(text=(as.character(model.list[i,j]))),envir=env))
 			}	
 		} else
 		{
@@ -165,4 +172,27 @@ load.model=function(x)
 	model.name=strsplit(x,"\\.rda")[[1]][1]
 	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
 	return(model)
+}
+crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
+{
+	split.model.list=split(model.list,1:nrow(model.list))
+	if(nc>detectCores())stop(paste("Too many cpus.  nc > ",detectCores(), " cpus available"))
+	cl=makeCluster(nc)
+	if(is.null(dim(cml)))
+		clusterExport(cl,unique(cml))
+	else
+	    clusterExport(cl,as.vector(apply(cml,2,unique)))
+	res<-parLapply(cl,split.model.list,crm.wrapper,data=data,ddl=ddl,models=models,base=base,external=external,run=run,...)
+	if(!external)
+	{
+		res=lapply(res,function(x) x[[1]])
+		res$model.table=model.table(res)
+	} else
+	{
+		res=paste(apply(model.list,1,paste,collapse="."),".rda",sep="")
+		res$model.table=model.table(res)
+	}	
+	class(res)="crmlist"
+	stopCluster(cl)
+	return(res)
 }

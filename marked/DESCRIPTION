@@ -10,7 +10,8 @@ Description: This package provides a framework for handling
 Depends:
     R (>= 2.15.0),
     lme4,
-    methods
+    methods,
+    parallel
 Imports:
     R2admb,
     truncnorm,

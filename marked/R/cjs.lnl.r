@@ -99,6 +99,7 @@
 #'	return(lnl) 
 #'} 
 #' 
+#' cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv,nc,cl)
 cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv)
 {
 	f_eval=get("markedfunc_eval",envir=cjsenv)+1
@@ -123,7 +124,26 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 #	   pbeta[p.links]=log(1/(1/pbeta[p.links]-1))
 #    }
 	pbeta=matrix(pbeta,ncol=nocc-1,nrow=nrow(model_data$p.dm)/(nocc-1),byrow=TRUE)	
-	lnl=.Fortran("cjs",as.double(model_data$imat$chmat),as.double(Phibeta),as.double(pbeta),
+#   put Fortran code in a separate function with arguments shown and vector of indices
+#   use parLapply with that function and its arguments and index matrix
+#   get list - use do.call and sum lnl and use c for p0.
+# attempt to parallelize code
+#	split_vec=function(nrow,nc)
+#	{
+#		nx=floor(nrow/nc)
+#		return(cbind(seq(1,nrow,nx)[1:nc],
+#						c(seq(nx,nrow,nx)[1:(nc-1)],nrow)))
+#	}   
+#	if(nc>1 & nrow(Phibeta)>5*nc)
+#	{
+#	   res=parLapply(cl,1:nc, cjs.parallel,chmat=model_data$imat$chmat,Phibeta=Phibeta,pbeta=pbeta,
+#			first=model_data$imat$first,last=model_data$imat$last,freq=model_data$imat$freq,
+#			loc=model_data$imat$loc,Phi.fixed=model_data$Phi.fixed,p.fixed=model_data$p.fixed,
+#			time.intervals=model_data$time.intervals,vec=split_vec(nrow(Phibeta),nc))
+#	   lnl=list(lnl=sum(unlist(lapply(res,function(x) x$lnl))))
+#	   lnl$p0=unlist(lapply(res,function(x) x$p0))
+#   } else
+  	   lnl=.Fortran("cjs",as.double(model_data$imat$chmat),as.double(Phibeta),as.double(pbeta),
 			as.double(model_data$imat$first),as.double(model_data$imat$last),as.double(model_data$imat$freq),
 			as.integer(model_data$imat$loc),as.double(model_data$Phi.fixed),as.double(model_data$p.fixed),
 			as.double(model_data$time.intervals),as.integer(nrow(model_data$imat$chmat)),           
@@ -143,6 +163,15 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	else
 		return(lnl$lnl)
 }
-
-
-
+# attempt to parallelize the code
+#cjs.parallel=function(i,chmat,Phibeta,pbeta,first,last,freq,loc,Phi.fixed,p.fixed,time.intervals,vec)
+#{
+#ir=vec[i,1]:vec[i,2]
+#lnl=.Fortran("cjs",as.double(chmat[ir,]),as.double(Phibeta[ir,]),as.double(pbeta[ir,]),
+#		as.double(first[ir]),as.double(last[ir]),as.double(freq[ir]),
+#		as.integer(loc[ir]),as.double(Phi.fixed),as.double(p.fixed),
+#		as.double(time.intervals[ir,]),as.integer(nrow(chmat[ir,])),           
+#		as.integer(ncol(chmat[ir,])),as.integer(nrow(Phi.fixed)),
+#		as.integer(nrow(p.fixed)),lnl=double(1),p0=double(nrow(chmat[ir,])),PACKAGE="marked")
+#return(lnl)
+#}
