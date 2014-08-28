@@ -299,9 +299,10 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
    df$seq=NULL
    df$Time=df$time-min(df$time)
    df$Cohort=df$cohort-min(df$cohort)
-   df$Age=df$age-max(0,min(df$age))
+  # df$Age=df$age-max(0,min(df$age))
    df$age[df$age<0]=0
    df$time=factor(df$time) 
+   df$Age=df$age
    df$age=factor(df$age) 
    df$cohort=factor(df$cohort) 
    if("group"%in%names(df))

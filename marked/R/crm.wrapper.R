@@ -190,6 +190,8 @@ crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",ex
 	} else
 	{
 		res=paste(apply(model.list,1,paste,collapse="."),".rda",sep="")
+		names(res)=apply(model.list,1,paste,collapse=".")
+		res=as.list(res)
 		res$model.table=model.table(res)
 	}	
 	class(res)="crmlist"
