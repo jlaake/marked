@@ -5,6 +5,7 @@
 DATA_SECTION 
     init_int n;                                           // number of capture histories
     init_int m;                                           // number of capture occasions
+	init_int debug;                                       // 0/1 variable 1 = printout iterations
     init_imatrix ch(1,n,1,m);                             // capture history matrix
     init_ivector frst(1,n);                               // occasion first seen for each history
     init_ivector lst(1,n);                                // occasion last seen for each history
@@ -121,6 +122,12 @@ PROCEDURE_SECTION
   		         nopll_i(i,phi_sigma,phi_u(phi_indices),phi_beta,p_beta);                      // phi random effects; p fixed
 			 else 			 
 		  	     ll_i(i,phi_sigma,p_sigma,phi_u(phi_indices),p_u(p_indices),phi_beta,p_beta);  // phi and p random effects		 
+    }
+	if(debug==1)
+	{
+	    cout << "Phi = " << phi_beta << endl;
+	    cout << "p = " << p_beta << endl;
+	    cout << "f = " << f << endl;
     }
 	
 

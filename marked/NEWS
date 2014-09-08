@@ -1,8 +1,16 @@
-marked 1.1.6 17 June 2014
+marked 1.1.6 29 Aug 2014
 -----------------
 CHANGES
 
 * Modification to documentation to avoid overflow on pdf
+
+* Patches to crm so design.data and fixed values were handled when the ddl is specified
+
+* cjs and js were patched so only the initial parameter values are stored; it was errantly storing the model when a model was used to specify initial values
+
+* Additional changes to crm to use optimx to work with HMM models.  This required changes to HMMLikelihood argument names which conflicted with optimx.
+
+* cjs and *.tpl files for cjs were modified to use debug; not all exes have been changed yet
 
 marked 1.1.5 16 June 2014
 -----------------

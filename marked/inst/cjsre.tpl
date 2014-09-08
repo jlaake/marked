@@ -3,6 +3,7 @@
 DATA_SECTION 
     init_int n;                                   // number of capture histories
 	init_int m;                                   // number of capture occasions
+	init_int debug;                               // 0/1 variable 1 = printout iterations
 	init_imatrix ch(1,n,1,m);                     // capture history matrix
 	init_ivector frst(1,n);                       // occasion first seen for each history
 	init_ivector lst(1,n);                        // occasion last seen for each history
@@ -88,7 +89,12 @@ PROCEDURE_SECTION
   		      norell_i(i,phi_beta,p_beta);                                 // no random effects 
 		}
     }
-
+	if(debug==1)
+	{
+	    cout << "Phi = " << phi_beta << endl;
+	    cout << "p = " << p_beta << endl;
+	    cout << "f = " << f << endl;
+    }
 
 
 SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dvar_vector& p_sigma,const dvar_vector& phi_u,const dvar_vector& p_u,const dvar_vector& phi_beta, const dvar_vector& p_beta )

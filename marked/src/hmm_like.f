@@ -4,10 +4,10 @@
 	   INTEGER X(N,T),START(N,2)
        DOUBLE PRECISION P(M,M),V(M),U,PHI(M), FREQ(N)
        DOUBLE PRECISION DMAT(N,T,NO,M), GAMMA(N,T-1,M,M), DELTA(N,M)
-       DOUBLE PRECISION LNL 
-       LNL=0D0
+       DOUBLE PRECISION LNL(N) 
 C      Loop over each capture history
        DO 20 I=1,N
+           LNL(I)=0D0
            U=0D0
 C          Compute initial state vector phi and likelihood 
 C          contribution (if any) for first capture history position
@@ -19,7 +19,7 @@ C          contribution (if any) for first capture history position
 	       DO 2 K=1,M
              PHI(K)=V(K)/U
    2       CONTINUE
-           LNL=LNL+DLOG(U)*FREQ(I)	
+           LNL(I)=DLOG(U)*FREQ(I)	
 C          Loop over remaining capture history positions, computing
 C          log-likelihood value and updating state vector(phi)
            DO 10 J=FIRST+1,T
@@ -33,7 +33,7 @@ C          log-likelihood value and updating state vector(phi)
                   V(K)=V(K)*DMAT(I,J,X(I,J),K)
                   U=U+V(K)
   7            CONTINUE
-               LNL=LNL+DLOG(U)*FREQ(I)
+               LNL(I)=LNL(I)+DLOG(U)*FREQ(I)
 	           DO 9 K=1,M
                  PHI(K)=V(K)/U
   9            CONTINUE

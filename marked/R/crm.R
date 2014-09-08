@@ -247,7 +247,7 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=NULL,refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
+ control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,clean=TRUE,...)
 {
 model=toupper(model)
@@ -311,7 +311,12 @@ if(is.null(ddl))
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 } else
+{
+    if(!is.null(design.parameters))
+		for(parname in names(design.parameters))
+			ddl$design.parameters[[parname]]=c(ddl$design.parameters[[parname]],design.parameters[[parname]])
 	design.parameters=ddl$design.parameters
+}
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
@@ -359,26 +364,33 @@ if(substr(model,1,3)=="HMM")
 {
 	if(is.null(data.proc$strata.list))
 	{
-	   runmodel=optimx(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
-				method=method,debug=debug,hessian=hessian)
-	   runmodel$mat=HMMLikelihood(par=runmodel$par,type=initial.list$ptype,x=data.proc$ehmat,m=data.proc$m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=data.proc$m,
+				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters)
+		par <- coef(runmodel, order="value")[1, ]
+		runmodel=as.list(summary(runmodel, order="value")[1, ])
+		runmodel$convergence=runmodel$convcode
+		lnl=runmodel$value
+ 	    runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=data.proc$m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
     } else
 	{
 		m=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
-		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
+		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
-				method=method,debug=debug,hessian=hessian)
-#		runmodel$mat=HMMLikelihood(par=runmodel$par,type=initial.list$ptype,x=data.proc$ehmat,m=m,T=data.proc$nocc,start=data.proc$start,freq=data.proc$freq,
-#				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
+				method=method,debug=debug,hessian=hessian,itnmax=itnmax)
+		runmodel=as.list(summary(runmodel, order="value")[1, ])
+		runmodel$convergence=runmodel$convcode
+		lnl=runmodel$value
+		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	}
+	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
-	#par=split(runmodel$par,initial.list$ptype)
 	for(p in names(initial.list$par))
 	{
-		par[[p]]=runmodel$par[initial.list$ptype==p]
+		par[[p]]=parlist[[p]]
 		names(par[[p]])=colnames(dml[[p]]$fe)	
 	}
 	runmodel$beta=par

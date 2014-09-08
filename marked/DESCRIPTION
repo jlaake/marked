@@ -16,12 +16,12 @@ Imports:
     R2admb,
     truncnorm,
     coda,
-    optimx (>= 2013.8.6),
     ggplot2,
     Matrix,
     numDeriv,
     Rcpp (>= 0.9.13),
-    plyr
+    plyr,
+    optimx (>= 2013.8.6)
 LinkingTo: Rcpp
 Suggests:
     RMark,

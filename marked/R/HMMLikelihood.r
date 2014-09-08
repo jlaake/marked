@@ -51,7 +51,7 @@
 #' 								delta=delta[id,])))
 #'  
 #' @param x single observed sequence (capture history) in HMMLikelihood and matrix of observed sequences (row:id; column:occasion/time) in loglikelihood
-#' @param m number of states
+#' @param mx number of states
 #' @param T number of occasions; sequence length
 #' @param dmat observation probability matrices
 #' @param gamma transition matrices
@@ -67,7 +67,7 @@
 #' @param parameters formulas for each parameter type
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parlist list of parameter strings used to split par vector
-#' @param start for each ch, the first non-zero x value and the occasion of the first non-zero value
+#' @param xstart for each ch, the first non-zero x value and the occasion of the first non-zero value
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @usage HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE,return.mat=FALSE)
@@ -79,7 +79,7 @@
 #' returns either the column dimension of design matrix for parameter or the real parameter vector
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
-HMMLikelihood=function(par,type=NULL,x,start,m,T,freq=1,fct_dmat,fct_gamma,
+HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE)
 {
 	# Arguments:
@@ -103,11 +103,16 @@ HMMLikelihood=function(par,type=NULL,x,start,m,T,freq=1,fct_dmat,fct_gamma,
 	#
 	# Create list of parameter matrices from single input parameter vector
 	# First split parameter vector by prameter type (type) 
+	# changed to mx to avoid problems with optimx
+	m=mx
 	ptm=proc.time()
 	if(is.null(type))
 		parlist=par
 	else
-	    parlist=split(par,type)
+	{
+		parlist=split(par,type)
+	}
+
 	pars=list()
 	# For each parameter type call function reals to compute vector
 	# of real parameter values; then use laply and split to create
@@ -121,34 +126,20 @@ HMMLikelihood=function(par,type=NULL,x,start,m,T,freq=1,fct_dmat,fct_gamma,
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	#observation and transition matrices using parameter values
-    dmat=fct_dmat(pars,m,F=start[,2],T)
-	gamma=fct_gamma(pars,m,F=start[,2],T)
-	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
+    dmat=fct_dmat(pars,m,F=xstart[,2],T)
+	gamma=fct_gamma(pars,m,F=xstart[,2],T)
+#	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	# compute matrix of initial state distribution for each id
-	delta=fct_delta(pars,m,F=start[,2],T,start)
+	delta=fct_delta(pars,m,F=xstart[,2],T,xstart)
 	if(return.mat)return(list(dmat=dmat,gamma=gamma,delta=delta))
 	if(is.list(m)) m=m$ns*m$na+1
 	if(debug){
 		cat("\npar \n")
 		print(parlist)
-		for(parname in names(parameters))
-		{
-			cat("\n",parname,"\n")
-			print(pars[[parname]][1,])
-		}
 	}
-	neglnl=hmm.lnl(x,start,m,T,dmat,gamma,delta,rowSums(freq))
-	if(debug){
-		cat(" -lnl= ",neglnl)
-		ps=delta[1,]
-		for(i in 1:(T-1))
-		{
-			ps=ps%*%gamma[1,i,,]
-			cat("\ni = ",i+1," ps= ", ps)
-		}
-		
-	}
-	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
+	neglnl=hmm.lnl(xx,xstart,m,T,dmat,gamma,delta,rowSums(freq),debug)
+	if(debug)cat("\n -lnl= ",neglnl)
+#	if(debug) cat("\n time = ",proc.time()-ptm,"\n")
 	return(neglnl)
 }
 reals=function(ddl,dml,parameters,parlist)
@@ -175,12 +166,21 @@ reals=function(ddl,dml,parameters,parlist)
 	# return vector of reals
 	return(values)
 }
-hmm.lnl=function(x,start,m,T,dmat,gamma,delta,freq)
+hmm.lnl=function(x,start,m,T,dmat,gamma,delta,freq,debug)
 {
 	lnl=.Fortran("hmmlike",as.integer(x),as.integer(nrow(x)),as.integer(m),as.integer(T),
 			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(freq),as.double(dmat),
-			as.double(gamma),as.double(delta),lnl=double(1),PACKAGE="marked")$lnl
-    -lnl
+			as.double(gamma),as.double(delta),lnl=double(nrow(x)),PACKAGE="marked")$lnl
+	if(any(is.nan(lnl)))
+	{
+		if(debug)
+		{
+			cat("lnl is nan for these rows\n")
+		    cat(which(is.nan(lnl)))
+		}
+	    lnl[is.nan(lnl)]=-1e5
+	}
+    -sum(lnl)
 }
 
 #' Hidden Markov Functions

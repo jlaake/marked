@@ -90,6 +90,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   par=cjs.initial(dml,imat)
    else
        par=set.initial(names(dml),dml,initial)$par
+   initial=par
 #  Create list of model data for optimization
 	model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
 			p.fixed=parameters$p$fixed,time.intervals=time.intervals)
@@ -176,8 +177,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   else
 			   tpl="cjs"
 	   }
-	   if(!hessian)message("ignoring hessian setting; set to TRUE")
-		   hessian=TRUE
+#	   if(!hessian)message("ignoring hessian setting; set to TRUE")
+#		   hessian=TRUE
 	   # cleanup any leftover files
 	   clean_admb(tpl)
 	   # if argument clean is TRUE, delete exe and TPL files as well
@@ -224,6 +225,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   # Number of occasions
 	   nocc=model_data$imat$nocc
 	   write(nocc,con,append=TRUE)
+	   write(as.numeric(debug),con,append=TRUE)
 	   # capture history matrix
 	   write(t(model_data$imat$chmat),con,ncolumns=nocc,append=TRUE)
 	   # first occasions seen 
