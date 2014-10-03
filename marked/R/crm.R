@@ -379,6 +379,7 @@ if(substr(model,1,3)=="HMM")
 		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian,itnmax=itnmax)
+		par <- coef(runmodel, order="value")[1, ]
 		runmodel=as.list(summary(runmodel, order="value")[1, ])
 		runmodel$convergence=runmodel$convcode
 		lnl=runmodel$value
