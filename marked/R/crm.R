@@ -368,8 +368,10 @@ if(substr(model,1,3)=="HMM")
 				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters)
 		par <- coef(runmodel, order="value")[1, ]
-		runmodel=as.list(summary(runmodel, order="value")[1, ])
+		runmodel=list(optim.details=as.list(summary(runmodel, order="value")[1, ]))
 		runmodel$convergence=runmodel$convcode
+		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
+				chunk_size=chunk_size,itnmax=itnmax,control=control)
 		lnl=runmodel$value
  	    runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=data.proc$m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
@@ -380,8 +382,10 @@ if(substr(model,1,3)=="HMM")
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
 				method=method,debug=debug,hessian=hessian,itnmax=itnmax)
 		par <- coef(runmodel, order="value")[1, ]
-		runmodel=as.list(summary(runmodel, order="value")[1, ])
+		runmodel=list(optim.details=as.list(summary(runmodel, order="value")[1, ]))
 		runmodel$convergence=runmodel$convcode
+		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
+				chunk_size=chunk_size,itnmax=itnmax,control=control)
 		lnl=runmodel$value
 		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)

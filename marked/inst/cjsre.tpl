@@ -147,7 +147,7 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
        else       
           pch=pch+cump(j)*phicumprod(j)*(1-phi(j));                // probability of history given possible last occasion alive
     }   
-    f-= log(pch+0.000000000000000000000001);                                // sum log-likelihood log(pr(ch))
+    f-= log(pch+1E-15);                                            // sum log-likelihood log(pr(ch))
 	f-= sum(-0.5*log(2.0*M_PI) - 0.5*square(phi_u));
 	f-= sum(-0.5*log(2.0*M_PI) - 0.5*square(p_u));
 
@@ -200,7 +200,7 @@ SEPARABLE_FUNCTION void nopll_i(const int i, const dvar_vector& phi_sigma,const 
        else       
           pch=pch+cump(j)*phicumprod(j)*(1-phi(j));                // probability of history given possible last occasion alive
     }   
-    f-= log(pch+0.000000000000000000000001);                                // sum log-likelihood log(pr(ch))
+    f-= log(pch+1E-15);                                            // sum log-likelihood log(pr(ch))
 	f-= sum(-0.5*log(2.0*M_PI) - 0.5*square(phi_u));
 
 SEPARABLE_FUNCTION void nophill_i(const int i, const dvar_vector& p_sigma,const dvar_vector& p_u,const dvar_vector& phi_beta, const dvar_vector& p_beta )
@@ -252,7 +252,7 @@ SEPARABLE_FUNCTION void nophill_i(const int i, const dvar_vector& p_sigma,const 
        else       
           pch=pch+cump(j)*phicumprod(j)*(1-phi(j));                // probability of history given possible last occasion alive
     }   
-    f-= log(pch+0.000000000000000000000001);                                // sum log-likelihood log(pr(ch))
+    f-= log(pch+1E-15);                                            // sum log-likelihood log(pr(ch))
 	f-= sum(-0.5*log(2.0*M_PI) - 0.5*square(p_u));
 
 SEPARABLE_FUNCTION void norell_i(const int i,const dvar_vector& phi_beta, const dvar_vector& p_beta )
@@ -303,7 +303,7 @@ SEPARABLE_FUNCTION void norell_i(const int i,const dvar_vector& phi_beta, const 
        else       
           pch=pch+cump(j)*phicumprod(j)*(1-phi(j));                // probability of history given possible last occasion alive
     }   
-       f-= log(pch+0.000000000000000000000001)*frq(i);                 // sum log-likelihood log(pr(ch))
+       f-= log(pch+1E-15)*frq(i);                                  // sum log-likelihood log(pr(ch))
 		
 REPORT_SECTION
     dvar_vector phi(1,m-1);              // temp vector for Phis for each occasion for a single history

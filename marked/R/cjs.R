@@ -141,12 +141,6 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   mod=as.list(summary(mod, order="value")[1, ])
 		   convergence=mod$convcode
 		   lnl=mod$value
-		   if(debug)
-		   {
-		      frstderiv=jacobian(cjs.lnl,par,model_data=model_data,
-				      debug=debug,cjsenv=cjsenv)
-		      cat("\n first derivatives = ",frstderiv)
-		  }
 	   }
 	   #  Rescale parameter vector 
 	   cjs.beta=unscale.par(par,scale)
@@ -183,8 +177,6 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   else
 			   tpl="cjs"
 	   }
-#	   if(!hessian)message("ignoring hessian setting; set to TRUE")
-#		   hessian=TRUE
 	   # cleanup any leftover files
 	   clean_admb(tpl)
 	   # if argument clean is TRUE, delete exe and TPL files as well
