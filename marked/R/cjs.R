@@ -147,8 +147,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
        # Create results list 
 	   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
 			   convergence=convergence,optim.details=mod,
-			   scale=scale,model_data=model_data,
-			   options=list(accumulate=accumulate,initial=initial,method=method,
+			   model_data=model_data,
+			   options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
 					   chunk_size=chunk_size,itnmax=itnmax,control=control))
        # Compute hessian if requested
 	   if(hessian) 
@@ -297,11 +297,8 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   if(is.null(extra.args)) extra.args=""
 	   cat("\nrunning ADMB program\n")
 	   flush.console()
-	   if(hessian)
-	   {
-	       xx=run_admb(tpl,extra.args=extra.args,verbose=T)
-	   } else
-		   xx=run_admb(tpl,verbose=T,extra.args=paste(extra.args,"-nohess"))
+	   if(!hessian)extra.args=paste(extra.args,"-nohess")
+	   xx=run_admb(tpl,verbose=T,extra.args=extra.args)
 	   convergence=attr(xx,"status")
 	   if(is.null(convergence))convergence=0
 	   res=read_admb(tpl)
@@ -339,8 +336,18 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   rownames(res$cor)=rownames(beta.vcv)
 	   colnames(res$cor)=rownames(beta.vcv)
 	   res$vcov=NULL
-	   res=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence,random.effects=list(random.effects),res)
-	   res$beta.vcv=beta.vcv
+	   optim.details=c(fn=res$fn,maxgrad=res$maxgrad,eratio=res$eratio)
+	   options=list(extra.args=extra.args)
+	   res$cor=NULL
+	   res$maxgrad=NULL
+	   results=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence)
+	   results$optim.details=optim.details
+	   results$options=options
+	   results$random.effects=res$random.effects
+	   results$coeflist=res$coeflist
+	   results$npar=list(npar=res$npar,npar_re=res$npar_re,npar_sdrpt=res$npar_sdrpt,npar_total=res$npar_total)
+	   results$beta.vcv=res$beta.vcv
+	   res=results
    }
 #  Restore non-accumulated, non-scaled dm's etc
    res$model_data=model_data.save
