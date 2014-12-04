@@ -5,3 +5,5 @@ mcmcTesting.R
 *.Rproj
 *.o
 *.so
+marked.Rcheck
+*.tar.gz
