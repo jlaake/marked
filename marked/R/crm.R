@@ -362,34 +362,23 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM")
 {
-	if(is.null(data.proc$strata.list))
-	{
-		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=data.proc$m,
-				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters)
-		par <- coef(runmodel, order="value")[1, ]
-		runmodel=list(optim.details=as.list(summary(runmodel, order="value")[1, ]))
-		runmodel$convergence=runmodel$convcode
-		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
-				chunk_size=chunk_size,itnmax=itnmax,control=control)
-		lnl=runmodel$value
- 	    runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=data.proc$m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
-    } else
-	{
-		m=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
-		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,control=control,
-				method=method,debug=debug,hessian=hessian,itnmax=itnmax)
-		par <- coef(runmodel, order="value")[1, ]
-		runmodel=list(optim.details=as.list(summary(runmodel, order="value")[1, ]))
-		runmodel$convergence=runmodel$convcode
-		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
-				chunk_size=chunk_size,itnmax=itnmax,control=control)
-		lnl=runmodel$value
-		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=m,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
+	if(is.null(data.proc$strata.list)){
+		mx=data.proc$m
+	}else{
+		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
 	}
+	runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
+			        type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
+				    fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters)
+	par <- coef(runmodel, order="value")[1, ]
+	runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
+	if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
+	runmodel$convergence=runmodel$convcode
+	runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
+	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
+	lnl=runmodel$value
+ 	runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
