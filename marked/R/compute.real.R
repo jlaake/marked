@@ -118,11 +118,9 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	      varnames=c(include,select,"fixed")
   }
   varnames=unique(varnames)
-  if(any(!varnames%in%names(df))) 
-  {
-	  warning(paste("These variable names not in data for real estimates: ",paste(varnames[!varnames%in%names(df)],collapse=""),sep=""))
-	  varnames=varnames[varnames%in%names(df)]
-  }
+  if(any(!select%in%names(df))) 
+	  warning(paste("These variable names not in data for real estimates: ",paste(varnames[!select%in%names(df)],collapse=""),sep=""))
+  varnames=varnames[varnames%in%names(df)]
   df=df[,varnames,drop=FALSE]
 # Check to make sure dimensions of beta and design matrix match
   results=model$results
