@@ -19,6 +19,7 @@
 #' @keywords utility
 print.crm=function(x,...)
 {
+   if(mode(x)=="character")x=load.model(x)
    if(!is.null(x$results))x=x$results
    if(class(x)[2]=="admb")
    {

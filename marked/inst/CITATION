@@ -1,0 +1,15 @@
+citHeader("To cite package 'marked' in publications use:")
+
+citEntry(entry="article",	
+         author = c(person("J.L.","Laake"),
+                    person("D.S.","Johnson"),
+                    person("P.B.","Conn")),
+         year = 2013,
+         title="marked: An R package for maximum-likelihood and MCMC analysis of capture-recapture data.",
+         journal="Methods in Ecology and Evolution",
+         textVersion =
+         paste("Laake, J.L., D.S. Johnson, and P.B. Conn. 2013.",
+          "marked: An R package for maximum-likelihood and MCMC analysis of", 
+          "capture-recapture data. Methods Ecol. Evol. 4:885-890.")
+         )
+

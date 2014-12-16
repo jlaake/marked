@@ -92,4 +92,3 @@ process.ch=function(ch,freq=NULL,all=FALSE)
    else
       return(list(nocc=nocc,freq=freq,first=first,last=last,loc=loc,chmat=chmat))      
 }
-
