@@ -3,32 +3,9 @@
 #' For a given set of parameters and data, it computes -log Likelihood value.
 #' 
 #' This function uses a FORTRAN subroutine (cjs.f) to speed up computation of the likelihood but the
-#' result can also be obtained wholly in with a small loss in precision. See example for R code.
+#' result can also be obtained wholly in R with a small loss in precision. See R code below.
 #' The R and FORTRAN code uses the likelihood formulation of Pledger et al.(2003).
-#' 
-#' @param par vector of parameter values
-#' @param model_data a list that contains: 1)imat-list of vectors and matrices constructed by
-#' \code{\link{process.ch}} from the capture history data, 2)Phi.dm design matrix for Phi constructed by \code{\link{create.dm}},
-#' 3)p.dm design matrix for p constructed by \code{\link{create.dm}},
-#' 4)Phi.fixed matrix with 3 columns: ch number(i), occasion number(j),
-#' fixed value(f) to fix phi(i,j)=f, 5)p.fixed matrix with 3 columns: ch number(i), occasion number(j), and
-#' 6) time.intervals intervals of time between occasions if not all 1
-#' fixed value(f) to fix p(i,j)=f
-#' @param Phi.links vector of links for each parameter
-#' @param p.links vector of links for each parameter
-#' @param debug if TRUE will printout values of \code{par} and function value
-#' @param all if TRUE, returns entire list rather than just lnl; can be used to
-#' extract reals
-#' @param cjsenv environment for cjs to update iteration counter
-#' @return either -log likelihood value if \code{all=FALSE} or the entire
-#' list contents of the call to the FORTRAN subroutine if \code{all=TRUE}. The
-#' latter is used from \code{\link{cjs}} after optimization to extract the real
-#' parameter estimates at the final beta values.
-#' @author Jeff Laake
-#' @references Pledger, S., K. H. Pollock, et al. (2003). Open
-#' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
-#' Biometrics 59(4):786-794.
-#' @examples 
+#' \preformatted{
 #' get.p=function(beta,dm,nocc,Fplus) 
 #' {
 #' # compute p matrix from parameters (beta) and list of design matrices (dm) 
@@ -98,8 +75,32 @@
 #'	if(debug)cat("\n-2lnl = ",2*lnl) 
 #'	return(lnl) 
 #'} 
+#'}
 #' 
-#' cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv,nc,cl)
+#' @param par vector of parameter values
+#' @param model_data a list that contains: 1)imat-list of vectors and matrices constructed by
+#' \code{\link{process.ch}} from the capture history data, 2)Phi.dm design matrix for Phi constructed by \code{\link{create.dm}},
+#' 3)p.dm design matrix for p constructed by \code{\link{create.dm}},
+#' 4)Phi.fixed matrix with 3 columns: ch number(i), occasion number(j),
+#' fixed value(f) to fix phi(i,j)=f, 5)p.fixed matrix with 3 columns: ch number(i), occasion number(j), and
+#' 6) time.intervals intervals of time between occasions if not all 1
+#' fixed value(f) to fix p(i,j)=f
+#' @param Phi.links vector of links for each parameter
+#' @param p.links vector of links for each parameter
+#' @param debug if TRUE will printout values of \code{par} and function value
+#' @param all if TRUE, returns entire list rather than just lnl; can be used to
+#' extract reals
+#' @param cjsenv environment for cjs to update iteration counter
+#' @return either -log likelihood value if \code{all=FALSE} or the entire
+#' list contents of the call to the FORTRAN subroutine if \code{all=TRUE}. The
+#' latter is used from \code{\link{cjs}} after optimization to extract the real
+#' parameter estimates at the final beta values.
+#' @author Jeff Laake
+#' @references Pledger, S., K. H. Pollock, et al. (2003). Open
+#' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
+#' Biometrics 59(4):786-794.
+#' 
+# cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv,nc,cl)
 cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv)
 {
 	f_eval=get("markedfunc_eval",envir=cjsenv)+1
