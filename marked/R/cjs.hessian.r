@@ -26,7 +26,7 @@ cjs.hessian=function(model)
 	} else
 #   Called within model fitting code
 	{
-		scale=model$scale
+		scale=model$options$scale
 		model_data=model$model_data
 	}
 	markedfunc_eval=0
