@@ -39,16 +39,15 @@ For a given set of parameters and data, it computes -log Likelihood value.
 }
 \details{
 This function uses a FORTRAN subroutine (cjs.f) to speed up computation of the likelihood but the
-result can also be obtained wholly in with a small loss in precision. See example for R code.
+result can also be obtained wholly in R with a small loss in precision. See R code below.
 The R and FORTRAN code uses the likelihood formulation of Pledger et al.(2003).
-}
-\examples{
+\preformatted{
 get.p=function(beta,dm,nocc,Fplus)
 {
 # compute p matrix from parameters (beta) and list of design matrices (dm)
 # created by function create.dm
   ps=cbind(rep(1,nrow(dm)/(nocc-1)),
-     matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
+     matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
   ps[Fplus==1]=plogis(ps[Fplus==1])
   return(ps)
 }
@@ -57,7 +56,7 @@ get.Phi=function(beta,dm,nocc,Fplus)
 # compute Phi matrix from parameters (beta) and list of design matrices (dm)
 # created by function create.dm
   Phis=cbind(rep(1,nrow(dm)/(nocc-1)),
-     matrix(dm\%*\%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
+     matrix(dm%*%beta,ncol=nocc-1,nrow=nrow(dm)/(nocc-1),byrow=TRUE))
   Phis[Fplus==1]=plogis(Phis[Fplus==1])
   return(Phis)
 }
@@ -76,7 +75,7 @@ get.Phi=function(beta,dm,nocc,Fplus)
 # Value: -LnL using
 #################################################################################
 cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE) {
-	if(debug)cat("\\npar = ",par)
+	if(debug)cat("\npar = ",par)
 	#extract Phi and p parameters from par vector
 	nphi=ncol(model_data$Phi.dm)
 	np=ncol(model_data$p.dm)
@@ -93,7 +92,7 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	}
 	ps=get.p(beta.p,model_data$p.dm,nocc=ncol(model_data$imat$chmat),
            model_data$imat$Fplus)
-	if(debug)cat("\\npar = ",par)
+	if(debug)cat("\npar = ",par)
 	# Compute probability of dying in interval from Phis
 	M=cbind((1-Phis)[,-1],rep(1,nrow(Phis)))
 	# compute cummulative survival from release across each subsequent time
@@ -109,11 +108,10 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	# compute prob of capture-history
 	pch=rowSums(model_data$imat$L*M*Phi.cumprod*cump)
 	lnl=-sum(model_data$imat$freq*log(pch))
-	if(debug)cat("\\n-2lnl = ",2*lnl)
+	if(debug)cat("\n-2lnl = ",2*lnl)
 	return(lnl)
 }
-
-cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALSE,cjsenv,nc,cl)
+}
 }
 \author{
 Jeff Laake
