@@ -373,10 +373,9 @@ if(substr(model,1,3)=="HMM")
 	par <- coef(runmodel, order="value")[1, ]
 	runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
 	if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
-	runmodel$convergence=runmodel$convcode
+	runmodel$convergence=runmodel$optim.details$convcode
 	runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
 	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
-	lnl=runmodel$value
  	runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	parlist=split(par,initial.list$ptype)
@@ -389,8 +388,7 @@ if(substr(model,1,3)=="HMM")
 	}
 	runmodel$beta=par
 	runmodel$par=NULL
-	runmodel$neg2lnl=2*runmodel$value
-	runmodel$value=NULL
+	runmodel$neg2lnl=2*runmodel$optim.details$value
 	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
 	if(!is.null(runmodel$hessian))
 	{
