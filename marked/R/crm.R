@@ -312,6 +312,12 @@ if(is.null(ddl))
 	ddl=make.design.data(data.proc,design.parameters)
 } else
 {
+	for (i in 1:length(parameters))
+	{
+		if(!is.null(ddl[[i]]$order))
+		   if(any(ddl[[i]]$order!=1:nrow(ddl[[i]]))) 
+			   stop(paste("Design data for parameter",names(parameters)[i],"is out of order."))
+	}
     if(!is.null(design.parameters))
 		for(parname in names(design.parameters))
 			ddl$design.parameters[[parname]]=c(ddl$design.parameters[[parname]],design.parameters[[parname]])
@@ -397,7 +403,6 @@ if(substr(model,1,3)=="HMM")
 		rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
 	}
 	class(runmodel)=c("crm","mle",model)
-#	runmodel$model_data=list(ddl=ddl)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file
@@ -411,7 +416,6 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-#if(!re & model!="MSCJS"& toupper(substr(model,1,3))!="HMM")
 if(!re & model!="MSCJS")
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
