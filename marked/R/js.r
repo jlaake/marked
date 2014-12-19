@@ -148,8 +148,8 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 #  create results list
    res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(js.beta,length)),
 		   convergence=convergence,optim.details=mod,
-		   scale=scale,model_data=model_data,ns=nobstot,
-		   options=list(accumulate=accumulate,initial=initial,method=method,
+		   model_data=model_data,ns=nobstot,
+		   options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
 		   chunk_size=chunk_size,itnmax=itnmax,control=control))
 #  Compute hessian if specified   
    if(hessian) 
