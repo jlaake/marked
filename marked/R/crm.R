@@ -183,6 +183,7 @@
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
+#' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
@@ -248,7 +249,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=TRUE,...)
+ strata.labels=NULL,clean=TRUE,save.matrices=TRUE,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -382,7 +383,8 @@ if(substr(model,1,3)=="HMM")
 	runmodel$convergence=runmodel$optim.details$convcode
 	runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
 	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
- 	runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+ 	if(save.matrices)
+		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
