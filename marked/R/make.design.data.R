@@ -206,6 +206,7 @@ full.design.data=vector("list",length=length(parameters))
 		  full.design.data[[i]]$fix=NA
 		  full.design.data[[i]]$fix[full.design.data[[i]]$tag1==0&full.design.data[[i]]$tag2==0]=1	  
 	  }
+	  full.design.data[[i]]$order=1:nrow(full.design.data[[i]])
    }
    names(full.design.data)=names(parameters)
    full.design.data[["design.parameters"]]=parameters
