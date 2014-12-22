@@ -46,18 +46,21 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{strata.labels}{labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..}
 
-\item{state.names}{names for states used to label output}
+\item{state.names}{names for states used to label output; if NULL uses strata.labels + Dead state}
 
-\item{obs.names}{names for observations used to lablel output}
+\item{obs.names}{names for observations used to label output; if NULL uses ObsLevels}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }
 \value{
-hmm demo list
+hmm demo list which includes 1) lnl - the log-likelihood value, 2) alpha - forward probabilities,
+3) beta - backward probabilities, 4) phi - scaled forward probabilities, 5) v- intermediate calculation for phi,
+6) dmat - 3-d array with observation probability matrix for each occasion, 7) gamma - 3-d array with state transition probability
+matrix for each occasion, 8) stateprob - predicted state probabilities, 9) chfowardstrings - set of capture history forward strings, 10) chbackwardstrings - same thing backwards.
 }
 \description{
 Uses dataframe and arguments to construct HMM state vectors alpha and phi for
-demonstration.#'
+demonstration.
 }
 \examples{
 # cormack-jolly-seber model
@@ -70,13 +73,14 @@ x=hmmDemo(dipper.proc,id=45,state.names=c("Alive","Dead"),obs.names=c("Missed","
 par(mfrow=c(2,1))
 barplot(t(x$alpha),beside=TRUE,names.arg=x$chforwardstrings)
 barplot(t(x$phi),beside=TRUE,names.arg=x$chforwardstrings)
-#data(mstrata)
-#mstrata$freq=1
-#x=hmmDemo(mstrata,id=1,model="hmmMSCJS")
-#rowSums(x$alpha*x$beta)
-#exp(x$lnl)
-# state probabilities given the data
-#x$alpha*x$beta/exp(x$lnl)
+# multi-state example showing state predictions
+data(mstrata,package="RMark")
+mstrata$freq=1
+x=hmmDemo(mstrata,id=1,model="hmmMSCJS")
+# state predictions are normalized by likelihood value which = rowSums(alpha*beta)
+cat(paste("\\nrowsums = ",rowSums(x$alpha*x$beta)[1],"which matches likelihood value",exp(x$lnl),"\\n"))
+# state predictions given the data
+x$stateprob
 }
 \author{
 Jeff Laake

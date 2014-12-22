@@ -10,7 +10,7 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   control = list(), refit = 1, itnmax = 5000, scale = NULL,
   run = TRUE, burnin = 100, iter = 1000, use.admb = FALSE,
   crossed = NULL, reml = FALSE, compile = FALSE, extra.args = NULL,
-  strata.labels = NULL, clean = TRUE, ...)
+  strata.labels = NULL, clean = TRUE, save.matrices = TRUE, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -78,6 +78,8 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 \item{strata.labels}{labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..}
 
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
+
+\item{save.matrices}{for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }
