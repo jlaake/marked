@@ -16,17 +16,14 @@
 #' with the former the set must be identified via a script and any in the environment will
 #' be used which requires removing/recreating the set to be used.
 #' 
-#' crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus
-#'  
 #' @aliases  crm.wrapper create.model.list model.table load.model
-#' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
+#' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,...)
 #' 
-#' crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
-#' create.model.list(parameters)
+#'         create.model.list(parameters)
 #' 
-#' model.table(model.list)
+#'         model.table(model.list)
 #' 
-#' load.model(x)
+#'         load.model(x)
 #' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a
@@ -34,11 +31,11 @@
 #' @param ddl Design data list which contains a list element for each parameter
 #' type; if NULL it is created
 #' @param model.list matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name
-#' @param nc number of cpus to use for parallel model runs. Will not let you to use more than are available.
 #' @param models a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables
 #' @param base base value for model names
 #' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
 #' @param run if TRUE, fit models; otherwise just create dml to test if model data are correct for formula
+#' @param env environment to find model specifications if not parent.frame
 #' @param ... aditional arguments passed to crm
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
@@ -49,7 +46,6 @@
 #' @export crm.wrapper
 #' @export model.table
 #' @export load.model
-#' @export crm.wrapper.parallel
 #' @import parallel
 #' @seealso \code{\link{crm}}
 #' @keywords models
@@ -173,28 +169,31 @@ load.model=function(x)
 	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
 	return(model)
 }
-crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
-{
-	split.model.list=split(model.list,1:nrow(model.list))
-	if(nc>detectCores())stop(paste("Too many cpus.  nc > ",detectCores(), " cpus available"))
-	cl=makeCluster(nc)
-	if(is.null(dim(cml)))
-		clusterExport(cl,unique(cml))
-	else
-	    clusterExport(cl,as.vector(apply(cml,2,unique)))
-	res<-parLapply(cl,split.model.list,crm.wrapper,data=data,ddl=ddl,models=models,base=base,external=external,run=run,...)
-	if(!external)
-	{
-		res=lapply(res,function(x) x[[1]])
-		res$model.table=model.table(res)
-	} else
-	{
-		res=paste(apply(model.list,1,paste,collapse="."),".rda",sep="")
-		names(res)=apply(model.list,1,paste,collapse=".")
-		res=as.list(res)
-		res$model.table=model.table(res)
-	}	
-	class(res)="crmlist"
-	stopCluster(cl)
-	return(res)
-}
+##' crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus 
+#crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
+##' @param nc number of cpus to use for parallel model runs. Will not let you to use more than are available.
+#{
+#	split.model.list=split(model.list,1:nrow(model.list))
+#	if(nc>detectCores())stop(paste("Too many cpus.  nc > ",detectCores(), " cpus available"))
+#	cl=makeCluster(nc)
+#	if(is.null(dim(cml)))
+#		clusterExport(cl,unique(cml))
+#	else
+#	    clusterExport(cl,as.vector(apply(cml,2,unique)))
+#	res<-parLapply(cl,split.model.list,crm.wrapper,data=data,ddl=ddl,models=models,base=base,external=external,run=run,...)
+#	if(!external)
+#	{
+#		res=lapply(res,function(x) x[[1]])
+#		res$model.table=model.table(res)
+#	} else
+#	{
+#		res=paste(apply(model.list,1,paste,collapse="."),".rda",sep="")
+#		names(res)=apply(model.list,1,paste,collapse=".")
+#		res=as.list(res)
+#		res$model.table=model.table(res)
+#	}	
+#	class(res)="crmlist"
+#	stopCluster(cl)
+#	return(res)
+#}
+##' @export crm.wrapper.parallel

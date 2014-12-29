@@ -3,15 +3,18 @@
 \alias{compute_matrices}
 \title{Compute HMM matrices}
 \usage{
-compute_matrices(x, ddl)
+compute_matrices(object, ddl = NULL)
 }
 \arguments{
-\item{x}{fitted crm model (must be an HMM model)}
+\item{object}{fitted crm model (must be an HMM model)}
 
 \item{ddl}{design data list}
 }
+\value{
+list with gamma, dmat and delta arrays
+}
 \description{
-Computes gamma, dmat and intial matrices(arrays) and returns them in a list.
+Computes gamma, dmat and delta (initial) matrices(arrays) and returns them in a list.
 }
 \author{
 Jeff Laake

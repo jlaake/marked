@@ -6,14 +6,13 @@
 \alias{model.table}
 \title{Automation of model runs}
 \usage{
-crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
+crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,...)
 
-crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
-create.model.list(parameters)
+        create.model.list(parameters)
 
-model.table(model.list)
+        model.table(model.list)
 
-load.model(x)
+        load.model(x)
 }
 \arguments{
 \item{model.list}{matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name}
@@ -33,9 +32,9 @@ type; if NULL it is created}
 
 \item{run}{if TRUE, fit models; otherwise just create dml to test if model data are correct for formula}
 
-\item{...}{aditional arguments passed to crm}
+\item{env}{environment to find model specifications if not parent.frame}
 
-\item{nc}{number of cpus to use for parallel model runs. Will not let you to use more than are available.}
+\item{...}{aditional arguments passed to crm}
 
 \item{parameters}{character vector of parameter names}
 
@@ -62,8 +61,6 @@ latter is that it is self-contained such that sets of parameter specifications c
 be selected without possibility of being over-written or accidentally changed whereas
 with the former the set must be identified via a script and any in the environment will
 be used which requires removing/recreating the set to be used.
-
-crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus
 }
 \author{
 Jeff Laake

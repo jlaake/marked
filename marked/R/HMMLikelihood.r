@@ -7,7 +7,9 @@
 #' For an R version of the HMMLikelihood and related code see \code{\link{RHMMLikelihood}}
 #'  
 #' @param xx  matrix of observed sequences (row:id; column:occasion/time); xx used instead of x to avoid conflict in optimx
+#' @param x  same as xx but for call to hmm.lnl
 #' @param mx number of states; mx used instead of m to avoid conflict in optimx
+#' @param m  same as mx but for call to hmm.lnl
 #' @param T number of occasions; sequence length
 #' @param dmat observation probability matrices
 #' @param gamma transition matrices
@@ -24,17 +26,18 @@
 #' @param debug if TRUE, print out par values and -log-likelihood
 #' @param parlist list of parameter strings used to split par vector
 #' @param xstart for each ch, the first non-zero x value and the occasion of the first non-zero value; ; xstart used instead of start to avoid conflict in optimx
+#' @param start same as xstart but for hmm.lnl
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE,return.mat=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
-#'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
+#'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 #' @aliases HMMLikelihood reals hmm.lnl
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
-#' loglikelihood returns the negative log-likelihood for all of the data. reals
+#' hmm.lnl returns the negative log-likelihood value for each capture history. reals
 #' returns either the column dimension of design matrix for parameter or the real parameter vector
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
-#' @seealso RHMMLikelihood
+#' @seealso R_HMMLikelihood
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE)

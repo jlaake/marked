@@ -5,19 +5,21 @@
 \alias{reals}
 \title{Hidden Markov Model likelihood functions}
 \usage{
-HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
+HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
                          dml,parameters,debug=FALSE,return.mat=FALSE)
        reals(ddl,dml,parameters,parlist)
-       hmm.lnl(x,start,m,T,dmat,gamma,delta,freq)
+       hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 }
 \arguments{
 \item{par}{vector of parameter values for log-likelihood evaluation}
 
 \item{type}{vector of parameter names used to split par vector into types}
 
-\item{xstart}{for each ch, the first non-zero x value and the occasion of the first non-zero value}
+\item{xx}{matrix of observed sequences (row:id; column:occasion/time); xx used instead of x to avoid conflict in optimx}
 
-\item{mx}{number of states}
+\item{xstart}{for each ch, the first non-zero x value and the occasion of the first non-zero value; ; xstart used instead of start to avoid conflict in optimx}
+
+\item{mx}{number of states; mx used instead of m to avoid conflict in optimx}
 
 \item{T}{number of occasions; sequence length}
 
@@ -39,7 +41,9 @@ HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 
 \item{return.mat}{If TRUE, returns list of transition, observation and delta arrays.}
 
-\item{x}{single observed sequence (capture history) in HMMLikelihood and matrix of observed sequences (row:id; column:occasion/time) in loglikelihood}
+\item{x}{same as xx but for call to hmm.lnl}
+
+\item{m}{same as mx but for call to hmm.lnl}
 
 \item{dmat}{observation probability matrices}
 
@@ -48,10 +52,12 @@ HMMLikelihood(par,type,x,start,m,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 \item{delta}{initial distribution}
 
 \item{parlist}{list of parameter strings used to split par vector}
+
+\item{start}{same as xstart but for hmm.lnl}
 }
 \value{
 HMMLikelihood returns log-likelihood for a single sequence and
-loglikelihood returns the negative log-likelihood for all of the data. reals
+hmm.lnl returns the negative log-likelihood value for each capture history. reals
 returns either the column dimension of design matrix for parameter or the real parameter vector
 }
 \description{
@@ -60,56 +66,15 @@ FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer an
 each sequence in the x matrix.
 }
 \details{
-Below is the deprecated R code for computation of the HMM likelihood
-# R version of FORTRAN code hmmlike.f for a single sequence
-HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
-{
-	# Arguments:
-	# x: observed sequence (capture (encounter) history)
-	# first: occasion to start sequence
-	# m: number of states
-	# T: number of occasions; sequence length
-	# dmat: array of occasion specific observation probabilty matrices
-	# gamma: array of occasion specific transition matrices
-	# delta: initial state distribution
-	# Other variables:
-	# lnl: log likelihood value
-	# phi: alpha/sum(alpha) sequence as defined in Zucchini/MacDonald
-	# v: temp variable to hold phi calculations
-	# u: sum(v)
-	# Assign prob state vector for initial observation: delta*p(x_first)
-	v=delta%*%diag(dmat[first,x[first],])
-	# Compute log-likelihood contribution for first observation; for
-	# models that condition on first observation u=1,lnl=0
-	u=sum(v)
-	phi=v/u
-	lnl=log(u)
-	# Loop over occasions for this encounter history (x)
-	for(t in (first+1):T)
-	{
-		# Compute likelihood contribution for this occasion
-		v=phi%*%gamma[t-1,,]%*%diag(dmat[t,x[t],])
-		u=sum(v)
-		lnl=lnl+log(u)
-		# Compute updated state vector
-		phi=v/u
-	}
-	return(lnl)
-}
- R code that called R version of HMMlikelihood for each sequence
-	# loop over each encounter history in sapply and
-	# create log-likelihood vector - an element for each x
-	# sum is total log-likelihood across individuals
-	# return negative log-likelihood
-	neglnl=-sum(freq*sapply(1:nrow(x),function(id)
-						HMMLikelihood(x[id,],start[id,2],m,T,
-								dmat=dmat[id,,,],gamma=gamma[id,,,],
-								delta=delta[id,])))
+For an R version of the HMMLikelihood and related code see \code{\link{RHMMLikelihood}}
 }
 \author{
 Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
+}
+\seealso{
+R_HMMLikelihood
 }
 
