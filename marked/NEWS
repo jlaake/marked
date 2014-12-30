@@ -1,3 +1,17 @@
+marked 1.1.7 30 Dec 2014
+-----------------
+CHANGES
+
+* modified R_HMMlikelihood and loglikelihood to be more useful for computations like in hmmDemo and local_decode
+
+* matrices delta, gamma, and dmat no longer stored in model object unless argument save.matrices=TRUE. They can be computed with compute_matrices. 
+
+NEW FEATURES
+
+* added compute_matrices, local_decode, global_decode, backward_prob, omega functions for HMM manipulations
+
+* added load.model into print.crm so if it is given a file string it will load the external model and then print results.
+
 marked 1.1.6 29 Aug 2014
 -----------------
 CHANGES
@@ -11,6 +25,7 @@ CHANGES
 * Additional changes to crm to use optimx to work with HMM models.  This required changes to HMMLikelihood argument names which conflicted with optimx.
 
 * cjs and *.tpl files for cjs were modified to use debug; not all exes have been changed yet
+
 
 marked 1.1.5 16 June 2014
 -----------------

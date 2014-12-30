@@ -3,40 +3,46 @@
 \alias{hmmDemo}
 \title{HMM computation demo functions}
 \usage{
-hmmDemo(object, state.names = NULL, obs.names = NULL, ...)
+hmmDemo(object, ddl = NULL, state.names = NULL, obs.names = NULL)
 }
 \arguments{
+\item{object}{fitted hmm model}
+
+\item{ddl}{design dat list; if NULL it is created}
+
 \item{state.names}{names for states used to label output; if NULL uses strata.labels + Dead state}
 
 \item{obs.names}{names for observations used to label output; if NULL uses ObsLevels}
-
-\item{model}{fitted hmm model}
 }
 \value{
 hmm demo list which includes 1) lnl - the log-likelihood value, 2) alpha - forward probabilities,
 3) beta - backward probabilities, 4) phi - scaled forward probabilities, 5) v- intermediate calculation for phi,
 6) dmat - 3-d array with observation probability matrix for each occasion, 7) gamma - 3-d array with state transition probability
-matrix for each occasion, 8) stateprob - predicted state probabilities, 9) chfowardstrings - set of capture history forward strings, 10) chbackwardstrings - same thing backwards.
+matrix for each occasion, 8) stateprob - predicted state probabilities, 9) local_decode - state predictions for each occasion and individual,
+10) global_decode - state predictions for entire sequence for each individual.
 }
 \description{
 Uses fitted hmm model to construct HMM state vectors alpha and phi for demonstration purposes
 }
 \examples{
+\donttest{
 # cormack-jolly-seber model
 data(dipper)
 mod=crm(dipper,model="hmmcjs")
 x=hmmDemo(mod,state.names=c("Alive","Dead"),obs.names=c("Missed","Seen"))
 par(mfrow=c(2,1))
-barplot(t(x$alpha[45,]),beside=TRUE,names.arg=x$chforwardstrings)
-barplot(t(x$phi[45,]),beside=TRUE,names.arg=x$chforwardstrings)
+barplot(t(x$alpha[45,,]),beside=TRUE,names.arg=x$chforwardstrings)
+barplot(t(x$phi[45,,]),beside=TRUE,names.arg=x$chforwardstrings)
 # multi-state example showing state predictions
 data(mstrata,package="RMark")
 mod=crm(mstrata,model="hmmMSCJS")
+#' x=hmmDemo(mod)
 # state predictions are normalized by likelihood value which = rowSums(alpha*beta)
-cat(paste("\\nrowsums = ",rowSums(x$alpha[45,]*x$beta[45,])[1],
+cat(paste("\\nrowsums = ",rowSums(x$alpha[45,,]*x$beta[45,,],na.rm=TRUE)[2],
    "which matches likelihood value",exp(x$lnl[45]),"\\n"))
 # state predictions given the data
-x$stateprob
+x$stateprob[45,,]
+}
 }
 \author{
 Jeff Laake

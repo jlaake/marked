@@ -25,11 +25,11 @@ Imports:
     numDeriv,
     Rcpp (>= 0.9.13),
     plyr,
-    optimx (>= 2013.8.6)
+    optimx (>= 2013.8.6),
+    expm
 LinkingTo: Rcpp
 Suggests:
-    RMark,
-    expm
+    RMark
 SystemRequirements: ADMB version 11 (http://admb-project.org/) for
     use.admb=TRUE; see readme.txt
 LazyLoad: yes

@@ -12,13 +12,14 @@
 #' @param gamma transition matrices
 #' @param delta initial distribution
 #' @param object fitted hmm model
+#' @param ddl design data list; will be computed if NULL
 #' @usage R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-#'        loglikelihood(object)
+#'        loglikelihood(object,ddl=NULL)
 #' @aliases R_HMMLikelihood loglikelihood
 #' @export R_HMMLikelihood loglikelihood
 #' @return both return log-likelihood, alpha, v and phi arrays 
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
-#' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
+#' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. See page 45. 
 R_HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
 {  
 	# Arguments:
@@ -69,7 +70,7 @@ R_HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
 	}
 	return(list(lnl=lnl,alpha=alpha,phi=phimat,v=vmat,dmat=dmat,gamma=gamma))
 } 
-loglikelihood=function(object)
+loglikelihood=function(object,ddl=NULL)
 {
 	if(!substr(object$model,1,3)=="HMM")
 	{
@@ -77,7 +78,7 @@ loglikelihood=function(object)
 		return(NULL)
 	}
 	# Create list of parameter matrices from model object
-    parmlist=compute_matrices(object)
+    parmlist=compute_matrices(object,ddl=ddl)
 	# loop over each encounter history in sapply and 
 	# create log-likelihood vector - an element for each x
 	# sum is total log-likelihood across individuals 

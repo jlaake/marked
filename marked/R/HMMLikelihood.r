@@ -4,7 +4,7 @@
 #' FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls HMMLikelihood for
 #' each sequence in the x matrix.
 #'  
-#' For an R version of the HMMLikelihood and related code see \code{\link{RHMMLikelihood}}
+#' For an R version of the HMMLikelihood and related code see \code{\link{R_HMMLikelihood}}
 #'  
 #' @param xx  matrix of observed sequences (row:id; column:occasion/time); xx used instead of x to avoid conflict in optimx
 #' @param x  same as xx but for call to hmm.lnl

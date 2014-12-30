@@ -34,6 +34,16 @@ compute_matrices=function(object,ddl=NULL)
 #' @return array of backward probabilities (one for each id, state, occasion)
 #' @export backward_prob
 #' @keywords utility
+#' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. See page 61.
+#' @examples
+#' #
+#' \donttest{
+#' # cormack-jolly-seber model
+#' data(dipper)
+#' mod=crm(dipper,model="hmmcjs")
+#' backward_prob(mod)
+#' }
+
 backward_prob=function(object,ddl=NULL)
 {  	
 	if(!substr(object$model,1,3)=="HMM")
@@ -73,7 +83,7 @@ backward_prob=function(object,ddl=NULL)
 } 
 #' Local decoding of HMM 
 #' 
-#' Computes state predictions one at a time for each occasion
+#' Computes state predictions one at a time for each occasion for each individual
 #' 
 #' @param object fitted crm model (must be an HMM model)
 #' @param ddl design data list
@@ -82,6 +92,16 @@ backward_prob=function(object,ddl=NULL)
 #' @return matrix of state predictions
 #' @export local_decode
 #' @keywords utility
+#' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. See page 80.
+#' @examples
+#' #
+#' \donttest{
+#' # cormack-jolly-seber model
+#' data(dipper)
+#' mod=crm(dipper,model="hmmcjs")
+#' local_decode(mod)
+#' }
+
 local_decode=function(object,ddl=NULL,state.names=NULL)
 {  	
 	if(!substr(object$model,1,3)=="HMM")
@@ -91,13 +111,69 @@ local_decode=function(object,ddl=NULL,state.names=NULL)
 	}
 	if(is.null(state.names))
 		if(!is.null(object$data$strata.labels))
-	         state.names=c(object$data$strata.labels,"Dead")
-	    else
-			 state.names=c("Alive","Dead")
-	result=loglikelihood(object)
-	result$beta=backward_prob(object)
+			state.names=c(object$data$strata.labels,"Dead")
+		else
+			state.names=c("Alive","Dead")
+	result=loglikelihood(object,ddl=ddl)
+	result$beta=backward_prob(object,ddl=ddl)
 	stateprob=result$alpha*result$beta/exp(result$lnl)
 	states=apply(stateprob,c(1,2),function(x){ if(any(is.na(x))) return(NA) else return(state.names[which.max(x)])})
 	return(states)
 } 
-
+#' Global decoding of HMM 
+#' 
+#' Computes sequence of state predictions for each individual
+#' 
+#' @param object fitted crm model (must be an HMM model)
+#' @param ddl design data list; will be computed if NULL
+#' @param state.names names for states used to label output; if NULL uses strata.labels + Dead state
+#' @author Jeff Laake
+#' @return matrix of state predictions
+#' @export global_decode
+#' @keywords utility
+#' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. See page 82.
+#' @examples
+#' #
+#' \donttest{
+#' # cormack-jolly-seber model
+#' data(dipper)
+#' mod=crm(dipper,model="hmmcjs")
+#' global_decode(mod)
+#' }
+global_decode=function(object,ddl=NULL,state.names=NULL)
+{  	
+	if(!substr(object$model,1,3)=="HMM")
+	{
+		message("Not an HMM model. Returning NULL")
+		return(NULL)
+	}
+	if(is.null(state.names))
+		if(!is.null(object$data$strata.labels))
+			state.names=c(object$data$strata.labels,"Dead")
+		else
+			state.names=c("Alive","Dead")
+	parmlist=compute_matrices(object,ddl=ddl)
+	dmat=parmlist$dmat
+	gamma=parmlist$gamma
+	delta=parmlist$delta
+	x=object$data$ehmat
+	T=object$data$nocc
+	m=object$data$m
+	first=object$data$start[,2]
+	states=matrix(NA,nrow=nrow(x),ncol=T)
+	for(i in 1:nrow(x))
+	{
+		psi=matrix(NA,nrow=T,ncol=m)
+		# Assign psi value at first occasion
+		psi[first[i],]=delta[i,]%*%diag(dmat[i,first[i],x[i,first[i]],]) 
+		for(t in (first[i]+1):T)
+		{
+			psi[t,]=apply(psi[t-1,]*gamma[i,t-1,,],2,max)%*%diag(dmat[i,t,x[i,t],])
+		}
+		states[i,T]=which.max(psi[T,])
+		for(t in (T-1):first[i])
+			states[i,t]=which.max(psi[t,]*gamma[i,t,,states[i,t+1]])
+	}
+	states=t(apply(states,1,function(x) state.names[x]))
+	return(states)
+}

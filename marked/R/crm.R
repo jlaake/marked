@@ -204,9 +204,6 @@
 #' mod.Phit.pt=crm(dipper.proc,dipper.ddl,
 #'    model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
 #' mod.Phit.pt
-#' mod.Phidot.pdot=crm(dipper.proc,dipper.ddl,
-#'    model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)))
-#' mod.Phidot.pdot
 #' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",
 #'    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
 #' mod.Phisex.pdot

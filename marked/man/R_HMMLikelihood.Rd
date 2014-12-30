@@ -5,7 +5,7 @@
 \title{Hidden Markov Model Functions}
 \usage{
 R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
-       loglikelihood(object)
+       loglikelihood(object,ddl=NULL)
 }
 \arguments{
 \item{x}{single observed sequence (capture history)}
@@ -23,6 +23,8 @@ R_HMMLikelihood(x,first,m,T,dmat,gamma,delta)
 \item{delta}{initial distribution}
 
 \item{object}{fitted hmm model}
+
+\item{ddl}{design data list; will be computed if NULL}
 }
 \value{
 both return log-likelihood, alpha, v and phi arrays
@@ -36,6 +38,6 @@ and then computes the gamma,dmat and delta matrices and calls R_HMMLikelihood fu
 Jeff Laake <jeff.laake@noaa.gov>
 }
 \references{
-Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
+Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. See page 45.
 }
 

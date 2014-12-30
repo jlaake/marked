@@ -17,7 +17,8 @@
 #' be used which requires removing/recreating the set to be used.
 #' 
 #' @aliases  crm.wrapper create.model.list model.table load.model
-#' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,...)
+#' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
+#'               external=TRUE,run=TRUE,env=NULL,...)
 #' 
 #'         create.model.list(parameters)
 #' 

@@ -7,6 +7,7 @@
 #' @param labels labels for states except for last which is always dead and is added at end
 #' @author Jeff Laake
 #' @export 
+#' @importFrom expm %^%
 #' @keywords utility
 omega=function(x,k=NULL,labels=NULL)
 {

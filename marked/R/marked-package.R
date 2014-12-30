@@ -157,7 +157,6 @@ NULL
 #' # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 #' # negatively biased. Note the data are different and AIC not comparable to other models.
 #' mod3
-#' require(expm)
 #' tag_status=function(k,x) 
 #' {
 #' 	mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
