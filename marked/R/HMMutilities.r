@@ -18,8 +18,13 @@ compute_matrices=function(object,ddl=NULL)
 	if(is.null(ddl))
 		ddl=make.design.data(object$data,object$design.parameters)
 	ddl=set.fixed(ddl,object$model.parameters)
+	if(is.null(object$data$strata.list)){
+		mx=object$data$m
+	}else{
+		mx=list(ns=length(object$data$strata.list$states),na=length(object$data$strata.list[[names(object$data$strata.list)[names(object$data$strata.list)!="states"]]]))
+	}
 	dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=object$design.parameters,chunk_size=object$results$options$chunk_size)
-	mat=HMMLikelihood(par=object$results$beta,xx=object$data$ehmat,mx=object$data$m,T=object$data$nocc,xstart=object$data$start,freq=object$data$freq,
+	mat=HMMLikelihood(par=object$results$beta,xx=object$data$ehmat,mx=mx,T=object$data$nocc,xstart=object$data$start,freq=object$data$freq,
 			fct_dmat=object$data$fct_dmat,fct_gamma=object$data$fct_gamma,fct_delta=object$data$fct_delta,ddl=ddl,dml=dml,parameters=object$model.parameters,
 			return.mat=TRUE)
 	return(mat)
