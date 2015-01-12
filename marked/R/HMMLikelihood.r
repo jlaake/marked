@@ -68,7 +68,19 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=xstart[,2],T,xstart)
-	if(return.mat)return(list(dmat=dmat,gamma=gamma,delta=delta))
+	if(return.mat)
+	{	
+		if(!is.null(object$data$strata.labels))
+			state.names=c(object$data$strata.labels,"Dead")
+		else
+			state.names=c("Alive","Dead")
+		obs.names=object$data$ObsLevels
+		dimnames(gamma)[3:4]=c(list(state.names),list(state.names))
+		names(dimnames(gamma))=c("Id","Occasion","From_state","To_state")
+		dimnames(dmat)[3:4]=c(list(obs.names),list(state.names))
+		names(dimnames(dmat))=c("Id","Occasion","Observation","State")
+		return(list(dmat=dmat,gamma=gamma,delta=delta))
+	}	
 	if(is.list(m)) m=m$ns*m$na+1
 	if(debug){
 		cat("\npar \n")
