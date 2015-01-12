@@ -27,6 +27,15 @@ compute_matrices=function(object,ddl=NULL)
 	mat=HMMLikelihood(par=object$results$beta,xx=object$data$ehmat,mx=mx,T=object$data$nocc,xstart=object$data$start,freq=object$data$freq,
 			fct_dmat=object$data$fct_dmat,fct_gamma=object$data$fct_gamma,fct_delta=object$data$fct_delta,ddl=ddl,dml=dml,parameters=object$model.parameters,
 			return.mat=TRUE)
+	if(!is.null(object$data$strata.labels))
+		state.names=c(object$data$strata.labels,"Dead")
+	else
+		state.names=c("Alive","Dead")
+	obs.names=object$data$ObsLevels
+	dimnames(mat$gamma)[3:4]=c(list(state.names),list(state.names))
+	names(dimnames(mat$gamma))=c("Id","Occasion","From_state","To_state")
+	dimnames(mat$dmat)[3:4]=c(list(obs.names),list(state.names))
+	names(dimnames(mat$dmat))=c("Id","Occasion","Observation","State")
 	return(mat)
 }
 #' Computes backward probabilities 
