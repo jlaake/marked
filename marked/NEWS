@@ -1,4 +1,4 @@
-marked 1.1.7 30 Dec 2014
+marked 1.1.7 16 Jan 2015
 -----------------
 CHANGES
 
@@ -11,6 +11,8 @@ NEW FEATURES
 * added compute_matrices, local_decode, global_decode, backward_prob, omega functions for HMM manipulations
 
 * added load.model into print.crm so if it is given a file string it will load the external model and then print results.
+
+* added function crmlist_fromfiles which allows you to select a set of .rda files for external models to create a crmlist with a model table.
 
 marked 1.1.6 29 Aug 2014
 -----------------

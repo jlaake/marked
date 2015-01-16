@@ -25,6 +25,8 @@
 #'         model.table(model.list)
 #' 
 #'         load.model(x)
+#'  
+#'         crmlist_fromfiles()
 #' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a
@@ -47,6 +49,7 @@
 #' @export crm.wrapper
 #' @export model.table
 #' @export load.model
+#' @export crmlist_fromfiles
 #' @import parallel
 #' @seealso \code{\link{crm}}
 #' @keywords models
@@ -115,6 +118,8 @@ model.table=function(model.list=NULL)
 		if(!is.list(model.list[[i]]))
 		{
 			load(model.list[[i]])
+			if(length(grep("\\\\",model.list[[i]]))>0 | length(grep("/",model.list[[i]]))>0)
+			model.list[[i]]=basename(model.list[[i]])	
 			eval(parse(text=paste("mymodel=",unlist(strsplit(model.list[[i]],".rda")))))
 		}else
 			mymodel=model.list[[i]]
@@ -170,6 +175,21 @@ load.model=function(x)
 	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
 	return(model)
 }
+crmlist_fromfiles=function()
+{
+	filenames=choose.files(filters=Filters["RData",])
+	modelnames=unlist(strsplit(basename(filenames),"\\.rda"))
+	mtable=model.table(c(filenames,""))
+	for(f in filenames)
+		load(f)
+	model.list=vector("list",length=length(modelnames))
+	names(model.list)=modelnames
+	for(m in modelnames)
+		eval(parse(text=paste("model.list[['",m,"']]=",m,sep="")))
+	model.list$model.table=mtable
+	class(model.list)="crmlist"
+	return(model.list)
+}		
 ##' crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus 
 #crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 ##' @param nc number of cpus to use for parallel model runs. Will not let you to use more than are available.
@@ -198,3 +218,6 @@ load.model=function(x)
 #	return(res)
 #}
 ##' @export crm.wrapper.parallel
+
+
+
