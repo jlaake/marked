@@ -14,6 +14,8 @@ NEW FEATURES
 
 * added function crmlist_fromfiles which allows you to select a set of .rda files for external models to create a crmlist with a model table.
 
+* added function rerun_crm which will run through a model list and re-run any models that did not converge (convergence !=0). A different method can be specified. If a specific set of models are to be re-run regardless of the convergence criterion then modelnums set to a vector of model numbers in the model list and they are re-run instead of those that did not converge. An initial model can be specified which is useful to rerun a model with a model that is a subset of that model.
+
 marked 1.1.6 29 Aug 2014
 -----------------
 CHANGES

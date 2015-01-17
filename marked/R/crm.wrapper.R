@@ -28,11 +28,13 @@
 #'  
 #'         crmlist_fromfiles()
 #' 
+#'         rerun_crm(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
+#' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a
-#' processed dataframe
+#' processed dataframe. For rerun_crm this should be the processed dataframe
 #' @param ddl Design data list which contains a list element for each parameter
-#' type; if NULL it is created
+#' type; if NULL it is created; For rerun_crm, must be the same ddl as used with original run can cannot be NULL
 #' @param model.list matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name
 #' @param models a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables
 #' @param base base value for model names
@@ -42,6 +44,10 @@
 #' @param ... aditional arguments passed to crm
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
+#' @param method vector of methods to use for optimization if different that previous run in rerun_crm
+#' @param debug can set to TRUE to watch progress of optimzation
+#' @param modelnums model numbers to be re-run instead of those that did not covnerge
+#' @param initial model to use for starting values
 #' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
 #' and a model selection table; load.model returns model object that is stored externally
 #' @author Jeff Laake
@@ -119,7 +125,7 @@ model.table=function(model.list=NULL)
 		{
 			load(model.list[[i]])
 			if(length(grep("\\\\",model.list[[i]]))>0 | length(grep("/",model.list[[i]]))>0)
-			model.list[[i]]=basename(model.list[[i]])	
+			    model.list[[i]]=basename(model.list[[i]])	
 			eval(parse(text=paste("mymodel=",unlist(strsplit(model.list[[i]],".rda")))))
 		}else
 			mymodel=model.list[[i]]
@@ -190,6 +196,34 @@ crmlist_fromfiles=function()
 	class(model.list)="crmlist"
 	return(model.list)
 }		
+rerun_crm=function(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
+{
+	for(i in 1:(length(model.list)-1))
+	{
+		if((is.null(modelnums) & model.list$model.table$convergence[i]!=0) | i %in% modelnums)
+		{
+			model=model.list[[i]]
+			external=FALSE
+			if(!is.list(model)) 
+			{
+				external=TRUE
+				load(model.list[[i]])
+				eval(parse(text=paste("model=",unlist(strsplit(model.list[[i]],".rda")))))
+			}
+			if(is.null(model$results$mat))
+				save.matrices=FALSE
+			else
+				save.matrices=TRUE
+			if(is.null(method))
+				method=attr(model$results$optim.details,"details")$method
+			if(is.null(initial))initial=model
+			model.list[[i]]=crm(data,ddl,model.parameters=model$model.parameters,design.parameters=model$design.parameters,initial=initial,
+					save.matrices=save.matrices,method=method,external=external,debug=debug)
+		}
+	}
+	model.list$model.table=model.table(model.list)
+	return(model.list)
+}
 ##' crm.wrapper.parallel can use multiple cpus to run multiple models simultaneously on nc cpus 
 #crm.wrapper.parallel=function(nc,model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,...)
 ##' @param nc number of cpus to use for parallel model runs. Will not let you to use more than are available.

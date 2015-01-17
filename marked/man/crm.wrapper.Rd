@@ -17,16 +17,18 @@ crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
         load.model(x)
 
         crmlist_fromfiles()
+
+        rerun_crm(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
 }
 \arguments{
 \item{model.list}{matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name}
 
 \item{data}{Either the raw data which is a dataframe with at least one
 column named ch (a character field containing the capture history) or a
-processed dataframe}
+processed dataframe. For rerun_crm this should be the processed dataframe}
 
 \item{ddl}{Design data list which contains a list element for each parameter
-type; if NULL it is created}
+type; if NULL it is created; For rerun_crm, must be the same ddl as used with original run can cannot be NULL}
 
 \item{models}{a function with a defined environment with model specifications as variables; values of model.list are some or all of those variables}
 
@@ -43,6 +45,14 @@ type; if NULL it is created}
 \item{parameters}{character vector of parameter names}
 
 \item{x}{filename of externally stored model}
+
+\item{method}{vector of methods to use for optimization if different that previous run in rerun_crm}
+
+\item{debug}{can set to TRUE to watch progress of optimzation}
+
+\item{modelnums}{model numbers to be re-run instead of those that did not covnerge}
+
+\item{initial}{model to use for starting values}
 }
 \value{
 create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
