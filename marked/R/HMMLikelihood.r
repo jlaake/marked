@@ -1,8 +1,8 @@
 #' Hidden Markov Model likelihood functions
 #' 
-#' Function HMMLikelihood computes the log-likelihood via hmm.like which is a wrapper for the
-#' FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls HMMLikelihood for
-#' each sequence in the x matrix.
+#' Function HMMLikelihood computes the log-likelihood via hmm.lnl which is a wrapper for the
+#' FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls hmm.lnl after
+#' setting up parameters.
 #'  
 #' For an R version of the HMMLikelihood and related code see \code{\link{R_HMMLikelihood}}
 #'  
