@@ -270,13 +270,13 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 #  if there are any time varying covariates then construct the data matrix for
 #  those covariates. That matrix is appended to other data in x that is non-time varying
    times=df$time[df$id==1]
-   occ=1:(nocc+parameter$num)
+ #  occ=1:(nocc+parameter$num)
    tcv=NULL
    if(!is.null(time.varying))
    {
 	   for (i in 1:length(time.varying))
 	   {
-		   vnames=paste(time.varying[i],times[occ],sep="")     
+		   vnames=paste(time.varying[i],times,sep="")     
 		   if( !all(vnames %in% names(x$data)))
 			   stop("Missing time varying variable ",paste(vnames[!vnames%in%names(x$data)],collapse=","))
 		   if(i==1) 
