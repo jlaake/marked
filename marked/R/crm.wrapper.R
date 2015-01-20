@@ -56,6 +56,7 @@
 #' @export model.table
 #' @export load.model
 #' @export crmlist_fromfiles
+#' @export rerun_crm
 #' @import parallel
 #' @seealso \code{\link{crm}}
 #' @keywords models
@@ -198,27 +199,53 @@ crmlist_fromfiles=function()
 }		
 rerun_crm=function(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
 {
+	# rerun through each model and if in modelnums (not NULL) or didn't 
+	# converge (modelnums is NULL) rerun.
 	for(i in 1:(length(model.list)-1))
 	{
 		if((is.null(modelnums) & model.list$model.table$convergence[i]!=0) | i %in% modelnums)
 		{
+			# if not a list then read in model
 			model=model.list[[i]]
 			external=FALSE
 			if(!is.list(model)) 
 			{
+				model.name=unlist(strsplit(model.list[[i]],".rda"))
 				external=TRUE
 				load(model.list[[i]])
-				eval(parse(text=paste("model=",unlist(strsplit(model.list[[i]],".rda")))))
+				eval(parse(text=paste("model=",model.name)))
 			}
+			# set default values
 			if(is.null(model$results$mat))
 				save.matrices=FALSE
 			else
 				save.matrices=TRUE
 			if(is.null(method))
 				method=attr(model$results$optim.details,"details")$method
-			if(is.null(initial))initial=model
-			model.list[[i]]=crm(data,ddl,model.parameters=model$model.parameters,design.parameters=model$design.parameters,initial=initial,
-					save.matrices=save.matrices,method=method,external=external,debug=debug)
+			# set initial values to use; either current model or what is specified in initial
+			# if external it is read in
+			if(is.null(initial))
+				initial=model
+			else
+			{
+			   if(!is.list(initial)) 
+			   {
+				   imodel.name=unlist(strsplit(initial,".rda"))
+				   load(initial)
+				   eval(parse(text=paste("initial=",imodel.name)))
+			   }
+		    }
+			# run model and save in mymodel
+			mymodel=crm(data,ddl,model.parameters=model$model.parameters,design.parameters=model$design.parameters,initial=initial,
+					save.matrices=save.matrices,method=method,debug=debug)
+			# handle storing in list or externally saving
+			if(external)
+			{
+				assign(as.character(as.name(model.name)),mymodel)
+				eval(parse(text=paste("save(",model.name,', file="',model.name,'.rda")',sep="")))
+				model.list[[i]]=paste(model.name,".rda",sep="")
+			} else
+				model.list[[i]]=mymodel
 		}
 	}
 	model.list$model.table=model.table(model.list)
