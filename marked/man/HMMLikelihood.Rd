@@ -62,9 +62,9 @@ hmm.lnl returns the negative log-likelihood value for each capture history. real
 returns either the column dimension of design matrix for parameter or the real parameter vector
 }
 \description{
-Function HMMLikelihood computes the log-likelihood via hmm.like which is a wrapper for the
-FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls HMMLikelihood for
-each sequence in the x matrix.
+Function HMMLikelihood computes the log-likelihood via hmm.lnl which is a wrapper for the
+FORTRAN code hmm_like.f.  The function HMMlikelihood is called from optimizer and it in turn calls hmm.lnl after
+setting up parameters.
 }
 \details{
 For an R version of the HMMLikelihood and related code see \code{\link{R_HMMLikelihood}}
