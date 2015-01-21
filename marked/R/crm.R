@@ -386,7 +386,7 @@ if(substr(model,1,3)=="HMM")
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
-	for(p in names(initial.list$par))
+	for(p in names(parlist))
 	{
 		par[[p]]=parlist[[p]]
 		names(par[[p]])=colnames(dml[[p]]$fe)	
