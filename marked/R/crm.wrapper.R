@@ -16,7 +16,7 @@
 #' with the former the set must be identified via a script and any in the environment will
 #' be used which requires removing/recreating the set to be used.
 #' 
-#' @aliases  crm.wrapper create.model.list model.table load.model
+#' @aliases  crm.wrapper create.model.list model.table load.model rerun_crm crmlist_fromfiles
 #' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
 #'               external=TRUE,run=TRUE,env=NULL,...)
 #' 
@@ -47,7 +47,7 @@
 #' @param method vector of methods to use for optimization if different that previous run in rerun_crm
 #' @param debug can set to TRUE to watch progress of optimzation
 #' @param modelnums model numbers to be re-run instead of those that did not covnerge
-#' @param initial model to use for starting values
+#' @param initial either a fitted crm model or the model number in model.list to use for starting values
 #' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
 #' and a model selection table; load.model returns model object that is stored externally
 #' @author Jeff Laake
@@ -225,6 +225,13 @@ rerun_crm=function(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,in
 			# set initial values to use; either current model or what is specified in initial
 			# if external it is read in
 			if(is.null(initial))
+				if(is.numeric(initial))
+				{
+					if(length(initial)==1 && initial %in% 1:(length(model.list)-1))
+						initial=model.list[[initial]]
+					else
+						stop("Invalid initial value")
+				} else
 				initial=model
 			else
 			{

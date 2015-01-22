@@ -3,8 +3,10 @@
 \name{crm.wrapper}
 \alias{create.model.list}
 \alias{crm.wrapper}
+\alias{crmlist_fromfiles}
 \alias{load.model}
 \alias{model.table}
+\alias{rerun_crm}
 \title{Automation of model runs}
 \usage{
 crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
@@ -52,7 +54,7 @@ type; if NULL it is created; For rerun_crm, must be the same ddl as used with or
 
 \item{modelnums}{model numbers to be re-run instead of those that did not covnerge}
 
-\item{initial}{model to use for starting values}
+\item{initial}{either a fitted crm model or the model number in model.list to use for starting values}
 }
 \value{
 create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
