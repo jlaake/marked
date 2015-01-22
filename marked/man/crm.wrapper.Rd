@@ -42,15 +42,13 @@ type; if NULL it is created; For rerun_crm, must be the same ddl as used with or
 
 \item{env}{environment to find model specifications if not parent.frame}
 
-\item{...}{aditional arguments passed to crm}
+\item{...}{aditional arguments passed to crm; for rerun_crm can be used to set hessian=TRUE for specific models after they have been run}
 
 \item{parameters}{character vector of parameter names}
 
 \item{x}{filename of externally stored model}
 
 \item{method}{vector of methods to use for optimization if different that previous run in rerun_crm}
-
-\item{debug}{can set to TRUE to watch progress of optimzation}
 
 \item{modelnums}{model numbers to be re-run instead of those that did not covnerge}
 

@@ -41,11 +41,10 @@
 #' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
 #' @param run if TRUE, fit models; otherwise just create dml to test if model data are correct for formula
 #' @param env environment to find model specifications if not parent.frame
-#' @param ... aditional arguments passed to crm
+#' @param ... aditional arguments passed to crm; for rerun_crm can be used to set hessian=TRUE for specific models after they have been run
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
 #' @param method vector of methods to use for optimization if different that previous run in rerun_crm
-#' @param debug can set to TRUE to watch progress of optimzation
 #' @param modelnums model numbers to be re-run instead of those that did not covnerge
 #' @param initial either a fitted crm model or the model number in model.list to use for starting values
 #' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
@@ -197,7 +196,7 @@ crmlist_fromfiles=function()
 	class(model.list)="crmlist"
 	return(model.list)
 }		
-rerun_crm=function(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
+rerun_crm=function(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 {
 	# rerun through each model and if in modelnums (not NULL) or didn't 
 	# converge (modelnums is NULL) rerun.
@@ -225,26 +224,28 @@ rerun_crm=function(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,in
 			# set initial values to use; either current model or what is specified in initial
 			# if external it is read in
 			if(is.null(initial))
-				if(is.numeric(initial))
-				{
-					if(length(initial)==1 && initial %in% 1:(length(model.list)-1))
-						initial=model.list[[initial]]
-					else
-						stop("Invalid initial value")
-				} else
 				initial=model
 			else
 			{
 			   if(!is.list(initial)) 
 			   {
-				   imodel.name=unlist(strsplit(initial,".rda"))
-				   load(initial)
-				   eval(parse(text=paste("initial=",imodel.name)))
+				   if(is.numeric(initial))
+				   {
+					   if(length(initial)==1 && initial %in% 1:(length(model.list)-1))
+						   initial=model.list[[initial]]
+					   else
+						   stop("Invalid initial value")
+				   } else
+				   {
+					   imodel.name=unlist(strsplit(initial,".rda"))
+					   load(initial)
+					   eval(parse(text=paste("initial=",imodel.name)))
+				   }
 			   }
 		    }
 			# run model and save in mymodel
 			mymodel=crm(data,ddl,model.parameters=model$model.parameters,design.parameters=model$design.parameters,initial=initial,
-					save.matrices=save.matrices,method=method,debug=debug)
+					save.matrices=save.matrices,method=method,...)
 			# handle storing in list or externally saving
 			if(external)
 			{
