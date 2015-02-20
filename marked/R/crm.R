@@ -366,7 +366,7 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM")
 {
-	if(is.null(data.proc$strata.list)){
+	if(is.null(data.proc$strata.list) | data$model=="MVMS"){
 		mx=data.proc$m
 	}else{
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))

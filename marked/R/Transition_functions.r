@@ -12,7 +12,7 @@
 #' @return array of id and occasion-specific transition matrices - Gamma in Zucchini and MacDonald (2009)
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
- cjs_gamma=function(pars,m,F,T) 
+cjs_gamma=function(pars,m,F,T) 
  {
 	phimat=array(0,c(nrow(pars$Phi),T-1,m,m))
  	# create 4-d array with a matrix for each id and occasion

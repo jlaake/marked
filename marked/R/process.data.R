@@ -163,7 +163,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    # If ch is not comma delimited, turn into comma delimited
    if(length(grep(",",data$ch[1]))==0)
 	   data$ch=sapply(strsplit(data$ch,""),paste,collapse=",")
-   data$ch=toupper(data$ch)
+#   data$ch=toupper(data$ch)
    ch.lengths=sapply(strsplit(data$ch,","),length)
    nocc=median(ch.lengths)
    if(any(ch.lengths!=nocc))
@@ -196,6 +196,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    {
 	   # Get unique ch values and use as strata.labels unless they are specified   
 	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
+	   uindex=grep("u",inp.strata.labels)
+	   if(length(uindex)>0)inp.strata.labels=inp.strata.labels[-uindex]
 	   nstrata = length(inp.strata.labels)                  
 	   if(is.null(strata.labels))
 		   strata.labels=inp.strata.labels
@@ -205,8 +207,9 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
 		   nstrata=length(strata.labels)
 		   unobserved=nstrata-length(inp.strata.labels)
-		   if(unobserved<0)stop(paste("\nSome of the strata in the data\n",paste(inp.strata.labels,collapse=","),"\nnot specified in strata.labels\n",paste(strata.labels,collapse=","),"\n"))
-		   if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")
+		   if(unobserved<0 | !all(inp.strata.labels%in%strata.labels))
+			   stop(paste("\nSome of the strata in the data\n",paste(inp.strata.labels,collapse=","),"\nnot specified in strata.labels\n",paste(strata.labels,collapse=","),"\n"))
+		   if(nstrata<2)stop("\nAny multistrata model must have at least 2 strata\n")
 	   }
    }
    #

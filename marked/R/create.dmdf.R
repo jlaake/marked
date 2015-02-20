@@ -324,7 +324,10 @@ create.base.dmdf=function(x,parameter)
 	# other bi-level MS models
 	if(x$model=="MVMS")
 	{
-		dfl=mvms_design_data(x$strata.list$df.states,transition=parameter$tostrata)
+		if(!is.null(parameter$obs) & parameter$obs)
+			dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
+		else
+		   dfl=mvms_design_data(x$strata.list$df.states,transition=parameter$tostrata)
 		df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))
 		dfl=dfl[rep(1:nrow(dfl),each=nrow(df)),,drop=FALSE]
 		df=cbind(df,dfl)
