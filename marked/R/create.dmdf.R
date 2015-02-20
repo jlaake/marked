@@ -320,75 +320,97 @@ create.base.dmdf=function(x,parameter)
 	occasions=begin.num:(parameter$begin+nocc)
 	sl=factor(x$strata.labels)
 	nstrata=length(sl)
-	if(!is.null(x$strata.list))
+    # MVMS model is currently split off but eventually this should be merged in with
+	# other bi-level MS models
+	if(x$model=="MVMS")
 	{
-		st.index=which("states"==names(x$strata.list))
-		oth.index=which("states"!=names(x$strata.list))
-		oth.name=names(x$strata.list)[oth.index]
-		oth=factor(rep(x$strata.list[[oth.index]],each=length(x$strata.list$states)))
-		states=factor(rep(x$strata.list$states,times=length(x$strata.list[[oth.index]])))
-		if(parameter$whichlevel!=0)
-		{
-			if(parameter$whichlevel==1)
-				sl=factor(x$strata.list$states)
-			else
-				sl=factor(x$strata.list[[oth.index]])
-			nstrata=length(sl)
-			x$strata.list=NULL
-		}
-	}
-	if(!parameter$bystratum)
-	{
+		dfl=mvms_design_data(x$strata.list$df.states,transition=parameter$tostrata)
 		df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))
-		df$seq=1:nrow(df)
-	}
-	else
-	{
+		dfl=dfl[rep(1:nrow(dfl),each=nrow(df)),,drop=FALSE]
+		df=cbind(df,dfl)
 		if(parameter$tostrata)
+			df=df[order(df$id,df$occ,df$stratum,df$tostratum),]
+		else
+			df=df[order(df$id,df$occ,df$stratum),]
+		df$seq=1:nrow(df)	
+		rownames(df)=df$seq
+	} else
+	{
+		if(!is.null(x$strata.list))
 		{
-			df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
-			df=df[,c("stratum","tostratum","occ","id")]
+			st.index=which("states"==names(x$strata.list))
+			oth.index=which("states"!=names(x$strata.list))
+			oth.name=names(x$strata.list)[oth.index]
+			oth=factor(rep(x$strata.list[[oth.index]],each=length(x$strata.list$states)))
+			states=factor(rep(x$strata.list$states,times=length(x$strata.list[[oth.index]])))
+			# For 2-level independent strata model 
+			if(parameter$whichlevel!=0)
+			{
+				if(parameter$whichlevel==1)
+					sl=factor(x$strata.list$states)
+				else
+					sl=factor(x$strata.list[[oth.index]])
+				nstrata=length(sl)
+				x$strata.list=NULL
+			}
+		}
+		# not by stratum
+		if(!parameter$bystratum)
+		{
+			df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))
 			df$seq=1:nrow(df)
 		}
 		else
 		{
-			df=expand.grid(stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
-			df$seq=1:nrow(df)
-		}
-	    if(!is.null(x$strata.list))
-	    {
-            state.df=data.frame(stratum=sl[1:nstrata],state=states,oth=oth)	
-			df=merge(df,state.df,by="stratum")
+			# from stratum - to stratum transition
 			if(parameter$tostrata)
 			{
-				state.df=data.frame(tostratum=sl[1:nstrata],tostate=states,tooth=oth)	
-				df=merge(df,state.df,by="tostratum")
-			} 
-			if(parameter$whichlevel!=0)
+				df=expand.grid(tostratum=sl[1:nstrata],stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
+				df=df[,c("stratum","tostratum","occ","id")]
+				df$seq=1:nrow(df)
+			}
+			# by stratum
+			else
 			{
-				if(parameter$whichlevel==1){
-					names(df)[names(df)=="stratum"]="state"
-					names(df)[names(df)=="tostratum"]="tostate"
+				df=expand.grid(stratum=sl[1:nstrata],occ=occasions,id=factor(1:nrow(x$data)))
+				df$seq=1:nrow(df)
+			}
+			# two-level stratification
+			if(!is.null(x$strata.list))
+			{
+				state.df=data.frame(stratum=sl[1:nstrata],state=states,oth=oth)	
+				df=merge(df,state.df,by="stratum")
+				if(parameter$tostrata)
+				{
+					state.df=data.frame(tostratum=sl[1:nstrata],tostate=states,tooth=oth)	
+					df=merge(df,state.df,by="tostratum")
 				} 
-				if(parameter$whichlevel==2) {
-					names(df)[names(df)=="stratum"]=oth.name
-					names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
-				}	 
+				if(parameter$whichlevel!=0)
+				{
+					if(parameter$whichlevel==1){
+						names(df)[names(df)=="stratum"]="state"
+						names(df)[names(df)=="tostratum"]="tostate"
+					} 
+					if(parameter$whichlevel==2) {
+						names(df)[names(df)=="stratum"]=oth.name
+						names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
+					}	 
+				}else
+				{
+					names(df)[names(df)=="oth"]=oth.name
+					names(df)[names(df)=="tooth"]=paste("to",oth.name,sep="")
+				}
 			}else
 			{
-				names(df)[names(df)=="oth"]=oth.name
-				names(df)[names(df)=="tooth"]=paste("to",oth.name,sep="")
+				if(parameter$whichlevel!=0)
+				{
+					if(parameter$whichlevel==1)names(df)[names(df)=="stratum"]="state"
+					if(parameter$whichlevel==2) names(df)[names(df)=="stratum"]=oth.name
+					if(parameter$whichlevel==1)names(df)[names(df)=="tostratum"]="tostate"
+					if(parameter$whichlevel==2) names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
+				}	 
 			}
-	    }else
-	    {
-			if(parameter$whichlevel!=0)
-			{
-				if(parameter$whichlevel==1)names(df)[names(df)=="stratum"]="state"
-				if(parameter$whichlevel==2) names(df)[names(df)=="stratum"]=oth.name
-				if(parameter$whichlevel==1)names(df)[names(df)=="tostratum"]="tostate"
-				if(parameter$whichlevel==2) names(df)[names(df)=="tostratum"]=paste("to",oth.name,sep="")
-			}	 
-  	    }
+		}
 	}
 	return(df)
 }

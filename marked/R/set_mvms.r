@@ -14,13 +14,14 @@
 #' structure with a number of elements described under return value below.
 #' 
 #' @param x a multivariate multistate (mvms) specification as described above
+#' @param df.states dataframe of states created from set_mvms
 #' @return a list with the following elements: 1) mvms - the input specification,
 #' 2) nd - the number of dimensions, 3) df - the dataframe containing all combinations 
 #' of observations across dimensions including uncertain states, 4) df.states - the dataframe with all
 #' combinations of states across dimensions, 5) uncertain - boolean vector with nd elements
 #' indicating whether there is uncertainy in states for each dimension.
 #' @author Jeff Laake
-#' @export
+#' @export set_mvms
 #' @examples
 #' set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u")))
 set_mvms=function(x)
@@ -33,6 +34,13 @@ set_mvms=function(x)
 		stop("each set of states must be specified as a vector")
 	if(any(!sapply(x,function(x) mode(x)=="character")))
 	    stop("each set of states must be specified as a character vector")
+	if(!is.null(x$exclude))
+	{
+		exclude=x$exclude
+		x$exclude=NULL
+	}
+	else
+		exclude=NULL
 	nd=length(x)
 	uncertain=sapply(x,function(x)"u"%in%x)
 	nou=lapply(x,function(x) x[x!="u"])
@@ -40,3 +48,44 @@ set_mvms=function(x)
 	df.nou=expand.grid(nou)
 	return(list(mvms=x,nd=nd,df=df,df.states=df.nou,uncertain=uncertain))
 }
+#' Multivariate Multistate (mvms) Design Data 
+#' 
+#' Creates a dataframe with design data for MvMS model for a single occasion 
+#' @param df.states dataframe of states created from set_mvms
+#' @param transition if TRUE, creates design data for a state transition (from to); otherwise just state variables
+#' @return a dataframe to be used with design data for mvms model
+#' @author Jeff Laake
+#' @export mvms_design_data
+#' @examples
+#' x=set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u")))
+#' mvms_design_data(x$df.states)
+#' mvms_design_data(x$df.states,transition=FALSE)
+#' 
+mvms_design_data=function(df.states,transition=TRUE)
+{
+	z=apply(df.states,1,paste,collapse="")
+	if(transition)
+	{
+		z=expand.grid(z,z)
+		colnames(z)=c("stratum","tostratum")
+	    for(i in 1:2)
+	    {
+		    x=as.data.frame(do.call("rbind",strsplit(t(sapply(z[,i],as.character)),"")))
+			if(ncol(x)>1)
+			{
+				if(i==1)
+					colnames(x)=paste("from",names(df.states),sep="")
+				else
+					colnames(x)=paste("to",names(df.states),sep="")
+				z=cbind(z,x)
+			}
+	    }
+	    return(z)
+    } else
+		if(ncol(df.states)>1)
+		  return(cbind(data.frame(stratum=z),df.states))
+	    else
+			return(cbind(data.frame(stratum=z)))
+}
+
+

@@ -179,6 +179,14 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    # the bayesian models cannot deal with accumulation
    if(!model.list$accumulate)accumulate=FALSE
    ch.values=unique(unlist(strsplit(data$ch,",")))
+   nocc=model.list$nocc
+   nocc.secondary=NULL
+   num=model.list$num
+   if(model.list$IShmm)
+   {
+	   model.list=setupHMM(model.list,model,strata.labels)
+	   strata.labels=model.list$hmm$strata.labels
+   }
    #  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
    {
@@ -186,7 +194,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
    } else
    {
-       # Get unique ch values and use as strata.labels unless they are specified   
+	   # Get unique ch values and use as strata.labels unless they are specified   
 	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
 	   nstrata = length(inp.strata.labels)                  
 	   if(is.null(strata.labels))
@@ -195,15 +203,12 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 	   if(is.vector(strata.labels))
 	   {
 		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
- 	       nstrata=length(strata.labels)
-	       unobserved=nstrata-length(inp.strata.labels)
-	       if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")
+		   nstrata=length(strata.labels)
+		   unobserved=nstrata-length(inp.strata.labels)
+		   if(unobserved<0)stop(paste("\nSome of the strata in the data\n",paste(inp.strata.labels,collapse=","),"\nnot specified in strata.labels\n",paste(strata.labels,collapse=","),"\n"))
+		   if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")
 	   }
    }
-   nocc=model.list$nocc
-   nocc.secondary=NULL
-   num=model.list$num
-   if(model.list$IShmm) model.list=setupHMM(model.list,model,strata.labels)
    #
    #     If time intervals specified make sure there are nocc-1 of them if a vector
    #     and if a matrix rows must match number of animals and # cols = nocc+num
@@ -554,4 +559,3 @@ accumulate_data <- function(data)
 	message(nx, " capture histories collapsed into ", nrow(x), "\n", appendLF=FALSE)
 	return(x)	
 }
-

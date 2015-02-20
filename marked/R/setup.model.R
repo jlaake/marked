@@ -112,6 +112,18 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$m=length(model_def$hmm$strata.labels)+1
 	}
 	if(toupper(model)=="HMMU2IMSCJS") model_def$hmm$fct_gamma=ms2_gamma
+	if(toupper(model)=="MVMS")
+	{
+		model_def$hmm$fct_dmat=ms_dmat
+		model_def$hmm$fct_gamma=ms_gamma
+		model_def$hmm$fct_delta=cjs_delta
+		model_def$hmm$strata.list=set_mvms(strata.labels)
+		model_def$hmm$strata.labels=apply(model_def$hmm$strata.list$df.states,1,paste,collapse="")
+		
+		model_def$hmm$m=nrow(model_def$hmm$strata.list$df.states)+1
+		
+		model_def$hmm$ObsLevels=c(0,apply(model_def$hmm$strata.list$df,1,paste,collapse=""))
+	}
 	return(model_def)
 }
 
