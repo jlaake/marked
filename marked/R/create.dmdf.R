@@ -323,10 +323,10 @@ create.base.dmdf=function(x,parameter)
 	nstrata=length(sl)
     # MVMS model is currently split off but eventually this should be merged in with
 	# other bi-level MS models
-	if(x$model=="MVMS")
+	if(substr(x$model,1,4)=="MVMS")
 	{
 		if(!is.null(parameter$obs) & parameter$obs)
-			if(any(x$stata.list$uncertain))
+			if(any(x$strata.list$uncertain))
 			   dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
 	        else
 				return(NULL)

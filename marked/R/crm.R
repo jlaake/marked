@@ -325,7 +325,7 @@ ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values
-if(substr(model,1,3)=="HMM"|data$model=="MVMS")
+if(substr(model,1,3)=="HMM"|substr(data$model,1,4)=="MVMS")
 	initial.list=set.initial(names(dml),dml,initial)
 # if not running, return object with data,ddl,dml etc
 if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
@@ -364,11 +364,11 @@ if(model=="PROBITCJS")
 	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 					   initial=initial,iter=iter,burnin=burnin)	   
 }
-if(substr(model,1,3)=="HMM"|data$model=="MVMS")
+if(substr(model,1,3)=="HMM"|substr(data$model,1,4)=="MVMS")
 {
 	obslevels=NULL
-	if(data$model=="MVMS")obslevels=data.proc$ObsLevels
-	if(is.null(data.proc$strata.list) | data$model=="MVMS"){
+	if(substr(data$model,1,4)=="MVMS")obslevels=data.proc$ObsLevels
+	if(is.null(data.proc$strata.list) | substr(data$model,1,4)=="MVMS"){
 		mx=data.proc$m
 	}else{
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
@@ -418,7 +418,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS" &model!="MVMS" )
+if(!re & model!="MSCJS" & substr(model,1,4)!="MVMS" )
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
