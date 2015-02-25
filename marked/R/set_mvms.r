@@ -109,14 +109,16 @@ mvms_design_data=function(df.states,df=NULL,transition=TRUE)
 				xx=cbind(data.frame(stratum=z),df.states)
 			else
 				xx=cbind(data.frame(stratum=z))
-			obs=do.call("rbind",apply(xx[,-1],1, function(x)
-					{
-						xx=as.list(as.data.frame(rbind(as.matrix(x)),stringsAsFactors=FALSE))
-						xx=c(x[!uncertain],lapply(x[uncertain],function(x) c(x,"u")))
-						expand.grid(xx)
-					}))
+			assignobs=function(x)
+			{
+				xx=as.list(as.data.frame(rbind(as.matrix(x)),stringsAsFactors=FALSE))
+				xx=c(x[!uncertain],lapply(x[uncertain],function(x) c(x,"u")))
+				expand.grid(xx)
+			}
+			obs=do.call("rbind",apply(xx[,-1],1, assignobs))
 	        nobs=nrow(obs)/nrow(xx)
 			colnames(obs)=paste("obs",names(obs),sep=".")
+			obs=obs[do.call(order,lapply(obs,function(x) x)),]
 			return(cbind(xx[rep(1:nrow(xx),each=nobs),],obs))
 		}
 	}

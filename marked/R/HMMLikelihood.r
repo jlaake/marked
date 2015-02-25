@@ -113,14 +113,17 @@ hmm.lnl=function(x,start,m,T,dmat,gamma,delta,freq,debug)
 	lnl=.Fortran("hmmlike",as.integer(x),as.integer(nrow(x)),as.integer(m),as.integer(T),
 			as.integer(nrow(dmat[1,1,,])),as.integer(start),as.double(freq),as.double(dmat),
 			as.double(gamma),as.double(delta),lnl=double(nrow(x)),PACKAGE="marked")$lnl
-	if(any(is.nan(lnl)))
+	if(any(is.nan(lnl) | is.infinite(lnl)))
 	{
 		if(debug)
 		{
 			cat("lnl is nan for these rows\n")
 		    cat(which(is.nan(lnl)))
+			cat("lnl is infinite for these rows\n")
+			cat(which(is.infinite(lnl)))
 		}
 	    lnl[is.nan(lnl)]=-1e5
+		lnl[is.infinite(lnl)]=-1e5
 	}
     -sum(lnl)
 }
