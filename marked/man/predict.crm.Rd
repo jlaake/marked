@@ -8,7 +8,7 @@
                    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
 }
 \arguments{
-\item{object}{model object}
+\item{object}{model object;}
 
 \item{newdata}{a dataframe for crm}
 

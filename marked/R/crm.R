@@ -325,7 +325,7 @@ ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
 # For HMM call set.initial to get ptype and set initial values
-if(substr(model,1,3)=="HMM")
+if(substr(model,1,3)=="HMM"|data$model=="MVMS")
 	initial.list=set.initial(names(dml),dml,initial)
 # if not running, return object with data,ddl,dml etc
 if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
@@ -364,8 +364,10 @@ if(model=="PROBITCJS")
 	    runmodel=probitCJS(ddl,dml,parameters=parameters,design.parameters=design.parameters,
 					   initial=initial,iter=iter,burnin=burnin)	   
 }
-if(substr(model,1,3)=="HMM")
+if(substr(model,1,3)=="HMM"|data$model=="MVMS")
 {
+	obslevels=NULL
+	if(data$model=="MVMS")obslevels=data.proc$ObsLevels
 	if(is.null(data.proc$strata.list) | data$model=="MVMS"){
 		mx=data.proc$m
 	}else{
@@ -373,7 +375,8 @@ if(substr(model,1,3)=="HMM")
 	}
 	runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
 			        type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
-				    fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters)
+				    fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
+					parameters=parameters,obslevels=obslevels)
 	par <- coef(runmodel, order="value")[1, ]
 	runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
 	if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
@@ -382,7 +385,7 @@ if(substr(model,1,3)=="HMM")
 	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
  	if(save.matrices)
 		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE)
+			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,obslevels=obslevels)
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
@@ -415,7 +418,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS")
+if(!re & model!="MSCJS" &model!="MVMS" )
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)

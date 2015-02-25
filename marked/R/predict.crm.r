@@ -5,7 +5,7 @@
 #' 
 #' @usage \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
 #'                    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
-#' @param object model object
+#' @param object model object;
 #' @param newdata a dataframe for crm 
 #' @param ddl list of dataframes for design data; created by call to
 #' @param parameter name of real parameter to be computed (eg "Phi" or "p")

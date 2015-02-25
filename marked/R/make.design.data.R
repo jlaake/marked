@@ -92,6 +92,7 @@ full.design.data=vector("list",length=length(parameters))
 		 else
 			 fields=parameters[[i]]$static   
 		 full.design.data[[i]]=create.dmdf(data,parameters[[i]],time.varying=time.varying,fields=fields)
+		 if(is.null(full.design.data[[i]]))next
 	 }else
 #    Compute design data for N
 	 {

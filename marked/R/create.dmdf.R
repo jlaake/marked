@@ -235,6 +235,7 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 	   begin.time=x$data$begin.time
 #  create base df
    df=create.base.dmdf(x,parameter)
+   if(is.null(df))return(NULL)
 #  add time,age,choort
    if(length(begin.time)==1 & is.vector(time.intervals))
    {
@@ -325,7 +326,10 @@ create.base.dmdf=function(x,parameter)
 	if(x$model=="MVMS")
 	{
 		if(!is.null(parameter$obs) & parameter$obs)
-			dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
+			if(any(x$stata.list$uncertain))
+			   dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
+	        else
+				return(NULL)
 		else
 		   dfl=mvms_design_data(x$strata.list$df.states,transition=parameter$tostrata)
 		df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))

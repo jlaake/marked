@@ -8,6 +8,8 @@ set_mvms(x)
 }
 \arguments{
 \item{x}{a multivariate multistate (mvms) specification as described above}
+
+\item{df.states}{dataframe of states created from set_mvms}
 }
 \value{
 a list with the following elements: 1) mvms - the input specification,
@@ -20,19 +22,20 @@ indicating whether there is uncertainy in states for each dimension.
 Creates list data structure from mvms specification
 }
 \details{
-Accepts a mvms specification which is a list with named character vectors.
-The length of the list is the multivariate dimension. The name of each
-dimension is the list element name.  Each character vector specifies the
-one character labels for the states of that dimension and optionally a
+Accepts a mvms specification which is a list with named character vectors and
+optionally a vector named exclude. The length of the list (except for exclude)
+is the multivariate dimension. The name of each dimension is the list element name.
+Each character vector specifies the one character labels for the states of that dimension and optionally a
 reserved character "u" to specify that there is state uncertainty for that
-dimension.
+dimension. The name vector exclude can be used to remove variable combinations that cannot
+occur in the data.
 
 The code tests to make sure that the input mvms specification is of the correct
 structure and it stops with an error message if not. The code returns a list
 structure with a number of elements described under return value below.
 }
 \examples{
-set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u")))
+set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u"),exclude=c("CP")))
 }
 \author{
 Jeff Laake

@@ -30,6 +30,11 @@ set.initial=function(pars,dml,initial)
 	for(parx in pars)
 	{
 		init=initial[[parx]]
+		if(is.null(dml[[parx]]$fe))
+		{
+			par[[parx]]=NULL
+			next
+		}
 		if(is.null(init))
 		{
 			par[[parx]]=rep(0,ncol(dml[[parx]]$fe))

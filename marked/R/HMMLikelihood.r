@@ -28,6 +28,7 @@
 #' @param xstart for each ch, the first non-zero x value and the occasion of the first non-zero value; ; xstart used instead of start to avoid conflict in optimx
 #' @param start same as xstart but for hmm.lnl
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
+#' @param obslevels vector of possible observations; used with MVMS model
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE,return.mat=FALSE)
 #'        reals(ddl,dml,parameters,parlist)
@@ -40,7 +41,7 @@
 #' @seealso R_HMMLikelihood
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
-		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE)
+		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE,obslevels)
 {
 	m=mx
 	# Create list of parameter matrices from single input parameter vector
@@ -62,8 +63,11 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
         pars[[parname]]=laply(split(R,ddl[[parname]]$id),function(x) x)
     }
 	# compute 4-d arrays of id- and occasion-specific 
-	# observation probability matrices and 
-    dmat=fct_dmat(pars,m,F=xstart[,2],T)
+	# observation probability matrices 
+	if(is.null(obslevels))
+       dmat=fct_dmat(pars,m,F=xstart[,2],T)
+   else
+	   dmat=fct_dmat(pars,m,F=xstart[,2],T,obslevels)
 	# transition matrices using parameter values
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
 	# compute matrix of initial state distribution for each id
@@ -86,6 +90,7 @@ reals=function(ddl,dml,parameters,parlist)
 	# type (parname); handles fixed parameters assigned by 
 	# non-NA value in field named fix in the ddl dataframe.
 	dm=dml$fe
+	if(is.null(dm))return(NULL)
 	if(ncol(dm)!=0)
 	{	
 		# Currently for log,logit or identity link, return the inverse values

@@ -48,6 +48,7 @@ set_mvms=function(x)
 	nou=lapply(x,function(x) x[x!="u"])
 	df=expand.grid(x)
 	strata=apply(df,1,paste,collapse="")
+	df=df[order(strata),,drop=FALSE]
 	df.nou=expand.grid(nou)
 	if(!is.null(exclude))
 	{
@@ -55,6 +56,8 @@ set_mvms=function(x)
 		strata=apply(df.nou,1,paste,collapse="")
 		df.nou=df.nou[!strata%in%exclude,,drop=FALSE]
 	}
+	strata=apply(df.nou,1,paste,collapse="")
+	df.nou=df.nou[order(strata),,drop=FALSE]
 	return(list(mvms=x,nd=nd,df=df,df.states=df.nou,uncertain=uncertain))
 }
 #' Multivariate Multistate (mvms) Design Data 
@@ -118,33 +121,4 @@ mvms_design_data=function(df.states,df=NULL,transition=TRUE)
 		}
 	}
 }
-
-hmm=set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u"),sex=c("M","u","F"),exclude=c("CPF")))
-
-# states
-s=c(apply(hmm$df.states,1,paste,collapse=""),"Dead")
-# observations
-o=c("0",apply(hmm$df,1,paste,collapse=""))
-
-# p
-pmat=matrix(0,ncol=length(s),nrow=length(o))
-colnames(pmat)=s
-rownames(pmat)=o
-f=function(x,y) { 
-	col=grep(y,s)
-	if(length(col)>0)
-		return(data.frame(row=x,col=col))
-    else
-        return(NULL)
-}
-indices_forp=as.matrix(do.call("rbind",mapply(f,1:length(o),gsub("u",".",o))))
-pmat[indices_forp]=1
-pmat[1,ncol(pmat)]=1
-# delta
-deltamat=matrix(0,ncol=length(s),nrow=length(o))
-colnames(deltamat)=s
-rownames(deltamat)=o
-urows=grep("u",o)
-deltamat[urows,]=pmat[urows,]
-deltamat
 

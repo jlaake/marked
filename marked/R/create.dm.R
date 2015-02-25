@@ -137,6 +137,11 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 		dd=ddl[[pn]]
 		if(restrict)dd=dd[dd$Time>=dd$Cohort,]
 		mlist=proc.form(model.parameters[[i]]$formula)  # parse formula for fixed effects
+		if(is.null(ddl[[i]]))
+		{
+			dml[[i]]=list(fe=NULL,re=NULL)
+		    next
+		}
 		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept,
 			    remove.unused.columns=remove.unused.columns)
