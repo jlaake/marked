@@ -182,10 +182,11 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    nocc=model.list$nocc
    nocc.secondary=NULL
    num=model.list$num
+   if(model.list$strata&is.null(strata.labels))stop("\nstrata.labels must be specified for stratified models\n")
    if(model.list$IShmm)
    {
 	   model.list=setupHMM(model.list,model,strata.labels)
-	   strata.labels=model.list$hmm$strata.labels
+	   if(model.list$strata)strata.labels=model.list$hmm$strata.labels
    }
    #  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
@@ -196,8 +197,14 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    {
 	   # Get unique ch values and use as strata.labels unless they are specified   
 	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
-	   uindex=grep("u",inp.strata.labels)
-	   if(length(uindex)>0)inp.strata.labels=inp.strata.labels[-uindex]
+	   if(substr(model,1,4)%in%c("HMMU","MVMS"))
+	   {
+		   if(substr(model,1,4)=="MVMS")
+			   uindex=grep("u",inp.strata.labels)
+		   else
+			   uindex=grep("U",inp.strata.labels)
+		   if(length(uindex)>0)inp.strata.labels=inp.strata.labels[-uindex]
+	   }
 	   nstrata = length(inp.strata.labels)                  
 	   if(is.null(strata.labels))
 		   strata.labels=inp.strata.labels
