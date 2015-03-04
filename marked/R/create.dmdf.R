@@ -323,7 +323,7 @@ create.base.dmdf=function(x,parameter)
 	nstrata=length(sl)
     # MVMS model is currently split off but eventually this should be merged in with
 	# other bi-level MS models
-	if(substr(x$model,1,4)=="MVMS")
+	if(nchar(x$model)>=4 & substr(x$model,1,4)=="MVMS")
 	{
 		if(!is.null(parameter$obs) & parameter$obs)
 			if(any(x$strata.list$uncertain))

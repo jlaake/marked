@@ -42,6 +42,8 @@ HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 
 \item{return.mat}{If TRUE, returns list of transition, observation and delta arrays.}
 
+\item{obslevels}{vector of possible observations; used with MVMS model}
+
 \item{x}{same as xx but for call to hmm.lnl}
 
 \item{m}{same as mx but for call to hmm.lnl}

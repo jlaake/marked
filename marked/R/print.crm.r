@@ -21,7 +21,7 @@ print.crm=function(x,...)
 {
    if(mode(x)=="character")x=load.model(x)
    if(!is.null(x$results))x=x$results
-   if(class(x)[2]=="admb")
+   if(class(x)[2]=="admb" & class(x)[3]=="cjs")
    {
 	   class(x)[1]="admb"
        print(x)
@@ -53,7 +53,7 @@ coef.crm=function(object,...)
    }
    else
    {
-       if(class(object)[2]=="admb")
+       if(class(object)[2]=="admb" & class(object)[3]=="cjs")
 	   {
 		   class(object)[1]="admb"
 		   beta=coef(object)

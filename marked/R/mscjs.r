@@ -203,6 +203,34 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	convergence=attr(xx,"status")
 	if(is.null(convergence))convergence=0
 	res=read_admb(tpl)
+	beta=list(unscale.par(c(res$coeflist$phibeta,res$coeflist$pbeta,res$coeflist$psibeta),scale))
+	parnames=names(unlist(beta))
+	fixed.npar=length(unlist(beta))
+	if(!is.null(res$hes))
+	{
+		beta.vcv=solvecov(res$hes)$inv
+		rownames(res$hes)=parnames
+		colnames(res$hes)=rownames(res$hes)
+		if(all(diag(beta.vcv>0))) 
+			res$cor=beta.vcv/outer(sqrt(diag(beta.vcv)),sqrt(diag(beta.vcv)))
+	}  else
+		beta.vcv=res$vcov
+	rownames(beta.vcv)=parnames
+	colnames(beta.vcv)=rownames(beta.vcv)
+	rownames(res$cor)=rownames(beta.vcv)
+	colnames(res$cor)=rownames(beta.vcv)
+	res$vcov=NULL
+	optim.details=c(fn=res$fn,maxgrad=res$maxgrad,eratio=res$eratio)
+	options=list(extra.args=extra.args)
+	res$cor=NULL
+	res$maxgrad=NULL
+	results=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence)
+	results$optim.details=optim.details
+	results$options=options
+	results$coeflist=res$coeflist
+	results$npar=list(npar=res$npar,npar_sdrpt=res$npar_sdrpt,npar_total=res$npar_total)
+	results$beta.vcv=beta.vcv
+	res=results
 #  Restore non-accumulated, non-scaled dm's etc
    res$model_data=model_data.save
 #  Assign S3 class values and return
