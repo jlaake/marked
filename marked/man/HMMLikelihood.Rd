@@ -7,7 +7,7 @@
 \title{Hidden Markov Model likelihood functions}
 \usage{
 HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
-                         dml,parameters,debug=FALSE,return.mat=FALSE)
+                         dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
        reals(ddl,dml,parameters,parlist)
        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 }
@@ -42,7 +42,7 @@ HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 
 \item{return.mat}{If TRUE, returns list of transition, observation and delta arrays.}
 
-\item{obslevels}{vector of possible observations; used with MVMS model}
+\item{sup}{list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat}
 
 \item{x}{same as xx but for call to hmm.lnl}
 

@@ -20,7 +20,7 @@ crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
 
         crmlist_fromfiles()
 
-        rerun_crm(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
+        rerun_crm(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 }
 \arguments{
 \item{model.list}{matrix of model names contained in the environment of models function; each row is a model and each column is for a parameter and the value is formula name}

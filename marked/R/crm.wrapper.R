@@ -28,7 +28,7 @@
 #'  
 #'         crmlist_fromfiles()
 #' 
-#'         rerun_crm(data,ddl,model.list,method=NULL,debug=FALSE,modelnums=NULL,initial=NULL)
+#'         rerun_crm(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 #' 
 #' @param data Either the raw data which is a dataframe with at least one
 #' column named ch (a character field containing the capture history) or a

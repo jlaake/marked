@@ -8,8 +8,6 @@ set_mvms(x)
 }
 \arguments{
 \item{x}{a multivariate multistate (mvms) specification as described above}
-
-\item{df.states}{dataframe of states created from set_mvms}
 }
 \value{
 a list with the following elements: 1) mvms - the input specification,

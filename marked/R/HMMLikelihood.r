@@ -28,9 +28,9 @@
 #' @param xstart for each ch, the first non-zero x value and the occasion of the first non-zero value; ; xstart used instead of start to avoid conflict in optimx
 #' @param start same as xstart but for hmm.lnl
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
-#' @param obslevels vector of possible observations; used with MVMS model
+#' @param sup  list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
-#'                          dml,parameters,debug=FALSE,return.mat=FALSE)
+#'                          dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
 #'        reals(ddl,dml,parameters,parlist)
 #'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 #' @aliases HMMLikelihood reals hmm.lnl
@@ -41,7 +41,7 @@
 #' @seealso R_HMMLikelihood
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
-		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE,obslevels)
+		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
 {
 	m=mx
 	# Create list of parameter matrices from single input parameter vector
@@ -64,10 +64,10 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	# observation probability matrices 
-	if(is.null(obslevels))
+	if(is.null(sup))
        dmat=fct_dmat(pars,m,F=xstart[,2],T)
    else
-	   dmat=fct_dmat(pars,m,F=xstart[,2],T,obslevels)
+	   dmat=fct_dmat(pars,m,F=xstart[,2],T,sup)
 	# transition matrices using parameter values
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
 	# compute matrix of initial state distribution for each id

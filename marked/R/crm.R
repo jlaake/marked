@@ -366,8 +366,12 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 {
-	obslevels=NULL
-	if(substr(data$model,1,4)=="MVMS")obslevels=data.proc$ObsLevels
+	if(substr(data$model,1,4)=="MVMS")
+	{
+		obslevels=data.proc$ObsLevels
+		sup=data.proc$fct_sup(list(obslevels=obslevels))
+	} else
+		sup=NULL
 	if(is.null(data.proc$strata.list) | substr(data$model,1,4)=="MVMS"){
 		mx=data.proc$m
 	}else{
@@ -376,7 +380,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
 			        type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
 				    fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
-					parameters=parameters,obslevels=obslevels)
+					parameters=parameters,sup=sup)
 	par <- coef(runmodel, order="value")[1, ]
 	runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
 	if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
@@ -385,7 +389,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
  	if(save.matrices)
 		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,obslevels=obslevels)
+			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)

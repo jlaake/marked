@@ -12,7 +12,7 @@
 
 \item{newdata}{a dataframe for crm}
 
-\item{ddl}{list of dataframes for design data; created by call to}
+\item{ddl}{list of dataframes for design data; created by call to make.design.data}
 
 \item{parameter}{name of real parameter to be computed (eg "Phi" or "p")}
 
@@ -47,7 +47,7 @@ dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 dipper.ddl=make.design.data(dipper.proc)
 mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,
    model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
-xx=predict(mod.Phisex.pdot)
+xx=predict(mod.Phisex.pdot,ddl=dipper.ddl)
 xx
 xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
 xx

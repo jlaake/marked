@@ -6,7 +6,7 @@
 C      Zero out values       
        DO 1 I=1,N
        DO 1 J=1,T
-       DO 1 K=1,M
+       DO 1 K=1,M+1
        DO 1 L=1,M
           PMAT(I,J,K,L)=0.0D0
   1    CONTINUE

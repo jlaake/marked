@@ -15,14 +15,13 @@
 #' structure with a number of elements described under return value below.
 #' 
 #' @param x a multivariate multistate (mvms) specification as described above
-#' @param df.states dataframe of states created from set_mvms
 #' @return a list with the following elements: 1) mvms - the input specification,
 #' 2) nd - the number of dimensions, 3) df - the dataframe containing all combinations 
 #' of observations across dimensions including uncertain states, 4) df.states - the dataframe with all
 #' combinations of states across dimensions, 5) uncertain - boolean vector with nd elements
 #' indicating whether there is uncertainy in states for each dimension.
 #' @author Jeff Laake
-#' @export set_mvms
+#' @export 
 #' @examples
 #' set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u"),exclude=c("CP")))
 set_mvms=function(x)
@@ -68,7 +67,7 @@ set_mvms=function(x)
 #' @param transition if TRUE, creates design data for a state transition (from to); otherwise just state variables
 #' @return a dataframe to be used with design data for mvms model
 #' @author Jeff Laake
-#' @export mvms_design_data
+#' @export 
 #' @examples
 #' x=set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u")))
 #' mvms_design_data(x$df.states)
@@ -113,13 +112,16 @@ mvms_design_data=function(df.states,df=NULL,transition=TRUE)
 			{
 				xx=as.list(as.data.frame(rbind(as.matrix(x)),stringsAsFactors=FALSE))
 				xx=c(x[!uncertain],lapply(x[uncertain],function(x) c(x,"u")))
-				expand.grid(xx)
+				xx=expand.grid(xx)
+				xx=xx[order(apply(xx,1,paste,collapse="")),,drop=FALSE]
 			}
-			obs=do.call("rbind",apply(xx[,-1],1, assignobs))
+			if(ncol(df.states)>1)
+			    obs=do.call("rbind",apply(xx[,-1],1, assignobs))
+			else
+				obs=do.call("rbind",apply(xx,1, assignobs))
 	        nobs=nrow(obs)/nrow(xx)
 			colnames(obs)=paste("obs",names(obs),sep=".")
-			obs=obs[do.call(order,lapply(obs,function(x) x)),]
-			return(cbind(xx[rep(1:nrow(xx),each=nobs),],obs))
+			return(cbind(xx[rep(1:nrow(xx),each=nobs),,drop=FALSE],obs))
 		}
 	}
 }
