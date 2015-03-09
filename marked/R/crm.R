@@ -208,25 +208,36 @@
 #'    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
 #' mod.Phisex.pdot
 #' # fit same 3 models with calls to mark
-#' \donttest{
-#' require(RMark)
-#' mod0=mark(dipper,
+#' if(require(RMark))
+#' {
+#' nomark=FALSE
+#' data(dipper)
+#' if(class(mark(dipper))=="try-error") nomark=TRUE
+#' if(!nomark)
+#' {
+#'    mod0=mark(dipper,
 #'    model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)),output=FALSE)
-#' summary(mod0,brief=TRUE)
-#' mod1=mark(dipper,
+#'    summary(mod0,brief=TRUE)
+#'    mod1=mark(dipper,
 #'    model.parameters=list(Phi=list(formula=~1),p=list(formula=~1)),output=FALSE)
-#' summary(mod1,brief=TRUE)
-#' mod2<-mark(dipper,groups="sex",
-#'    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
-#' summary(mod2,brief=TRUE)
+#'    summary(mod1,brief=TRUE)
+#'    mod2<-mark(dipper,groups="sex",
+#'      model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)),output=FALSE)
+#'    summary(mod2,brief=TRUE)
+#' }
+#' } else {
+#'   nomark=TRUE
+#'   cat("RMark is not available")
 #' }
 #' # jolly seber model
 #' crm(dipper,model="js",groups="sex",
 #'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' mark(dipper,model="POPAN",groups="sex",
 #'    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
-#' library(RMark)
+#' if(!nomark)
+#' {
 #' data(dipper)
 #' data(mstrata)
 #' mark(dipper,model.parameters=list(p=list(formula=~time)),output=FALSE)$results$beta
@@ -234,6 +245,7 @@
 #'  S=list(formula=~1),Psi=list(formula=~-1+stratum:tostratum)),
 #'  output=FALSE)$results$beta
 #' detach("package:RMark")
+#' }
 #' ##CJS example
 #' crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))
 #' ##MSCJS example
@@ -366,13 +378,13 @@ if(model=="PROBITCJS")
 }
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 {
-	if(substr(data$model,1,4)=="MVMS")
+	if(substr(model,1,4)=="MVMS")
 	{
 		obslevels=data.proc$ObsLevels
 		sup=data.proc$fct_sup(list(obslevels=obslevels))
 	} else
 		sup=NULL
-	if(is.null(data.proc$strata.list) | substr(data$model,1,4)=="MVMS"){
+	if(is.null(data.proc$strata.list) | substr(model,1,4)=="MVMS"){
 		mx=data.proc$m
 	}else{
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))

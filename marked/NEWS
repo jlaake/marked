@@ -1,4 +1,4 @@
-marked 1.1.7 3 March 2015
+marked 1.1.7 9 March 2015
 -----------------
 CHANGES
 
@@ -22,7 +22,13 @@ NEW FEATURES
 
 * added model class mvmscjs 
 
-* added data set mstrata from MARK and examples showing fitted models from hmmmscjs, mscjs and mvmscjs. The mscjs is not run by default because it requires ADMB. Code from help can be copied and pasted.
+* added data set mstrata from MARK and examples showing fitted models from hmmmscjs, mscjs and mvmscjs. The mscjs is not run unless ADMB is available. Code from help can be copied and pasted.
+
+BUG FIXES
+
+* fixed bug in multistate.tpl that caused array out of bounds in ADMB when in safe mode
+
+* fixed bug in msgamma.f; PSISUM not defined as REAL*8 so sum of transitions slightly less (1E-8) than 1.
 
 
 marked 1.1.6 29 Aug 2014
