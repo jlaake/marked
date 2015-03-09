@@ -53,16 +53,6 @@ ms_gamma=function(pars,m,F,T)
 	 dim(value$tmat)=c(nrow(pars$S),T-1,m,m)
 	 value$tmat
  }
- mvms_gamma=function(pars,m,F,T) 
- {
-	 # create 4-d array with a matrix for each id and occasion
-	 # from pars$Phi which is a matrix of id by occasion survival probabilities 
-	 # and pars$Psi which is state transitions
-	 value=.Fortran("msgam",as.double(pars$Phi),as.double(pars$Psi),as.integer(nrow(pars$Phi)),as.integer(m),
-			 as.integer(F),as.integer(T),tmat=double(nrow(pars$Phi)*(T-1)*m^2),PACKAGE="marked")
-	 dim(value$tmat)=c(nrow(pars$Phi),T-1,m,m)
-	 value$tmat
- }
  ms2_gamma=function(pars,m,F,T) 
  {
 	 ns=m$ns*m$na+1
@@ -72,6 +62,16 @@ ms_gamma=function(pars,m,F,T)
 			 as.integer(ns),as.integer(m$na),as.integer(m$ns),as.integer(F),as.integer(T),
 			 tmat=double(nrow(pars$S)*(T-1)*ns^2),PACKAGE="marked")
 	 dim(value$tmat)=c(nrow(pars$S),T-1,ns,ns)
+	 value$tmat
+ }
+ mvms_gamma=function(pars,m,F,T) 
+ {
+	 # create 4-d array with a matrix for each id and occasion
+#	 # from pars$Phi which is a matrix of id by occasion survival probabilities 
+	 # and pars$Psi which is state transitions
+	 value=.Fortran("msgam",as.double(pars$Phi),as.double(pars$Psi),as.integer(nrow(pars$Phi)),as.integer(m),
+			 as.integer(F),as.integer(T),tmat=double(nrow(pars$Phi)*(T-1)*m^2),PACKAGE="marked")
+	 dim(value$tmat)=c(nrow(pars$Phi),T-1,m,m)
 	 value$tmat
  }
 # R versions of the FORTRAN code

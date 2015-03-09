@@ -2,7 +2,7 @@
        INTEGER N,F(N),T,I,J,K,L,INDEX,INDEX1
        DOUBLE PRECISION S(N,(M-1)*(T-1)),SURV
        DOUBLE PRECISION PSI(N,(M-1)*(M-1)*(T-1)),TMAT(N,T-1,M,M)
-       DOUBLE PRECISION PSIMAT(M,M),PSIX
+       DOUBLE PRECISION PSIMAT(M,M),PSIX,PSISUM
 C      Loop over each capture history and T-1 intervals
        DO 30 I=1,N
 	   IF(F(I).LT.T) THEN
