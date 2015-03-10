@@ -1,20 +1,14 @@
-#' Print model results or extract coefficients
+#' Print model results 
 #' 
-#' Provides a printed simple summary of the model results or extracts the beta
-#' coefficients from the model results.
+#' Provides a printed simple summary of the model results.
 #' 
-#' @usage \method{coef}{crm}(object,...)
-#'        \method{print}{crm}(x,...)
-#'        \method{print}{crmlist}(x,...)
-#' @aliases print.crm coef.crm print.crmlist
+#' @usage \method{print}{crm}(x,...)
 #' @param x crm model result or list of model results
-#' @param object crm model result
 #' @param ... generic arguments not used here
 #' @return \code{print} prints a simple summary of the model to the screen and
-#' returns NULL. \code{coef} returns a dataframe with estimates and standard
-#' errors and confidence intervals if hessian=TRUE on model run.
+#' returns NULL. 
 #' @author Jeff Laake
-#' @export coef.crm print.crm print.crmlist
+#' @export 
 #' @seealso \code{\link{crm}}
 #' @keywords utility
 print.crm=function(x,...)
@@ -42,6 +36,19 @@ print.crm=function(x,...)
    }
    invisible(x)
 }
+#' Extract coefficients
+#' 
+#' Extracts the beta coefficients from the model results.
+#' 
+#' @usage \method{coef}{crm}(object,...)
+#' @param object crm model result
+#' @param ... generic arguments not used here
+#' @return  returns a dataframe with estimates and standard
+#' errors and confidence intervals if hessian=TRUE on model run.
+#' @author Jeff Laake
+#' @export 
+#' @seealso \code{\link{crm}}
+#' @keywords utility
 coef.crm=function(object,...)
 {
    if("results"%in%names(object)) object=object$results
@@ -71,6 +78,15 @@ coef.crm=function(object,...)
    }
    return(beta)
 }
+#' Print model table from model list
+#' 
+#' @usage \method{print}{crmlist}(x,...)
+#' @param x list of model results
+#' @param ... generic arguments not used here
+#' @return None#' @author Jeff Laake
+#' @export coef.crm print.crm print.crmlist
+#' @seealso \code{\link{crm}}
+#' @keywords utility
 print.crmlist<-function(x,...)
 {
 	if(!is.null(x$model.table))
