@@ -52,6 +52,7 @@ compute_matrices=function(object,ddl=NULL)
 #' @examples
 #' #
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # cormack-jolly-seber model
 #' data(dipper)
 #' mod=crm(dipper,model="hmmcjs")
@@ -110,6 +111,7 @@ backward_prob=function(object,ddl=NULL)
 #' @examples
 #' #
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # cormack-jolly-seber model
 #' data(dipper)
 #' mod=crm(dipper,model="hmmcjs")
@@ -149,6 +151,7 @@ local_decode=function(object,ddl=NULL,state.names=NULL)
 #' @examples
 #' #
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # cormack-jolly-seber model
 #' data(dipper)
 #' mod=crm(dipper,model="hmmcjs")

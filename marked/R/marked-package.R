@@ -156,20 +156,26 @@ NULL
 #' # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 #' # negatively biased. Note the data are different and AIC not comparable to other models.
 #' mod3
-#' tag_status=function(k,x) 
+#' if(require(expm))
 #' {
-#' 	mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
-#' 	colnames(mat)=c("11","10","01","00","Dead")
-#' 	rownames(mat)=1:k
-#' 	return(mat)
+#'    tag_status=function(k,x) 
+#'    {
+#' 	    mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
+#' 	    colnames(mat)=c("11","10","01","00","Dead")
+#' 	    rownames(mat)=1:k
+#' 	    return(mat)
+#'     }
+#'     par(mfrow=c(1,4))
+#'     barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),
+#'      beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),
+#'      args.legend=list(x=20,y=.9)) 
+#'     barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                   ylim=c(0,1),main="mod1")
+#'     barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                   ylim=c(0,1),main="mod2")
+#'     barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                    ylim=c(0,1),main="mod3")
 #' }
-#' par(mfrow=c(1,4))
-#' barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),
-#'  beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),
-#'  args.legend=list(x=20,y=.9)) 
-#' barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod1")
-#' barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod2")
-#' barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod3")
 #' }
 NULL
 
@@ -201,14 +207,16 @@ NULL
 #' ms1.ddl=make.design.data(ms1)
 #' ms2.ddl=make.design.data(ms2)
 #' ms3.ddl=make.design.data(ms3)
-#' \dontrun{
-#' mod1=crm(ms1,ms1.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
-#'       p=list(formula=~time)),hessian=TRUE)
-#' mod1
-#' }
+#' 
+#' # following requires ADMB or the exe constructed from ADMB and links set for ADMB
+#' mod1=try(crm(ms1,ms1.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#'       p=list(formula=~time)),hessian=TRUE))
+#' if(class(mod1)[1]!="try-error") mod1
+#' 
 #' mod2=crm(ms2,ms2.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
 #'       p=list(formula=~time)),hessian=TRUE)
 #' mod2
+#' 
 #' mod3=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
 #'       p=list(formula=~time)),hessian=TRUE)
 #' mod3

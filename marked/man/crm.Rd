@@ -253,7 +253,7 @@ if(require(RMark))
 {
 nomark=FALSE
 data(dipper)
-if(class(mark(dipper))=="try-error") nomark=TRUE
+if(any(class(mark(dipper))=="try-error")) nomark=TRUE
 if(!nomark)
 {
    mod0=mark(dipper,
@@ -275,8 +275,9 @@ crm(dipper,model="js",groups="sex",
    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
 \donttest{
 # This example is excluded from testing to reduce package check time
-mark(dipper,model="POPAN",groups="sex",
+mod=mark(dipper,model="POPAN",groups="sex",
    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)))
+summary(mod)
 if(!nomark)
 {
 data(dipper)
@@ -290,7 +291,8 @@ detach("package:RMark")
 ##CJS example
 crm(dipper,model="hmmCJS",model.parameters = list(p = list(formula = ~time)))
 ##MSCJS example
-ms=process.data(mstrata,model="hmmMSCJS")
+data(mstrata)
+ms=process.data(mstrata,model="hmmMSCJS",strata.labels=c("A","B","C"))
 ms.ddl=make.design.data(ms)
 ms.ddl$Psi$fix=NA
 ms.ddl$Psi$fix[ms.ddl$Psi$stratum==ms.ddl$Psi$tostratum]=1

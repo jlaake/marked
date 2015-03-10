@@ -41,6 +41,7 @@
 #' @author Devin Johnson
 #' @examples
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # Analysis of the female dipper data
 #' data(dipper)
 #' dipper=dipper[dipper$sex=="Female",]

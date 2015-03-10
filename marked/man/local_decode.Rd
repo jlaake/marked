@@ -22,6 +22,7 @@ Computes state predictions one at a time for each occasion for each individual
 \examples{
 #
 \donttest{
+# This example is excluded from testing to reduce package check time
 # cormack-jolly-seber model
 data(dipper)
 mod=crm(dipper,model="hmmcjs")

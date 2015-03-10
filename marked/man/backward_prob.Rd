@@ -20,6 +20,7 @@ Computes backward probability sequence for a set of capture histories
 \examples{
 #
 \donttest{
+# This example is excluded from testing to reduce package check time
 # cormack-jolly-seber model
 data(dipper)
 mod=crm(dipper,model="hmmcjs")

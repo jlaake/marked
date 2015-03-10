@@ -182,7 +182,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    nocc=model.list$nocc
    nocc.secondary=NULL
    num=model.list$num
-   if(model.list$strata&is.null(strata.labels))stop("\nstrata.labels must be specified for stratified models\n")
+   if(model.list$strata&is.null(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
+	   stop("\nstrata.labels must be specified for stratified models\n")
    if(model.list$IShmm)
    {
 	   model.list=setupHMM(model.list,model,strata.labels)
@@ -209,7 +210,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 	   if(is.null(strata.labels))
 		   strata.labels=inp.strata.labels
 	   # If strata specified as a vector test otherwise pass it through
-	   if(is.vector(strata.labels))
+	   if(is.vector(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
 	   {
 		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
 		   nstrata=length(strata.labels)
@@ -217,7 +218,8 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   if(unobserved<0 | !all(inp.strata.labels%in%strata.labels))
 			   stop(paste("\nSome of the strata in the data\n",paste(inp.strata.labels,collapse=","),"\nnot specified in strata.labels\n",paste(strata.labels,collapse=","),"\n"))
 		   if(nstrata<2)stop("\nAny multistrata model must have at least 2 strata\n")
-	   }
+	   } else
+		   unobserved=0
    }
    #
    #     If time intervals specified make sure there are nocc-1 of them if a vector

@@ -49,6 +49,7 @@
 #' @keywords utility
 #' @examples
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' data(dipper)
 #' dipper.proc=process.data(dipper)
 #' ddl=make.design.data(dipper.proc)

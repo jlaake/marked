@@ -17,6 +17,7 @@
 #' @keywords models
 #' @examples
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # cormack-jolly-seber model
 #' data(dipper)
 #' mod=crm(dipper,model="hmmcjs")
@@ -25,8 +26,8 @@
 #' barplot(t(x$alpha[45,,]),beside=TRUE,names.arg=x$chforwardstrings)
 #' barplot(t(x$phi[45,,]),beside=TRUE,names.arg=x$chforwardstrings)
 #' # multi-state example showing state predictions
-#' data(mstrata,package="RMark")
-#' mod=crm(mstrata,model="hmmMSCJS")
+#' data(mstrata)
+#' mod=crm(mstrata,model="hmmMSCJS",strata.labels=c("A","B","C"))
 #' #' x=hmmDemo(mod)
 #' # state predictions are normalized by likelihood value which = rowSums(alpha*beta)
 #' cat(paste("\nrowsums = ",rowSums(x$alpha[45,,]*x$beta[45,,],na.rm=TRUE)[2],

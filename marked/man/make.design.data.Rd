@@ -58,6 +58,7 @@ occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
 }
 \examples{
 \donttest{
+# This example is excluded from testing to reduce package check time
 data(dipper)
 dipper.proc=process.data(dipper)
 ddl=make.design.data(dipper.proc)

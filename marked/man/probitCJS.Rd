@@ -57,6 +57,7 @@ and draws a sample from the posterior distribution using a Gibbs sampler.
 }
 \examples{
 \donttest{
+# This example is excluded from testing to reduce package check time
 # Analysis of the female dipper data
 data(dipper)
 dipper=dipper[dipper$sex=="Female",]
