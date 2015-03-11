@@ -12,8 +12,7 @@
 \item{...}{generic arguments not used here}
 }
 \value{
-\code{print} prints a simple summary of the model to the screen and
-returns NULL.
+prints a simple summary of the model to the screen and returns NULL.
 }
 \description{
 Provides a printed simple summary of the model results.
