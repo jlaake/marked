@@ -65,7 +65,7 @@ FUNCTION void ll_i(const int i, const dvar_vector& phibeta, const dvar_vector& p
    	for (k=1;k<=nS;k++)
        phi((j-1)*nS+k)=pow(phi((j-1)*nS+k),tint(i,j));    
     for(j=1;j<=nrows;j++)
-	   p(j+frst(i)-1)=1/(1+exp(-pdm(bindex+j)*pbeta));  // compute p 
+	   p(j)=1/(1+exp(-pdm(bindex+j)*pbeta));  // compute p 
 
 	bindex=(i-1)*nT;                                    // initialize index into psi for ith history
     for(j=1;j<=nT;j++)

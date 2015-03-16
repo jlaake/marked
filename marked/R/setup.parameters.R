@@ -72,7 +72,7 @@ setup.parameters <-
 	fdir=file.path(fdir,"parameters.txt")	
 	parameter_definitions=read.delim(fdir,header=TRUE,
 			colClasses=c("character","character",rep("numeric",3),rep("character",3),
-					rep("logical",3),"numeric","logical","logical","character","character"))
+					rep("logical",3),"numeric","logical","logical","character","character","logical"))
 #
 #  Create valid parameter list depending on model.
 #

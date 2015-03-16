@@ -1,16 +1,35 @@
-marked 1.1.7 30 Dec 2014
+marked 1.1.7 10 March 2015
 -----------------
 CHANGES
 
 * modified R_HMMlikelihood and loglikelihood to be more useful for computations like in hmmDemo and local_decode
 
-* matrices delta, gamma, and dmat no longer stored in model object unless argument save.matrices=TRUE. They can be computed with compute_matrices. 
+* matrices delta, gamma, and dmat no longer stored in model object unless argument save.matrices=TRUE. They can be computed with compute_matrices.
+
+* specification of strata.labels is now required for multistate models. Code will no longer use values it finds in capture history. You can specify more strata that are in the data (unobserved strata).
+
+* modified mscjs.r to return standard crm model object rather than admb object.   
 
 NEW FEATURES
 
 * added compute_matrices, local_decode, global_decode, backward_prob, omega functions for HMM manipulations
 
 * added load.model into print.crm so if it is given a file string it will load the external model and then print results.
+
+* added function crmlist_fromfiles which allows you to select a set of .rda files for external models to create a crmlist with a model table.
+
+* added function rerun_crm which will run through a model list and re-run any models that did not converge (convergence !=0). A different method can be specified. If a specific set of models are to be re-run regardless of the convergence criterion then modelnums set to a vector of model numbers in the model list and they are re-run instead of those that did not converge. An initial model can be specified which is useful to rerun a model with a model that is a subset of that model.
+
+* added model class mvmscjs 
+
+* added data set mstrata from MARK and examples showing fitted models from hmmmscjs, mscjs and mvmscjs. The mscjs is not run unless ADMB is available. Code from help can be copied and pasted.
+
+BUG FIXES
+
+* fixed bug in multistate.tpl that caused array out of bounds in ADMB when in safe mode
+
+* fixed bug in msgamma.f; PSISUM not defined as REAL*8 so sum of transitions slightly less (1E-8) than 1.
+
 
 marked 1.1.6 29 Aug 2014
 -----------------

@@ -7,11 +7,27 @@
 #' @param m number of states
 #' @param F initial occasion vector 
 #' @param T number of occasions
+#' @param sup  list of supplemental information that may be needed by the function but only needs to be computed once
 #' @aliases cjs_dmat ms_dmat ums_dmat ums2_dmat
-#' @export cjs_dmat ms_dmat ums_dmat ums2_dmat
+#' @export cjs_dmat ms_dmat ums_dmat ums2_dmat mvms_dmat
 #' @return 4-d array of id and occasion-specific observation probability matrices - state-dependent distributions in Zucchini and MacDonald (2009)
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
+mvms_dmat=function(pars,m,F,T,sup) 
+{
+	unk=1
+	if(length(pars$delta)==0) 
+	{
+		unk=0
+		pars$delta=1
+	}
+	value=.Fortran("mvmsp",as.double(pars$p),as.double(pars$delta),as.integer(nrow(pars$p)),as.integer(m),
+			as.integer(F),as.integer(T),as.integer(sup$np),length(sup$obslevels),as.integer(sup$pcounts),as.integer(sup$indices_forp),
+			as.integer(unk),pmat=double(nrow(pars$p)*T*length(sup$obslevels)*m),PACKAGE="marked")
+	dim(value$pmat)=c(nrow(pars$p),T,length(sup$obslevels),m)
+	value$pmat
+}
+
 cjs_dmat=function(pars,m,F,T) 
 {
 	value=.Fortran("cjsp",as.double(pars$p),as.integer(nrow(pars$p)),
@@ -56,6 +72,33 @@ ums2_dmat=function(pars,m,F,T)
 			pmat=double(nrow(pars$p)*T*(m$na*(m$ns+1)+1)*(m$ns*m$na+1)),PACKAGE="marked")
 	dim(value$pmat)=c(nrow(pars$p),T,m$na*(m$ns+1)+1,m$ns*m$na+1)
 	value$pmat
+}
+mvms_sup=function(x) 
+{
+#   supplemental function to provide information to dmat function 
+#   it is only run once per model fit because it doesn't change
+	obslevels=x$obslevels
+#   Function to identify indices that should be filled in matrix
+	identify=function(x,y) { 
+		col=grep(y,s)
+		if(length(col)>0)
+			return(data.frame(row=x,col=col))
+		else
+			return(NULL)
+	}
+#   state names
+	unknown=grep("u",obslevels)
+	if(length(unknown)==0)
+		s=obslevels[-1]
+	else
+		s=obslevels[-grep("u",obslevels)][-1]
+#   indices for p and delta for non-zero values
+	indices_forp=as.matrix(do.call("rbind",mapply(identify,1:length(obslevels),gsub("u",".",obslevels))))
+	s=c(s,"Dead")
+	np=nrow(indices_forp)
+	pcounts=table(indices_forp[,2])
+	indices_forp=indices_forp[order(indices_forp[,2]),]
+	return(list(indices_forp=indices_forp,np=np,pcounts=pcounts,obslevels=obslevels))
 }
 # R versions of the FORTRAN code
 #
@@ -237,4 +280,3 @@ ums2_dmat=function(pars,m,F,T)
 #	}
 #	pmat
 #}
-
