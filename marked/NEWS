@@ -1,3 +1,10 @@
+marked 1.1.8 16 March 2015
+-----------------
+CHANGES
+
+* modified crmlist_fromfiles to avoid issue on non-Windows machines which do not support choose.files 
+
+
 marked 1.1.7 10 March 2015
 -----------------
 CHANGES

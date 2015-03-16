@@ -184,6 +184,7 @@ load.model=function(x)
 }
 crmlist_fromfiles=function(filenames=NULL)
 {
+	if(R.Version()$os!="mingw32")Filters=NULL
 	if(is.null(filenames))
 	{
 		if(R.Version()$os=="mingw32")
