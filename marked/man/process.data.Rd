@@ -23,8 +23,7 @@ covariates specific to animals with that capture history.}
 \item{begin.time}{Time of first capture occasion or vector of times if
 different for each group}
 
-\item{model}{Type of analysis model. See \code{mark in RMark} for a list of
-possible values for \code{model}}
+\item{model}{Type of analysis model.}
 
 \item{mixtures}{Number of mixtures in closed capture models with
 heterogeneity}

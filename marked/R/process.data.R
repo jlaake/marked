@@ -103,8 +103,7 @@
 #' covariates specific to animals with that capture history.
 #' @param begin.time Time of first capture occasion or vector of times if
 #' different for each group
-#' @param model Type of analysis model. See \code{mark in RMark} for a list of
-#' possible values for \code{model}
+#' @param model Type of analysis model. 
 #' @param mixtures Number of mixtures in closed capture models with
 #' heterogeneity
 #' @param groups Vector of factor variable names (in double quotes) in

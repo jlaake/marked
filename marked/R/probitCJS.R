@@ -238,7 +238,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     ### UPDATE Z.TILDE ### 
     a = ifelse(zvec==0, -Inf, 0)
     b = ifelse(zvec==0, 0, Inf)
-    z.tilde = rtruncnorm(n, a=a, b=b, mean=as.vector(Xz%*%beta.z+eta.phi), sd=1)
+    z.tilde = truncnorm::rtruncnorm(n, a=a, b=b, mean=as.vector(Xz%*%beta.z+eta.phi), sd=1)
     
     ### BETA.Z UPDATE ###
     idx.z.tilde = make.ztilde.idx(id, zvec)
@@ -251,7 +251,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     ### UPDATE Y.TILDE ### 
     a = ifelse(yvec==0, -Inf, 0)
     b = ifelse(yvec==0, 0, Inf)
-    y.tilde = rtruncnorm(n, a=a, b=b, mean=as.vector(Xy%*%beta.y+eta.p), sd=1)
+    y.tilde = truncnorm::rtruncnorm(n, a=a, b=b, mean=as.vector(Xy%*%beta.y+eta.p), sd=1)
     
     ### BETA.Y UPDATE ###
     Q.b.y = tau.b.y*crossprod(Xy[zvec==1,])

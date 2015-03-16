@@ -26,7 +26,7 @@
 #' 
 #'         load.model(x)
 #'  
-#'         crmlist_fromfiles()
+#'         crmlist_fromfiles(filenames=NULL)
 #' 
 #'         rerun_crm(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 #' 
@@ -47,6 +47,7 @@
 #' @param method vector of methods to use for optimization if different that previous run in rerun_crm
 #' @param modelnums model numbers to be re-run instead of those that did not covnerge
 #' @param initial either a fitted crm model or the model number in model.list to use for starting values
+#' @param filenames for non-Windows machine, vector of filenames for external files must be specifed in crmlist_fromfiles including .rda extension
 #' @return create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
 #' and a model selection table; load.model returns model object that is stored externally
 #' @author Jeff Laake
@@ -181,9 +182,15 @@ load.model=function(x)
 	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
 	return(model)
 }
-crmlist_fromfiles=function()
+crmlist_fromfiles=function(filenames=NULL)
 {
-	filenames=choose.files(filters=Filters["RData",])
+	if(is.null(filenames))
+	{
+		if(R.Version()$os=="mingw32")
+			filenames=choose.files(filters=Filters["RData",])
+		else
+			stop("filenames must be specified for non-Windows machine")
+	}
 	modelnames=unlist(strsplit(basename(filenames),"\\.rda"))
 	mtable=model.table(c(filenames,""))
 	for(f in filenames)

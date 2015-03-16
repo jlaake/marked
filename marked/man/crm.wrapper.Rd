@@ -18,7 +18,7 @@ crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
 
         load.model(x)
 
-        crmlist_fromfiles()
+        crmlist_fromfiles(filenames=NULL)
 
         rerun_crm(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 }
@@ -53,6 +53,8 @@ type; if NULL it is created; For rerun_crm, must be the same ddl as used with or
 \item{modelnums}{model numbers to be re-run instead of those that did not covnerge}
 
 \item{initial}{either a fitted crm model or the model number in model.list to use for starting values}
+
+\item{filenames}{for non-Windows machine, vector of filenames for external files must be specifed in crmlist_fromfiles including .rda extension}
 }
 \value{
 create.model.list returns a matrix for crm.wrapper; crm.wrapper runs and stores models externally and retrurns a list of model results
