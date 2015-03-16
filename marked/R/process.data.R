@@ -103,8 +103,7 @@
 #' covariates specific to animals with that capture history.
 #' @param begin.time Time of first capture occasion or vector of times if
 #' different for each group
-#' @param model Type of analysis model. See \code{mark in RMark} for a list of
-#' possible values for \code{model}
+#' @param model Type of analysis model. 
 #' @param mixtures Number of mixtures in closed capture models with
 #' heterogeneity
 #' @param groups Vector of factor variable names (in double quotes) in
@@ -163,7 +162,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    # If ch is not comma delimited, turn into comma delimited
    if(length(grep(",",data$ch[1]))==0)
 	   data$ch=sapply(strsplit(data$ch,""),paste,collapse=",")
-   data$ch=toupper(data$ch)
+#   data$ch=toupper(data$ch)
    ch.lengths=sapply(strsplit(data$ch,","),length)
    nocc=median(ch.lengths)
    if(any(ch.lengths!=nocc))
@@ -179,6 +178,16 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    # the bayesian models cannot deal with accumulation
    if(!model.list$accumulate)accumulate=FALSE
    ch.values=unique(unlist(strsplit(data$ch,",")))
+   nocc=model.list$nocc
+   nocc.secondary=NULL
+   num=model.list$num
+   if(model.list$strata&is.null(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
+	   stop("\nstrata.labels must be specified for stratified models\n")
+   if(model.list$IShmm)
+   {
+	   model.list=setupHMM(model.list,model,strata.labels)
+	   if(model.list$strata)strata.labels=model.list$hmm$strata.labels
+   }
    #  If no strata in model then only 0,1 are acceptable values
    if(!model.list$strata)
    {
@@ -186,24 +195,31 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   stop(paste("\nIncorrect ch values in data:",paste(ch.values,collapse=""),"\n",sep=""))
    } else
    {
-       # Get unique ch values and use as strata.labels unless they are specified   
+	   # Get unique ch values and use as strata.labels unless they are specified   
 	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
+	   if(substr(model,1,4)%in%c("HMMU","MVMS"))
+	   {
+		   if(substr(model,1,4)=="MVMS")
+			   uindex=grep("u",inp.strata.labels)
+		   else
+			   uindex=grep("U",inp.strata.labels)
+		   if(length(uindex)>0)inp.strata.labels=inp.strata.labels[-uindex]
+	   }
 	   nstrata = length(inp.strata.labels)                  
 	   if(is.null(strata.labels))
 		   strata.labels=inp.strata.labels
 	   # If strata specified as a vector test otherwise pass it through
-	   if(is.vector(strata.labels))
+	   if(is.vector(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
 	   {
 		   strata.labels=c(strata.labels[strata.labels%in%inp.strata.labels],strata.labels[!strata.labels%in%inp.strata.labels])
- 	       nstrata=length(strata.labels)
-	       unobserved=nstrata-length(inp.strata.labels)
-	       if(nstrata<2)stop("\nAny multistrata(multistata) model must have at least 2 strata\n")
-	   }
+		   nstrata=length(strata.labels)
+		   unobserved=nstrata-length(inp.strata.labels)
+		   if(unobserved<0 | !all(inp.strata.labels%in%strata.labels))
+			   stop(paste("\nSome of the strata in the data\n",paste(inp.strata.labels,collapse=","),"\nnot specified in strata.labels\n",paste(strata.labels,collapse=","),"\n"))
+		   if(nstrata<2)stop("\nAny multistrata model must have at least 2 strata\n")
+	   } else
+		   unobserved=0
    }
-   nocc=model.list$nocc
-   nocc.secondary=NULL
-   num=model.list$num
-   if(model.list$IShmm) model.list=setupHMM(model.list,model,strata.labels)
    #
    #     If time intervals specified make sure there are nocc-1 of them if a vector
    #     and if a matrix rows must match number of animals and # cols = nocc+num
@@ -554,4 +570,3 @@ accumulate_data <- function(data)
 	message(nx, " capture histories collapsed into ", nrow(x), "\n", appendLF=FALSE)
 	return(x)	
 }
-

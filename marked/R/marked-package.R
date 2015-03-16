@@ -94,6 +94,7 @@ NULL
 #' @keywords datasets
 #' @examples
 #' \donttest{
+#' # This example is excluded from testing to reduce package check time
 #' # get data; the beta parameters used to simulate the data were
 #' # Phi: 2.197, p: -0.4064  Tau:-2,-1,3
 #' data(tagloss)
@@ -127,8 +128,6 @@ NULL
 #' # model.
 #' mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
 #'         initial=list(Phi=2,p=.3,tau=c(-2)),hessian=TRUE)
-#' }
-#' \dontrun{
 #' # now fit a model allowing different loss rates for each tag but still independent
 #' mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
 #'         initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
@@ -157,23 +156,72 @@ NULL
 #' # the model assumes what are unobserved excess 00's are dead, so the survival estimate will be
 #' # negatively biased. Note the data are different and AIC not comparable to other models.
 #' mod3
-#' tag_status=function(k,x) 
+#' if(require(expm))
 #' {
-#' 	mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
-#' 	colnames(mat)=c("11","10","01","00","Dead")
-#' 	rownames(mat)=1:k
-#' 	return(mat)
+#'    tag_status=function(k,x) 
+#'    {
+#' 	    mat=t(sapply(1:k,function(k,x) (x%^%k)[1,] ,x=x))
+#' 	    colnames(mat)=c("11","10","01","00","Dead")
+#' 	    rownames(mat)=1:k
+#' 	    return(mat)
+#'     }
+#'     par(mfrow=c(1,4))
+#'     barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),
+#'      beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),
+#'      args.legend=list(x=20,y=.9)) 
+#'     barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                   ylim=c(0,1),main="mod1")
+#'     barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                   ylim=c(0,1),main="mod2")
+#'     barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,
+#'                    ylim=c(0,1),main="mod3")
 #' }
-#' par(mfrow=c(1,4))
-#' barplot(t(tag_status(4,mod0$results$mat$gamma[1,1,,])),
-#'  beside=TRUE,ylim=c(0,1),main="mod0",legend.text=c("11","10","01","00","Dead"),
-#'  args.legend=list(x=20,y=.9)) 
-#' barplot(t(tag_status(4,mod1$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod1")
-#' barplot(t(tag_status(4,mod2$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod2")
-#' barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,ylim=c(0,1),main="mod3")
 #' }
 NULL
 
+#' Multistrata example data
+#' 
+#' An example data set which appears to be simulated data that accompanies MARK
+#' as an example analysis using the Multistrata model.
+#' 
+#' This is a data set that accompanies program MARK as an example for the
+#' Multistrata model and is also in the RMark pacakge. Here I use it to show the 
+#' 3 ways models can be fitted to multistrata data. The model MSCJS is not run because it
+#' requires ADMB or the exe constructed from ADMB which is not available if downloaded from CRAN.
+#' 
+#' @name mstrata
+#' @docType data
+#' @format A data frame with 255 observations on the following 2 variables.
+#' \describe{ \item{ch}{a character vector containing the encounter history of
+#' each bird with strata} \item{freq}{the number of birds with that capture
+#' history} }
+#' @keywords datasets
+#' @examples
+#' \donttest{
+#' data(mstrata)
+#' ms1=process.data(mstrata,model="MSCJS",strata.labels=c("A","B","C"))
+#' ms2=process.data(mstrata,model="hmmMSCJS",strata.labels=c("A","B","C"))
+#' # strata.labels for MVMS models must be specified as a list because more than one variable
+#' # can be used
+#' ms3=process.data(mstrata,model="MVMSCJS",strata.labels=list(state=c("A","B","C")))
+#' ms1.ddl=make.design.data(ms1)
+#' ms2.ddl=make.design.data(ms2)
+#' ms3.ddl=make.design.data(ms3)
+#' 
+#' # following requires ADMB or the exe constructed from ADMB and links set for ADMB
+#' mod1=try(crm(ms1,ms1.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#'       p=list(formula=~time)),hessian=TRUE))
+#' if(class(mod1)[1]!="try-error") mod1
+#' 
+#' mod2=crm(ms2,ms2.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#'       p=list(formula=~time)),hessian=TRUE)
+#' mod2
+#' 
+#' mod3=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#'       p=list(formula=~time)),hessian=TRUE)
+#' mod3
+#' }
+NULL
 
 
 
