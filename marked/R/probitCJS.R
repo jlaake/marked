@@ -163,15 +163,15 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   }
   if(is.p.re){
     #n.p.re=length(dml$p$re)
-    if(is.null(parameters$p$priors$re)){
+    if(is.null(parameters$p$prior$re)){
       a.p=rep(2,length(n.p.re))
       b.p=rep(1.0E-4,length(n.p.re))
       Q.p=lapply(n.p.re, function(x){Diagonal(x)})
       rnks.p=n.p.re
     }else{
-      a.p=parameters$p$priors$re$a
-      b.p=parameters$p$priors$re$b
-      Q.p=parameters$Phi$priors$re$Q
+      a.p=parameters$p$prior$re$a
+      b.p=parameters$p$prior$re$b
+      Q.p=parameters$Phi$prior$re$Q
       if(!is.list(Q.p)) {Q.p = list(Q.p)}
       rnks.p=unlist(lapply(Q.p, function(x){sum(eigen(x)$values>nrow(x)*.Machine$double.eps)}))
     }
