@@ -286,7 +286,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
       Xbeta = Xz[zvec==1,]%*%beta.z
       V.alpha.p.inv = crossprod(K.p[zvec==1,]) + Q.alpha.p
       m.alpha.p = solve(V.alpha.p.inv, crossprod(K.p[zvec==1,],y.tilde[zvec==1]-Xbeta))
-      alpha.p = m.alpha.phi + solve(chol(V.alpha.p.inv), rnorm(ncol(K.p),0,1))
+      alpha.p = m.alpha.p + solve(chol(V.alpha.p.inv), rnorm(ncol(K.p),0,1))
       eta.p = K.p%*%alpha.p
       ### TAU.P UPDATE
       quad.p = crossprod(m.p.re*alpha.p,Q.p)%*%(m.p.re*alpha.p)/2
