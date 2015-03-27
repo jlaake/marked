@@ -171,7 +171,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     }else{
       a.p=parameters$p$prior$re$a
       b.p=parameters$p$prior$re$b
-      Q.p=parameters$Phi$prior$re$Q
+      Q.p=parameters$p$prior$re$Q
       if(!is.list(Q.p)) {Q.p = list(Q.p)}
       rnks.p=unlist(lapply(Q.p, function(x){sum(eigen(x)$values>nrow(x)*.Machine$double.eps)}))
     }
@@ -283,13 +283,13 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     }
     if(is.p.re){
       ### ALPHA.P UPDATE ###
-      Xbeta = Xz[zvec==1,]%*%beta.z
+      Xbeta = Xy[zvec==1,]%*%beta.y
       V.alpha.p.inv = crossprod(K.p[zvec==1,]) + Q.alpha.p
       m.alpha.p = solve(V.alpha.p.inv, crossprod(K.p[zvec==1,],y.tilde[zvec==1]-Xbeta))
       alpha.p = m.alpha.p + solve(chol(V.alpha.p.inv), rnorm(ncol(K.p),0,1))
       eta.p = K.p%*%alpha.p
       ### TAU.P UPDATE
-      quad.p = crossprod(m.p.re*alpha.p,Q.p)%*%(m.p.re*alpha.p)/2
+      quad.p = suppressMessages(crossprod(m.p.re*alpha.p,Q.p))%*%(m.p.re*alpha.p)/2
       tau.p = rgamma(length(n.p.re), rnks.p/2 + a.p, as.numeric(quad.p) + b.p)
       Tau.p.mat = Diagonal(x=rep(tau.p, n.p.re))
       Q.alpha.p = Tau.p.mat%*%Q.p
@@ -359,7 +359,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
                        CI.lower=HPDinterval(vc.p)[,1], CI.upper=HPDinterval(vc.p)[,2])
     re.struc.p=list(K=K.p, Q=Q.p)
     palpha.mcmc=mcmc(alpha.p.stor)
-    hpd.p = HPDinterval(phialpha.mcmc)
+    hpd.p = HPDinterval(palpha.mcmc)
     alpha.p = data.frame( mode = apply(alpha.p.stor, 2, mcmc_mode), 
                           mean=apply(alpha.p.stor, 2, mean), 
                           sd=apply(alpha.p.stor,2,sd),
