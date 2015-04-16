@@ -243,7 +243,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     ### BETA.Z UPDATE ###
     idx.z.tilde = make.ztilde.idx(id, zvec)
     V.beta.z.inv = crossprod(Xz[idx.z.tilde,]) + tau.b.z
-    m.beta.z = solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]-eta.phi[idx.z.tilde]) + crossprod(tau.b.z,mu.b.z))
+    m.beta.z = solve(V.beta.z.inv, crossprod(Xz[idx.z.tilde,],z.tilde[idx.z.tilde]-eta.phi[idx.z.tilde]) + tau.b.z*mu.b.z)
     beta.z = m.beta.z + solve(chol(V.beta.z.inv), rnorm(ncol(Xz),0,1))
     if(m>burnin)beta.z.stor[m-burnin,] = beta.z
     
@@ -254,7 +254,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
     
     ### BETA.Y UPDATE ###
     V.beta.y.inv = crossprod(Xy[zvec==1,]) + tau.b.y
-    m.beta.y = solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1]-eta.p[zvec==1])+crossprod(tau.b.y,mu.b.y))
+    m.beta.y = solve(V.beta.y.inv, crossprod(Xy[zvec==1,],y.tilde[zvec==1]-eta.p[zvec==1])+tau.b.y*mu.b.y)
     beta.y = m.beta.y + solve(chol(V.beta.y.inv), rnorm(ncol(Xy),0,1))
     if(m>burnin) beta.y.stor[m-burnin,] = beta.y
     
