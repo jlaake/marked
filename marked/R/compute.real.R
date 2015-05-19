@@ -112,7 +112,7 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
  	     varnames=c(select,include,all.vars(model$model.parameters[[parameter]]$formula),"occ","fixed")
   } else
   {
-	  if(!is.null(ulink)$uselink)	
+	  if(!is.null(ulink)&uselink)	
   	      varnames=c(include,select,"fixed","link")
 	  else
 	      varnames=c(include,select,"fixed")
