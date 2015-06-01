@@ -11,7 +11,8 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   control = list(), refit = 1, itnmax = 5000, scale = NULL,
   run = TRUE, burnin = 100, iter = 1000, use.admb = FALSE,
   crossed = NULL, reml = FALSE, compile = FALSE, extra.args = NULL,
-  strata.labels = NULL, clean = TRUE, save.matrices = TRUE, ...)
+  strata.labels = NULL, clean = TRUE, save.matrices = TRUE,
+  simplify = FALSE, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -81,6 +82,8 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
 
 \item{save.matrices}{for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object}
+
+\item{simplify}{if TRUE, design matrix is simplified to unique valus including fixed values}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }

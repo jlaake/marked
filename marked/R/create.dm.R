@@ -90,7 +90,8 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
    npar=ncol(mm)
    nrows=nrow(x)
    upper=0
-   dm=Matrix(0,nrow=nrows,ncol=npar)
+#   dm=Matrix(0,nrow=nrows,ncol=npar)
+   dm=NULL
    pieces=floor(npar*nrows/chunk_size+1)
    rows_in_piece=floor(nrows/pieces)
    if(npar*nrows>chunk_size)
@@ -102,14 +103,19 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 		  upper=i*rows_in_piece
 		  if(i==1)
 		  {
-			  mm=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
-			  dm[lower:upper,]=mm
-		  }
-		  dm[lower:upper,]=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
+			  dm=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
+#			  dm[lower:upper,]=mm
+		  } else
+		dm=rBind(dm,as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix"))
+#		dm[lower:upper,]=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 
 	  }
    }
    if(upper<nrow(x))
-	   dm[(upper+1):nrow(x),]=as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")    
+	   if(is.null(dm))
+		   dm=as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")
+	   else
+	      dm=rBind(dm,as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")) 
+#   dm[(upper+1):nrow(x),]=as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")    
    colnames(dm)=colnames(mm)
 #  Remove any unused columns; this is slower but uses less memory
    if(remove.unused.columns)
@@ -125,7 +131,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 	   return(dm)
    }
 }
-create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
+create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE,simplify=FALSE)
 {
 	dml=vector("list",length=length(model.parameters))
 	names(dml)=names(model.parameters)
@@ -145,6 +151,11 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
 				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept,
 			    remove.unused.columns=remove.unused.columns)
+		if(simplify)
+		{
+			dml[[i]]$indices=realign.pims(dml[[i]]$fe)
+			dml[[i]]$fe=dml[[i]]$fe[dml[[i]]$indices,,drop=FALSE]
+		} 
 		# if some reals are fixed, assign 0 to rows of dm and then
 		# remove any columns (parameters) that are all 0.
 		if(!is.null(dd$fix)&&any(!is.na(dd$fix)))
@@ -162,4 +173,3 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 	}
 	return(dml)
 }
-

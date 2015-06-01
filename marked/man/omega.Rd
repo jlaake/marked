@@ -7,7 +7,7 @@
 omega(x, k = NULL, labels = NULL)
 }
 \arguments{
-\item{x}{either a transition matrix or 3-d array ( a set of transition matrices)}
+\item{x}{either a transition matrix, list of transition matrices or 3-d array ( a set of transition matrices)}
 
 \item{k}{if x is a transition matrix, this is number of steps 1 to k}
 

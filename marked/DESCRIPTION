@@ -24,7 +24,6 @@ Imports:
     Matrix,
     numDeriv,
     Rcpp (>= 0.9.13),
-    plyr,
     optimx (>= 2013.8.6),
     expm
 LinkingTo: Rcpp

@@ -184,12 +184,13 @@
 #' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
+#' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
 #' @author Jeff Laake
 #' @export crm
-#' @import optimx ggplot2 Matrix Rcpp numDeriv plyr
+#' @import optimx ggplot2 Matrix Rcpp numDeriv
 #' @useDynLib marked
 #' @seealso \code{\link{cjs}}, \code{\link{js}},
 #' \code{\link{make.design.data}},\code{\link{process.data}}
@@ -250,7 +251,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=TRUE,save.matrices=TRUE,...)
+ strata.labels=NULL,clean=TRUE,save.matrices=TRUE,simplify=FALSE,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -326,8 +327,13 @@ if(is.null(ddl))
 	design.parameters=ddl$design.parameters
 }
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
+if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS")))
+{
+	simplify=FALSE
+	message("Can only use simplify with HMM models. simplify set to FALSE")
+}
 # Create design matrices for each parameter
-dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=1e7)
+dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify)
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)
