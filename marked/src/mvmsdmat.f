@@ -12,6 +12,10 @@ C      Zero out values
        DO 1 L=1,M
           PMAT(I,J,K,L)=0.0D0
   1    CONTINUE
+       DO 2 K=1,NOBS
+       DO 2 L=1,M
+          DMAT(K,L)=0.0D0
+  2    CONTINUE
 C      Loop over each capture history and from F(I) to T-1
        DO 20 I=1,N
        DO 20 J=F(I),T-1
