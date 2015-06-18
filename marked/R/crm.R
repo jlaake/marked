@@ -398,8 +398,21 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
 	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
  	if(save.matrices)
+	{
 		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
+	    if(model=="HMMCJS")
+		{
+			dimnames(runmodel$mat$gamma)[3:4]=list(c("Alive","Dead"),c("Alive","Dead"))
+			dimnames(runmodel$mat$dmat)[3:4]=list(c("Missed","Seen"),c("Alive","Dead"))
+		}else
+		{
+			dimnames(runmodel$mat$gamma)[3:4]=list(c(data.proc$strata.labels,"Dead"),c(data.proc$strata.labels,"Dead"))
+			dimnames(runmodel$mat$dmat)[3:4]=list(data.proc$ObsLevels,c(data.proc$strata.labels,"Dead"))
+		}
+		names(dimnames(runmodel$mat$gamma))=c("Id","Occasion","From_state","To_state")
+		names(dimnames(runmodel$mat$dmat))=c("Id","Occasion","Observation","State")
+    }
 	parlist=split(par,initial.list$ptype)
 	par=vector("list",length=length(names(initial.list$par)))
 	names(par)=names(initial.list$par)
