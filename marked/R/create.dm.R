@@ -160,7 +160,9 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 		# remove any columns (parameters) that are all 0.
 		if(!is.null(dd$fix)&&any(!is.na(dd$fix)))
 		{
-			dml[[i]]$fe[!is.na(dd$fix),]=0
+#			dml[[i]]$fe[!is.na(dd$fix),]=0
+			zeros=Matrix(rep(as.numeric(is.na(dd$fix)),each=ncol(dml[[i]]$fe)),byrow=T,ncol=ncol(dml[[i]]$fe),nrow=nrow(dml[[i]]$fe))
+			dml[[i]]$fe=dml[[i]]$fe*zeros
 			dml[[i]]$fe=dml[[i]]$fe[,apply(dml[[i]]$fe,2,function(x) any(x!=0)),drop=FALSE]
 		}
 		if(!is.null(mlist$re.model))
