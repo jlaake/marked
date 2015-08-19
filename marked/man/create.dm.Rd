@@ -9,7 +9,7 @@ create.dm(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL,
                   chunk_size=1e7, remove.intercept=NULL,remove.unused.columns=TRUE)
 
        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,
-             chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
+             chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE,simplify=FALSE)
 }
 \arguments{
 \item{x}{design dataframe created by \code{\link{create.dmdf}}}
@@ -41,6 +41,8 @@ data for each parameter}
 \item{restrict}{if TRUE, only use design data with Time >= Cohort}
 
 \item{use.admb}{if TRUE uses mixed.model.admb for random effects; otherwise mixed.model}
+
+\item{simplify}{if TRUE simplies real parameter structure for some models; at this time it is not more efficient so ignore}
 }
 \value{
 create.dm returns a fixed effect design matrix constructed with the design dataframe and the

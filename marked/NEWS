@@ -1,4 +1,4 @@
-marked 1.1.9 
+marked 1.1.9 19 Aug 2015
 -----------------
 BUG FIXES
 
@@ -9,6 +9,8 @@ BUG FIXES
 CHANGES
 
 * modified omega to accept a list of transition matrices
+
+* added sealions data for example
 
 marked 1.1.8 16 March 2015
 -----------------

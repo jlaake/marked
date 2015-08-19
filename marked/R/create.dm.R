@@ -8,7 +8,7 @@
 #'                   chunk_size=1e7, remove.intercept=NULL,remove.unused.columns=TRUE)
 #'        
 #'        create.dml(ddl,model.parameters,design.parameters,restrict=FALSE,
-#'              chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE)
+#'              chunk_size=1e7,use.admb=FALSE,remove.unused.columns=TRUE,simplify=FALSE)
 #' 
 #' @param x design dataframe created by \code{\link{create.dmdf}}
 #' @param formula formula for model in R format
@@ -27,6 +27,7 @@
 #' @param restrict if TRUE, only use design data with Time >= Cohort
 #' @param use.admb if TRUE uses mixed.model.admb for random effects; otherwise mixed.model
 #' @param remove.unused.columns if TRUE, unused columns are removed; otherwise they are left
+#' @param simplify if TRUE simplies real parameter structure for some models; at this time it is not more efficient so ignore
 #' @return create.dm returns a fixed effect design matrix constructed with the design dataframe and the
 #' formula for a single parametre.  It excludes any columns that are all 0. create.dml returns a list with an element for
 #' for each parameter with a sub-list for the fixed effect (fe) and random effects. The re structure depends
