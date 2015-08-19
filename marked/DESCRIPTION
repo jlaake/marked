@@ -17,15 +17,18 @@ Depends:
     methods,
     parallel
 Imports:
+    graphics,
+    stats,
+    utils,
     R2admb,
     truncnorm,
     coda,
     ggplot2,
     Matrix,
     numDeriv,
+    expm,
     Rcpp (>= 0.9.13),
-    optimx (>= 2013.8.6),
-    expm
+    optimx (>= 2013.8.6)
 LinkingTo: Rcpp
 SystemRequirements: ADMB version 11 (http://admb-project.org/) for
     use.admb=TRUE; see readme.txt
