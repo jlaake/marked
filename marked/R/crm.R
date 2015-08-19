@@ -186,6 +186,13 @@
 #' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
 #' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
 #' @param ... optional arguments passed to js or cjs and optimx
+#' @importFrom graphics boxplot par
+#' @importFrom stats as.formula binomial coef density
+#'             glm.fit median model.frame model.matrix optim
+#'              plogis pnorm predict rgamma rmultinom
+#'              rnorm sd
+#' @importFrom utils capture.output choose.files flush.console
+#'             read.delim
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
 #' @author Jeff Laake
