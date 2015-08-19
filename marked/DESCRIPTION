@@ -1,6 +1,6 @@
 Package: marked
-Version: 1.1.8
-Date: 2015-03-16
+Version: 1.1.9
+Date: 2015-08-19
 Title: Mark-Recapture Analysis for Survival and Abundance Estimation
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>
@@ -24,7 +24,6 @@ Imports:
     Matrix,
     numDeriv,
     Rcpp (>= 0.9.13),
-    plyr,
     optimx (>= 2013.8.6),
     expm
 LinkingTo: Rcpp

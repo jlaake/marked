@@ -55,8 +55,8 @@ simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.paramet
 	# compute real parameters
 	pars=list()
 	for(parname in names(setup$model.parameters))
-		pars[[parname]]=laply(split(reals(ddl=setup$ddl[[parname]],dml=setup$dml[[parname]],parameters=setup$model.parameters[[parname]],
-							parlist=parlist[[parname]]),setup$ddl[[parname]]$id),function(x) x)
+		pars[[parname]]=do.call("rbind",split(reals(ddl=setup$ddl[[parname]],dml=setup$dml[[parname]],parameters=setup$model.parameters[[parname]],
+							parlist=parlist[[parname]]),setup$ddl[[parname]]$id))
 	# compute arrays of observation and transition matrices using parameter values
 	dmat=setup$data$fct_dmat(pars,m,setup$data$start[,2],T)
 	gamma=setup$data$fct_gamma(pars,m,setup$data$start[,2],T)

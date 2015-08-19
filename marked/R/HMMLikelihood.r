@@ -52,7 +52,7 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 	else
 		parlist=split(par,type)
 	# For each parameter type call function reals to compute vector
-	# of real parameter values; then use laply and split to create
+	# of real parameter values; then use split to create
 	# a matrix of parameter values with a row for each id and column for
 	# each occasion.
 	pars=list()
@@ -60,7 +60,7 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
     {
         R=reals(ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters[[parname]],parlist=parlist[[parname]])
 		R[is.infinite(R)]=1e199*sign(Inf)
-        pars[[parname]]=laply(split(R,ddl[[parname]]$id),function(x) x)
+        pars[[parname]]=do.call("rbind",split(R,ddl[[parname]]$id))
     }
 	# compute 4-d arrays of id- and occasion-specific 
 	# observation probability matrices 
@@ -98,6 +98,7 @@ reals=function(ddl,dml,parameters,parlist)
 				log=exp(as.vector(dm%*%parlist)),
 				logit=plogis(as.vector(dm%*%parlist)),
 				identity=as.vector(dm%*%parlist))
+		if(!is.null(dml$indices))values=values[dml$indices]
 		if(!is.null(ddl$time.interval))values=values^ddl$time.interval
 	}
 	else

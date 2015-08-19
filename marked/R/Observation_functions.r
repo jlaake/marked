@@ -13,11 +13,11 @@
 #' @return 4-d array of id and occasion-specific observation probability matrices - state-dependent distributions in Zucchini and MacDonald (2009)
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
-mvms_dmat=function(pars,m,F,T,sup) 
-{
-	unk=1
-	if(length(pars$delta)==0) 
-	{
+  mvms_dmat=function(pars,m,F,T,sup) 
+ {
+ 	unk=1
+ 	if(length(pars$delta)==0) 
+ 	{
 		unk=0
 		pars$delta=1
 	}
@@ -87,13 +87,13 @@ mvms_sup=function(x)
 			return(NULL)
 	}
 #   state names
-	unknown=grep("u",obslevels)
+	unknown=grep("u",obslevels,fixed=TRUE)
 	if(length(unknown)==0)
 		s=obslevels[-1]
 	else
-		s=obslevels[-grep("u",obslevels)][-1]
+		s=obslevels[-grep("u",obslevels,fixed=TRUE)][-1]
 #   indices for p and delta for non-zero values
-	indices_forp=as.matrix(do.call("rbind",mapply(identify,1:length(obslevels),gsub("u",".",obslevels))))
+	indices_forp=as.matrix(do.call("rbind",mapply(identify,1:length(obslevels),gsub("\\+","\\\\+",gsub("u",".",obslevels)))))
 	s=c(s,"Dead")
 	np=nrow(indices_forp)
 	pcounts=table(indices_forp[,2])
@@ -280,3 +280,43 @@ mvms_sup=function(x)
 #	}
 #	pmat
 #}
+#mvms_dmat=function(pars,m,F,T,sup) 
+#{
+#	indices_forp=sup$indices_forp
+#	pcounts=sup$pcounts
+#	np=sup$np
+#	obslevels=sup$obslevels
+##   p
+#	pmat=array(0,c(nrow(pars$p),T,length(obslevels),m))
+#	for (i in 1:nrow(pmat))
+#	{
+#		pmat[cbind(rep(i,np),rep(F[i],np),indices_forp)]=1
+#		pmat[i,F[i],1,m]=1
+#		if(F[i]<=(T-1))
+#			for(j in F[i]:(T-1))
+#			{
+#				pmat[cbind(rep(i,np,),rep(j+1,np),indices_forp)]=rep(pars$p[i,((j-1)*(m-1)+1):(j*(m-1))],pcounts)
+#				pmat[i,j+1,1,-m]=1-pars$p[i,((j-1)*(m-1)+1):(j*(m-1))]
+#				pmat[i,j+1,1,m]=1
+#			}
+#	}
+##   delta; if no parameter values return pmat because there is no uncertainty in states
+#	if(length(pars$delta)==0)return(pmat)
+#	deltamat=array(0,c(nrow(pars$p),T,length(obslevels),m))
+#	for (i in 1:nrow(deltamat))
+#	{
+#		deltamat[i,F[i],,]=1
+#		if(F[i]<= (T-1))
+#			for(j in F[i]:(T-1))
+#			{
+#				deltamat[cbind(rep(i,np,),rep(j+1,np),indices_forp)]=pars$delta[i,((j-1)*np+1):(j*np)]
+#				deltamat[i,j+1,,-m]=t(t(deltamat[i,j+1,,-m])/colSums(deltamat[i,j+1,,-m]))
+#				deltamat[i,j+1,1,]=1			 
+#			}
+#	}
+#	return(pmat*deltamat)
+#}
+
+
+
+

@@ -1,3 +1,17 @@
+marked 1.1.9 19 Aug 2015
+-----------------
+BUG FIXES
+
+* fixed bug in compute.real which would fail computing real values for Psi in some models
+
+* made change to setup.parameters to handle include and mlogit parameter setting when model is re-run with rerun_crm.
+
+CHANGES
+
+* modified omega to accept a list of transition matrices
+
+* added sealions data for example
+
 marked 1.1.8 16 March 2015
 -----------------
 CHANGES

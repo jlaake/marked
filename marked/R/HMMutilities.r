@@ -10,7 +10,7 @@
 #' @keywords utility
 compute_matrices=function(object,ddl=NULL)
 {
-	if(!substr(object$model,1,3)=="HMM")
+	if(!substr(object$model,1,3)=="HMM"&!substr(object$model,1,4)=="MVMS")
 	{
 		message("Not an HMM model. Returning NULL")
 		return(NULL)
@@ -18,14 +18,20 @@ compute_matrices=function(object,ddl=NULL)
 	if(is.null(ddl))
 		ddl=make.design.data(object$data,object$design.parameters)
 	ddl=set.fixed(ddl,object$model.parameters)
-	if(is.null(object$data$strata.list)){
+	if(substr(object$model,1,4)=="MVMS")
+	{
+		obslevels=object$data$ObsLevels
+		sup=object$data$fct_sup(list(obslevels=obslevels))
+	} else
+		sup=NULL
+	if(is.null(object$data$strata.list)|substr(object$model,1,4)=="MVMS"){
 		mx=object$data$m
 	}else{
 		mx=list(ns=length(object$data$strata.list$states),na=length(object$data$strata.list[[names(object$data$strata.list)[names(object$data$strata.list)!="states"]]]))
 	}
 	dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=object$design.parameters,chunk_size=object$results$options$chunk_size)
 	mat=HMMLikelihood(par=object$results$beta,xx=object$data$ehmat,mx=mx,T=object$data$nocc,xstart=object$data$start,freq=object$data$freq,
-			fct_dmat=object$data$fct_dmat,fct_gamma=object$data$fct_gamma,fct_delta=object$data$fct_delta,ddl=ddl,dml=dml,parameters=object$model.parameters,
+			fct_dmat=object$data$fct_dmat,fct_gamma=object$data$fct_gamma,fct_delta=object$data$fct_delta,ddl=ddl,dml=dml,parameters=object$model.parameters,sup=sup,
 			return.mat=TRUE)
 	if(!is.null(object$data$strata.labels))
 		state.names=c(object$data$strata.labels,"Dead")
@@ -61,7 +67,7 @@ compute_matrices=function(object,ddl=NULL)
 
 backward_prob=function(object,ddl=NULL)
 {  	
-	if(!substr(object$model,1,3)=="HMM")
+	if(!substr(object$model,1,3)=="HMM"&!substr(object$model,1,4)=="MVMS")
 	{
 		message("Not an HMM model. Returning NULL")
 		return(NULL)
@@ -120,7 +126,7 @@ backward_prob=function(object,ddl=NULL)
 
 local_decode=function(object,ddl=NULL,state.names=NULL)
 {  	
-	if(!substr(object$model,1,3)=="HMM")
+	if(!substr(object$model,1,3)=="HMM"&!substr(object$model,1,4)=="MVMS")
 	{
 		message("Not an HMM model. Returning NULL")
 		return(NULL)
@@ -159,7 +165,7 @@ local_decode=function(object,ddl=NULL,state.names=NULL)
 #' }
 global_decode=function(object,ddl=NULL,state.names=NULL)
 {  	
-	if(!substr(object$model,1,3)=="HMM")
+	if(!substr(object$model,1,3)=="HMM"&!substr(object$model,1,4)=="MVMS")
 	{
 		message("Not an HMM model. Returning NULL")
 		return(NULL)

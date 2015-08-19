@@ -109,10 +109,17 @@ setup.parameters <-
 #       if include or mlogit have multiple values turn into a vector
 #
 		if(!is.null(pars[[par.list[i]]]$include))
-			pars[[par.list[i]]]$include=strsplit(pars[[par.list[i]]]$include,",")[[1]]
+		{
+			xx=strsplit(pars[[par.list[i]]]$include,",")
+			if(length(xx)==1)
+				pars[[par.list[i]]]$include=xx[[1]]
+		}
 		if(!is.null(pars[[par.list[i]]]$mlogit))
-			pars[[par.list[i]]]$mlogit=strsplit(pars[[par.list[i]]]$mlogit,",")[[1]]
-		
+		{
+			xx=strsplit(pars[[par.list[i]]]$mlogit,",")
+			if(length(xx)==1)
+				pars[[par.list[i]]]$mlogit=xx[[1]]
+		}
 	}
 	return(pars)
 }
