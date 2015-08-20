@@ -191,7 +191,7 @@
 #'             glm.fit median model.frame model.matrix optim
 #'              plogis pnorm predict rgamma rmultinom
 #'              rnorm sd
-#' @importFrom utils capture.output choose.files flush.console
+#' @importFrom utils capture.output flush.console
 #'             read.delim
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
