@@ -188,7 +188,7 @@ crmlist_fromfiles=function(filenames=NULL)
 	if(is.null(filenames))
 	{
 		if(R.Version()$os=="mingw32")
-			filenames=choose.files(filters=Filters["RData",])
+			filenames=utils::choose.files(filters=Filters["RData",])
 		else
 			stop("filenames must be specified for non-Windows machine")
 	}
