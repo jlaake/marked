@@ -208,7 +208,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   {
 		   # no exe or compile set TRUE; see if admb can be found; this is not a complete test but should catch the novice user who has
 	       # not setup admb at all
-	       if(Sys.which(paste("tpl2cpp",ext,sep=""))=="")
+	       if(R.Version()$os=="mingw32" & Sys.which(paste("tpl2cpp",ext,sep=""))=="")
 			  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
 		   else
 		   {
@@ -346,7 +346,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   results$random.effects=res$random.effects
 	   results$coeflist=res$coeflist
 	   results$npar=list(npar=res$npar,npar_re=res$npar_re,npar_sdrpt=res$npar_sdrpt,npar_total=res$npar_total)
-	   results$beta.vcv=res$beta.vcv
+	   results$beta.vcv=beta.vcv
 	   res=results
    }
 #  Restore non-accumulated, non-scaled dm's etc
