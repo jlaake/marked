@@ -87,7 +87,15 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		}
 		model.name=paste(model.list[i,],collapse=".")
 		cat(model.name,"\n")
-		mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,run=run,...)
+		if(file.exists(paste(model.name,".rda",sep=""))&is.null(list(...)$initial))
+		{
+			load(paste(model.name,".rda",sep=""))
+			initial=eval(parse(text=model.name))
+			mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,run=run,initial=initial,...)
+		} else
+		{
+			mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,run=run,...)
+		}
 		if(external)
 		{
 			assign(as.character(as.name(model.name)),mymodel)
