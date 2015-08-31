@@ -8,9 +8,14 @@ BUG FIXES
 
 * modified cjs so it doesn't check for tplcpp before running admb. This was stopping it from using admb on Linux.
 
+* run=FALSE was not working for non-HMM models because initial.list was not assigned.
+
 CHANGES
 
 * in crm.wrapper if a model with the same name is stored externally in the workspace it will load that file and use it as initial values unless the initial argument has been specified in the call.
+
+* modified crmlist_fromfiles and model.table to prevent issues with lack of memory by removing models after loading. 
+
 
 marked 1.1.10 20 Aug 2015
 -----------------
@@ -36,7 +41,8 @@ marked 1.1.8 16 March 2015
 -----------------
 CHANGES
 
-* modified crmlist_fromfiles to avoid issue on non-Windows machines which do not support choose.files 
+* modified crmlist_fromfiles to avoid issue on non-Windows machines which do not support choose.files
+
 
 
 marked 1.1.7 10 March 2015

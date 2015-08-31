@@ -136,6 +136,9 @@ model.table=function(model.list=NULL)
 			if(length(grep("\\\\",model.list[[i]]))>0 | length(grep("/",model.list[[i]]))>0)
 			    model.list[[i]]=basename(model.list[[i]])	
 			eval(parse(text=paste("mymodel=",unlist(strsplit(model.list[[i]],".rda")))))
+			eval(parse(text = paste("rm(", unlist(strsplit(model.list[[i]], 
+													".rda")),")")))
+			gc()
 		}else
 			mymodel=model.list[[i]]
 		formulae=sapply(mymodel$model.parameters,function(x){return(paste(x$formula,collapse=""))})
@@ -190,7 +193,7 @@ load.model=function(x)
 	eval(parse(text=paste("assign(as.character(as.name('model')),",model.name,")")))
 	return(model)
 }
-crmlist_fromfiles=function(filenames=NULL)
+crmlist_fromfiles=function(filenames=NULL,external=TRUE)
 {
 	if(R.Version()$os!="mingw32")Filters=NULL
 	if(is.null(filenames))
@@ -202,12 +205,23 @@ crmlist_fromfiles=function(filenames=NULL)
 	}
 	modelnames=unlist(strsplit(basename(filenames),"\\.rda"))
 	mtable=model.table(c(filenames,""))
-	for(f in filenames)
-		load(f)
 	model.list=vector("list",length=length(modelnames))
 	names(model.list)=modelnames
-	for(m in modelnames)
-		eval(parse(text=paste("model.list[['",m,"']]=",m,sep="")))
+	i=0
+	for(f in filenames)
+	{
+		i=i+1
+		m=modelnames[i]
+		if(!external)
+		{
+  		    load(f)
+			eval(parse(text=paste("model.list[['",m,"']]=",m,sep="")))
+			eval(parse(text=paste("rm(",m,")",sep="")))
+			gc()
+		}
+	    else
+		   model.list[[m]]=m
+	}
 	model.list$model.table=mtable
 	class(model.list)="crmlist"
 	return(model.list)

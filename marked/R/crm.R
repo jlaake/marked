@@ -344,6 +344,8 @@ dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.paramete
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)
+else
+	initial.list=NULL
 # if not running, return object with data,ddl,dml etc
 if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
 # Depending on method set some values
