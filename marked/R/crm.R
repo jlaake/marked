@@ -340,7 +340,7 @@ if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="M
 	message("Can only use simplify with HMM models. simplify set to FALSE")
 }
 # Create design matrices for each parameter
-dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify)
+dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)

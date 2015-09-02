@@ -1,4 +1,4 @@
-marked 1.1.11 28 Aug 2015
+marked 1.1.11 2 Sept 2015
 -----------------
 BUG FIXES
 
@@ -16,6 +16,9 @@ CHANGES
 
 * modified crmlist_fromfiles and model.table to prevent issues with lack of memory by removing models after loading. 
 
+* modified reSplit so it would cope with left-hand-side of random effect being a formula with more than one term
+
+* stop message was changed to warning when right-hand-side of random effect is not a factor variable. This was needed to do something like (1|time:post) where post is a 0/1 variable that restricts the random effect to occur where post=1.
 
 marked 1.1.10 20 Aug 2015
 -----------------

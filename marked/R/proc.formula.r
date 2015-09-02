@@ -21,7 +21,8 @@ proc.form <- function(f){
 	return(list(fix.model=fix.model, re.model=re.model))
 }
 reSplit = function(x){
-  s=strsplit(deparse(x), " | ")[[1]][-2]
+#  s=strsplit(deparse(x), " | ")[[1]][-2]
+  s=strsplit(deparse(x), "|",fixed=TRUE)[[1]]
   model=paste("~", s[1])
   sub=paste("~", s[2], "- 1")
   return(list(model=model, sub=sub))
