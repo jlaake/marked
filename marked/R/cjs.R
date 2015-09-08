@@ -280,6 +280,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   con=file(paste(tpl,".pin",sep=""),open="wt")
 	   write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
 	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
+	   if(is.null(extra.args)) extra.args=""
 	   if(nphisigma+npsigma>0) 
 	   {
 		   warning("\nReal parameter estimates are not produced currently for random effect models\n")  
@@ -289,12 +290,11 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 		   if(crossed)
 		   {
 			   if(any(model_data$imat$freq!=1)) stop("\n freq cannot be > 1 if crossed effects; don't accumulate")
-			   if(is.null(extra.args))extra.args="-shess"
+			   extra.args=paste(extra.args,"-shess")
 		   } else
-		       if(is.null(extra.args))extra.args="-gh 14"
+			   extra.args=paste(extra.args,"-gh 14")
 	   }
 	   close(con)   
-	   if(is.null(extra.args)) extra.args=""
 	   cat("\nrunning ADMB program\n")
 	   flush.console()
 	   if(!hessian)extra.args=paste(extra.args,"-nohess")

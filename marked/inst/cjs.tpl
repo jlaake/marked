@@ -139,6 +139,7 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
     dvar_vector p(1,m-1);                                          // temp vector for ps for each occasion for a single history
     dvar_vector phicumprod(1,m);                                   // cummulative survival probability across occasions
     dvar_vector cump(1,m);                                         // cummulative probability of being seen across occasions
+//    dvar_vector sigma(1,phi_krand);                                // vector of random effect std deviations
     dvariable pch;                                                 // probability of capture history
     int i1,i2,j,L;                                                 // miscellaneous ints
     dvariable mu;                                                  // link function value
@@ -162,8 +163,13 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
               if(phi_counts(i) > 0)	                               // random portion of mean if any
 	          {
 	             for(L=1;L<=phi_krand;L++)
+//	             {
+//	                if(L==1) sigma(L)=phi_randDM(i2,L)*phi_sigma(L);
+//	                if(L>1) sigma(L)=sigma(L-1)+phi_randDM(i2,L)*phi_sigma(L);
 		            if(phi_randIndex(i2,L)>0)
+//	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(sigma(L));
 	                   mu+=phi_randDM(i2,L)*phi_u(phi_randIndex(i2,L))*mfexp(phi_sigma(L));
+//                 }
 	          }  
 	      }
           phi(j-1)=1/(1+exp(-mu));                                    // compute phi for the interval
