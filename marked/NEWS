@@ -1,5 +1,10 @@
 marked 1.1.11 2 Sept 2015
 -----------------
+
+NEW FEATURES
+
+* can now add sigmaPhi and sigmap to list of initial values for random effects CJS model. If none are specified, initial values are now set to -2 instead of 0.1
+
 BUG FIXES
 
 * patched create.dm which was leaving one record when chunking through design data. This cased failure when using splines.

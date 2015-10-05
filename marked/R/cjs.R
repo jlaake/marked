@@ -283,8 +283,22 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   if(is.null(extra.args)) extra.args=""
 	   if(nphisigma+npsigma>0) 
 	   {
-		   warning("\nReal parameter estimates are not produced currently for random effect models\n")  
-	  	   write(rep(0.1,nphisigma+npsigma),con,ncolumns=1,append=TRUE)
+		   warning("\nReal parameter estimates are not produced currently for random effect models\n") 
+		   if(is.null(initial$sigmaPhi))
+			   sigma.initial=rep(-2,nphisigma)
+		   else
+		   {
+			   sigma.initial=initial$sigmaPhi
+			   if(length(initial$sigmaPhi)!=nphisigma)stop("length of initial values for sigmaPhi does not match design")
+		   }
+		   if(is.null(initial$sigmap))
+			   sigma.initial=c(sigma.initial,rep(-2,npsigma))
+		   else
+		   {
+			   sigma.initial=c(sigma.initial,initial$sigmap)
+			   if(length(initial$sigmap)!=npsigma)stop("length of initial values for sigmap does not match design")
+		   }
+		   write(sigma.initial,con,ncolumns=1,append=TRUE)
 	  	   if(nphisigma>0) write(rep(0,nphisigma*nrow(phimixed$re.dm)),con,ncolumns=nphisigma,append=TRUE)
 		   if(npsigma>0) write(rep(0,npsigma*nrow(pmixed$re.dm)),con,ncolumns=npsigma,append=TRUE)
 		   if(crossed)

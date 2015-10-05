@@ -454,7 +454,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS" & (nchar(model)>=4 & substr(model,1,4)!="MVMS"))
+if(!re & model!="MSCJS" & (nchar(model)>=4 | substr(model,1,4)!="MVMS"))
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)

@@ -20,6 +20,7 @@ set.initial=function(pars,dml,initial)
 #   values or any values are specified
 	par=vector("list",length(pars))
 	names(par)=pars
+#	par=c(par,initial)
 	ptype=NULL
 #   if no initial list, create one with NULL values
 	if(is.null(initial))
