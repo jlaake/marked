@@ -18,7 +18,7 @@ crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
 
         load.model(x)
 
-        crmlist_fromfiles(filenames=NULL)
+        crmlist_fromfiles(filenames=NULL,external=TRUE)
 
         rerun_crm(data,ddl,model.list,method=NULL,modelnums=NULL,initial=NULL,...)
 }

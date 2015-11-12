@@ -114,6 +114,8 @@ mixed.model=function(formula,data,indices=FALSE)
 		  {
 		    sub=strsplit(mlist$re.model[[i]]$sub, "~ ")[[1]][2]
 		    mod=strsplit(mlist$re.model[[i]]$model, "~ ")[[1]][2]
+			# strip leading and trailing blank space
+			mod=gsub("^\\s+|\\s+$", "", mod) 
 		    if(mod=="1") form=formula(paste(c("~", sub), collapse=""))
 		    else form=formula(paste(c("~", mod, ":(", sub, ")"), collapse=""))
 		    dm=model.matrix(form, data)
