@@ -156,6 +156,7 @@ options(width=70)
 
 <<comment="",prompt=TRUE,message=FALSE>>=
 library(marked) 
+library(ggplot2)
 data(dipper)
 model=crm(dipper)
 @
@@ -392,7 +393,6 @@ newdipper=expand.grid(sex=c("Male","Female"),weight=1:10,Flood1=0,
       Flood2=1,Flood3=1,Flood4=0,Flood5=0,Flood6=0,td2=0,td3=c(0,1),
       td4=c(0,1),td5=c(0,1),td6=c(0,1),td7=c(0,1)) 
 reals=predict(model,newdata=newdipper,se=TRUE) 
-library(ggplot2)
 reals$Phi$Flood=factor(reals$Phi$Flood,labels=c("Non-flood","Flood"))
 ggplot(reals$Phi,aes(weight,estimate,ymin=lcl,ymax=ucl))+
        geom_errorbar(width=0.2)+geom_point()+geom_line()+
