@@ -94,7 +94,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 #   dm=Matrix(0,nrow=nrows,ncol=npar)
    dm=NULL
    pieces=floor(npar*nrows/chunk_size+1)
-   rows_in_piece=floor(nrows/pieces)
+   rows_in_piece=ceiling(nrows/pieces)
    if(npar*nrows>chunk_size)
    {
       for(i in 1:pieces)
@@ -102,6 +102,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 		  
 		  lower=(i-1)*rows_in_piece+1
 		  upper=i*rows_in_piece
+		  if(upper>nrow(x))upper=nrow(x)
 		  if(i==1)
 		  {
 			  dm=as(model.matrix(formula,x[lower:upper,,drop=FALSE]),"sparseMatrix") 

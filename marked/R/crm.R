@@ -197,7 +197,7 @@
 #' either "CJS" or "JS" at present.
 #' @author Jeff Laake
 #' @export crm
-#' @import optimx ggplot2 Matrix Rcpp numDeriv
+#' @import optimx Matrix Rcpp numDeriv
 #' @useDynLib marked
 #' @seealso \code{\link{cjs}}, \code{\link{js}},
 #' \code{\link{make.design.data}},\code{\link{process.data}}
@@ -340,10 +340,12 @@ if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="M
 	message("Can only use simplify with HMM models. simplify set to FALSE")
 }
 # Create design matrices for each parameter
-dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify)
+dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)
+else
+	initial.list=NULL
 # if not running, return object with data,ddl,dml etc
 if(!run) return(list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,ddl=ddl,dml=dml,results=initial.list))
 # Depending on method set some values
@@ -452,7 +454,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!re & model!="MSCJS" & (nchar(model)>=4 & substr(model,1,4)!="MVMS"))
+if(!re & model!="MSCJS" & (nchar(model)<4 | (nchar(model)>=4 & substr(model,1,4)!="MVMS")))
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)

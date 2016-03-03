@@ -58,9 +58,9 @@ mixed.model.admb=function(formula,data)
 	 {
 #      Make sure each variable used to define random effect group is a factor variable
   	   if(!all(sapply(model.frame(as.formula(mlist$re.model[[i]]$sub),data),is.factor)))
-	       stop(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
-       else
-	   {
+	       warning(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
+#       else
+#	   {
 #         Compute design matrix for grouping variables
           zz=model.matrix(as.formula(mlist$re.model[[i]]$sub),data)
 #         Not all combinations of factor variable(s) may be used so only use those observed in the data
@@ -80,7 +80,7 @@ mixed.model.admb=function(formula,data)
 #         index for the random effect sigma parameter (re.sigma)
 		  re.dm=cbind(re.dm,zz)
 		  re.indices=cbind(re.indices,indices)
-	   }
+#	   }
 	 }
    }
    return(list(re.dm=re.dm,re.indices=re.indices))
@@ -97,9 +97,9 @@ mixed.model=function(formula,data,indices=FALSE)
      for(i in 1:length(mlist$re.model))
      {
         if(!all(sapply(model.frame(as.formula(mlist$re.model[[i]]$sub),data),is.factor)))
-           stop(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
-        else
-        {
+           warning(paste("\n one or more variables in",mlist$re.model[[i]]$sub,"is not a factor variable\n"))
+ #       else
+ #       {
 		  if(indices)
 		  {
 			  zz=model.matrix(as.formula(mlist$re.model[[i]]$sub),data)
@@ -114,6 +114,8 @@ mixed.model=function(formula,data,indices=FALSE)
 		  {
 		    sub=strsplit(mlist$re.model[[i]]$sub, "~ ")[[1]][2]
 		    mod=strsplit(mlist$re.model[[i]]$model, "~ ")[[1]][2]
+			# strip leading and trailing blank space
+			mod=gsub("^\\s+|\\s+$", "", mod) 
 		    if(mod=="1") form=formula(paste(c("~", sub), collapse=""))
 		    else form=formula(paste(c("~", mod, ":(", sub, ")"), collapse=""))
 		    dm=model.matrix(form, data)
@@ -122,7 +124,7 @@ mixed.model=function(formula,data,indices=FALSE)
 			  re.list[[i]]=Matrix(dm)
 		    names(re.list)[i]=paste(c(mod, "|",strsplit(sub, " - 1")), collapse="")
 		  }
-        }
+#        }
       }
 	  
   }

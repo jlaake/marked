@@ -208,7 +208,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   {
 		   # no exe or compile set TRUE; see if admb can be found; this is not a complete test but should catch the novice user who has
 	       # not setup admb at all
-	       if(Sys.which(paste("tpl2cpp",ext,sep=""))=="")
+	       if(R.Version()$os=="mingw32" & Sys.which(paste("tpl2cpp",ext,sep=""))=="")
 			  stop("admb not found; setup links to admb and c++ compiler with environment variables or put in path")
 		   else
 		   {
@@ -280,21 +280,35 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   con=file(paste(tpl,".pin",sep=""),open="wt")
 	   write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
 	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
+	   if(is.null(extra.args)) extra.args=""
 	   if(nphisigma+npsigma>0) 
 	   {
-		   warning("\nReal parameter estimates are not produced currently for random effect models\n")  
-	  	   write(rep(0.1,nphisigma+npsigma),con,ncolumns=1,append=TRUE)
+		   warning("\nReal parameter estimates are not produced currently for random effect models\n") 
+		   if(is.null(initial$sigmaPhi))
+			   sigma.initial=rep(-2,nphisigma)
+		   else
+		   {
+			   sigma.initial=initial$sigmaPhi
+			   if(length(initial$sigmaPhi)!=nphisigma)stop("length of initial values for sigmaPhi does not match design")
+		   }
+		   if(is.null(initial$sigmap))
+			   sigma.initial=c(sigma.initial,rep(-2,npsigma))
+		   else
+		   {
+			   sigma.initial=c(sigma.initial,initial$sigmap)
+			   if(length(initial$sigmap)!=npsigma)stop("length of initial values for sigmap does not match design")
+		   }
+		   write(sigma.initial,con,ncolumns=1,append=TRUE)
 	  	   if(nphisigma>0) write(rep(0,nphisigma*nrow(phimixed$re.dm)),con,ncolumns=nphisigma,append=TRUE)
 		   if(npsigma>0) write(rep(0,npsigma*nrow(pmixed$re.dm)),con,ncolumns=npsigma,append=TRUE)
 		   if(crossed)
 		   {
 			   if(any(model_data$imat$freq!=1)) stop("\n freq cannot be > 1 if crossed effects; don't accumulate")
-			   if(is.null(extra.args))extra.args="-shess"
+			   extra.args=paste(extra.args,"-shess")
 		   } else
-		       if(is.null(extra.args))extra.args="-gh 14"
+			   extra.args=paste(extra.args,"-gh 14")
 	   }
 	   close(con)   
-	   if(is.null(extra.args)) extra.args=""
 	   cat("\nrunning ADMB program\n")
 	   flush.console()
 	   if(!hessian)extra.args=paste(extra.args,"-nohess")
@@ -346,7 +360,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   results$random.effects=res$random.effects
 	   results$coeflist=res$coeflist
 	   results$npar=list(npar=res$npar,npar_re=res$npar_re,npar_sdrpt=res$npar_sdrpt,npar_total=res$npar_total)
-	   results$beta.vcv=res$beta.vcv
+	   results$beta.vcv=beta.vcv
 	   res=results
    }
 #  Restore non-accumulated, non-scaled dm's etc
