@@ -1,4 +1,4 @@
-marked 1.1.11 2 Sept 2015
+marked 1.1.11 7 March 2016
 -----------------
 
 NEW FEATURES
@@ -7,13 +7,15 @@ NEW FEATURES
 
 BUG FIXES
 
-* patched create.dm which was leaving one record when chunking through design data. This cased failure when using splines.
+* patched create.dm which was leaving out one record when chunking through design data. This cased failure when using splines.
 
 * beta v-c matrix not being properly stored on CJS with use.admb=TRUE
 
 * modified cjs so it doesn't check for tplcpp before running admb. This was stopping it from using admb on Linux.
 
 * run=FALSE was not working for non-HMM models because initial.list was not assigned.
+
+* fixed bug that was preventing real predictions from being included in results where appropriate.
 
 CHANGES
 
