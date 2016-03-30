@@ -1,3 +1,9 @@
+marked 1.1.12 15 March 2016
+-----------------
+CHANGES
+* pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
+
+
 marked 1.1.11 7 March 2016
 -----------------
 
@@ -7,7 +13,7 @@ NEW FEATURES
 
 BUG FIXES
 
-* patched create.dm which was leaving out one record when chunking through design data. This cased failure when using splines.
+* patched create.dm which was leaving out one record when chunking through design data. This caused failure when using splines.
 
 * beta v-c matrix not being properly stored on CJS with use.admb=TRUE
 
