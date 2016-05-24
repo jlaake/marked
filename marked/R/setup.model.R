@@ -132,6 +132,12 @@ setupHMM=function(model_def,model,strata.labels)
 		model_def$hmm$strata.labels=apply(model_def$hmm$strata.list$df.states,1,paste,collapse="")
 		model_def$hmm$m=nrow(model_def$hmm$strata.list$df.states)+1
 		model_def$hmm$ObsLevels=c(0,apply(model_def$hmm$strata.list$df,1,paste,collapse=""))
+	}	
+	if(toupper(model)=="ATTEND")
+	{
+		model_def$hmm$strata.labels=strata.labels
+		model_def$hmm$m=length(strata.labels)+1
+		model_def$hmm$ObsLevels=c(0,1)
 	}
 	return(model_def)
 }

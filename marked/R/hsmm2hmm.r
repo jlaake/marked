@@ -7,7 +7,7 @@
 #' @param dm list of dwell time distribution vectors; each list element is vector of dwell time probabilities in order of aggregated states  
 #' @param eps epsilon value for setting small probabilities to 0; anything less than eps is set to exactly 0.  
 #' @return transition matrix for hmm to approximate hsmm
-#' @author Roland Langrock
+#' @author Walter Zucchini
 #' @export hsmm2hmm
 #' @keywords utility
 ###############################################################################
@@ -35,6 +35,22 @@ hsmm2hmm<-function(omega,dm,eps=1e-10){
 	}
 	G
 }
-
+#' Create expanded state-dependent observation matrix for HMM from HSMM
+#' 
+#' Creates expanded state-dependent matrix for HMM from aggregated state-dependent observation
+#' matrix.
+#' 
+#' @param dmat state-dependent observation matrix for aggregated states
+#' @param mv vector of dwell time distribution lengths  
+#' @return expanded state-dependent observation matrix for hmm to approximate hsmm
+#' @author Jeff Laake
+#' @export dmat_hsmm2hmm
+#' @keywords utility
+###############################################################################
+dmat_hsmm2hmm<-function(dmat,mv){
+	m <- length(mv)
+	return(dmat[,rep(1:m,mv)])
+}
+	
 
 

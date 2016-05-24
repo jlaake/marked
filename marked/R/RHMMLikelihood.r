@@ -86,7 +86,7 @@ loglikelihood=function(object,ddl=NULL)
 	value=R_HMMLikelihood(object$data$ehmat,object$data$start[,2],object$data$m,object$data$nocc,
 			dmat=parmlist$dmat,gamma=parmlist$gamma,
 			delta=parmlist$delta)
-	value$neg2lnl=-2*sum(value$lnl*object$data$freq)
+	value$neg2lnl=-sum(value$lnl*object$data$freq)
 	return(value)
 }
 
