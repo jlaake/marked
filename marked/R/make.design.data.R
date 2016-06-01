@@ -222,6 +222,29 @@ full.design.data=vector("list",length=length(parameters))
 #' Creates field fix in pi design data and either sets to NA to be estimated
 #' or 1 if intercept or 0 if not possible. It uses observed data at initial
 #' entry to decide the appropriate fix values.
+#' 
+#' It is possible that the state will be known for some individuals
+#' and unknown for others.  The function initiate_pi modifies the design data for pi by adding
+#' the field fix which can be used to fix the value of pi for an individual with known state
+#' at release. It also sets up the mlogit structure for pi by setting one of the fixed values to 1
+#' such that the value for pi is computed by subtraction.  By default it chooses the first factor level
+#' of each of the state variables that is unknown.  If some of the state variables are known but others are not, 
+#' it sets fix to 0 for the values of the known state variables that don't match the known value.  
+#' 
+#' For example, with a bivariate case with first state A,B or C and second variable 1 or 2.  Only the second
+#' variable can be unknown. There are 6 possible combinations of the state variables: A1,A2,B2,B2,C1,C2.
+#' Assume a capture history is 0,Au,0,B1,B2.  There will be 6 records in the design data for this record
+#' with strata A1,A2,B2,B2,C1,C2. The occ (occasion field) will be 2 because pi is only for the first occasion.
+#' After running initiate_pi, the fix values will be 1,NA,0,0,0,0.  A1 will be the intercept and computed 
+#' by subtraction (fix=1), the value for A2 will be estimated (NA) and all of the others
+#' are not possible (0) because it is known to be in A.
+#' 
+#' If both can be uncertain, and the capture history was  0,uu,0,B1,B2, then the fix values will be
+#' 1,NA,NA,NA,NA,NA. With a mix of partially known and completely unknown the formulation for the mlogit could
+#' get complicated making it difficult to specify an understandable formula because the restrictions on the
+#' mlogit will change, so think hard and long about what you are doing.  It may be necessary to construct "multiple" formula
+#' in the sense that you use indicator variables (0/1) as interactions. 
+#' 
 #' @param data Processed data list; resulting value from process.data
 #' @param ddl design data list created by make.design.data
 #' @return ddl with fix field added to pi dataframe

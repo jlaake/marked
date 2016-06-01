@@ -343,11 +343,18 @@ if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="M
 for (i in 1:length(parameters))
 {
 	if(!is.null(ddl[[i]]$fix))
+	{
 		if(all(!is.na(ddl[[i]]$fix)))
 		{
 			message(paste("All values for",names(parameters)[i],"have been fixed. Setting formula to ~0"))
 			parameters[[i]]$formula=~0
-		}		
+		} else {
+			if(parameters[[i]]$formula==~0)
+				stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated"))
+		}
+	} else
+	   if(parameters[[i]]$formula==~0)
+		   stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated"))
 }
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)

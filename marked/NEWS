@@ -1,7 +1,20 @@
-marked 1.1.12 15 March 2016
+marked 1.1.12 1 June 2016
 -----------------
+NEW FEATURES
+
+* parameter pi has been added to MVMSCJS model. Including pi allows the initial 
+state at release to be uncertain. See ?initiate_pi for more details. 
+
 CHANGES
+
 * pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
+
+* all values for a parameter can be fixed (e.g., S=1 or delta=1). This used to cause problems but now if
+all values are fixed, a message is given that the formula is being reset to ~0 which has no parameters. Likewise,
+if formula is ~0 and not all values are fixed then an error is generated. 
+
+* The above change made it possible to allow an mvmscjs specification in which all states are certain. In which case,
+no design data is generated for the delta parameter.
 
 
 marked 1.1.11 7 March 2016
