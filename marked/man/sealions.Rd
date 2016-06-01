@@ -64,7 +64,7 @@ delta.1=list(formula= ~ -1 + obs.ltag.u + obs.rtag.u + obs.ltag.u:obs.rtag.u)
 Phi.1=list(formula=~sex*bs(Age)+pup:weight+area)
 
 # Fit model - commented out because it takes >1hr to run
-# mod=crm(dp,ddl,model.parameters=list(Psi=Psi.1,p=p.1,delta=delta.1,Phi=Phi.1,hessian=TRUE)
+# mod=crm(dp,ddl,model.parameters=list(Psi=Psi.1,p=p.1,delta=delta.1,Phi=Phi.1),hessian=TRUE)
 }
 }
 \keyword{datasets}

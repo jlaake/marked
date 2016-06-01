@@ -116,7 +116,7 @@ setupHMM=function(model_def,model,strata.labels)
 	{
 		model_def$hmm$fct_dmat=mvms_dmat
 		model_def$hmm$fct_gamma=mvms_gamma
-		model_def$hmm$fct_delta=cjs_delta
+		model_def$hmm$fct_delta=mvmscjs_delta
 		model_def$hmm$fct_sup=mvms_sup
 		model_def$hmm$strata.list=set_mvms(strata.labels)
 		model_def$hmm$strata.labels=apply(model_def$hmm$strata.list$df.states,1,paste,collapse="")

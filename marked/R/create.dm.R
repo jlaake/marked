@@ -150,30 +150,37 @@ create.dml=function(ddl,model.parameters,design.parameters,restrict=FALSE,chunk_
 			dml[[i]]=list(fe=NULL,re=NULL)
 		    next
 		}
-		dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
-				design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept,
-			    remove.unused.columns=remove.unused.columns)
-		if(simplify)
+		if(as.formula(mlist$fix.model)!=~0)
 		{
-			dml[[i]]$indices=realign.pims(dml[[i]]$fe)
-			dml[[i]]$fe=dml[[i]]$fe[dml[[i]]$indices,,drop=FALSE]
-		} 
-		# if some reals are fixed, assign 0 to rows of dm and then
-		# remove any columns (parameters) that are all 0.
-		if(!is.null(dd$fix)&&any(!is.na(dd$fix)))
-		{
+			dml[[i]]$fe=create.dm(dd,as.formula(mlist$fix.model),design.parameters[[pn]]$time.bins,
+					design.parameters[[pn]]$cohort.bins,design.parameters[[pn]]$age.bins,chunk_size=chunk_size,model.parameters[[i]]$remove.intercept,
+					remove.unused.columns=remove.unused.columns)
+			if(simplify)
+			{
+				dml[[i]]$indices=realign.pims(dml[[i]]$fe)
+				dml[[i]]$fe=dml[[i]]$fe[dml[[i]]$indices,,drop=FALSE]
+			} 
+			# if some reals are fixed, assign 0 to rows of dm and then
+			# remove any columns (parameters) that are all 0.
+			if(!is.null(dd$fix)&&any(!is.na(dd$fix)))
+			{
 #			dml[[i]]$fe[!is.na(dd$fix),]=0
-			zeros=Matrix(rep(as.numeric(is.na(dd$fix)),each=ncol(dml[[i]]$fe)),byrow=T,ncol=ncol(dml[[i]]$fe),nrow=nrow(dml[[i]]$fe))
-			dml[[i]]$fe=dml[[i]]$fe*zeros
-			dml[[i]]$fe=dml[[i]]$fe[,apply(dml[[i]]$fe,2,function(x) any(x!=0)),drop=FALSE]
-		}
-		if(!is.null(mlist$re.model))
-		{
-			if(use.admb)
-				dml[[i]]$re=mixed.model.admb(model.parameters[[i]]$formula,dd)
+				zeros=Matrix(rep(as.numeric(is.na(dd$fix)),each=ncol(dml[[i]]$fe)),byrow=T,ncol=ncol(dml[[i]]$fe),nrow=nrow(dml[[i]]$fe))
+				dml[[i]]$fe=dml[[i]]$fe*zeros
+				dml[[i]]$fe=dml[[i]]$fe[,apply(dml[[i]]$fe,2,function(x) any(x!=0)),drop=FALSE]
+			}
+			if(!is.null(mlist$re.model))
+			{
+				if(use.admb)
+					dml[[i]]$re=mixed.model.admb(model.parameters[[i]]$formula,dd)
+				else
+					dml[[i]]$re=mixed.model(model.parameters[[i]]$formula,dd)
+			}	
+		} else
+			if(!is.null(dd))
+			   dml[[i]]=list(fe=matrix(NA,nrow=nrow(dd),ncol=0),re=NULL)
 		    else
-				dml[[i]]$re=mixed.model(model.parameters[[i]]$formula,dd)
-		}
+			   dml[[i]]=NA
 	}
 	return(dml)
 }

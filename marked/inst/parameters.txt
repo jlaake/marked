@@ -1,51 +1,50 @@
-model	parname	begin	num	default	type	link	formula	bystratum	tostrata	cjs	whichlevel	interval	nointercept	include	mlogit	obs
-NULL	dummy	0	0	0	Triang	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-CJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-CJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-JS	Phi	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-JS	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-JS	pent	1	-1	0	Square	mlogit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	"time"	"id"	FALSE
-JS	N	0	1		Square	log	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-probitCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-probitCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-MSCJS	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE
-hmmCJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-hmmCJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-hmmMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE
-hmmuMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-hmmuMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmuMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmuMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE
-hmmu2MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-hmmu2MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmu2MSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE
-hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	1	FALSE	FALSE	"state,tostate"	"id,occ,state"	FALSE
-hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2	FALSE	FALSE	"area,toarea"	"id,occ,area"	FALSE
-HMMStageOcc	Psi0	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-HMMStageOcc	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	""	""	FALSE
-HMMStageOcc	Epsilon	1	-1	0	Square	logit	~1	TRUE	FALSE	TRUE	0	TRUE	FALSE	""	""	FALSE
-HMMCJS1TL	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-HMMCJS1TL	tau	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-HMMCJS1TL	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-HMMCJS2TL	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-HMMCJS2TL	tau	0	-1	1	Triang	log	~I(tag1+tag2)	TRUE	FALSE	FALSE	0	TRUE	TRUE	"stratum"	"id,occ"	FALSE
-HMMCJS2TL	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-MVMSCJS	Phi	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-MVMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-MVMSCJS	delta	1	-1	0	Triang	log	~1	TRUE	FALSE	FALSE	0	FALSE	FALSE	""	""	TRUE
-MVMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	""	""	FALSE
-MVMS	Phi	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE	""	""	FALSE
-MVMS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-MVMS	delta	1	-1	0	Triang	log	~1	TRUE	FALSE	FALSE	0	FALSE	FALSE	""	""	TRUE
-MVMS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	""	""	FALSE
-MVMS	pi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	""	""	FALSE
-ATTEND	p	0	0	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
-ATTEND	dt	0	0	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE	""	""	FALSE
+model	parname	begin	num	default	type	link	formula	bystratum	tostrata	cjs	whichlevel	interval	nointercept	include	mlogit	obs	firstonly
+NULL	dummy	0	0	0	Triang	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+CJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+CJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+JS	Phi	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+JS	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+JS	pent	1	-1	0	Square	mlogit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE	time	id	FALSE	FALSE
+JS	N	0	1		Square	log	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+probitCJS	Phi	0	-1	1	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+probitCJS	p	1	-1	0	Triang	probit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+MSCJS	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
+hmmCJS	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+hmmCJS	p	1	-1	0	Triang	logit	~1	FALSE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+hmmMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
+hmmuMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+hmmuMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmuMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmuMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
+hmmu2MSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+hmmu2MSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmu2MSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmu2MSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
+hmmu2iMSCJS	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+hmmu2iMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmu2iMSCJS	delta	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+hmmu2iMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	1	FALSE	FALSE	"state,tostate"	"id,occ,state"	FALSE	FALSE
+hmmu2iMSCJS	alpha	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	2	FALSE	FALSE	"area,toarea"	"id,occ,area"	FALSE	FALSE
+HMMStageOcc	Psi0	0	-1	1	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+HMMStageOcc	p	0	0	0	Square	logit	~1	FALSE	FALSE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+HMMStageOcc	Epsilon	1	-1	0	Square	logit	~1	TRUE	FALSE	TRUE	0	TRUE	FALSE			FALSE	FALSE
+HMMCJS1TL	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+HMMCJS1TL	tau	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+HMMCJS1TL	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+HMMCJS2TL	Phi	0	-1	1	Triang	logit	~1	FALSE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+HMMCJS2TL	tau	0	-1	1	Triang	log	~I(tag1+tag2)	TRUE	FALSE	FALSE	0	TRUE	TRUE	stratum	"id,occ"	FALSE	FALSE
+HMMCJS2TL	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+MVMSCJS	Phi	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+MVMSCJS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+MVMSCJS	delta	1	-1	0	Triang	log	~1	TRUE	FALSE	FALSE	0	FALSE	FALSE			TRUE	FALSE
+MVMSCJS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+MVMSCJS	pi	0	-1	0	Triang	log	~0	TRUE	FALSE	FALSE	0	FALSE	FALSE			FALSE	TRUE
+MVMS	Phi	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
+MVMS	p	1	-1	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
+MVMS	delta	1	-1	0	Triang	log	~1	TRUE	FALSE	FALSE	0	FALSE	FALSE			TRUE	FALSE
+MVMS	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE			FALSE	FALSE
+MVMS	pi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE			FALSE	FALSE

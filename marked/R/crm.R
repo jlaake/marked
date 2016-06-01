@@ -339,6 +339,16 @@ if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="M
 	simplify=FALSE
 	message("Can only use simplify with HMM models. simplify set to FALSE")
 }
+# check to see if all values for a parameter have been fixed.  If so, then set formula to ~0
+for (i in 1:length(parameters))
+{
+	if(!is.null(ddl[[i]]$fix))
+		if(all(!is.na(ddl[[i]]$fix)))
+		{
+			message(paste("All values for",names(parameters)[i],"have been fixed. Setting formula to ~0"))
+			parameters[[i]]$formula=~0
+		}		
+}
 # Create design matrices for each parameter
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
 # For HMM call set.initial to get ptype and set initial values

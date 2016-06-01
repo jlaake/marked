@@ -201,7 +201,9 @@ full.design.data=vector("list",length=length(parameters))
 	  {
 		  full.design.data[[i]]$fix=NA
 		  full.design.data[[i]]$fix[as.character(full.design.data[[i]]$time)==as.character(full.design.data[[i]]$cohort)]=1	  
+		  full.design.data[[i]]$fix[as.numeric(as.character(full.design.data[[i]]$time))<as.numeric(as.character(full.design.data[[i]]$cohort))]=0  
 	  }	
+	  if(parameters[[i]]$firstonly) full.design.data[[i]]= full.design.data[[i]][as.character(full.design.data[[i]]$cohort)==as.character(full.design.data[[i]]$time),]
 	  full.design.data[[i]]=droplevels(full.design.data[[i]])
 	  if(names(parameters)[i]=="tau"&!is.null(full.design.data[[i]]$tag1))
 	  {
@@ -215,6 +217,41 @@ full.design.data=vector("list",length=length(parameters))
    full.design.data$ehmat=data$ehmat
    return(full.design.data)
 }
-
-        
+#' Setup fixed values for pi in design data
+#' 
+#' Creates field fix in pi design data and either sets to NA to be estimated
+#' or 1 if intercept or 0 if not possible. It uses observed data at initial
+#' entry to decide the appropriate fix values.
+#' @param data Processed data list; resulting value from process.data
+#' @param ddl design data list created by make.design.data
+#' @return ddl with fix field added to pi dataframe
+#' @author Jeff Laake
+#' @export
+initiate_pi=function(data,ddl)
+{
+set_pifix=function(id)
+{
+	strata=ddl$pi$stratum[ddl$pi$id==id]
+	cohort=as.numeric(unique(ddl$pi$cohort[ddl$pi$id==id]))
+	first_value=strsplit(data$data$ch[data$data$id==id],",")[[1]][cohort]
+	unknown=grep("u",first_value)
+	fix=rep(0,nrow(ddl$pi[data$data$id==id,]))
+	if(length(unknown)==0)
+		fix[strata==first_value]=1
+	else
+	{
+		match_value= gsub("u","\\\\S",first_value)
+		match_value= gsub("\\+","\\\\+",match_value)
+		match_value= gsub("\\-","\\\\-",match_value)
+		fix[!regexpr(match_value,strata)==-1]=NA
+		splitch=strsplit(first_value,"")[[1]]
+		whichu=grep("u",splitch,fixed=TRUE)
+		splitch[whichu]=strsplit(levels(ddl$pi$stratum)[1],"")[[1]][whichu]
+		fix[strata==paste(splitch,collapse="")]=1
+	}
+	return(fix)
+}
+ddl$pi$fix=as.vector(sapply(data$data$id,set_pifix))
+return(ddl)
+}
          
