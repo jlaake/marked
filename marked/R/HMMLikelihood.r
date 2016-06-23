@@ -79,7 +79,7 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 		cat("\npar \n")
 		print(parlist)
 	}
-	neglnl=hmm.lnl(xx,xstart,m,T,dmat,gamma,delta,rowSums(freq),debug)
+	neglnl=hmm.lnl(xx,xstart[,2],m,T,dmat,gamma,delta,rowSums(freq),debug)
 	if(debug)cat("\n -lnl= ",neglnl)
 	return(neglnl)
 }

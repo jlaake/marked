@@ -1,7 +1,7 @@
        SUBROUTINE HMMLIKE(X,N,M,T,NO,START,FREQ,DMAT,GAMMA,DELTA,LNL)
        IMPLICIT DOUBLE PRECISION (A-H,O-Z)
        INTEGER N,M,T,NO,I,J,FIRST
-	   INTEGER X(N,T),START(N,2)
+	   INTEGER X(N,T),START(N)
        DOUBLE PRECISION P(M,M),V(M),U,PHI(M), FREQ(N)
        DOUBLE PRECISION DMAT(N,T,NO,M), GAMMA(N,T-1,M,M), DELTA(N,M)
        DOUBLE PRECISION LNL(N) 
@@ -11,7 +11,7 @@ C      Loop over each capture history
            U=0D0
 C          Compute initial state vector phi and likelihood 
 C          contribution (if any) for first capture history position
-	       FIRST=START(I,2)
+	       FIRST=START(I)
 	       DO 1 K=1,M
              V(K)=DELTA(I,K)*DMAT(I,FIRST,X(I,FIRST),K)
 		     U=U+V(K)	
