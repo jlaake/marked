@@ -67,8 +67,6 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
 		time.intervals=x$time.intervals
-#  Create fixed matrices in parameters
-	parameters=create.fixed.matrix(ddl,parameters)
 #  Store data from x$data into x
 	strata.labels=x$strata.labels
 	uS=x$unobserved
@@ -150,7 +148,8 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	nocc=model_data$imat$nocc
 	write(nocc,con,append=TRUE)
 	# Number of states
-	write(length(strata.labels),con,append=TRUE)
+    nS=length(strata.labels)
+	write(nS,con,append=TRUE)
 	# Number of unobserved states
 	write(uS,con,append=TRUE)
 	# capture history matrix
@@ -167,8 +166,19 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	}
 	write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
 	# S design matrix
-	write(ncol(model_data$S.dm),con,append=TRUE)
-	write(t(model_data$S.dm),con,ncolumns=ncol(model_data$S.dm),append=TRUE)
+    phidm=model_data$S.dm
+    phifix=rep(-1,nrow(phidm))
+	if(!is.null(ddl$S$fix))
+	   phifix[!is.na(ddl$S$fix)]=ddl$S$fix[!is.na(ddl$S$fix)]
+#   if(model_data$S.fixed[1,1]!= -1)
+#   {
+#	   index=(nocc-1)*nS*(model_data$S.fixed[,1]-1)+model_data$S.fixed[,2]
+#	   phifix[index]=model_data$S.fixed[,3]
+#	   phidm[index,1:ncol(phidm)]=0
+#    }
+	write(ncol(phidm),con,append=TRUE)
+	write(t(phidm),con,ncolumns=ncol(phidm),append=TRUE)
+	write(phifix,con,append=TRUE)
 	# p design matrix
     # zero out dm if any unobserved stratum; only done to remove unneeded columns
     if(uS>0)
@@ -179,8 +189,19 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 			select[i]=any(model_data$p.dm[,i]!=0)
 		model_data$p.dm=model_data$p.dm[,select,drop=FALSE]
 	}
-    write(ncol(model_data$p.dm),con,append=TRUE)
-	write(t(model_data$p.dm),con,ncolumns=ncol(model_data$p.dm),append=TRUE)
+	pdm=model_data$p.dm
+	pfix=rep(-1,nrow(pdm))
+	if(!is.null(ddl$p$fix))
+		pfix[!is.na(ddl$p$fix)]=ddl$p$fix[!is.na(ddl$p$fix)]
+#	if(model_data$p.fixed[1,1]!= -1)
+#	{
+#		index=(nocc-1)*nS*(model_data$p.fixed[,1]-1)+model_data$p.fixed[,2]
+#		pfix[index]=model_data$p.fixed[,3]
+#		pdm[index,1:ncol(pdm)]=0
+#	}
+    write(ncol(pdm),con,append=TRUE)
+	write(t(pdm),con,ncolumns=ncol(pdm),append=TRUE)
+	write(pfix,con,append=TRUE)
 	# Psi design matrix
 	# zero out subtracted stratum and remove any unneeded columns
     model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
@@ -188,9 +209,21 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	for (i in 1:ncol(model_data$Psi.dm))
 		select[i]=any(model_data$Psi.dm[,i]!=0)
 	model_data$Psi.dm=model_data$Psi.dm[,select,drop=FALSE]
-	write(ncol(model_data$Psi.dm),con,append=TRUE)
-	write(t(model_data$Psi.dm),con,ncolumns=ncol(model_data$Psi.dm),append=TRUE)
+	psidm=model_data$Psi.dm
+	psifix=rep(-1,nrow(psidm))
+	if(!is.null(ddl$Psi$fix))
+	psifix[!is.na(ddl$Psi$fix)]=ddl$Psi$fix[!is.na(ddl$Psi$fix)]
+#	if(model_data$Psi.fixed[1,1]!= -1)
+#	{
+#		index=(nocc-1)*nS^2*(model_data$Psi.fixed[,1]-1)+model_data$Psi.fixed[,2]
+#		psifix[index]=model_data$Psi.fixed[,3]
+#		psidm[index,1:ncol(psidm)]=0
+#	}
+	write(ncol(psidm),con,append=TRUE)
+	write(t(psidm),con,ncolumns=ncol(psidm),append=TRUE)
+	write(psifix,con,append=TRUE)
 	close(con)
+#   write out initial values for betas
 	con=file(paste(tpl,".pin",sep=""),open="wt")
 	write(par$S,con,ncolumns=length(par$S),append=FALSE)
 	write(par$p,con,ncolumns=length(par$p),append=TRUE)

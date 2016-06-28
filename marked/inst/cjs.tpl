@@ -176,7 +176,7 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
           if(tint(i,j-1)!=1)
              phi(j-1)=pow(phi(j-1),tint(i,j-1));                      // adjust phi for the time interval length
 	   } else
-	      phi(j-1)=phi_fixedDM(i2,kphi+1);
+	      phi(j-1)=phi_fixedDM(i2,kphi+1);                            // fixed real phi
 	   /////// p computation /////////
 	   if(p_fixedDM(i2,kp+1)== -1)
 	   {
@@ -194,7 +194,7 @@ SEPARABLE_FUNCTION void ll_i(const int i, const dvar_vector& phi_sigma,const dva
 	      }
           p(j-1)=1/(1+exp(-mu));                                    // compute p for the occasion
 	   } else
-	      p(j-1)=p_fixedDM(i2,kp+1);
+	      p(j-1)=p_fixedDM(i2,kp+1);                                // fixed real p
 
  	   phicumprod(j)=phicumprod(j-1)*phi(j-1);                     // compute cummulative survival
        cump(j)=cump(j-1)*((1-p(j-1))*(1-ch(i,j))+p(j-1)*ch(i,j));  // compute cummulative capture probability
