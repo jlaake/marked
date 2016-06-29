@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.1.12
-Date: 2016-6-1
+Date: 2016-6-29
 Title: Mark-Recapture Analysis for Survival and Abundance Estimation
 Author: Jeff Laake <jeff.laake@noaa.gov>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>

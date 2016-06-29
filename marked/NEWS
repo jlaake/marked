@@ -1,9 +1,16 @@
-marked 1.1.12 1 June 2016
+marked 1.1.12 29 June 2016
 -----------------
 NEW FEATURES
 
 * parameter pi has been added to MVMSCJS model. Including pi allows the initial 
-state at release to be uncertain. See ?initiate_pi for more details. 
+state at release to be uncertain. See ?initiate_pi for more details. initiate_pi is called
+from make.design.data for MVMSCJS models so existing code can be run without modification.
+
+* modified mscjs and multistate.tpl file so fixed parameters can be included and design
+matrix can be simplified to speed up execution times.
+
+* added function setup_admb to simplify calling code like cjs and mscjs and standardize handling
+of compile, clean arguments and use of existing admb executables in the marked package directory.
 
 CHANGES
 
