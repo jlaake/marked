@@ -9,7 +9,7 @@
 #' @param F initial occasion vector 
 #' @param T number of occasions
 #' @param start matrix with values that are first occasion and for some CJS type models the state of first observation
-#' @aliases cjs_delta 
+#' @aliases cjs_delta mvmscjs_delta
 #' @export cjs_delta mvmscjs_delta
 #' @return 2-d array of initial state probability vectors for each id
 #' @author Jeff Laake <jeff.laake@@noaa.gov>

@@ -24,3 +24,11 @@
 
 	return(new.indices)
 }
+simplify_indices=function(x)
+{
+	uniquevals=apply(unique(x),1,paste,collapse="")
+	allvals=apply(x,1,paste,collapse="")
+	new.indices=match(allvals, uniquevals)
+	return(list(indices=new.indices,set=which(!duplicated(allvals))))
+}
+

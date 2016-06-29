@@ -2,6 +2,7 @@
 % Please edit documentation in R/InitialDistribution_functions.r
 \name{cjs_delta}
 \alias{cjs_delta}
+\alias{mvmscjs_delta}
 \title{HMM Initial state distribution functions}
 \usage{
 cjs_delta(pars, m, F, T, start)

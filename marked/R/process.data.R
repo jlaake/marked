@@ -219,6 +219,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   if(nstrata<2)stop("\nAny multistrata model must have at least 2 strata\n")
 	   } else
 		   unobserved=0
+	   
    }
    #
    #     If time intervals specified make sure there are nocc-1 of them if a vector
@@ -463,7 +464,7 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		plist=list(data=data,model=model,mixtures=mixtures,freq=freqmat,
 				nocc=nocc, nocc.secondary=nocc.secondary, time.intervals=time.intervals,begin.time=begin.time,
 				initial.ages=init.ages,group.covariates=group.covariates,start=start,ehmat=ehmat)
-        if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=model.list$strata.labels,unobserved=unobserved))
+        if(model.list$strata)plist=c(plist,list(strata=model.list$strata,strata.labels=strata.labels,unobserved=unobserved))
         if(!is.null(model.list$hmm)) 
 		{
 			if(!is.null(model.list$hmm$strata.labels))
