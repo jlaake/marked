@@ -25,17 +25,20 @@ set.scale=function(pars,model_data,scale)
 	if(!is.null(scale)&&!is.list(scale)&&all(scale==1))
 	{
 		for(parx in pars)
+			if(!is.null(model_data[[paste(parx,".dm",sep="")]]))
 			scale.list[[parx]]=rep(1,ncol(model_data[[paste(parx,".dm",sep="")]]))
 	}else
 	{
 		for(parx in pars)
 		{
 			if(is.null(scale[[parx]]))
+				if(!is.null(model_data[[paste(parx,".dm",sep="")]]))
 				scale.list[[parx]]=apply(model_data[[paste(parx,".dm",sep="")]],2,function(x) mean(x[x!=0]))
 			else
 			{
 				if(length(scale[[parx]])==1)
-				   scale.list[[parx]]=rep(scale[[parx]],ncol(model_data[[paste(parx,".dm",sep="")]]))
+					if(!is.null(model_data[[paste(parx,".dm",sep="")]]))
+				       scale.list[[parx]]=rep(scale[[parx]],ncol(model_data[[paste(parx,".dm",sep="")]]))
 			    else
 				   if(length(scale[[parx]])!=ncol(model_data[[paste(parx,".dm",sep="")]]))
 					   stop(paste("For",parx,"length of scale does not match length of parameters\n"))
@@ -45,6 +48,7 @@ set.scale=function(pars,model_data,scale)
 		}
 	}
 	for(parx in pars)
+	if(!is.null(model_data[[paste(parx,".dm",sep="")]]))
 	   names(scale.list[[parx]])=colnames(model_data[[paste(parx,".dm",sep="")]])	
 	return(scale.list)
 }
@@ -52,6 +56,7 @@ scale.dm=function(model_data,scale)
 {
 	pars=names(scale)
 	for(parx in pars)
+		if(!is.null(model_data[[paste(parx,".dm",sep="")]]))
 		model_data[[paste(parx,".dm",sep="")]]=t(t(as.matrix(model_data[[paste(parx,".dm",sep="")]]))/scale[[parx]])
     return(model_data)
 }

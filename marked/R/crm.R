@@ -388,7 +388,7 @@ if(model=="JS")
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 if(model=="MSCJS")
 	runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				   refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
+				   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
 if(model=="PROBITCJS")
 {
 	if(is.null(initial))
@@ -403,61 +403,66 @@ if(model=="PROBITCJS")
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 {
 	if(substr(model,1,4)=="MVMS")
-	{
-		obslevels=data.proc$ObsLevels
-		sup=data.proc$fct_sup(list(obslevels=obslevels))
-	} else
+		sup=data.proc$fct_sup(list(obslevels=data.proc$ObsLevels))
+	else
 		sup=NULL
 	if(is.null(data.proc$strata.list) | substr(model,1,4)=="MVMS"){
 		mx=data.proc$m
 	}else{
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
 	}
-	runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
-			        type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
-				    fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
-					parameters=parameters,sup=sup)
-	par <- coef(runmodel, order="value")[1, ]
-	runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
-	if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
-	runmodel$convergence=runmodel$optim.details$convcode
-	runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
-	                		chunk_size=chunk_size,itnmax=itnmax,control=control)
- 	if(save.matrices)
+	if(use.admb & model=="MVMSCJS") 
+		runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
+	else
 	{
-		runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-			fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
-	    if(model=="HMMCJS")
+		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
+				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
+				parameters=parameters,sup=sup)
+		par <- coef(runmodel, order="value")[1, ]
+		runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
+		if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
+		runmodel$convergence=runmodel$optim.details$convcode
+		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
+				chunk_size=chunk_size,itnmax=itnmax,control=control)
+		if(save.matrices)
 		{
-			dimnames(runmodel$mat$gamma)[3:4]=list(c("Alive","Dead"),c("Alive","Dead"))
-			dimnames(runmodel$mat$dmat)[3:4]=list(c("Missed","Seen"),c("Alive","Dead"))
-		}else
-		{
-			dimnames(runmodel$mat$gamma)[3:4]=list(c(data.proc$strata.labels,"Dead"),c(data.proc$strata.labels,"Dead"))
-			dimnames(runmodel$mat$dmat)[3:4]=list(data.proc$ObsLevels,c(data.proc$strata.labels,"Dead"))
+			runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+					fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
+			if(model=="HMMCJS")
+			{
+				dimnames(runmodel$mat$gamma)[3:4]=list(c("Alive","Dead"),c("Alive","Dead"))
+				dimnames(runmodel$mat$dmat)[3:4]=list(c("Missed","Seen"),c("Alive","Dead"))
+			}else
+			{
+				dimnames(runmodel$mat$gamma)[3:4]=list(c(data.proc$strata.labels,"Dead"),c(data.proc$strata.labels,"Dead"))
+				dimnames(runmodel$mat$dmat)[3:4]=list(data.proc$ObsLevels,c(data.proc$strata.labels,"Dead"))
+			}
+			names(dimnames(runmodel$mat$gamma))=c("Id","Occasion","From_state","To_state")
+			names(dimnames(runmodel$mat$dmat))=c("Id","Occasion","Observation","State")
 		}
-		names(dimnames(runmodel$mat$gamma))=c("Id","Occasion","From_state","To_state")
-		names(dimnames(runmodel$mat$dmat))=c("Id","Occasion","Observation","State")
-    }
-	parlist=split(par,initial.list$ptype)
-	par=vector("list",length=length(names(initial.list$par)))
-	names(par)=names(initial.list$par)
-	for(p in names(parlist))
-	{
-		par[[p]]=parlist[[p]]
-		names(par[[p]])=colnames(dml[[p]]$fe)	
+		parlist=split(par,initial.list$ptype)
+		par=vector("list",length=length(names(initial.list$par)))
+		names(par)=names(initial.list$par)
+		for(p in names(parlist))
+		{
+			par[[p]]=parlist[[p]]
+			names(par[[p]])=colnames(dml[[p]]$fe)	
+		}
+		runmodel$beta=par
+		runmodel$par=NULL
+		runmodel$neg2lnl=2*runmodel$optim.details$value
+		runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
+		if(!is.null(runmodel$hessian))
+		{
+			runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
+			colnames(runmodel$beta.vcv)=names(unlist(runmodel$beta))
+			rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
+		}
+		class(runmodel)=c("crm","mle",model)
+		
 	}
-	runmodel$beta=par
-	runmodel$par=NULL
-	runmodel$neg2lnl=2*runmodel$optim.details$value
-	runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
-	if(!is.null(runmodel$hessian))
-	{
-		runmodel$beta.vcv=solvecov(runmodel$hessian)$inv
-		colnames(runmodel$beta.vcv)=names(unlist(runmodel$beta))
-		rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
-	}
-	class(runmodel)=c("crm","mle",model)
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file

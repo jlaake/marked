@@ -1,7 +1,7 @@
 // Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states based on work of Jessica Ford in MEE Dec 2012
-// Jeff Laake; 23 June 2016
+// Jeff Laake; 29 June 2016
 // Modified from original version to split off code to compute dmat and gamma calculations
-// Need to add fixed values to handle unobservable state
+// Now allows fixed real parameters and uses simplification
 DATA_SECTION 
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
