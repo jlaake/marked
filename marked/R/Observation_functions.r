@@ -23,7 +23,7 @@
 	}
 	value=.Fortran("mvmsp",as.double(pars$p),as.double(pars$delta),as.integer(nrow(pars$p)),as.integer(m),
 			as.integer(F),as.integer(T),as.integer(sup$np),length(sup$obslevels),as.integer(sup$pcounts),as.integer(sup$indices_forp),
-			as.integer(unk),pmat=double(nrow(pars$p)*T*length(sup$obslevels)*m),PACKAGE="marked")
+			as.integer(unk),as.integer(sup$unkinit),pmat=double(nrow(pars$p)*T*length(sup$obslevels)*m),PACKAGE="marked")
 	dim(value$pmat)=c(nrow(pars$p),T,length(sup$obslevels),m)
 	value$pmat
 }

@@ -67,7 +67,12 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 	if(is.null(sup))
        dmat=fct_dmat(pars,m,F=xstart[,2],T)
    else
+   {
+	   sup$unkinit=0
+	   if(!is.null(ddl$pi))
+		   sup$unkinit=as.numeric(any(is.na(ddl$pi$fix)))
 	   dmat=fct_dmat(pars,m,F=xstart[,2],T,sup)
+   }
 	# transition matrices using parameter values
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
 	# compute matrix of initial state distribution for each id

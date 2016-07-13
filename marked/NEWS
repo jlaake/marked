@@ -12,6 +12,8 @@ matrix can be simplified to speed up execution times.
 * added function setup_admb to simplify calling code like cjs and mscjs and standardize handling
 of compile, clean arguments and use of existing admb executables in the marked package directory.
 
+* created an ADMB version of the mvms model with simplified design matrix to speed up execution times. The sealion example runs in 1/10 of the time if use.admb=TRUE is set.
+
 CHANGES
 
 * pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
