@@ -6,7 +6,6 @@ DATA_SECTION
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
 	init_int nS;                           // number of states excluding death state
-	init_int uS;                           // number of unobserved states
     init_imatrix ch(1,n,1,m);              // capture history matrix; uses numeric values for states
     init_ivector frst(1,n);                // occasion first seen for each history
 	init_vector freq(1,n);                 // frequency of each capture history
@@ -43,7 +42,7 @@ PARAMETER_SECTION
     init_vector pbeta(1,kp);           // parameter vector for p
     init_vector psibeta(1,kpsi);       // parameter vector for p
 	objective_function_value g; 
-
+	
 PROCEDURE_SECTION
     int i,j,k,bindex,bindex2,k2;       // indices and counters
     dvar_vector uniquephi(1,nrowphi);  // all unique phi values    
@@ -93,7 +92,7 @@ PROCEDURE_SECTION
 	       }
 	       bindex2=bindex2+nS*nS;         
         }
-           
+         
         ll_i(i,phi,p,psi);                 // compute neg log likelihod and increment
      }
 
@@ -162,6 +161,10 @@ FUNCTION void ll_i(const int i, const dvar_vector& phi, const dvar_vector& p, co
 // 	    j2=j+frst(i)-1; 
         pS=S*gamma(j-1);        	                    // previous scaled state probability*transition matrix
         v=elem_prod(pS,dmat(j-1,ch(i,j)+1));            // v is temp state vector alpha in Z&M
+        if(sum(v)==0) {
+          cout << "\n Check Psi or p values set to 0";
+          cout << "\n i = " << i << " ch = " << ch(i);
+        }
     	u=sum(v);                                       // sum across states
         S=v/u;                                          // update S;S is normalized alpha(j) (phi) in Z&M
 	    Lglki+=log(u);    	                            // accumulate log-likelihood value

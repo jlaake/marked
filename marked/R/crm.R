@@ -334,11 +334,30 @@ if(is.null(ddl))
 	design.parameters=ddl$design.parameters
 }
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
-if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS")))
+if(model=="MSCJS")
+{
+	for (parname in names(parameters))
+	{
+		fields=all.vars(parameters[[parname]]$formula)
+		if(!is.null(ddl[[parname]]$fix)) fields=c(fields,"fix")
+		if(length(fields)==0)
+			slist=list(indices=rep(1,nrow(ddl[[parname]])),set=1)
+		else
+		    slist=simplify_indices(cbind(ddl[[parname]][,fields]))
+		ddl[[parname]]=ddl[[parname]][slist$set,]
+		ddl[[paste(parname,".indices",sep="")]]=slist$indices
+	}
+}
+if(simplify)
 {
 	simplify=FALSE
-	message("Can only use simplify with HMM models. simplify set to FALSE")
+	message("simplify argument has been disabled")
 }
+#if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS")))
+#{
+#	simplify=FALSE
+#	message("Can only use simplify with HMM models. simplify set to FALSE")
+#}
 # check to see if all values for a parameter have been fixed.  If so, then set formula to ~0
 for (i in 1:length(parameters))
 {
@@ -412,20 +431,26 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
 	}
 	if(use.admb & model=="MVMSCJS") 
+	{
 		runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
-	else
+		par=coef(runmodel)[,1]
+		runmodel$options=c(runmodel$options,list(accumulate=accumulate,initial=initial.list$par,method=method,
+				chunk_size=chunk_size,itnmax=itnmax,control=control))
+		
+	} else
 	{
 		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
 				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
 				parameters=parameters,sup=sup)
-		par <- coef(runmodel, order="value")[1, ]
+		par=coef(runmodel, order="value")[1, ]
 		runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
 		if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
 		runmodel$convergence=runmodel$optim.details$convcode
 		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
 				chunk_size=chunk_size,itnmax=itnmax,control=control)
+	}
 		if(save.matrices)
 		{
 			runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
@@ -452,7 +477,8 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		}
 		runmodel$beta=par
 		runmodel$par=NULL
-		runmodel$neg2lnl=2*runmodel$optim.details$value
+		if(is.null(runmodel$neg2lnl)) 
+			runmodel$neg2lnl=2*runmodel$optim.details$value
 		runmodel$AIC=runmodel$neg2lnl+2*sum(sapply(runmodel$beta,length))
 		if(!is.null(runmodel$hessian))
 		{
@@ -461,8 +487,6 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 			rownames(runmodel$beta.vcv)=colnames(runmodel$beta.vcv)
 		}
 		class(runmodel)=c("crm","mle",model)
-		
-	}
 }
 #
 # Return fitted MARK model object or if external, return character string with same class and save file

@@ -201,8 +201,6 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	# Number of states
     nS=length(strata.labels)
 	write(nS,con,append=TRUE)
-	# Number of unobserved states
-	write(uS,con,append=TRUE)
 	# capture history matrix
 	write(t(chmat),con,ncolumns=nocc,append=TRUE)
 	# first occasions seen 
@@ -217,54 +215,66 @@ mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL
 	}
 	write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
 	# S design matrix
-    phidm=model_data$S.dm
+    phidm=as.matrix(model_data$S.dm)
     phifix=rep(-1,nrow(phidm))
 	if(!is.null(ddl$S$fix))
 	   phifix[!is.na(ddl$S$fix)]=ddl$S$fix[!is.na(ddl$S$fix)]
-    slist=simplify_indices(cbind(phidm,phifix))
+    #slist=simplify_indices(cbind(phidm,phifix))
     write(ncol(phidm),con,append=TRUE)
-	write(length(slist$set),con,append=TRUE)
-	write(t(phidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(phidm),append=TRUE)
-	write(phifix[slist$set],con,append=TRUE)
-	write(slist$indices,con,append=TRUE)
+	write(nrow(phidm),con,append=TRUE)
+	write(t(phidm),con,ncolumns=ncol(phidm),append=TRUE)
+	write(phifix,con,append=TRUE)
+	write(ddl$S.indices,con,append=TRUE)
+#	write(length(slist$set),con,append=TRUE)
+#	write(t(phidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(phidm),append=TRUE)
+#	write(phifix[slist$set],con,append=TRUE)
+#	write(slist$indices,con,append=TRUE)
 	# p design matrix
     # zero out dm if any unobserved stratum; only done to remove unneeded columns
-    if(uS>0)
-	{
-		model_data$p.dm[as.numeric(ddl$p$stratum)>=(length(strata.labels)-uS),]=0
-		select=vector("logical",length=ncol(model_data$p.dm))
-		for (i in 1:ncol(model_data$p.dm))
-			select[i]=any(model_data$p.dm[,i]!=0)
-		model_data$p.dm=model_data$p.dm[,select,drop=FALSE]
-	}
-	pdm=model_data$p.dm
+#    if(uS>0)
+#	{
+#		model_data$p.dm[as.numeric(ddl$p$stratum)>=(length(strata.labels)-uS),]=0
+#		select=vector("logical",length=ncol(model_data$p.dm))
+#		for (i in 1:ncol(model_data$p.dm))
+#			select[i]=any(model_data$p.dm[,i]!=0)
+#		model_data$p.dm=model_data$p.dm[,select,drop=FALSE]
+#	}
+	pdm=as.matrix(model_data$p.dm)
 	pfix=rep(-1,nrow(pdm))
 	if(!is.null(ddl$p$fix))
 		pfix[!is.na(ddl$p$fix)]=ddl$p$fix[!is.na(ddl$p$fix)]
 	slist=simplify_indices(cbind(pdm,pfix))
 	write(ncol(pdm),con,append=TRUE)
-	write(length(slist$set),con,append=TRUE)
-	write(t(pdm[slist$set,,drop=FALSE]),con,ncolumns=ncol(pdm),append=TRUE)
-	write(pfix[slist$set],con,append=TRUE)
-	write(slist$indices,con,append=TRUE)
+	write(nrow(pdm),con,append=TRUE)
+	write(t(pdm),con,ncolumns=ncol(pdm),append=TRUE)
+	write(pfix,con,append=TRUE)
+	write(ddl$p.indices,con,append=TRUE)
+#	write(length(slist$set),con,append=TRUE)
+#	write(t(pdm[slist$set,,drop=FALSE]),con,ncolumns=ncol(pdm),append=TRUE)
+#	write(pfix[slist$set],con,append=TRUE)
+#	write(slist$indices,con,append=TRUE)
 	
 	# Psi design matrix
 	# zero out subtracted stratum and remove any unneeded columns
-    model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
-	select=vector("logical",length=ncol(model_data$Psi.dm))
-	for (i in 1:ncol(model_data$Psi.dm))
-		select[i]=any(model_data$Psi.dm[,i]!=0)
-	model_data$Psi.dm=model_data$Psi.dm[,select,drop=FALSE]
-	psidm=model_data$Psi.dm
+#    model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
+#	select=vector("logical",length=ncol(model_data$Psi.dm))
+#	for (i in 1:ncol(model_data$Psi.dm))
+#		select[i]=any(model_data$Psi.dm[,i]!=0)
+#	model_data$Psi.dm=model_data$Psi.dm[,select,drop=FALSE]
+	psidm=as.matrix(model_data$Psi.dm)
 	psifix=rep(-1,nrow(psidm))
 	if(!is.null(ddl$Psi$fix))
 	psifix[!is.na(ddl$Psi$fix)]=ddl$Psi$fix[!is.na(ddl$Psi$fix)]
     slist=simplify_indices(cbind(psidm,psifix))
-    write(ncol(psidm),con,append=TRUE)
-    write(length(slist$set),con,append=TRUE)
-    write(t(psidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(psidm),append=TRUE)
-    write(psifix[slist$set],con,append=TRUE)
-    write(slist$indices,con,append=TRUE)
+	write(ncol(psidm),con,append=TRUE)
+	write(nrow(psidm),con,append=TRUE)
+	write(t(psidm),con,ncolumns=ncol(psidm),append=TRUE)
+	write(psifix,con,append=TRUE)
+	write(ddl$Psi.indices,con,append=TRUE)
+#    write(length(slist$set),con,append=TRUE)
+#   write(t(psidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(psidm),append=TRUE)
+#    write(psifix[slist$set],con,append=TRUE)
+#    write(slist$indices,con,append=TRUE)
 	close(con)
 #   write out initial values for betas
 	con=file(paste(tpl,".pin",sep=""),open="wt")

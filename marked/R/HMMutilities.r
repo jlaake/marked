@@ -170,6 +170,10 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
 		message("Not an HMM model. Returning NULL")
 		return(NULL)
 	}
+	if(is.null(ddl)){
+		message("\nddl argument required.")
+		return(NULL)
+	}
 	if(is.null(state.names))
 		if(!is.null(object$data$strata.labels))
 			state.names=c(object$data$strata.labels,"Dead")
