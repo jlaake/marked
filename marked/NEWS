@@ -25,6 +25,8 @@ if formula is ~0 and not all values are fixed then an error is generated.
 * The above change made it possible to allow an mvmscjs specification in which all states are certain. In which case,
 no design data is generated for the delta parameter.
 
+* global_decode now requires ddl argument to be specified and does not compute on the fly.
+
 
 marked 1.1.11 7 March 2016
 -----------------
