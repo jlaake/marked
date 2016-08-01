@@ -334,20 +334,8 @@ if(is.null(ddl))
 	design.parameters=ddl$design.parameters
 }
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
-if(model=="MSCJS")
-{
-	for (parname in names(parameters))
-	{
-		fields=all.vars(parameters[[parname]]$formula)
-		if(!is.null(ddl[[parname]]$fix)) fields=c(fields,"fix")
-		if(length(fields)==0)
-			slist=list(indices=rep(1,nrow(ddl[[parname]])),set=1)
-		else
-		    slist=simplify_indices(cbind(ddl[[parname]][,fields]))
-		ddl[[parname]]=ddl[[parname]][slist$set,]
-		ddl[[paste(parname,".indices",sep="")]]=slist$indices
-	}
-}
+if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
+	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 if(simplify)
 {
 	simplify=FALSE

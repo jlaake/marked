@@ -29,6 +29,7 @@
 #' @param start same as xstart but for hmm.lnl
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @param sup  list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat
+#' @param indices list of simplified indices for original full ddl
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
 #'        reals(ddl,dml,parameters,parlist)
@@ -58,10 +59,14 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 	pars=list()
 	for(parname in names(parameters))
     {
-        R=reals(ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters[[parname]],parlist=parlist[[parname]])
+		indices=ddl[[paste(paste(parname,"indices",sep="."))]]
+        R=reals(ddl=ddl[[parname]],dml=dml[[parname]],parameters=parameters[[parname]],parlist=parlist[[parname]],indices=indices)
 		R[is.infinite(R)]=1e199*sign(Inf)
-        pars[[parname]]=do.call("rbind",split(R,ddl[[parname]]$id))
-    }
+        if(is.null(indices))
+		  pars[[parname]]=do.call("rbind",split(R,ddl[[parname]]$id))
+	  else
+		  pars[[parname]]=do.call("rbind",split(R,ddl[[paste(parname,"id",sep=".")]]))
+  }
 	# compute 4-d arrays of id- and occasion-specific 
 	# observation probability matrices 
 	if(is.null(sup))
@@ -88,7 +93,7 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 	if(debug)cat("\n -lnl= ",neglnl)
 	return(neglnl)
 }
-reals=function(ddl,dml,parameters,parlist)
+reals=function(ddl,dml,parameters,parlist,indices=NULL)
 {
 	# Computes real estimates for HMM models using inverse of 
 	# link from design matrix and for a particular parameter 
@@ -103,14 +108,28 @@ reals=function(ddl,dml,parameters,parlist)
 				log=exp(as.vector(dm%*%parlist)),
 				logit=plogis(as.vector(dm%*%parlist)),
 				identity=as.vector(dm%*%parlist))
-		if(!is.null(dml$indices))values=values[dml$indices]
+		if(!is.null(indices))
+			values = values[indices]
+		#if(!is.null(dml$indices))values=values[dml$indices]
 		if(!is.null(ddl$time.interval))values=values^ddl$time.interval
 	}
 	else
+	{
 		values=rep(NA,nrow(dm))
+		if(!is.null(indices))
+			values = values[indices]
+	}
 	# if some reals are fixed, set reals to their fixed values 
-	if(!is.null(ddl$fix))
-		values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]
+	if(!is.null(ddl$fix)) 
+	{
+		if(is.null(indices))
+			values[!is.na(ddl$fix)]=ddl$fix[!is.na(ddl$fix)]
+		else
+		{
+			fix=ddl$fix[indices]
+			values[!is.na(fix)]=fix[!is.na(fix)]
+		}
+	}		
 	# return vector of reals
 	return(values)
 }

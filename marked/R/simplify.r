@@ -31,4 +31,20 @@ simplify_indices=function(x)
 	new.indices=match(allvals, uniquevals)
 	return(list(indices=new.indices,set=which(!duplicated(allvals))))
 }
+simplify_ddl=function(ddl,parameters)
+{
+	for (parname in names(parameters))
+	{
+		fields=all.vars(parameters[[parname]]$formula)
+		if(!is.null(ddl[[parname]]$fix)) fields=c(fields,"fix")
+		if(length(fields)==0)
+			slist=list(indices=rep(1,nrow(ddl[[parname]])),set=1)
+		else
+			slist=simplify_indices(cbind(ddl[[parname]][,fields]))
+		ddl[[paste(parname,"id",sep=".")]]=ddl[[parname]]$id
+		ddl[[parname]]=ddl[[parname]][slist$set,]
+		ddl[[paste(parname,"indices",sep=".")]]=slist$indices
+	}
+	return(ddl)
+}
 
