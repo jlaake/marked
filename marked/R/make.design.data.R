@@ -257,8 +257,7 @@ initiate_pi=function(data,ddl)
 set_pifix=function(id)
 {
 	strata=ddl$pi$stratum[ddl$pi$id==id]
-	cohort=as.numeric(as.character(unique(ddl$pi$cohort[ddl$pi$id==id])))
-	first_value=strsplit(data$data$ch[data$data$id==id],",")[[1]][cohort]
+	first_value=strsplit(data$data$ch[data$data$id==id],",")[[1]][unique(ddl$pi$occ[ddl$pi$id==id])]
 	unknown=grep("u",first_value)
 	fix=rep(0,nrow(ddl$pi[data$data$id==id,]))
 	if(length(unknown)==0)
