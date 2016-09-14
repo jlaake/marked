@@ -130,11 +130,29 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		phimixed=mixed.model.admb(parameters$Phi$formula,ddl$Phi)
 		nphisigma=0
 		if(!is.null(phimixed$re.dm))nphisigma=ncol(phimixed$re.dm)
-		if(crossed & !is.null(phimixed$re.dm))
+		if(!is.null(phimixed$re.dm))
 		{
 			phimixed$re.indices[ddl$Phi$Time<ddl$Phi$Cohort,]=NA
 			phimixed=reindex(phimixed,ddl$Phi$id)
+
+			# random effect data
+			phi_nre=max(phimixed$re.indices)
+            phi_krand=ncol(phimixed$re.dm)
+			phi_randDM=phimixed$re.dm
+			phi_randIndex=phimixed$re.indices
+			phi_counts=phimixed$index.counts
+			mx=max(phimixed$index.counts)
+			phi_Idindex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+		} else {
+			phi_nre=0
+			phi_krand=0
+			phi_randDM=matrix(0,nrow=0,ncol=0)
+			phi_randIndex=matrix(0,nrow=0,ncol=0)
+			phi_counts=vector("integer",length=0)
+			phi_Idindex=matrix(0,nrow=0,ncol=0)
 		}
+		
+		
 		# p dm portion
 		pdm=model_data$p.dm
 		pdm=cbind(pdm,rep(-1,nrow(pdm)))
@@ -151,16 +169,63 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		{
 			pmixed$re.indices[ddl$p$Time<ddl$p$Cohort,]=NA
 			pmixed=reindex(pmixed,ddl$p$id)
-		}	   
-		setup_tmb("cjs_tmb",compile=compile,clean=clean)
-		cat("\nrunning TMB program\n")                         
-		compile("cjs_tmb.cpp")               # Compile the C++ file
-		dyn.load(dynlib("cjs_tmb"))          # Dynamically link the C++ code
+		}	
+		npsigma=0
+		if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
 		
-# Create AD function with data and parameters
-		f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frq=model_data$imat$freq,frst=model_data$imat$first,
-								lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,kphi=ncol(phidm)-1,phi_fixedDM=phidm,kp=ncol(pdm)-1,p_fixedDM=pdm),
-						        parameters=list(phi_beta=initial$Phi,p_beta=initial$p),DLL="cjs_tmb")
+		if(!is.null(pmixed$re.dm))
+		{
+			pmixed$re.indices[ddl$Phi$Time<ddl$Phi$Cohort,]=NA
+			pmixed=reindex(pmixed,ddl$Phi$id)
+			
+			# random effect data
+			p_nre=max(pmixed$re.indices)
+			p_krand=ncol(pmixed$re.dm)
+			p_randDM=pmixed$re.dm
+			p_randIndex=pmixed$re.indices
+			p_counts=pmixed$index.counts
+			mx=max(pmixed$index.counts)
+			p_Idindex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+		} else {
+			p_nre=0
+			p_krand=0
+			p_randDM=matrix(0,nrow=0,ncol=0)
+			p_randIndex=matrix(0,nrow=0,ncol=0)
+			p_counts=vector("integer",length=0)
+			p_Idindex=matrix(0,nrow=0,ncol=0)
+		}
+		
+		if(nphisigma+npsigma>0)
+		{
+			setup_tmb("cjsre_tmb",compile=compile,clean=clean)
+			cat("\nrunning TMB program\n")                         
+			compile("cjsre_tmb.cpp")               # Compile the C++ file
+			dyn.load(dynlib("cjsre_tmb"))          # Dynamically link the C++ code
+			
+			# Create AD function with data and parameters
+			f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frst=model_data$imat$first,
+							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
+							kphi=ncol(phidm)-1,phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_Idindex=phi_Idindex,
+							kp=ncol(pdm)-1,p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+							p_randIndex=p_randIndex,p_counts=p_counts,p_Idindex=p_Idindex),
+					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
+							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
+					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
+			
+		} else
+		{
+			setup_tmb("cjs_tmb",compile=compile,clean=clean)
+			cat("\nrunning TMB program\n")                         
+			compile("cjs_tmb.cpp")               # Compile the C++ file
+			dyn.load(dynlib("cjs_tmb"))          # Dynamically link the C++ code
+			
+			# Create AD function with data and parameters
+			f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frq=model_data$imat$freq,frst=model_data$imat$first,
+							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,kphi=ncol(phidm)-1,phi_fixedDM=phidm,kp=ncol(pdm)-1,p_fixedDM=pdm),
+					parameters=list(phi_beta=initial$Phi,p_beta=initial$p),DLL="cjs_tmb")
+			
+		}
 		
 		mod=optimx(f$par,f$fn,f$gr,method=method,hessian=FALSE,
 				debug=debug,control=control,itnmax=itnmax,...)
