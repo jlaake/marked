@@ -177,6 +177,7 @@
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
 #' @param use.admb if TRUE creates data file for cjs.tpl and runs admb optimizer
+#' @param use.tmb if TRUE runs TMB for cjs
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param reml if TRUE uses restricted maximum likelihood
 #' @param compile if TRUE forces re-compilation of tpl file
@@ -257,8 +258,8 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=TRUE,save.matrices=TRUE,simplify=FALSE,...)
+ control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
+ strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -304,11 +305,20 @@ for (i in 1:length(parameters))
 {
 	if(is.null(parameters[[i]]$formula)) parameters[[i]]$formula=~1
 	mlist=proc.form(parameters[[i]]$formula)
-	if(!is.null(mlist$re.model))re=TRUE
+	
+	if(!is.null(mlist$re.model))
+	{
+		if(length(grep("| id",names(mlist$re.model),fixed=TRUE))!=length(mlist$re.model)) crossed=TRUE  
+		re=TRUE
+	}
 	if(parameters[[i]]$nointercept)parameters[[i]]$remove.intercept=TRUE
 }
 # currently if re, then set use.admb to TRUE
-if(re) use.admb=TRUE
+if(re&!use.tmb) {
+	use.admb=TRUE
+	if(is.null(clean))clean=TRUE
+}
+if(use.tmb&is.null(clean))clean=FALSE
 if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
 if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
@@ -388,7 +398,12 @@ if("nlminb"%in%method)
 # Call estimation function which depends on the model
 message("Fitting model\n")
 if(model=="CJS")
-    runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+	if(use.tmb)
+	{
+		runmodel=cjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
+	} else
+		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
 if(model=="JS")
     runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,

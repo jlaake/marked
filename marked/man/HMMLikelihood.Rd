@@ -57,6 +57,8 @@ HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 \item{parlist}{list of parameter strings used to split par vector}
 
 \item{start}{same as xstart but for hmm.lnl}
+
+\item{indices}{list of simplified indices for original full ddl}
 }
 \value{
 HMMLikelihood returns log-likelihood for a single sequence and

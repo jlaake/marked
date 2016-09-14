@@ -10,7 +10,7 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb in local directory
 #' @param re uses admb-re if TRUE for random effects
 #' @param safe can be used to set safe mode for admb
-#' @export
+#' @export setup_admb setup_tmb
 setup_admb=function(tpl,compile=FALSE,clean=TRUE,safe=TRUE,re=FALSE)
 {
 if(R.Version()$os=="mingw32")
@@ -57,4 +57,21 @@ if(!have.exe | compile)
 	}
 }
 invisible()
+}
+
+
+setup_tmb=function(tpl,compile=FALSE,clean=FALSE)
+{
+	sdir=system.file(package="marked")
+#   if argument clean is TRUE, delete dll and cpp files as well
+	if(clean)
+	{
+		if(file.exists(paste(tpl,".cpp",sep=""))) unlink(paste(tpl,".cpp",sep=""))
+		if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
+		if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
+	}
+# if cpp is not available, copy from the package directory
+	if(!file.exists(paste(tpl,".cpp",sep="")))
+		file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
+	invisible()
 }

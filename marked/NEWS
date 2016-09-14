@@ -27,6 +27,8 @@ no design data is generated for the delta parameter.
 
 * global_decode now requires ddl argument to be specified and does not compute on the fly.
 
+* changed AIC calculation for use.admb=T to use only number of fixed effect estimates plus number of random effect sigma values.
+
 
 marked 1.1.11 7 March 2016
 -----------------

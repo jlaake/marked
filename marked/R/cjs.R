@@ -314,7 +314,7 @@ cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,m
 	   options=list(extra.args=extra.args)
 	   res$cor=NULL
 	   res$maxgrad=NULL
-	   results=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence)
+	   results=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*sum(sapply(cjs.beta,length)),convergence=convergence)
 	   results$optim.details=optim.details
 	   results$options=options
 	   results$random.effects=res$random.effects
