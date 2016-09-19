@@ -136,20 +136,22 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			phimixed=reindex(phimixed,ddl$Phi$id)
 
 			# random effect data
-			phi_nre=max(phimixed$re.indices)
             phi_krand=ncol(phimixed$re.dm)
 			phi_randDM=phimixed$re.dm
 			phi_randIndex=phimixed$re.indices
 			phi_counts=phimixed$index.counts
 			mx=max(phimixed$index.counts)
-			phi_Idindex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+			phi_idIndex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+			phi_nre=max(phi_idIndex)
+			if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
+			if(phi_krand==1)phi_randIndex=matrix(as.vector(phi_randIndex),ncol=1)
 		} else {
 			phi_nre=0
 			phi_krand=0
 			phi_randDM=matrix(0,nrow=0,ncol=0)
 			phi_randIndex=matrix(0,nrow=0,ncol=0)
 			phi_counts=vector("integer",length=0)
-			phi_Idindex=matrix(0,nrow=0,ncol=0)
+			phi_idIndex=matrix(0,nrow=0,ncol=0)
 		}
 		
 		
@@ -165,36 +167,33 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		pmixed=mixed.model.admb(parameters$p$formula,ddl$p)
 		npsigma=0
 		if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
-		if(crossed &!is.null(pmixed$re.dm))
-		{
-			pmixed$re.indices[ddl$p$Time<ddl$p$Cohort,]=NA
-			pmixed=reindex(pmixed,ddl$p$id)
-		}	
-		npsigma=0
-		if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
 		
 		if(!is.null(pmixed$re.dm))
 		{
-			pmixed$re.indices[ddl$Phi$Time<ddl$Phi$Cohort,]=NA
-			pmixed=reindex(pmixed,ddl$Phi$id)
+			pmixed$re.indices[ddl$p$Time<ddl$Cohort,]=NA
+			pmixed=reindex(pmixed,ddl$p$id)
 			
 			# random effect data
-			p_nre=max(pmixed$re.indices)
+			
 			p_krand=ncol(pmixed$re.dm)
 			p_randDM=pmixed$re.dm
 			p_randIndex=pmixed$re.indices
 			p_counts=pmixed$index.counts
 			mx=max(pmixed$index.counts)
-			p_Idindex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+			p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+			if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
+			p_nre=max(p_idIndex)
+			if(p_krand==1)p_randIndex=matrix(as.vector(p_randIndex),ncol=1)
+			
 		} else {
 			p_nre=0
 			p_krand=0
 			p_randDM=matrix(0,nrow=0,ncol=0)
 			p_randIndex=matrix(0,nrow=0,ncol=0)
 			p_counts=vector("integer",length=0)
-			p_Idindex=matrix(0,nrow=0,ncol=0)
+			p_idIndex=matrix(0,nrow=0,ncol=0)
 		}
-		
+		usere=TRUE
 		if(nphisigma+npsigma>0)
 		{
 			setup_tmb("cjsre_tmb",compile=compile,clean=clean)
@@ -206,9 +205,9 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frst=model_data$imat$first,
 							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
 							kphi=ncol(phidm)-1,phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
-							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_Idindex=phi_Idindex,
+							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
 							kp=ncol(pdm)-1,p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
-							p_randIndex=p_randIndex,p_counts=p_counts,p_Idindex=p_Idindex),
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex),
 					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
 							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
 					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
@@ -226,7 +225,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 					parameters=list(phi_beta=initial$Phi,p_beta=initial$p),DLL="cjs_tmb")
 			
 		}
-		
+		control$starttests=FALSE
 		mod=optimx(f$par,f$fn,f$gr,method=method,hessian=FALSE,
 				debug=debug,control=control,itnmax=itnmax,...)
 		par <- coef(mod, order="value")[1, ]

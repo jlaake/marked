@@ -33,7 +33,10 @@ create.fixed.matrix=function(ddl,parameters)
 		if(!is.null(ddl[[parx]]$fix))
 		{
 			select=!is.na(ddl[[parx]]$fix)
-			parameters[[parx]]$fixed=cbind(as.numeric(ddl[[parx]]$id[select]),as.numeric(ddl[[parx]]$time[select])+1,ddl[[parx]]$fix[select])
+			if(any(select))
+			    parameters[[parx]]$fixed=cbind(as.numeric(ddl[[parx]]$id[select]),as.numeric(ddl[[parx]]$time[select])+1,ddl[[parx]]$fix[select])
+			else
+				parameters[[parx]]$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)				
 		} else
 		    parameters[[parx]]$fixed=matrix(c(-1,-1,0),nrow=1,ncol=3)
 	}	
