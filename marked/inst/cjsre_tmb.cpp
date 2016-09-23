@@ -53,7 +53,7 @@ Type objective_function<Type>::operator() ()
     int npcounts=n;                                         // number of counts for p random effects by id
     if(p_nre==0)npcounts=0;
   
-	for(int i=1;i<=n;i++)                                 // loop over capture histories - one per animal
+	for(int i=1;i<=n;i++)                // loop over capture histories - one per animal
     {
        vector<Type> phi(m-1);            // temp vector for Phis for each occasion for a single history
        vector<Type> p(m-1);              // temp vector for Phis for each occasion for a single history
@@ -63,13 +63,13 @@ Type objective_function<Type>::operator() ()
        int i1,i2,j,L;	                 // miscellaneous ints
        Type mu;                          // link function value
 	   
-       vector<Type> p_u(p_idIndex.cols());                          
-       vector<Type> phi_u(phi_idIndex.cols());
+       vector<Type> p_u(p_idIndex.cols());        // define random effects vector for p and Phi used                  
+       vector<Type> phi_u(phi_idIndex.cols());    // just for this capture history copied from full vectors
        p_u.setZero();	   
        phi_u.setZero();	   
 	   phi.setZero();
 	   p.setZero();
- 	   if(nphicounts >0)
+ 	   if(nphicounts >0)                          // if any random effects for phi, copy values from u_phi to phi_u
 	   {
    		  if(phi_counts(i-1)==0)
 		     phi_u(0)=0;
@@ -78,7 +78,7 @@ Type objective_function<Type>::operator() ()
 			    phi_u(j)=u_phi(phi_idIndex(i-1,j)-1);
 		} 
 
-		if(npcounts >0)
+		if(npcounts >0)                           // if any random effects for p, copy values from u_phi to phi_u
 	    {
    		   if(p_counts(i-1)==0)
 		      p_u(0)=0;
@@ -86,12 +86,15 @@ Type objective_function<Type>::operator() ()
 		     for(j=0;j<=p_counts(i-1)-1;j++)
 		        p_u(j)=u_p(p_idIndex(i-1,j)-1);
 		} 
-   	    for(j=0;j<=m-1;j++)               
+		
+   	    for(j=0;j<=m-1;j++)              // loop over all occasions              
         {   
  	      phicumprod(j)=1.0;             // set cummulative survival to 1
           cump(j)=1.0;                   // set cummulative p to 1
        }	
+       
        i1=(m-1)*(i-1);                   // compute beginning index in design matrix
+       
 	   for(j=frst(i-1)+1;j<=m;j++)       // loop over occasions from frst to m
 	   {
 	      i2=i1+j-1;                     // increment index in design matrix
@@ -114,6 +117,7 @@ Type objective_function<Type>::operator() ()
                 phi(j-2)=pow(phi(j-2),tint(i-1,j-2));       // adjust phi for the time interval length
 	      } else
 	        phi(j-2)=phi_fixedDM(i2-1,kphi);                // real fixed value for this phi
+	        
  		  /////// p computation /////////
 	      if(p_fixedDM(i2-1,kp)== -1)
 	      {
@@ -134,16 +138,17 @@ Type objective_function<Type>::operator() ()
 		  phicumprod(j-1)=phicumprod(j-2)*phi(j-2);                             // compute cummulative survival
 	      cump(j-1)=cump(j-2)*((1-p(j-2))*(1-ch(i-1,j-1))+p(j-2)*ch(i-1,j-1));  // compute cummulative capture probability
 	   } 
-       pch=0.0;                                                           // initialize prob of the capture history to 0
-       for(j=lst(i-1);j<=((1-loc(i-1))*m+loc(i-1)*lst(i-1));j++)      // loop over last occasion to m unless loss on capture
-       {                                                                  // to compute prob of the capture history 
+       pch=0.0;                                                      // initialize prob of the capture history to 0
+       for(j=lst(i-1);j<=((1-loc(i-1))*m+loc(i-1)*lst(i-1));j++)     // loop over last occasion to m unless loss on capture
+       {                                                             // to compute prob of the capture history 
           if(loc(i-1)==1 | j==m)
-             pch=pch+cump(j-1)*phicumprod(j-1);                       // probability of history given possible last occasion alive
+             pch=pch+cump(j-1)*phicumprod(j-1);                      // probability of history given possible last occasion alive
           else       
-             pch=pch+cump(j-1)*phicumprod(j-1)*(1-phi(j-1));          // probability of history given possible last occasion alive
+             pch=pch+cump(j-1)*phicumprod(j-1)*(1-phi(j-1));         // probability of history given possible last occasion alive
        }   
-       f-= log(pch+1E-24)*freq(i-1);                                  // sum log-likelihood log(pr(ch))
-       if(getreals==1)
+       f-= log(pch+1E-24)*freq(i-1);                                 // sum log-likelihood log(pr(ch))
+       
+       if(getreals==1)                                               // if requested report phi and p real values
 	   {
 	      ADREPORT(phi);
 	      ADREPORT(p);
