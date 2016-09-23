@@ -186,6 +186,7 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
 #' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
+#' @pram getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @importFrom graphics boxplot par
 #' @importFrom stats as.formula binomial coef density
@@ -259,7 +260,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,...)
+ strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -313,11 +314,12 @@ for (i in 1:length(parameters))
 	}
 	if(parameters[[i]]$nointercept)parameters[[i]]$remove.intercept=TRUE
 }
-# currently if re, then set use.admb to TRUE
+# currently if re, then set use.admb to TRUE unless use.tmb=T
 if(re&!use.tmb) {
 	use.admb=TRUE
 	if(is.null(clean))clean=TRUE
 }
+if(use.admb&is.null(clean))clean=TRUE
 if(use.tmb&is.null(clean))clean=FALSE
 if(use.admb & !re) crossed=FALSE
 # if re and accumulate=T, stop with message to use accumulate=FALSE
@@ -401,7 +403,7 @@ if(model=="CJS")
 	if(use.tmb)
 	{
 		runmodel=cjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
+				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,getreals=getreals,...)
 	} else
 		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)

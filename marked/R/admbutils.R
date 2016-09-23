@@ -59,19 +59,46 @@ if(!have.exe | compile)
 invisible()
 }
 
-
-setup_tmb=function(tpl,compile=FALSE,clean=FALSE)
+setup_tmb=function(tpl,clean=FALSE)
 {
 	sdir=system.file(package="marked")
 #   if argument clean is TRUE, delete dll and cpp files as well
 	if(clean)
 	{
+		cat("\n deleting old TMB program and rebuilding")
 		if(file.exists(paste(tpl,".cpp",sep=""))) unlink(paste(tpl,".cpp",sep=""))
 		if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
 		if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
-	}
-# if cpp is not available, copy from the package directory
-	if(!file.exists(paste(tpl,".cpp",sep="")))
 		file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
-	invisible()
+		cat("\n compiling and linking TMB program\n")
+		compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
+		dyn.load(dynlib(tpl))                           # Dynamically link the C++ code
+	} else
+	{
+# if cpp is not available, copy from the package directory
+		if(!file.exists(paste(tpl,".cpp",sep="")))
+		{
+			file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
+			if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
+			if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
+			cat("\n compiling and linking TMB program\n")
+			compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
+			dyn.load(dynlib(tpl))          # Dynamically link the C++ code
+		} else
+		{
+			if(file.exists(paste(tpl,".dll",sep=""))) 
+				if(!is.loaded(dynlib(tpl))) {
+					dyn.load(dynlib(tpl))
+				}
+			else
+			{
+				if(file.exists(paste(tpl,".o",sep=""))) unlink(paste(tpl,".o",sep=""))
+				cat("\n compiling and linking TMB program\n")
+				compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
+				if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
+				dyn.load(dynlib(tpl))          # Dynamically link the C++ code
+			}	
+		}
+	  }
+	  invisible()
 }

@@ -46,6 +46,7 @@
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
+#' @param getreals  if TRUE, will compute real Phi and p values and std errors
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb optimx TMB
@@ -62,7 +63,7 @@
 #' Biometrics 59(4):786-794.
 cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,...)
+		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE,...)
 {
 	if(use.admb)accumulate=FALSE
 	nocc=x$nocc
@@ -100,7 +101,6 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	if(accumulate)
 	{
 		message("Accumulating capture histories based on design. This can take awhile...")
-		#flush.console()
 		model_data.save=model_data   
 		model_data=cjs.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
 	}else
@@ -110,8 +110,9 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 #   Phi.links=which(Phi.links==1)
 #   p.links=create.links(p.dm)
 #   p.links=which(p.links==1)
-#  Scale the design matrices and parameters with either input scale or computed scale
-	if(use.admb)scale=1
+#   Scale the design matrices and parameters with either input scale or computed scale of mean
+#   Currently no scaling
+    scale=1
 	scale=set.scale(names(dml),model_data,scale)
 	model_data=scale.dm(model_data,scale)
 
@@ -144,7 +145,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			phi_idIndex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
 			phi_nre=max(phi_idIndex)
 			if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
-			if(phi_krand==1)phi_randIndex=matrix(as.vector(phi_randIndex),ncol=1)
+			if(phi_krand==1)phi_randIndex=matrix(as.vector(t(phi_randIndex)),ncol=1)
 		} else {
 			phi_nre=0
 			phi_krand=0
@@ -172,9 +173,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		{
 			pmixed$re.indices[ddl$p$Time<ddl$Cohort,]=NA
 			pmixed=reindex(pmixed,ddl$p$id)
-			
-			# random effect data
-			
+			# random effect data	
 			p_krand=ncol(pmixed$re.dm)
 			p_randDM=pmixed$re.dm
 			p_randIndex=pmixed$re.indices
@@ -183,8 +182,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
 			if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
 			p_nre=max(p_idIndex)
-			if(p_krand==1)p_randIndex=matrix(as.vector(p_randIndex),ncol=1)
-			
+			if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)	
 		} else {
 			p_nre=0
 			p_krand=0
@@ -193,63 +191,87 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_counts=vector("integer",length=0)
 			p_idIndex=matrix(0,nrow=0,ncol=0)
 		}
-		usere=TRUE
-		if(nphisigma+npsigma>0)
-		{
-			setup_tmb("cjsre_tmb",compile=compile,clean=clean)
-			cat("\nrunning TMB program\n")                         
-			compile("cjsre_tmb.cpp")               # Compile the C++ file
-			dyn.load(dynlib("cjsre_tmb"))          # Dynamically link the C++ code
-			
-			# Create AD function with data and parameters
-			f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frst=model_data$imat$first,
+		setup_tmb("cjsre_tmb",clean=clean)
+		cat("\nbuilding TMB program\n")                         
+		# Create AD function with data and parameters
+		f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
 							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
-							kphi=ncol(phidm)-1,phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
 							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
-							kp=ncol(pdm)-1,p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
-							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex),
+							p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals)),
 					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
 							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
 					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
-			
+		cat("\nrunning TMB program\n")                         
+		if(method=="nlminb")
+		{
+			mod=nlminb(f$par,f$fn,f$gr,control=control,itnmax=itnmax,...)
+			lnl=mod$objective
+			par=mod$par
+			convergence=mod$convergence
 		} else
 		{
-			setup_tmb("cjs_tmb",compile=compile,clean=clean)
-			cat("\nrunning TMB program\n")                         
-			compile("cjs_tmb.cpp")               # Compile the C++ file
-			dyn.load(dynlib("cjs_tmb"))          # Dynamically link the C++ code
-			
-			# Create AD function with data and parameters
-			f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,ch=model_data$imat$chmat,frq=model_data$imat$freq,frst=model_data$imat$first,
-							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,kphi=ncol(phidm)-1,phi_fixedDM=phidm,kp=ncol(pdm)-1,p_fixedDM=pdm),
-					parameters=list(phi_beta=initial$Phi,p_beta=initial$p),DLL="cjs_tmb")
-			
+			control$starttests=FALSE
+  		    mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+			par <- coef(mod, order="value")[1, ]
+			mod=as.list(summary(mod, order="value")[1, ])
+			convergence=mod$convcode
+			lnl=mod$value		
 		}
-		control$starttests=FALSE
-		mod=optimx(f$par,f$fn,f$gr,method=method,hessian=FALSE,
-				debug=debug,control=control,itnmax=itnmax,...)
-		par <- coef(mod, order="value")[1, ]
-		mod=as.list(summary(mod, order="value")[1, ])
-		convergence=mod$convcode
-		lnl=mod$value
-		
-		#  Rescale parameter vector 
-		cjs.beta=unscale.par(par,scale)
+		fixed.npar=(ncol(phidm)+ncol(pdm)-2)
+		if(p_nre+phi_nre>0)
+		{
+			if(getreals) 
+				par_summary=sdreport(f,getReportCovariance=FALSE)
+			else
+				par_summary=sdreport(f)
+			par=par_summary$par.fixed[1:fixed.npar]
+			cjs.beta.fixed=unscale.par(par,scale)
+			cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
+			sigma=NULL
+			if(phi_krand>0)
+			{
+				Phi_sigma=cjs.beta.sigma[1:phi_krand]
+				names(Phi_sigma)=colnames(phi_randDM)
+				sigma=list(Phi_logsigma=Phi_sigma)
+			} 
+			if(p_krand>0)
+			{
+				p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
+			    names(p_sigma)=colnames(p_randDM)
+				sigma=c(sigma,list(p_logsigma=p_sigma))
+			}
+			cjs.beta=c(cjs.beta.fixed,sigma)
+			beta.vcv=par_summary$cov.fixed
+		}else
+		{	
+			cjs.beta=unscale.par(par,scale)
+			if(hessian) 
+			{
+				message("Computing hessian...")
+				beta.vcv=solve(f$he(par))
+				colnames(beta.vcv)=names(unlist(cjs.beta))
+				rownames(beta.vcv)=colnames(beta.vcv)
+			} else
+			   beta.vcv=NULL
+		}	
 		# Create results list 
+        if(getreals&p_nre+phi_nre>0)
+		{
+			reals=split(par_summary$value,names(par_summary$value))
+			reals.se=split(par_summary$sd,names(par_summary$value))	
+		}
+		else
+		{
+			reals=NULL
+			reals.se=NULL
+		}
 		res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-				convergence=convergence,optim.details=mod,
+				beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
 				model_data=model_data,
 				options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
-						chunk_size=chunk_size,itnmax=itnmax,control=control))
-		# Compute hessian if requested
-		if(hessian) 
-		{
-			message("Computing hessian...")
-			res$beta.vcv=solve(f$he(par))
-			colnames(res$beta.vcv)=names(unlist(cjs.beta))
-			rownames(res$beta.vcv)=colnames(res$beta.vcv)
-		} 
-		
+						chunk_size=chunk_size,itnmax=itnmax,control=control))		
 		
 #  Restore non-accumulated, non-scaled dm's etc
 	res$model_data=model_data.save
