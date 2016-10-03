@@ -86,11 +86,12 @@ setup_tmb=function(tpl,clean=FALSE)
 			dyn.load(dynlib(tpl))          # Dynamically link the C++ code
 		} else
 		{
-			if(file.exists(paste(tpl,".dll",sep=""))) 
+			if(file.exists(paste(tpl,".dll",sep="")))
+			{
 				if(!is.loaded(dynlib(tpl))) {
 					dyn.load(dynlib(tpl))
 				}
-			else
+			} else
 			{
 				if(file.exists(paste(tpl,".o",sep=""))) unlink(paste(tpl,".o",sep=""))
 				cat("\n compiling and linking TMB program\n")

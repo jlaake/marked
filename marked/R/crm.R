@@ -309,7 +309,21 @@ for (i in 1:length(parameters))
 	
 	if(!is.null(mlist$re.model))
 	{
-		if(length(grep("| id",names(mlist$re.model),fixed=TRUE))!=length(mlist$re.model)) crossed=TRUE  
+		re_names=sub("^\\s+", "",sapply(strsplit(names(mlist$re.model),"\\|"),function(x)x[2]))
+		if(length(re_names)>1 | !"id" %in% re_names) crossed=TRUE  
+		if((length(re_names)> 1 || re_names[1]!="time" ||  use.admb ) & any(data.proc$freq>1)) 
+			stop("\n data cannot be accumulated (freq>1) except with temporal random effects only; set accumulate=FALSE\n")	
+#		else
+#            if(use.tmb & any(data.proc$freq>1))
+#			{
+#				re_names=re_names[re_names!="time"]
+#				if(!all(re_names %in% names(data.proc$data)))
+#				{
+#					cat("\n data cannot be accumulated (freq>1) unless the following fields are in the data\n")
+#					cat(paste(re_names),"\n")
+#					stop()
+#				}
+#			}
 		re=TRUE
 	}
 	if(parameters[[i]]$nointercept)parameters[[i]]$remove.intercept=TRUE
@@ -319,11 +333,12 @@ if(re&!use.tmb) {
 	use.admb=TRUE
 	if(is.null(clean))clean=TRUE
 }
-if(use.admb&is.null(clean))clean=TRUE
+if(use.admb)
+{
+	if( !re) crossed=FALSE
+	if(is.null(clean))clean=TRUE
+}
 if(use.tmb&is.null(clean))clean=FALSE
-if(use.admb & !re) crossed=FALSE
-# if re and accumulate=T, stop with message to use accumulate=FALSE
-if(re & any(data.proc$freq>1)) stop("\n data cannot be accumulated (freq>1) with random effects; set accumulate=FALSE\n")
 #
 # If the design data have not been constructed, do so now
 #

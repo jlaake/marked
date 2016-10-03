@@ -45,14 +45,18 @@ mixed.model.admb=function(formula,data)
 {
 # parse formula for fixed and random effects
   mlist=proc.form(formula)
+  
 # construct design matrix for fixed effects
 #  fixed.dm=model.matrix(as.formula(mlist$fix.model),data)
 # remainder of code is for random effects unless NULL
   reindex=0
   re.dm=NULL
   re.indices=NULL
+  freq=NULL
+  sigma_names=NULL
   if(!is.null(mlist$re.model))
   {
+	  re_names = sub("^\\s+", "", sapply(strsplit(names(mlist$re.model),"\\|"), function(x) x[2]))
 #    Loop over each random effect component
      for(i in 1:length(mlist$re.model))
 	 {
@@ -78,12 +82,21 @@ mixed.model.admb=function(formula,data)
           reindex=max(indices)	
 #         Bind random effect design matrices (re.dm), indices into random effects vector (re.indices) and
 #         index for the random effect sigma parameter (re.sigma)
+		  colnames(zz)=paste(re_names[i],colnames(zz),sep=":")	
 		  re.dm=cbind(re.dm,zz)
 		  re.indices=cbind(re.indices,indices)
 #	   }
 	 }
-   }
-   return(list(re.dm=re.dm,re.indices=re.indices))
+	 crossed=sapply(1:ncol(re.indices),function(i) all(table(data$id,re.indices[,i])==1)) 
+	 ff=re.dm
+	 ff[ff!=0]=1
+	 ff[,crossed]=0
+	 ff=ff*data$freq
+	 zz=unique(cbind(as.vector(re.indices),as.vector(ff)))
+	 zz[zz==0]=1  
+	 freq=zz[,2]
+ }
+   return(list(re.dm=re.dm,re.indices=re.indices,freq=freq))
 #   return(list(fixed.dm=fixed.dm,re.dm=re.dm,re.indices=re.indices))
 }
 mixed.model=function(formula,data,indices=FALSE)

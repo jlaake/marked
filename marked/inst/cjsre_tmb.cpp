@@ -154,5 +154,8 @@ Type objective_function<Type>::operator() ()
 	      ADREPORT(p);
 	   }    
 	}
+    ADREPORT(u_phi);
+    ADREPORT(u_p);
+	
     return f;
 }

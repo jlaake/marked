@@ -120,7 +120,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 #      CJS with TMB
 		########################################################################
 		#phi dm portion
-		phidm=model_data$Phi.dm
+ 		phidm=model_data$Phi.dm
 		phidm=cbind(phidm,rep(-1,nrow(phidm)))
 		if(model_data$Phi.fixed[1,1]!= -1)
 		{
@@ -146,6 +146,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			phi_nre=max(phi_idIndex)
 			if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
 			if(phi_krand==1)phi_randIndex=matrix(as.vector(t(phi_randIndex)),ncol=1)
+			phi_refreq=phimixed$freq
 		} else {
 			phi_nre=0
 			phi_krand=0
@@ -153,10 +154,14 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			phi_randIndex=matrix(0,nrow=0,ncol=0)
 			phi_counts=vector("integer",length=0)
 			phi_idIndex=matrix(0,nrow=0,ncol=0)
+			phi_refreq=vector("numeric",length=0)
 		}
 		
-		
-		# p dm portion
+		# p dm portion        
+        mlist=proc.form(parameters$p$formula)
+		p_re_names=NULL
+        if(!is.null(mlist$re.model))
+	       p_re_names=sub("^\\s+", "",sapply(strsplit(names(mlist$re.model),"\\|"),function(x)x[2]))
 		pdm=model_data$p.dm
 		pdm=cbind(pdm,rep(-1,nrow(pdm)))
 		if(model_data$p.fixed[1,1]!= -1)
@@ -182,7 +187,8 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
 			if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
 			p_nre=max(p_idIndex)
-			if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)	
+			if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)
+			p_refreq=pmixed$freq
 		} else {
 			p_nre=0
 			p_krand=0
@@ -190,6 +196,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_randIndex=matrix(0,nrow=0,ncol=0)
 			p_counts=vector("integer",length=0)
 			p_idIndex=matrix(0,nrow=0,ncol=0)
+			p_refreq=vector("numeric",length=0)
 		}
 		setup_tmb("cjsre_tmb",clean=clean)
 		cat("\nbuilding TMB program\n")                         

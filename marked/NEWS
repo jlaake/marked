@@ -1,4 +1,4 @@
-marked 1.1.12 3 August 2016
+marked 1.1.12 26 September 2016
 -----------------
 NEW FEATURES
 
@@ -14,6 +14,8 @@ of compile, clean arguments and use of existing admb executables in the marked p
 
 * created an ADMB version of the mvms model with simplified design matrix to speed up execution times. The sealion example runs in 1/10 of the time if use.admb=TRUE is set.
 
+* created a TMB version of cjs models that provides real predictions with std errors and is much faster fitting random effects.  It allows accumulation of capture histories for time random effects or if group effects included in data.
+
 CHANGES
 
 * pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
@@ -27,7 +29,7 @@ no design data is generated for the delta parameter.
 
 * global_decode now requires ddl argument to be specified and does not compute on the fly.
 
-* changed AIC calculation for use.admb=T to use only number of fixed effect estimates plus number of random effect sigma values.
+* changed AIC calculation for models with random effects to use only number of fixed effect estimates plus number of random effect sigma values.
 
 
 marked 1.1.11 7 March 2016
