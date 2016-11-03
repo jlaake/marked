@@ -1,3 +1,17 @@
+marked 1.1.13 3 November 2016
+-----------------
+BUG FIXES
+
+* patched mvms.f for non-admb version of MVMSCJS. Code had an incorrect index that only worked if delta did not vary by individual.
+
+* patched mvmscjs.r so that it allows ~0 for delta (all fixed values) in the ADMB version. Also, now all Psi can be fixed as well.
+
+CHANGES
+
+* added returns to output when debug=T for MVMS so warning about last line incomplete should not appear.
+
+* added checks HMMLikelihood to outline errors when dmat, gamma or delta are not formed correctly. Typically this will be due to fix values being set incorrectly. Also, HMMLikelihood is now called prior to mvmscjs to check for those errors to avoid putting checks in ADMB code as well.
+
 marked 1.1.12 26 September 2016
 -----------------
 NEW FEATURES
@@ -31,6 +45,9 @@ no design data is generated for the delta parameter.
 
 * changed AIC calculation for models with random effects to use only number of fixed effect estimates plus number of random effect sigma values.
 
+BUG FIXES
+
+* patched mvms.f which had a bad index. Only worked if delta did not vary by individual. 
 
 marked 1.1.11 7 March 2016
 -----------------

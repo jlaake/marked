@@ -78,10 +78,34 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
 		   sup$unkinit=as.numeric(any(is.na(ddl$pi$fix)))
 	   dmat=fct_dmat(pars,m,F=xstart[,2],T,sup)
    }
-	# transition matrices using parameter values
+   if(any(!apply(dmat,c(1,2,4),sum)%in%(0:1)))
+   {
+	   for(i in 1:dim(dmat)[1])
+	   for(j in 1:dim(dmat)[2])
+	   for(k in 1:dim(dmat)[4])
+		   if(!sum(dmat[i,j,,k])%in%(0:1))
+			  cat("\nFor id = ",i," occasion = ", j, " and strata = ",k," value sum of dmat is",sum(dmat[i,j,,k]))
+	   stop("\nCheck model and design data fix values for parameters affecting dmat -the observation probability matrix\n")   
+   }
+   # transition matrices using parameter values
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
+	if(any(!apply(gamma,c(1,2,3),sum)%in%(0:1)))
+	{
+		for(i in 1:dim(gamma)[1])
+			for(j in 1:dim(gamma)[2])
+				for(k in 1:dim(gamma)[3])
+					if(!sum(gamma[i,j,k,])%in%(0:1))
+						cat("\nFor id = ",i," occasion = ", j, " and strata = ",k," value sum of gamma is",sum(gamma[i,j,k,]))
+		stop("\nCheck model and design data fix values for parameters affecting gamma -the transition probability matrix\n")
+	}
+	
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=xstart[,2],T,xstart)
+	if(any(rowSums(delta)!=1))
+	{
+		cat("\nProblem with initial state for observations",paste((1:nrow(delta))[rowSums(delta)!=1],sep=","))
+		stop("\nCheck model and design data fix values for parameters affecting delta - initial state probability")
+	}		
 	if(return.mat)	
 		return(list(dmat=dmat,gamma=gamma,delta=delta))
 	if(is.list(m)) m=m$ns*m$na+1

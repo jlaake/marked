@@ -178,10 +178,13 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	# Psi design matrix
 	# zero out subtracted stratum and remove any unneeded columns
 	model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
-	select=vector("logical",length=ncol(model_data$Psi.dm))
-	for (i in 1:ncol(model_data$Psi.dm))
-		select[i]=any(model_data$Psi.dm[,i]!=0)
-	model_data$Psi.dm=model_data$Psi.dm[,select,drop=FALSE]
+	if(ncol(model_data$Psi.dm)!=0)
+	{
+		select=vector("logical",length=ncol(model_data$Psi.dm))
+		for (i in 1:ncol(model_data$Psi.dm))
+			select[i]=any(model_data$Psi.dm[,i]!=0)
+		model_data$Psi.dm=model_data$Psi.dm[,select,drop=FALSE]
+	}
 	psidm=model_data$Psi.dm
 	psifix=rep(-1,nrow(psidm))
 	if(!is.null(ddl$Psi$fix))
@@ -189,7 +192,8 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	slist=simplify_indices(cbind(psidm,psifix))
 	write(ncol(psidm),con,append=TRUE)
 	write(length(slist$set),con,append=TRUE)
-	write(t(psidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(psidm),append=TRUE)
+	if(ncol(psidm)>0)
+	   write(t(psidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(psidm),append=TRUE)
 	write(psifix[slist$set],con,append=TRUE)
 	write(slist$indices[ddl$Psi.indices],con,append=TRUE)
 	# delta design matrix
@@ -200,7 +204,8 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
     slist=simplify_indices(cbind(deltadm,deltafix))
     write(ncol(deltadm),con,append=TRUE)
     write(length(slist$set),con,append=TRUE)
-    write(t(deltadm[slist$set,,drop=FALSE]),con,ncolumns=ncol(deltadm),append=TRUE)
+	if(ncol(deltadm)>0)
+       write(t(deltadm[slist$set,,drop=FALSE]),con,ncolumns=ncol(deltadm),append=TRUE)
     write(deltafix[slist$set],con,append=TRUE)
     write(slist$indices[ddl$delta.indices],con,append=TRUE)
     # pi design matrix
@@ -230,7 +235,8 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	con=file(paste(tpl,".pin",sep=""),open="wt")
 	write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
 	write(par$p,con,ncolumns=length(par$p),append=TRUE)
-	write(par$Psi,con,ncolumns=length(par$Psi),append=TRUE)
+	if(ncol(dml$Psi$fe)>0) 
+		write(par$Psi,con,ncolumns=length(par$Psi),append=TRUE)
 	if(ncol(dml$pi$fe)>0) 
 		write(par$pi,con,ncolumns=length(par$pi),append=TRUE)
 	if(ncol(dml$delta$fe)>0) 

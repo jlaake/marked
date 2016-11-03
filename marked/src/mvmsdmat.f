@@ -35,8 +35,8 @@ C         release state could be uncertainty
                    DO 10 K=1,NP
                       INDEX=INDEX+1
                       ICOL=INDICES(K,2)
-                      DMAT(INDICES(K,1),ICOL)=DELTA(K,INDEX)
-			          COLSUM(ICOL)=COLSUM(ICOL)+DELTA(K,INDEX)
+                      DMAT(INDICES(K,1),ICOL)=DELTA(I,INDEX)
+			          COLSUM(ICOL)=COLSUM(ICOL)+DELTA(I,INDEX)
  10                CONTINUE
                    DO 12 L=1,M-1
   		           DO 12 K=2,NOBS
@@ -64,8 +64,8 @@ C               Uses M-1 to exclude death state
                    DO 15 K=1,NP
                       INDEX=INDEX+1
                       ICOL=INDICES(K,2)
-                      DMAT(INDICES(K,1),ICOL)=DELTA(K,INDEX)
-			          COLSUM(ICOL)=COLSUM(ICOL)+DELTA(K,INDEX)
+                      DMAT(INDICES(K,1),ICOL)=DELTA(I,INDEX)
+			          COLSUM(ICOL)=COLSUM(ICOL)+DELTA(I,INDEX)
  15                CONTINUE
                    DO 17 L=1,M-1
   		           DO 17 K=2,NOBS

@@ -11,7 +11,7 @@ Type objective_function<Type>::operator() ()
     DATA_IVECTOR(loc);                                     // 0 or 1, 1 if lost on capture at last event
     DATA_MATRIX(tint);                                     // time interval between occasions 
 
-	DATA_MATRIX(phi_fixedDM);                              // Phi DM
+    DATA_MATRIX(phi_fixedDM);                              // Phi DM
     DATA_INTEGER(phi_nre);                                 // number of random effects for phi
     DATA_INTEGER(phi_krand);                               // number of columns in phi random effect DM
     DATA_MATRIX(phi_randDM);                               // phi random effect DM
@@ -19,7 +19,7 @@ Type objective_function<Type>::operator() ()
     DATA_IVECTOR(phi_counts);                              // count of phi random effect indices by id
     DATA_IMATRIX(phi_idIndex);                             // phi random effect indices by id
 
- 	DATA_MATRIX(p_fixedDM);                               // p DM
+    DATA_MATRIX(p_fixedDM);                               // p DM
     DATA_INTEGER(p_nre);                                  // number of random effects for p
     DATA_INTEGER(p_krand);                                // number of columns in p random effect DM
     DATA_MATRIX(p_randDM);                                // p random effect DM
@@ -31,11 +31,11 @@ Type objective_function<Type>::operator() ()
 
     PARAMETER_VECTOR(phi_beta);
     PARAMETER_VECTOR(p_beta);
-	PARAMETER_VECTOR(log_sigma_phi);
+    PARAMETER_VECTOR(log_sigma_phi);
     PARAMETER_VECTOR(log_sigma_p);
     PARAMETER_VECTOR(u_phi);
     PARAMETER_VECTOR(u_p);
-	Type f=0;
+    Type f=0;
     int n=ch.rows();                  // number of capture histories
     int kphi=phi_fixedDM.cols()-1;    // number of Phi DM columns
     int kp=p_fixedDM.cols()-1;        // number of p DM columns
@@ -48,18 +48,18 @@ Type objective_function<Type>::operator() ()
         for (int i=0;i<=p_nre-1;i++)
 	      f-= dnorm(u_p(i),Type(0),Type(1),true);
  
-	int nphicounts=n;                                       // number of counts for phi random effects by id
+    int nphicounts=n;                                       // number of counts for phi random effects by id
     if(phi_nre==0)nphicounts=0;
     int npcounts=n;                                         // number of counts for p random effects by id
     if(p_nre==0)npcounts=0;
   
-	for(int i=1;i<=n;i++)                // loop over capture histories - one per animal
+    for(int i=1;i<=n;i++)                // loop over capture histories - one per animal
     {
        vector<Type> phi(m-1);            // temp vector for Phis for each occasion for a single history
        vector<Type> p(m-1);              // temp vector for Phis for each occasion for a single history
-	   vector<Type> phicumprod(m);       // cummulative survival probability across occasions
-	   vector<Type> cump(m);             // cummulative probability of being seen across occasions
-	   Type pch;                         // probability of capture history
+       vector<Type> phicumprod(m);       // cummulative survival probability across occasions
+       vector<Type> cump(m);             // cummulative probability of being seen across occasions
+       Type pch;                         // probability of capture history
        int i1,i2,j,L;	                 // miscellaneous ints
        Type mu;                          // link function value
 	   
@@ -76,28 +76,28 @@ Type objective_function<Type>::operator() ()
 		  else
 		    for(j=0;j<=phi_counts(i-1)-1;j++)
 			    phi_u(j)=u_phi(phi_idIndex(i-1,j)-1);
-		} 
+	    } 
 
-		if(npcounts >0)                           // if any random effects for p, copy values from u_phi to phi_u
+            if(npcounts >0)                           // if any random effects for p, copy values from u_phi to phi_u
 	    {
    		   if(p_counts(i-1)==0)
 		      p_u(0)=0;
 		   else
 		     for(j=0;j<=p_counts(i-1)-1;j++)
 		        p_u(j)=u_p(p_idIndex(i-1,j)-1);
-		} 
+	    } 
 		
    	    for(j=0;j<=m-1;j++)              // loop over all occasions              
-        {   
+            {   
  	      phicumprod(j)=1.0;             // set cummulative survival to 1
-          cump(j)=1.0;                   // set cummulative p to 1
-       }	
+              cump(j)=1.0;                   // set cummulative p to 1
+             }	
        
-       i1=(m-1)*(i-1);                   // compute beginning index in design matrix
+            i1=(m-1)*(i-1);                   // compute beginning index in design matrix
        
-	   for(j=frst(i-1)+1;j<=m;j++)       // loop over occasions from frst to m
-	   {
-	      i2=i1+j-1;                     // increment index in design matrix
+	    for(j=frst(i-1)+1;j<=m;j++)       // loop over occasions from frst to m
+	    {
+	       i2=i1+j-1;                     // increment index in design matrix
 
          /////// phi computation //////////
 	      if(phi_fixedDM(i2-1,kphi)== -1)
@@ -131,13 +131,13 @@ Type objective_function<Type>::operator() ()
                    if(p_randIndex(i2-1,L-1)>0)
 	                    mu+=p_randDM(i2-1,L-1)*p_u(p_randIndex(i2-1,L-1)-1)*exp(log_sigma_p(L-1));
             }	
-             p(j-2)=1/(1+exp(-mu));                                     
+            p(j-2)=1/(1+exp(-mu));                                     
           } else
 	         p(j-2)=p_fixedDM(i2-1,kp);                      // real fixed value for this p
 			 
-		  phicumprod(j-1)=phicumprod(j-2)*phi(j-2);                             // compute cummulative survival
-	      cump(j-1)=cump(j-2)*((1-p(j-2))*(1-ch(i-1,j-1))+p(j-2)*ch(i-1,j-1));  // compute cummulative capture probability
-	   } 
+	  phicumprod(j-1)=phicumprod(j-2)*phi(j-2);                             // compute cummulative survival
+	  cump(j-1)=cump(j-2)*((1-p(j-2))*(1-ch(i-1,j-1))+p(j-2)*ch(i-1,j-1));  // compute cummulative capture probability
+       } 
        pch=0.0;                                                      // initialize prob of the capture history to 0
        for(j=lst(i-1);j<=((1-loc(i-1))*m+loc(i-1)*lst(i-1));j++)     // loop over last occasion to m unless loss on capture
        {                                                             // to compute prob of the capture history 

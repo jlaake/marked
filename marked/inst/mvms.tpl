@@ -109,7 +109,7 @@ PROCEDURE_SECTION
           
     for(j=1;j<=nrowpi;j++)
     {
-       if(psifix(j) < -0.5)
+       if(pifix(j) < -0.5)
            uniquepi(j)=exp(pidm(j)*pibeta);           // compute exp of pidm*pibeta; these are components of pi
        else
            uniquepi(j)=pifix(j);                      // fixed exp pi value     
@@ -123,7 +123,7 @@ PROCEDURE_SECTION
            uniquedelta(j)=dfix(j);                   // fixed exp delta value     
     }  
 
-
+  
 
     for(i=1;i<=n;i++)                              // loop over capture histories - one per capture history
     {
@@ -173,7 +173,7 @@ PROCEDURE_SECTION
          cout << "\npsi " <<psibeta;
          cout << "\npi " <<pibeta;
          cout << "\ndelta " <<dbeta;
-         cout << "\n-lnl = " << g;
+         cout << "\n-lnl = " << g << "\n";
      }
 
 FUNCTION dvar3_array get_dmat(const int i, const dvar_vector& p, const dvar_matrix& delta, const imatrix ipos)
