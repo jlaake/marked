@@ -32,6 +32,7 @@ of compile, clean arguments and use of existing admb executables in the marked p
 
 CHANGES
 
+
 * pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
 
 * all values for a parameter can be fixed (e.g., S=1 or delta=1). This used to cause problems but now if

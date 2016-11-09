@@ -260,7 +260,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,...)
+ strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,check=FALSE,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -363,6 +363,32 @@ if(is.null(ddl))
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
+if(substr(model,1,4)=="MVMS")
+{
+	if(is.null(ddl$pi$fix))
+		message("\n No values provided for fix for pi. At least need to set a reference cell")
+	else
+	{
+		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+		if(any(bad_pi))message("\n Check values of fix for pi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+	}
+	if(is.null(ddl$delta$fix))
+	{
+		message("\n No values provided for fix for delta. At least need to set a reference cell")
+	}else
+	{
+		bad_delta=sapply(split(ddl$delta$fix,list(ddl$delta$id,ddl$delta$occ,ddl$delta$stratum)),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+	    if(any(bad_delta))message("\n Check values of fix for delta. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+	}
+	if(is.null(ddl$Psi$fix))
+	{
+		message("\n No values provided for fix for delta. At least need to set a reference cell")
+	}else
+	{
+		bad_Psi=sapply(split(ddl$Psi$fix,list(ddl$Psi$id,ddl$Psi$occ,ddl$Psi$stratum)),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+		if(any(bad_Psi))message("\n Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+	}
+}
 if(simplify)
 {
 	simplify=FALSE
@@ -456,7 +482,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		xx=HMMLikelihood(par=unlist(initial.list$par),xx=data.proc$ehmat,mx=mx,
 				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
-				parameters=parameters,sup=sup)
+				parameters=parameters,sup=sup,check=TRUE)
 		# call mvmscjs to run admb program
 		runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
@@ -466,10 +492,14 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		
 	} else
 	{
+		xx=HMMLikelihood(par=unlist(initial.list$par),xx=data.proc$ehmat,mx=mx,
+				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
+				parameters=parameters,sup=sup,check=TRUE)
 		runmodel=optimx(unlist(initial.list$par),HMMLikelihood,method=method,debug=debug,hessian=hessian,itnmax=itnmax,xx=data.proc$ehmat,mx=mx,
 				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,control=control,
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
-				parameters=parameters,sup=sup)
+				parameters=parameters,sup=sup,check=FALSE)
 		par=coef(runmodel, order="value")[1, ]
 		runmodel=list(optim.details=as.list(summary(runmodel, order="value",par.select=FALSE)[1, ]))
 		if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend

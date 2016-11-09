@@ -36,6 +36,8 @@ simplify_ddl=function(ddl,parameters)
 	for (parname in names(parameters))
 	{
 		fields=all.vars(parameters[[parname]]$formula)
+		for(i in seq_along(fields))
+			if(!fields[i]%in%colnames(ddl[[parname]])) stop(paste("\n",fields[i]," variable used in formula for",parname,", not found in data\n"))
 		if(!is.null(ddl[[parname]]$fix)) fields=c(fields,"fix")
 		if(length(fields)==0)
 			slist=list(indices=rep(1,nrow(ddl[[parname]])),set=1)

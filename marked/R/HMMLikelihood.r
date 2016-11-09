@@ -29,7 +29,7 @@
 #' @param start same as xstart but for hmm.lnl
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @param sup  list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat
-#' @param indices list of simplified indices for original full ddl
+#' @param check if TRUE, checks validity of gamma, dmat and delta to look for any errors
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 #'                          dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
 #'        reals(ddl,dml,parameters,parlist)
@@ -42,7 +42,7 @@
 #' @seealso R_HMMLikelihood
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
-		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
+		fct_delta,ddl,dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL,check=FALSE)
 {
 	m=mx
 	# Create list of parameter matrices from single input parameter vector
@@ -73,39 +73,51 @@ HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,
        dmat=fct_dmat(pars,m,F=xstart[,2],T)
    else
    {
-	   sup$unkinit=0
-	   if(!is.null(ddl$pi))
-		   sup$unkinit=as.numeric(any(is.na(ddl$pi$fix)))
+	   # unkinit set to 1 unless all unknown or all known at initial release;
+	   # when unkinit=1, delta is applied in dmat
+	   sup$unkinit=1-as.numeric(all(is.na(xstart[,1])) | all(!is.na(xstart[,1])))
 	   dmat=fct_dmat(pars,m,F=xstart[,2],T,sup)
    }
-   if(any(!apply(dmat,c(1,2,4),sum)%in%(0:1)))
+   if(check)
    {
+	   bad=FALSE
 	   for(i in 1:dim(dmat)[1])
-	   for(j in 1:dim(dmat)[2])
+	   for(j in (xstart[i,2]+1):dim(dmat)[2])
 	   for(k in 1:dim(dmat)[4])
-		   if(!sum(dmat[i,j,,k])%in%(0:1))
+		   if(is.nan(sum(dmat[i,j,,k])) || (sum(dmat[i,j,,k])< -1e-8 | sum(dmat[i,j,,k])> 1.0000001))
+		   {
 			  cat("\nFor id = ",i," occasion = ", j, " and strata = ",k," value sum of dmat is",sum(dmat[i,j,,k]))
-	   stop("\nCheck model and design data fix values for parameters affecting dmat -the observation probability matrix\n")   
+			  bad=TRUE
+		  }
+	   if(bad) stop("\nCheck model and design data fix values for parameters affecting dmat -the observation probability matrix\n")   
    }
    # transition matrices using parameter values
 	gamma=fct_gamma(pars,m,F=xstart[,2],T)
-	if(any(!apply(gamma,c(1,2,3),sum)%in%(0:1)))
+	if(check)
 	{
+		bad=FALSE
 		for(i in 1:dim(gamma)[1])
 			for(j in 1:dim(gamma)[2])
 				for(k in 1:dim(gamma)[3])
-					if(!sum(gamma[i,j,k,])%in%(0:1))
+					if(is.nan(sum(gamma[i,j,k,])) || (sum(gamma[i,j,k,])< -1e-8 | sum(gamma[i,j,k,])> 1.0000001))
+					{
 						cat("\nFor id = ",i," occasion = ", j, " and strata = ",k," value sum of gamma is",sum(gamma[i,j,k,]))
-		stop("\nCheck model and design data fix values for parameters affecting gamma -the transition probability matrix\n")
+						bad=TRUE
+					}
+		if(bad)stop("\nCheck model and design data fix values for parameters affecting gamma -the transition probability matrix\n")
 	}
 	
 	# compute matrix of initial state distribution for each id
 	delta=fct_delta(pars,m,F=xstart[,2],T,xstart)
-	if(any(rowSums(delta)!=1))
+	if(check)
 	{
-		cat("\nProblem with initial state for observations",paste((1:nrow(delta))[rowSums(delta)!=1],sep=","))
-		stop("\nCheck model and design data fix values for parameters affecting delta - initial state probability")
-	}		
+		zz=rowSums(delta)
+	    if(any(is.nan(zz)) || any((zz< (1-1e-8) | zz> (1+1e-8) )))
+	    {
+		   cat("\nProblem with initial state for observations",paste((1:nrow(delta))[is.nan(zz) || (zz< (1-1e-8) | zz> (1+1e-8))],sep=","))
+		   stop("\nCheck model and design data fix values for parameters affecting delta - initial state probability")
+	    }	
+	}
 	if(return.mat)	
 		return(list(dmat=dmat,gamma=gamma,delta=delta))
 	if(is.list(m)) m=m$ns*m$na+1

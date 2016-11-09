@@ -4,7 +4,189 @@
 #' via ADMB. It works very much like mscjs but with more parameters.
 #'  
 #' It is easiest to call this function through the function \code{\link{crm}}.
-#' Details are explained there.
+#' This function has been exported but to fit a model it should be called through the crm function
+#' which does some testing of the arguments to avoid errors.
+#' 
+#' The mvmscjs model is quite flexible but also quite complex. Prior to using this model, read Johnson et al. (2015) 
+#' and particularly Supplement B which goes through the code used in the analysis of Johnson et al. (2015).
+#' Supplement B is useful but there have been a number of changes to the code since the paper was written and it is far from complete.
+#' The documentation here will fill in some of those blanks.
+#'   
+#' There are 5 classes of parameters in an mvms model. They are 1)Phi - survival probability, 2) p-capture probability, 3) Psi - state transition
+#' probabilities, 4) delta - certainty/uncertainty state probabilities, 5) pi - initial state probability. The final
+#' class pi was described in Johnson et al. (2015) but was not implemented in marked at the time the paper was written. However, with 
+#' the sealions example, the initial state is known for all releases and pi is not relevant.
+#' 
+#' Before I jump into a description of each parameter, I'll describe some characteristics that are common to all of the 
+#' parameters. First, all of the pa
+#' 
+#' Phi - survival probability is also called S in the straight multi-state model. In retrospect I wish I had stayed with 
+#' S but I didn't.  In capture-recapture Phi is usually reserved for apparent survival rate which might include permanent emigration. 
+#' With a multi-state model, the presumption is that "all" states are covered and animals can't emigrate permanently to some 
+#' unobservable state.  Whether that is true or not is always a question. Anyhow I use Phi for survival.
+#' 
+#' Phi uses a logit link (log(Phi/(1-Phi))= a+bx...) to relate survival to any covariates which have parameter values
+#' that can the real line. The logit link bounds Phi to the interval 0-1.  Largish negative values of the link (eg -5) 
+#' are essentially a 0 survival rate (all dead) and largish positive values (+5) mean survival is nearly 1 (all alive).
+#' The inverse logit link is computed with the plogis function in R (inverse logit = 1/(1+exp(-a-bx))).  
+#'  
+#' 
+#' There is an important difference between the way marked and RMark work with regard to mlogit parameters 
+#' like Psi. An mlogit parameter is one in which the sum of the probabilities is 1. For Psi, if I'm in stratum A
+#' and can go to B or C or remain in A, the probabilities A to A, A to B and A to C must sum to 1 because that is
+#' all of the possibilities. In RMark/MARK the design data would only contain 2 records which are determined 
+#' based on what you select as subtract.stratum. If subtract.stratum was set as A for the A stratum, the design 
+#' data for Psi would only contain records for A to B and A to C. The value for A to A would be computed by 
+#' subtraction. 
+
+#' In marked, all 3 records are in the design data and the default of staying in A (A to A) has a value of 
+#' fix=1 which makes it computed by subtraction. I did this for 2 reasons. Firstly, that way you get a real 
+#' parameter estimate for the subtracted stratum which you don't get in RMark/MARK. 
+#' Secondly, you can change the value to be subtracted at will and it is not fixed across the entire model fit,
+#' but you do have to be careful when specifying the model when you do that because the formula specifies the 
+#' parameters for those that are not fixed.
+#' 
+#' 
+#' Unobserved strata:
+#' Here is the example I promised.  Note that this is only an issue if X and Y terms are showing up in the 
+#' list of coefficients.  You don't want that to happen because there are no observations for X and Y and 
+#' thus no data.  The only exception is Psi but even there you may have to restrict these because you don't 
+#' have robust design data. One such restriction would be entry and exit from X or Y is the same.  
+
+
+> 
+> # use iris data and modify so only record for versicolor is NA
+> data(iris)
+> iris=iris[c(1:3,148:150),c("Sepal.Length","Species")]
+> iris=rbind(iris,data.frame(Sepal.Length=NA,Species="versicolor"))
+> iris
+    Sepal.Length    Species
+1            5.1     setosa
+2            4.9     setosa
+3            4.7     setosa
+148          6.5  virginica
+149          6.2  virginica
+150          5.9  virginica
+11            NA versicolor
+> # The following is the design matrix for say an lm or glm; note that it drops the
+> # NA row and the versicolor column is zeroed out and won't appear in
+> # the model
+> model.matrix(Sepal.Length~Species,data=iris)
+    (Intercept) Speciesversicolor Speciesvirginica
+1             1                 0                0
+2             1                 0                0
+3             1                 0                0
+148           1                 0                1
+149           1                 0                1
+150           1                 0                1
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$Species
+[1] "contr.treatment"
+
+> # Now consider what happens when you don't have a dependent variable
+> # which is the case with the formulas you are specifying for capture-recapture data
+> # We don't have the equivalent of an NA in the independent variable to tell the 
+> # code that there is no data on which to base estimation. Now the column for 
+> # versicolor appears
+> model.matrix(~Species,data=iris)
+    (Intercept) Speciesversicolor Speciesvirginica
+1             1                 0                0
+2             1                 0                0
+3             1                 0                0
+148           1                 0                1
+149           1                 0                1
+150           1                 0                1
+11            1                 1                0
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$Species
+[1] "contr.treatment"
+
+Here are 3 ways to remove that column.
+> 
+> # Alternative 1
+> # So one way to eliminate it is with fix. Let's say I have a fix variable
+> fix=c(rep(NA,6),1)
+> # and wherever it is not NA I zero out the row
+> mm=model.matrix(~Species,data=iris)
+> mm[!is.na(fix),]=0
+> mm
+    (Intercept) Speciesversicolor Speciesvirginica
+1             1                 0                0
+2             1                 0                0
+3             1                 0                0
+148           1                 0                1
+149           1                 0                1
+150           1                 0                1
+11            0                 0                0
+attr(,"assign")
+[1] 0 1 1
+attr(,"contrasts")
+attr(,"contrasts")$Species
+[1] "contr.treatment"
+
+> # now the column is all zeros and it is dropped
+
+For this case, the value I use for fix is irrelevant because I only use it to assign 0's to the row which makes the column versicolor all 0s.  In marked the value of fix is used to do 0 out the rows but also as the predictor for the dependent variable - although in c-r the DMs are for parameters - so it is the parameter value.  Now for delta with X and Y, the actual value for fix is not important because delta is never used because there are no observations for X and Y. The only time they are in X and Y, the observation will be a 0 and the probability of getting a zero is 1-p and that doesn't involve delta.
+
+> 
+> # Alternative 2 
+> # Another approach is to use a 0/1 variable to "remove" versicolor (make column all 0s)
+> iris$notv=ifelse(iris$Species!="versicolor",1,0)
+> # either of these works
+> model.matrix(~Species:notv,data=iris)
+    (Intercept) Speciessetosa:notv Speciesversicolor:notv Speciesvirginica:notv
+1             1                  1                      0                     0
+2             1                  1                      0                     0
+3             1                  1                      0                     0
+148           1                  0                      0                     1
+149           1                  0                      0                     1
+150           1                  0                      0                     1
+11            1                  0                      0                     0
+attr(,"assign")
+[1] 0 1 1 1
+attr(,"contrasts")
+attr(,"contrasts")$Species
+[1] "contr.treatment"
+
+> model.matrix(~-1+Species:notv,data=iris)
+    Speciessetosa:notv Speciesversicolor:notv Speciesvirginica:notv
+1                    1                      0                     0
+2                    1                      0                     0
+3                    1                      0                     0
+148                  0                      0                     1
+149                  0                      0                     1
+150                  0                      0                     1
+11                   0                      0                     0
+attr(,"assign")
+[1] 1 1 1
+attr(,"contrasts")
+attr(,"contrasts")$Species
+[1] "contr.treatment"
+
+> 
+> # Alternative 3
+> # A very similar idea is to write the formula so it doesn't
+> # use species and only specifies variables that won't include versicolor
+> iris$setosa=ifelse(iris$Species=="setosa",1,0)
+> iris$virginica=ifelse(iris$Species=="virginica",1,0)
+> model.matrix(~-1+setosa+virginica,data=iris)
+    setosa virginica
+1        1         0
+2        1         0
+3        1         0
+148      0         1
+149      0         1
+150      0         1
+11       0         0
+attr(,"assign")
+[1] 1 2
+> 
+
+
 #' 
 #' @param x processed dataframe created by process.data
 #' @param ddl list of dataframes for design data; created by call to
@@ -54,6 +236,7 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 {
 	accumulate=FALSE
 	nocc=x$nocc
+	xstart=x$start
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
 	if(!is.null(ddl$Phi$time.interval))
@@ -221,10 +404,11 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
     write(pifix[slist$set],con,append=TRUE)
     write(slist$indices[ddl$pi.indices],con,append=TRUE)
 
-	if(any(is.na(ddl$pi$fix)))
-	   write(0,con,append=TRUE)
-	else
-	   write(1,con,append=TRUE)
+	# unkinit set to 0 unless all unknown or all known at initial release;
+	# when unkinit=0, delta is applied in dmat
+	unkinit=as.numeric(all(is.na(xstart[,1])) | all(!is.na(xstart[,1])))
+    write(unkinit,con,append=TRUE)
+
    if(!debug)
 	   write(0,con,append=TRUE)
    else
