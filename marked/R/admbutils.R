@@ -10,7 +10,7 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb in local directory
 #' @param re uses admb-re if TRUE for random effects
 #' @param safe can be used to set safe mode for admb
-#' @export setup_admb setup_tmb
+#' @export 
 setup_admb=function(tpl,compile=FALSE,clean=TRUE,safe=TRUE,re=FALSE)
 {
 if(R.Version()$os=="mingw32")
@@ -58,7 +58,14 @@ if(!have.exe | compile)
 }
 invisible()
 }
-
+#' TMB setup
+#' 
+#' Sets up executable for the .cpp file (tpl) by looking for exe in package directory or
+#' compiles cpp file in local directory (clean=FALSE) of from package directory.
+#' 
+#' @param tpl character string for admb template file
+#' @param clean if TRUE, deletes the tpl (.cpp) and executable files in local directory and copies from package directory
+#' @export 
 setup_tmb=function(tpl,clean=FALSE)
 {
 	sdir=system.file(package="marked")

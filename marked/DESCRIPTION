@@ -27,6 +27,7 @@ Imports:
     numDeriv,
     expm,
     Rcpp (>= 0.9.13),
+    TMB,
     optimx (>= 2013.8.6)
 Suggests:
     ggplot2

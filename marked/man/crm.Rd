@@ -11,8 +11,9 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   control = list(), refit = 1, itnmax = 5000, scale = NULL,
   run = TRUE, burnin = 100, iter = 1000, use.admb = FALSE,
   use.tmb = FALSE, crossed = NULL, reml = FALSE, compile = FALSE,
-  extra.args = NULL, strata.labels = NULL, clean = TRUE,
-  save.matrices = TRUE, simplify = FALSE, ...)
+  extra.args = NULL, strata.labels = NULL, clean = NULL,
+  save.matrices = TRUE, simplify = FALSE, getreals = FALSE,
+  check = FALSE, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -86,6 +87,10 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 \item{save.matrices}{for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object}
 
 \item{simplify}{if TRUE, design matrix is simplified to unique valus including fixed values}
+
+\item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
+
+\item{check}{if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }

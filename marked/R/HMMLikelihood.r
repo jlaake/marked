@@ -30,9 +30,10 @@
 #' @param return.mat If TRUE, returns list of transition, observation and delta arrays.
 #' @param sup  list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat
 #' @param check if TRUE, checks validity of gamma, dmat and delta to look for any errors
+#' @param indices specific indices for computation unless NULL
 #' @usage HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
-#'                          dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
-#'        reals(ddl,dml,parameters,parlist)
+#'                          dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL,check=FALSE)
+#'        reals(ddl,dml,parameters,parlist,indices=NULL)
 #'        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 #' @aliases HMMLikelihood reals hmm.lnl
 #' @return HMMLikelihood returns log-likelihood for a single sequence and

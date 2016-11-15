@@ -186,13 +186,14 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
 #' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
-#' @pram getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param check if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @importFrom graphics boxplot par
 #' @importFrom stats as.formula binomial coef density
 #'             glm.fit median model.frame model.matrix optim
 #'              plogis pnorm predict rgamma rmultinom
-#'              rnorm sd
+#'              rnorm sd nlminb
 #' @importFrom utils capture.output flush.console
 #'             read.delim
 #' @return crm model object with class=("crm",submodel) where submodel is

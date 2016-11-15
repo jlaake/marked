@@ -127,7 +127,8 @@ It constructs a dataframe with a row for each animal-occasion.  Following on
 with the example above, depending on how the arguments are set the following
 dataframe could be constructed:
 
-\preformatted{ row time Time cohort Cohort age Age initial.age 
+\preformatted{ 
+              row time Time cohort Cohort age Age initial.age 
                 1    1    0     1     0     0     0    0
                 2    2    1     1     0     1     1    0 
                 3    3    2     1     0     2     2    0 

@@ -145,7 +145,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 #	   select=vector("logical",length=npar)
 #	   for (i in 1:npar)
 #		   select[i]=any(dm[,i]!=0)
-#	   if(!is.null(remove.intercept)&&remove.intercept)select[1]=FALSE 
+	   if(!is.null(remove.intercept)&&remove.intercept)drop[1]=TRUE 
 #      Return dm with selected columns
        return(dm[,!drop,drop=FALSE])
 #	   return(dm[,select,drop=FALSE])

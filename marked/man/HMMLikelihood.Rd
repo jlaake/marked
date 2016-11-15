@@ -7,8 +7,8 @@
 \title{Hidden Markov Model likelihood functions}
 \usage{
 HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
-                         dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL)
-       reals(ddl,dml,parameters,parlist)
+                         dml,parameters,debug=FALSE,return.mat=FALSE,sup=NULL,check=FALSE)
+       reals(ddl,dml,parameters,parlist,indices=NULL)
        hmm.lnl(x,start,m,T,dmat,gamma,delta,freq,debug)
 }
 \arguments{
@@ -44,6 +44,8 @@ HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 
 \item{sup}{list of supplemental information that may be needed by the function but only needs to be computed once; currently only used for MVMS models for dmat}
 
+\item{check}{if TRUE, checks validity of gamma, dmat and delta to look for any errors}
+
 \item{x}{same as xx but for call to hmm.lnl}
 
 \item{m}{same as mx but for call to hmm.lnl}
@@ -58,7 +60,7 @@ HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
 
 \item{start}{same as xstart but for hmm.lnl}
 
-\item{indices}{list of simplified indices for original full ddl}
+\item{indices}{specific indices for computation unless NULL}
 }
 \value{
 HMMLikelihood returns log-likelihood for a single sequence and

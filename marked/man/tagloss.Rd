@@ -77,7 +77,7 @@ ddl$p$fix[ddl$p$perm=="no"&ddl$p$tag1==1&ddl$p$tag2==1]=0
 # parameter the intercept is removed automatically. Also tag loss is independent in this
 # model.
 mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
-        initial=list(Phi=2,p=.3,tau=c(-2)),hessian=TRUE)
+        initial=list(Phi=2,p=.3,tau=c(-1)),hessian=TRUE)
 # now fit a model allowing different loss rates for each tag but still independent
 mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
         initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
