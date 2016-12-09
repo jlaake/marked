@@ -8,7 +8,7 @@ cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   initial = NULL, method, hessian = FALSE, debug = FALSE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
   use.admb = FALSE, crossed = TRUE, compile = TRUE, extra.args = NULL,
-  reml, clean = FALSE, getreals = FALSE, ...)
+  reml, clean = FALSE, getreals = FALSE, returnTMB = FALSE, ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -62,6 +62,9 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
 
 \item{getreals}{if TRUE, will compute real Phi and p values and std errors}
+
+\item{returnTMB}{If TRUE, the function will return the compiled TMB objective function that calculates the gradient
+and Hessian as well. This can be used for other optimization or MCMC routines.}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optim} or \code{\link{cjs.lnl}}}

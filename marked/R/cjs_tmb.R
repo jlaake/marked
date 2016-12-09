@@ -47,6 +47,8 @@
 #' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param getreals  if TRUE, will compute real Phi and p values and std errors
+#' @param returnTMB If TRUE, the function will return the compiled TMB objective function that calculates the gradient
+#' and Hessian as well. This can be used for other optimization or MCMC routines.
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb optimx TMB
@@ -63,7 +65,7 @@
 #' Biometrics 59(4):786-794.
 cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE,...)
+		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE, returnTMB=FALSE,...)
 {
 	if(use.admb)accumulate=FALSE
 	nocc=x$nocc
@@ -210,6 +212,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
 							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
 					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
+		if(returnTMB) return(f)
 		cat("\nrunning TMB program\n")                         
 		if(method=="nlminb")
 		{
