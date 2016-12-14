@@ -229,10 +229,12 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		fixed.npar=(ncol(phidm)+ncol(pdm)-2)
 		if(p_nre+phi_nre>0)
 		{
+			browser()
 			if(getreals) 
 				par_summary=sdreport(f,getReportCovariance=FALSE)
 			else
-				par_summary=sdreport(f)
+				par_summary=sdreport(f,getJointPrecision=TRUE)
+
 			par=par_summary$par.fixed[1:fixed.npar]
 			cjs.beta.fixed=unscale.par(par,scale)
 			cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]

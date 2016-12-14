@@ -91,7 +91,10 @@ full.design.data=vector("list",length=length(parameters))
 		 if(is.null(parameters[[i]]$static))
 			 fields=NULL
 		 else
+		 {
 			 fields=parameters[[i]]$static   
+			 if(any(!fields%in%names(data$data)))stop(names(parameters)[i],": Not all fields listed in static are in data file")
+		 }
 		 full.design.data[[i]]=create.dmdf(data,parameters[[i]],time.varying=time.varying,fields=fields)
 		 if(is.null(full.design.data[[i]]))next
 	 }else

@@ -119,27 +119,29 @@
 #' be included.
 #' 
 #' To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
-#' The following are instructions for installation with Windows. For other operating systems see (http://www.admb-project.org/downloads) and 
-#'  (http://www.admb-project.org/tools/gcc/). 
+#' The following are instructions for installation with Windows. For other operating systems see (\url{http://www.admb-project.org/downloads}) and 
+#'  (\url{http://www.admb-project.org/tools/gcc/}). 
 #' 
 #' Windows Instructions:
 #'
 #'  1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
 #' 
-#'  2) Install ADMB 11: http://admb-project.googlecode.com/files/admb-11-mingw-gcc4.5-32bit.exe. Put the software in C:/admb to
+#'  2) Install ADMB 11: \url{http://www.admb-project.org/downloads}. Put the software in C:/admb to
 #'  avoid problems with spaces in directory name and for the function below to work.
 #' 
-#'  3) Install gcc 4.5 from: http://www.admb-project.org/tools/gcc/gcc452-win32.zip/view. Put in c:/MinGW
+#'  3) Install gcc compiler from: \url{http://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
 #' 
 #' I use the following function in R to setup R2admb to access ADMB rather than adding to my path so gcc versions
 #' with Rtools don't conflict. 
 #' 
+#' \preformatted{
 #' prepare_admb=function()
 #' {
 #'   Sys.setenv(PATH = paste("c:/admb/bin;c:admb/utilities;c:/MinGW/bin;", 
 #'         Sys.getenv("PATH"), sep = ";"))
 #'     Sys.setenv(ADMB_HOME = "c:/admb")
 #'     invisible()
+#' }
 #' }
 #' To use different locations you'll need to change the values used above
 #' 
@@ -370,7 +372,7 @@ if(substr(model,1,4)=="MVMS")
 		message("\n No values provided for fix for pi. At least need to set a reference cell")
 	else
 	{
-		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),function(x){ifelse(!is.null(x) && any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
 		if(any(bad_pi))message("\n Check values of fix for pi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
 	}
 	if(is.null(ddl$delta$fix))
@@ -378,7 +380,7 @@ if(substr(model,1,4)=="MVMS")
 		message("\n No values provided for fix for delta. At least need to set a reference cell")
 	}else
 	{
-		bad_delta=sapply(split(ddl$delta$fix,list(ddl$delta$id,ddl$delta$occ,ddl$delta$stratum)),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+		bad_delta=sapply(split(ddl$delta$fix,list(ddl$delta$id,ddl$delta$occ,ddl$delta$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
 	    if(any(bad_delta))message("\n Check values of fix for delta. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
 	}
 	if(is.null(ddl$Psi$fix))
@@ -386,7 +388,7 @@ if(substr(model,1,4)=="MVMS")
 		message("\n No values provided for fix for delta. At least need to set a reference cell")
 	}else
 	{
-		bad_Psi=sapply(split(ddl$Psi$fix,list(ddl$Psi$id,ddl$Psi$occ,ddl$Psi$stratum)),function(x){ifelse(any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
+		bad_Psi=sapply(split(ddl$Psi$fix,list(ddl$Psi$id,ddl$Psi$occ,ddl$Psi$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
 		if(any(bad_Psi))message("\n Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
 	}
 }
@@ -405,7 +407,7 @@ for (i in 1:length(parameters))
 {
 	if(!is.null(ddl[[i]]$fix))
 	{
-		if(all(!is.na(ddl[[i]]$fix)))
+		if(!is.null(ddl[[i]]$fix) && all(!is.na(ddl[[i]]$fix)))
 		{
 			message(paste("All values for",names(parameters)[i],"have been fixed. Setting formula to ~0"))
 			parameters[[i]]$formula=~0
@@ -563,7 +565,7 @@ cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=
 return(object)
 }
 # solvecov code was taken from package fpc: Christian
-# Hennig chrish@@stats.ucl.ac.uk http://www.homepages.ucl.ac.uk/~ucakche/
+# Hennig <chrish@@stats.ucl.ac.uk> \url{http://www.homepages.ucl.ac.uk/~ucakche/}
 solvecov=function (m, cmax = 1e+10)
 # from package fpc
 {
