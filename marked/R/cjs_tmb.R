@@ -207,25 +207,43 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		if(prior)
 		{
         # priors for fixed effects
-			if(is.null(prior.list)|| is.null(prior.list$mu_phi_prior)) mu_phi_prior=0
+			if(is.null(prior.list)|| is.null(prior.list$mu_phi_prior)) 
+				mu_phi_prior=0
+			else
+				mu_phi_prior=prior.list$mu_phi_prior
 		  	if(length(mu_phi_prior)==1) mu_phi_prior=rep(mu_phi_prior,ncol(phidm))
 		   	if(length(mu_phi_prior)!=ncol(phidm))stop("\nMismatch between length of mu_phi_prior and number of phi_betas")
-		   	if(is.null(prior.list)|| is.null(prior.list$mu_p_prior)) mu_p_prior=0
+		   	if(is.null(prior.list)|| is.null(prior.list$mu_p_prior)) 
+				mu_p_prior=0
+			else
+				mu_p_prior=prior.list$mu_p_prior
 		   	if(length(mu_p_prior)==1) mu_p_prior=rep(mu_p_prior,ncol(pdm))
 		   	if(length(mu_p_prior)!=ncol(pdm))stop("\nMismatch between length of mu_p_prior and number of p_betas")
-		   	if(is.null(prior.list)|| is.null(prior.list$sigma_phi_prior)) sigma_phi_prior=1
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_phi_prior)) 
+				sigma_phi_prior=100
+			else
+				sigma_phi_prior=prior.list$sigma_phi_prior
 		   	if(length(sigma_phi_prior)==1) sigma_phi_prior=rep(sigma_phi_prior,ncol(phidm))
 		   	if(length(sigma_phi_prior)!=ncol(phidm))stop("\nMismatch between length of sigma_phi_prior and number of phi_betas")
-		   	if(is.null(prior.list)|| is.null(prior.list$sigma_p_prior)) sigma_p_prior=1
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_p_prior)) 
+				sigma_p_prior=100
+			else
+				sigma_p_prior=prior.list$sigma_p_prior
 		   	if(length(sigma_p_prior)==1) sigma_p_prior=rep(sigma_p_prior,ncol(pdm))
 		   	if(length(sigma_p_prior)!=ncol(pdm))stop("\nMismatch between length of sigma_p_prior and number of p_betas")
 		# priors for random effects  
 	        if(phi_krand>0)
 			{	
-				if(is.null(prior.list)|| is.null(prior.list$random_mu_phi_prior)) random_mu_phi_prior=0
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_phi_prior)) 
+					random_mu_phi_prior=0
+				else
+					random_mu_phi_prior=prior.list$random_mu_phi_prior
 				if(length(random_mu_phi_prior)==1) random_mu_phi_prior=rep(random_mu_phi_prior,phi_krand)
 				if(length(random_mu_phi_prior)!=phi_krand)stop("\nMismatch between length of random_mu_phi_prior and number of phi random effects")
-				if(is.null(prior.list)|| is.null(prior.list$random_sigma_phi_prior)) random_sigma_phi_prior=1
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_phi_prior)) 
+					random_sigma_phi_prior=1
+				else
+					random_sigma_phi_prior=prior.list$random_sigma_phi_prior
 				if(length(random_sigma_phi_prior)==1) random_sigma_phi_prior=rep(random_sigma_phi_prior,phi_krand)
 				if(length(random_sigma_phi_prior)!=phi_krand)stop("\nMismatch between length of random_sigma_phi_prior and number of phi random effects")
 			} else {
@@ -234,10 +252,16 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			}
 			if(phi_krand>0)
 			{	
-				if(is.null(prior.list)|| is.null(prior.list$random_mu_p_prior)) random_mu_p_prior=0
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_p_prior)) 
+					random_mu_p_prior=0
+				else
+					random_mu_p_prior=prior.list$random_mu_p_prior
 			 	if(length(random_mu_p_prior)==1) random_mu_p_prior=rep(random_mu_p_prior,p_krand)
 				if(length(random_mu_p_prior)!=p_krand)stop("\nMismatch between length of random_mu_p_prior and number of p random effects")
-				if(is.null(prior.list)|| is.null(prior.list$random_sigma_p_prior)) random_sigma_p_prior=1
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_p_prior)) 
+					random_sigma_p_prior=1
+				else
+					random_sigma_p_prior=prior.list$random_sigma_p_prior
 				if(length(random_sigma_p_prior)==1) random_sigma_p_prior=rep(random_sigma_p_prior,p_krand)
 				if(length(random_sigma_p_prior)!=p_krand)stop("\nMismatch between length of random_sigma_p_prior and number of p random effects")
 			} else{
