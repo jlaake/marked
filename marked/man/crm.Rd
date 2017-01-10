@@ -13,7 +13,7 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   use.tmb = FALSE, crossed = NULL, reml = FALSE, compile = FALSE,
   extra.args = NULL, strata.labels = NULL, clean = NULL,
   save.matrices = TRUE, simplify = FALSE, getreals = FALSE,
-  check = FALSE, ...)
+  check = FALSE, prior = FALSE, prior.list = NULL, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -91,6 +91,10 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 \item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
 
 \item{check}{if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.}
+
+\item{prior}{if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb}
+
+\item{prior.list}{which contains list of prior parameters that will be model dependent}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }

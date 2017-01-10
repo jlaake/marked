@@ -7,8 +7,9 @@
 cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   initial = NULL, method, hessian = FALSE, debug = FALSE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  use.admb = FALSE, crossed = TRUE, compile = TRUE, extra.args = NULL,
-  reml, clean = FALSE, getreals = FALSE, ...)
+  crossed = TRUE, compile = TRUE, extra.args = NULL, reml,
+  clean = FALSE, getreals = FALSE, prior = FALSE, prior.list = NULL,
+  ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -49,8 +50,6 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{scale}{vector of scale values for parameters}
 
-\item{use.admb}{if TRUE creates data file for admbcjs.tpl and runs admb optimizer}
-
 \item{crossed}{if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration}
 
 \item{compile}{if TRUE forces re-compilation of tpl file}
@@ -62,6 +61,12 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
 
 \item{getreals}{if TRUE, will compute real Phi and p values and std errors}
+
+\item{prior}{if TRUE will expect vectors of prior values in list prior.list}
+
+\item{prior.list}{which contains for normal distributions 1) mu_phi_prior: vector of mu values for phi_beta, 2) sigma_phi_prior: vector of sigma values for phi_beta,
+3) mu_p_prior: vector of mu values for p_beta, 4) sigma_p_prior: vector of sigma values for p_beta, 5) random_mu_phi_prior: vector of mu values for ln sigma of random effects, 
+6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p.}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optim} or \code{\link{cjs.lnl}}}
