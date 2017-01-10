@@ -28,26 +28,50 @@ Type objective_function<Type>::operator() ()
     DATA_IMATRIX(p_idIndex);                              // p random effect indices by id; index into u_phi to construct phi_u
 
     DATA_INTEGER(getreals);                               // =1 if real phi's and p's are to be computed
-
+    
+    DATA_INTEGER(prior);                                  // either 0 or 1 (if specified prior means/sigma for betas and sigmas for random effects)
+    DATA_VECTOR(mu_phi_prior);
+    DATA_VECTOR(sigma_phi_prior);
+    DATA_VECTOR(mu_p_prior);
+    DATA_VECTOR(sigma_p_prior);
+    DATA_VECTOR(random_mu_phi_prior);
+    DATA_VECTOR(random_sigma_phi_prior);
+    DATA_VECTOR(random_mu_p_prior);
+    DATA_VECTOR(random_sigma_p_prior);
+       
     PARAMETER_VECTOR(phi_beta);
     PARAMETER_VECTOR(p_beta);
     PARAMETER_VECTOR(log_sigma_phi);
     PARAMETER_VECTOR(log_sigma_p);
     PARAMETER_VECTOR(u_phi);
     PARAMETER_VECTOR(u_p);
+    
     Type f=0;
     int n=ch.rows();                  // number of capture histories
     int kphi=phi_fixedDM.cols()-1;    // number of Phi DM columns
     int kp=p_fixedDM.cols()-1;        // number of p DM columns
 
     if(phi_krand>0)	                                        // likelihood contribution for n(0,1) re for 
-       for (int i=0;i<=phi_nre-1;i++)
-	      f-= dnorm(u_phi(i),Type(0),Type(1),true);
-	
+       for (int i=0;i<=phi_nre-1;i++)	   	     
+           f-= dnorm(u_phi(i),Type(0),Type(1),true);
+           
     if(p_krand>0)	                                        // likelihood contribution for n(0,1) re for p
         for (int i=0;i<=p_nre-1;i++)
 	      f-= dnorm(u_p(i),Type(0),Type(1),true);
- 
+	      
+    if(prior>0) 
+    {  
+    	for(int i=0;i<=kphi-1;i++) 
+       		f-= dnorm(phi_beta(i), mu_phi_prior(i), sigma_phi_prior(i), true);
+    	for(int i=0;i<=kp-1;i++) 
+       		f-= dnorm(p_beta(i), mu_p_prior(i), sigma_p_prior(i), true);
+       	if(phi_krand>0)	
+	    	for(int i=0;i<=phi_krand-1;i++) 
+    	   		f-= dnorm(exp(log_sigma_phi(i)), random_mu_phi_prior(i), random_sigma_phi_prior(i), true) +log_sigma_phi(i);
+       	if(p_krand>0)	
+    		for(int i=0;i<=p_krand-1;i++) 
+       			f-= dnorm(exp(log_sigma_p(i)), random_mu_p_prior(i), random_sigma_p_prior(i), true)+ log_sigma_p(i);
+    }
     int nphicounts=n;                                       // number of counts for phi random effects by id
     if(phi_nre==0)nphicounts=0;
     int npcounts=n;                                         // number of counts for p random effects by id

@@ -40,13 +40,16 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
-#' @param use.admb if TRUE creates data file for admbcjs.tpl and runs admb optimizer
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param getreals  if TRUE, will compute real Phi and p values and std errors
+#' @param prior if TRUE will expect vectors of prior values in list prior.list
+#' @param prior.list which contains for normal distributions 1) mu_phi_prior: vector of mu values for phi_beta, 2) sigma_phi_prior: vector of sigma values for phi_beta,
+#' 3) mu_p_prior: vector of mu values for p_beta, 4) sigma_p_prior: vector of sigma values for p_beta, 5) random_mu_phi_prior: vector of mu values for ln sigma of random effects, 
+#' 6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p. 
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb optimx TMB
@@ -63,9 +66,10 @@
 #' Biometrics 59(4):786-794.
 cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE,...)
+		crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE,prior=FALSE,
+		prior.list=NULL,...)
 {
-	if(use.admb)accumulate=FALSE
+	accumulate=FALSE
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
@@ -198,6 +202,59 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_idIndex=matrix(0,nrow=0,ncol=0)
 			p_refreq=vector("numeric",length=0)
 		}
+	
+		# if priors are desired, set up appropriate structure
+		if(prior)
+		{
+        # priors for fixed effects
+			if(is.null(prior.list)|| is.null(prior.list$mu_phi_prior)) mu_phi_prior=0
+		  	if(length(mu_phi_prior)==1) mu_phi_prior=rep(mu_phi_prior,ncol(phidm))
+		   	if(length(mu_phi_prior)!=ncol(phidm))stop("\nMismatch between length of mu_phi_prior and number of phi_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$mu_p_prior)) mu_p_prior=0
+		   	if(length(mu_p_prior)==1) mu_p_prior=rep(mu_p_prior,ncol(pdm))
+		   	if(length(mu_p_prior)!=ncol(pdm))stop("\nMismatch between length of mu_p_prior and number of p_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_phi_prior)) sigma_phi_prior=1
+		   	if(length(sigma_phi_prior)==1) sigma_phi_prior=rep(sigma_phi_prior,ncol(phidm))
+		   	if(length(sigma_phi_prior)!=ncol(phidm))stop("\nMismatch between length of sigma_phi_prior and number of phi_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_p_prior)) sigma_p_prior=1
+		   	if(length(sigma_p_prior)==1) sigma_p_prior=rep(sigma_p_prior,ncol(pdm))
+		   	if(length(sigma_p_prior)!=ncol(pdm))stop("\nMismatch between length of sigma_p_prior and number of p_betas")
+		# priors for random effects  
+	        if(phi_krand>0)
+			{	
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_phi_prior)) random_mu_phi_prior=0
+				if(length(random_mu_phi_prior)==1) random_mu_phi_prior=rep(random_mu_phi_prior,phi_krand)
+				if(length(random_mu_phi_prior)!=phi_krand)stop("\nMismatch between length of random_mu_phi_prior and number of phi random effects")
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_phi_prior)) random_sigma_phi_prior=1
+				if(length(random_sigma_phi_prior)==1) random_sigma_phi_prior=rep(random_sigma_phi_prior,phi_krand)
+				if(length(random_sigma_phi_prior)!=phi_krand)stop("\nMismatch between length of random_sigma_phi_prior and number of phi random effects")
+			} else {
+				random_mu_phi_prior=vector("numeric",length=0)
+				random_sigma_phi_prior=vector("numeric",length=0)
+			}
+			if(phi_krand>0)
+			{	
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_p_prior)) random_mu_p_prior=0
+			 	if(length(random_mu_p_prior)==1) random_mu_p_prior=rep(random_mu_p_prior,p_krand)
+				if(length(random_mu_p_prior)!=p_krand)stop("\nMismatch between length of random_mu_p_prior and number of p random effects")
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_p_prior)) random_sigma_p_prior=1
+				if(length(random_sigma_p_prior)==1) random_sigma_p_prior=rep(random_sigma_p_prior,p_krand)
+				if(length(random_sigma_p_prior)!=p_krand)stop("\nMismatch between length of random_sigma_p_prior and number of p random effects")
+			} else{
+				random_mu_p_prior=vector("numeric",length=0)
+				random_sigma_p_prior=vector("numeric",length=0)
+			}
+		} else {
+		# no priors but need to create empty vectors
+	       mu_phi_prior=vector("numeric",length=0)
+		   sigma_phi_prior=vector("numeric",length=0)
+		   mu_p_prior=vector("numeric",length=0)
+		   sigma_p_prior=vector("numeric",length=0)
+		   random_mu_phi_prior=vector("numeric",length=0)
+		   random_sigma_phi_prior=vector("numeric",length=0)
+		   random_mu_p_prior=vector("numeric",length=0)
+		   random_sigma_p_prior=vector("numeric",length=0)
+	   }	
 		setup_tmb("cjsre_tmb",clean=clean)
 		cat("\nbuilding TMB program\n")                         
 		# Create AD function with data and parameters
@@ -206,7 +263,10 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
 							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
 							p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
-							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals)),
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals),
+							prior=as.numeric(prior),mu_phi_prior=mu_phi_prior,sigma_phi_prior=sigma_phi_prior,
+							mu_p_prior=mu_p_prior,sigma_p_prior=sigma_p_prior,random_mu_phi_prior=random_mu_phi_prior,
+							random_sigma_phi_prior=random_sigma_phi_prior,random_mu_p_prior=mu_p_prior,random_sigma_p_prior=sigma_p_prior),
 					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
 							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
 					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
@@ -229,7 +289,6 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		fixed.npar=(ncol(phidm)+ncol(pdm)-2)
 		if(p_nre+phi_nre>0)
 		{
-			browser()
 			if(getreals) 
 				par_summary=sdreport(f,getReportCovariance=FALSE)
 			else

@@ -190,6 +190,8 @@
 #' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param check if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.
+#' @param prior if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb
+#' @param prior.list which contains list of prior parameters that will be model dependent
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @importFrom graphics boxplot par
 #' @importFrom stats as.formula binomial coef density
@@ -263,7 +265,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,check=FALSE,...)
+ strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,check=FALSE,prior=FALSE,prior.list=NULL,...)
 {
 model=toupper(model)
 ptm=proc.time()
@@ -447,7 +449,8 @@ if(model=="CJS")
 	if(use.tmb)
 	{
 		runmodel=cjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,getreals=getreals,...)
+				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,getreals=getreals,
+				prior=prior,prior.list=prior.list,...)
 	} else
 		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
