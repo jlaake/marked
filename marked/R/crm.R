@@ -366,34 +366,34 @@ if(is.null(ddl))
 	design.parameters=ddl$design.parameters
 }
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
-if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
-	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 if(substr(model,1,4)=="MVMS")
 {
 	if(is.null(ddl$pi$fix))
-		message("\n No values provided for fix for pi. At least need to set a reference cell")
+		message("\n Warning: No values provided for fix for pi. Must have a reference cell via formula.")
 	else
 	{
 		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),function(x){ifelse(!is.null(x) && any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-		if(any(bad_pi))message("\n Check values of fix for pi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+		if(any(bad_pi))message("\n Warning: Check values of fix for pi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
 	}
 	if(is.null(ddl$delta$fix))
 	{
-		message("\n No values provided for fix for delta. At least need to set a reference cell")
+		message("\n Warning: No values provided for fix for delta. Must have a reference cell via formula.")
 	}else
 	{
 		bad_delta=sapply(split(ddl$delta$fix,list(ddl$delta$id,ddl$delta$occ,ddl$delta$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-	    if(any(bad_delta))message("\n Check values of fix for delta. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+	    if(any(bad_delta))message("\n Warning: Check values of fix for delta. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
 	}
 	if(is.null(ddl$Psi$fix))
 	{
-		message("\n No values provided for fix for delta. At least need to set a reference cell")
+		message("\n Warning: No values provided for fix for delta. Must have a reference cell via formula.")
 	}else
 	{
 		bad_Psi=sapply(split(ddl$Psi$fix,list(ddl$Psi$id,ddl$Psi$occ,ddl$Psi$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-		if(any(bad_Psi))message("\n Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+		if(any(bad_Psi))message("\n Warning: Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
 	}
 }
+if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
+	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 if(simplify)
 {
 	simplify=FALSE
@@ -458,8 +458,14 @@ if(model=="JS")
     runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
 if(model=="MSCJS")
-	runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+	if(use.tmb)
+	{
+		runmodel=mscjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
+    }else{
+	    runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
+    }
 if(model=="PROBITCJS")
 {
 	if(is.null(initial))
