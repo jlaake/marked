@@ -10,7 +10,9 @@
 #' Details are explained there.
 #' 
 #' @param x processed dataframe created by process.data
-#' @param ddl list of dataframes for design data; created by call to
+#' @param ddl list of simplified dataframes for design data; created by call to
+#' \code{\link{make.design.data}}
+#' @param fullddl list of complete dataframes for design data; created by call to
 #' \code{\link{make.design.data}}
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
@@ -49,7 +51,7 @@
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
 #' @author Jeff Laake <jeff.laake@@noaa.gov>
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
-mscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
 		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,...)
 {
@@ -57,13 +59,14 @@ mscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
-	if(!is.null(ddl$Phi$time.interval))
-		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+	if(!is.null(ddl$S$time.interval))
+		time.intervals=matrix(ddl$S$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
 	if(is.vector(x$time.intervals))
 		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
 		time.intervals=x$time.intervals
+
 #  Store data from x$data into x
 	strata.labels=x$strata.labels
 	uS=x$unobserved
@@ -115,6 +118,33 @@ mscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=
 	if(!is.null(ddl$S$fix))
 		phifix[!is.na(ddl$S$fix)]=ddl$S$fix[!is.na(ddl$S$fix)]
 	phi_slist=simplify_indices(cbind(phidm,phifix))
+	phimixed=mixed.model.admb(parameters$S$formula,fullddl$S)
+	nphisigma=0
+	if(!is.null(phimixed$re.dm))nphisigma=ncol(phimixed$re.dm)
+	if(!is.null(phimixed$re.dm))
+	{
+		phimixed$re.indices[fullddl$S$Time<fullddl$S$Cohort,]=NA
+		phimixed=reindex(phimixed,fullddl$S$id)
+		
+		# random effect data
+		phi_krand=ncol(phimixed$re.dm)
+		phi_randDM=phimixed$re.dm
+		phi_randIndex=phimixed$re.indices
+		phi_counts=phimixed$index.counts
+		mx=max(phimixed$index.counts)
+		phi_idIndex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+		phi_nre=max(phi_idIndex)
+		if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
+		if(phi_krand==1)phi_randIndex=matrix(as.vector(t(phi_randIndex)),ncol=1)
+	} else {
+		phi_nre=0
+		phi_krand=0
+		phi_randDM=matrix(0,nrow=0,ncol=0)
+		phi_randIndex=matrix(0,nrow=0,ncol=0)
+		phi_counts=vector("integer",length=0)
+		phi_idIndex=matrix(0,nrow=0,ncol=0)
+	}
+	
 	
 	# p design matrix
 	pdm=as.matrix(model_data$p.dm)
@@ -122,24 +152,83 @@ mscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=
 	if(!is.null(ddl$p$fix))
 		pfix[!is.na(ddl$p$fix)]=ddl$p$fix[!is.na(ddl$p$fix)]
 	p_slist=simplify_indices(cbind(pdm,pfix))
-
+	pmixed=mixed.model.admb(parameters$p$formula,fullddl$p)
+	npsigma=0
+	if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
+	
+	if(!is.null(pmixed$re.dm))
+	{
+		pmixed$re.indices[fullddl$p$Time<fullddl$Cohort,]=NA
+		pmixed=reindex(pmixed,fullddl$p$id)
+		# random effect data	
+		p_krand=ncol(pmixed$re.dm)
+		p_randDM=pmixed$re.dm
+		p_randIndex=pmixed$re.indices
+		p_counts=pmixed$index.counts
+		mx=max(pmixed$index.counts)
+		p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+		if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
+		p_nre=max(p_idIndex)
+		if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)
+	} else {
+		p_nre=0
+		p_krand=0
+		p_randDM=matrix(0,nrow=0,ncol=0)
+		p_randIndex=matrix(0,nrow=0,ncol=0)
+		p_counts=vector("integer",length=0)
+		p_idIndex=matrix(0,nrow=0,ncol=0)
+	}
+	
 	#Psi design matrix
 	psidm=as.matrix(model_data$Psi.dm)
 	psifix=rep(-1,nrow(psidm))
 	if(!is.null(ddl$Psi$fix))
 		psifix[!is.na(ddl$Psi$fix)]=ddl$Psi$fix[!is.na(ddl$Psi$fix)]
 	psi_slist=simplify_indices(cbind(psidm,psifix))
+	psimixed=mixed.model.admb(parameters$Psi$formula,fullddl$Psi)
+	npsisigma=0
+	if(!is.null(psimixed$re.dm))npsisigma=ncol(psimixed$re.dm)
+	
+	if(!is.null(psimixed$re.dm))
+	{
+		psimixed$re.indices[fullddl$Psi$Time<fullddl$Cohort,]=NA
+		psimixed=reindex(psimixed,fullddl$Psi$id)
+		# random effect data	
+		psi_krand=ncol(psimixed$re.dm)
+		psi_randDM=psimixed$re.dm
+		psi_randIndex=psimixed$re.indices
+		psi_counts=psimixed$index.counts
+		mx=max(psimixed$index.counts)
+		psi_idIndex=t(sapply(psimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+		if(nrow(psi_idIndex)==1)psi_idIndex=t(psi_idIndex)
+		psi_nre=max(psi_idIndex)
+		if(psi_krand==1)psi_randIndex=matrix(as.vector(t(psi_randIndex)),ncol=1)
+	} else {
+		psi_nre=0
+		psi_krand=0
+		psi_randDM=matrix(0,nrow=0,ncol=0)
+		psi_randIndex=matrix(0,nrow=0,ncol=0)
+		psi_counts=vector("integer",length=0)
+		psi_idIndex=matrix(0,nrow=0,ncol=0)
+	}
 	
 	f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,nS=length(strata.labels),
 					ch=chmat,frst=model_data$imat$first,freq=model_data$imat$freq,tint=model_data$time.intervals,
 					kphi=ncol(phidm),nrowphi=length(phi_slist$set),	phidm=phidm[phi_slist$set,,drop=FALSE],
 					phifix=phifix[phi_slist$set],phiindex=phi_slist$indices[ddl$S.indices],
+					phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+					phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
 					kp=ncol(pdm),nrowp=length(p_slist$set),pdm=pdm[p_slist$set,,drop=FALSE],
 					pfix=pfix[p_slist$set],pindex=p_slist$indices[ddl$p.indices],
+					p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+					p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,
 					kpsi=ncol(psidm),nrowpsi=length(psi_slist$set),	psidm=psidm[psi_slist$set,,drop=FALSE],
-					psifix=psifix[psi_slist$set],psiindex=psi_slist$indices[ddl$Psi.indices]),
-			        parameters=list(phibeta=par$S,pbeta=par$p,psibeta=par$Psi)
-					,DLL="multistate_tmb")
+					psifix=psifix[psi_slist$set],psiindex=psi_slist$indices[ddl$Psi.indices],
+					psi_nre=psi_nre,psi_krand=psi_krand,psi_randDM=psi_randDM,
+					psi_randIndex=psi_randIndex,psi_counts=psi_counts,psi_idIndex=psi_idIndex),
+			        parameters=list(phibeta=par$S,pbeta=par$p,psibeta=par$Psi,log_sigma_phi=rep(-1,nphisigma),
+					log_sigma_p=rep(-1,npsigma),log_sigma_psi=rep(-1,npsisigma),u_phi=rep(0,phi_nre),
+					u_p=rep(0,p_nre),u_psi=rep(0,psi_nre)),random=c("u_phi","u_p","u_psi"),DLL="multistate_tmb")
 	cat("\nrunning TMB program\n")                         
 	if(method=="nlminb")
 	{
@@ -156,67 +245,75 @@ mscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=
 	    convergence=mod$convcode
 		lnl=mod$value		
 	}
-	fixed.npar=(ncol(phidm)+ncol(pdm)-2)
-			if(p_nre+phi_nre>0)
-			{
-				if(getreals) 
-					par_summary=sdreport(f,getReportCovariance=FALSE)
-				else
-					par_summary=sdreport(f,getJointPrecision=TRUE)
-				
-				par=par_summary$par.fixed[1:fixed.npar]
-				cjs.beta.fixed=unscale.par(par,scale)
-				cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
-				sigma=NULL
-				if(phi_krand>0)
-				{
-					Phi_sigma=cjs.beta.sigma[1:phi_krand]
-					names(Phi_sigma)=colnames(phi_randDM)
-					sigma=list(Phi_logsigma=Phi_sigma)
-				} 
-				if(p_krand>0)
-				{
-					p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
-					names(p_sigma)=colnames(p_randDM)
-					sigma=c(sigma,list(p_logsigma=p_sigma))
-				}
-				cjs.beta=c(cjs.beta.fixed,sigma)
-				beta.vcv=par_summary$cov.fixed
-			}else
-			{	
-				cjs.beta=unscale.par(par,scale)
-				if(hessian) 
-				{
-					message("Computing hessian...")
-					beta.vcv=solve(f$he(par))
-					colnames(beta.vcv)=names(unlist(cjs.beta))
-					rownames(beta.vcv)=colnames(beta.vcv)
-				} else
-					beta.vcv=NULL
-			}	
-			# Create results list 
-			if(getreals&p_nre+phi_nre>0)
-			{
-				reals=split(par_summary$value,names(par_summary$value))
-				reals.se=split(par_summary$sd,names(par_summary$value))	
-			}
-			else
-			{
-				reals=NULL
-				reals.se=NULL
-			}
-			res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-					beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
-					model_data=model_data,
-					options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
-							chunk_size=chunk_size,itnmax=itnmax,control=control))		
-			
+	fixed.npar=ncol(phidm)+ncol(pdm)+ncol(psidm)
+	
+	getreals=FALSE
+	if(p_nre+phi_nre>0)
+	{
+		if(getreals) 
+			par_summary=sdreport(f,getReportCovariance=FALSE)
+		else
+			par_summary=sdreport(f,getJointPrecision=TRUE)
+		
+	 	par=par_summary$par.fixed[1:fixed.npar]
+		cjs.beta.fixed=unscale.par(par,scale)
+		cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
+		sigma=NULL
+		if(phi_krand>0)
+		{
+			Phi_sigma=cjs.beta.sigma[1:phi_krand]
+			names(Phi_sigma)=colnames(phi_randDM)
+			sigma=list(Phi_logsigma=Phi_sigma)
+		} 
+		if(p_krand>0)
+		{
+			p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
+			names(p_sigma)=colnames(p_randDM)
+			sigma=c(sigma,list(p_logsigma=p_sigma))
+		}
+		if(psi_krand>0)
+		{
+			Psi_sigma=cjs.beta.sigma[(phi_krand+p_krand+1):(phi_krand+p_krand+psi_krand)]
+			names(Psi_sigma)=colnames(psi_randDM)
+			sigma=c(sigma,list(Psi_logsigma=Psi_sigma))
+		} 
+		cjs.beta=c(cjs.beta.fixed,sigma)
+		beta.vcv=par_summary$cov.fixed
+	}else
+	{	
+		cjs.beta=unscale.par(par,scale)
+		if(hessian) 
+		{
+			message("Computing hessian...")
+			beta.vcv=solve(f$he(par))
+			colnames(beta.vcv)=names(unlist(cjs.beta))
+			rownames(beta.vcv)=colnames(beta.vcv)
+		} else
+			beta.vcv=NULL
+	}	
+	# Create results list 
+	if(getreals&p_nre+phi_nre>0)
+	{
+		reals=split(par_summary$value,names(par_summary$value))
+		reals.se=split(par_summary$sd,names(par_summary$value))	
+	}
+	else
+	{
+		reals=NULL
+		reals.se=NULL
+	}
+	res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
+			beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
+			model_data=model_data,
+			options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
+			chunk_size=chunk_size,itnmax=itnmax,control=control))		
+		
 #  Restore non-accumulated, non-scaled dm's etc
-			res$model_data=model_data.save
+	res$model_data=model_data.save
 #  Assign S3 class values and return
-			class(res)=c("crm","admb","mle","mscjs")
-			return(res)
-			}
+	class(res)=c("crm","admb","mle","mscjs")
+	return(res)
+}
 
 
 

@@ -1,5 +1,9 @@
-marked 1.1.14 13 December 2016
+marked 1.1.14 7 March 2017
 -----------------
+BUG FIXES
+
+* bug fixed in js.hessian which prevented computation of vcv matrix because of earlier change restructuring model object. Thanks to Bjorn Kroger for reporting problem.
+
 NEW FEATURES
 
 * addition of priors for cjs with TMB - still in testing phase

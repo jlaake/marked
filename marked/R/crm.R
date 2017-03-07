@@ -14,9 +14,7 @@
 #' parameter, 4) call to the specific function for model fitting (now either
 #' \code{\link{cjs}} or \code{\link{js}}). As with \code{mark} the calling
 #' arguments for \code{crm} are a compilation of the calling arguments for each
-#' of the functions it calls (with some arguments renamed to avoid conflicts).
-#' If data is a processed dataframe (see \code{\link{process.data}}) then it
-#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
+#' of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
 #' processed, then \code{ddl} should be NULL.  This dual calling structure
 #' allows either a single call approach for each model or alternatively for the
 #' data to be processed and the design data (\code{ddl}) to be created once and
@@ -338,9 +336,9 @@ if(re&!use.tmb) {
 	use.admb=TRUE
 	if(is.null(clean))clean=TRUE
 }
-if(use.admb)
+if(use.admb | (!use.tmb &toupper(model)=="MSCJS"))
 {
-	if( !re) crossed=FALSE
+	if(!re) crossed=FALSE
 	if(is.null(clean))clean=TRUE
 }
 if(use.tmb&is.null(clean))clean=FALSE
@@ -393,7 +391,10 @@ if(substr(model,1,4)=="MVMS")
 	}
 }
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
+{
+	fullddl=ddl
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
+}
 if(simplify)
 {
 	simplify=FALSE
@@ -460,7 +461,7 @@ if(model=="JS")
 if(model=="MSCJS")
 	if(use.tmb)
 	{
-		runmodel=mscjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+		runmodel=mscjs_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
     }else{
 	    runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,

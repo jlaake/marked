@@ -26,7 +26,7 @@ js.hessian=function(model)
 	} else
 #   Called within model fitting code
 	{
-		scale=model$scale
+		scale=model$options$scale
 		model_data=model$model_data
 	}	
 #nobstot number of unique caught at least once by group if applicable
