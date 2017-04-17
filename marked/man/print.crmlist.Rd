@@ -17,11 +17,10 @@ None
 \description{
 Print model table from model list
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{crm}}
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-

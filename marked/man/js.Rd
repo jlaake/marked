@@ -81,12 +81,11 @@ the data.  Normally this would not be a big problem but because
 to terminate.  So make sure to save your workspace frequently if you use
 this function in its current implementation.
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
 for the analysis of capture-recapture experiments in open populations.
 Biometrics 52:860-873.
 }
-
+\author{
+Jeff Laake <jeff.laake@noaa.gov>
+}

@@ -38,4 +38,3 @@ set_mvms(list(location=c("A","B","C"),repro_status=c("N","P","u"),exclude=c("CP"
 \author{
 Jeff Laake
 }
-

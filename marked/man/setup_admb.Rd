@@ -23,4 +23,3 @@ compiles tpl file in local directory (clean=F) of from package directory.
 If admb cannot be found will attempt to run prepare_admb function (if exists) to
 establish connections for compilation.
 }
-

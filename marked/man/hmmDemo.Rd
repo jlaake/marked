@@ -50,4 +50,3 @@ x$stateprob[45,,]
 Jeff Laake
 }
 \keyword{models}
-

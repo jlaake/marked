@@ -24,4 +24,3 @@ Parses a mixed effect model in the lme4 structure of  ~fixed +(re1|g1) +...+(ren
 \author{
 Devin Johnson <devin.johnson@noaa.gov>
 }
-

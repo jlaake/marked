@@ -59,4 +59,3 @@ intervals defined for time, cohort and age.
 \author{
 Jeff Laake
 }
-

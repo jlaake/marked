@@ -310,7 +310,7 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			convergence=mod$convcode
 			lnl=mod$value		
 		}
-		fixed.npar=(ncol(phidm)+ncol(pdm)+ncol(psidm))
+		fixed.npar=(ncol(phidm)+ncol(pdm)-2)
 		if(p_nre+phi_nre>0)
 		{
 			if(getreals) 

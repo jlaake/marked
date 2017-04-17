@@ -18,11 +18,10 @@ errors and confidence intervals if hessian=TRUE on model run.
 \description{
 Extracts the beta coefficients from the model results.
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{crm}}
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-

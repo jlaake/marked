@@ -41,12 +41,11 @@ This functions uses \code{\link{cjs.lnl}} and then supplements with the
 remaining calculations to compute the likelihood for the POPAN formulation
 (Arnason and Schwarz 1996) of the Jolly-Seber model.
 }
-\author{
-Jeff Laake
-}
 \references{
 Schwarz, C. J., and A. N. Arnason. 1996. A general methodology
 for the analysis of capture-recapture experiments in open populations.
 Biometrics 52:860-873.
 }
-
+\author{
+Jeff Laake
+}

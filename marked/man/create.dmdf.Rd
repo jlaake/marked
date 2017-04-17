@@ -230,9 +230,6 @@ The behavior of create.dmdf can vary depending on the values of begin.time and
 time.intervals. An explanation of these values and how they can be used is given 
 in \code{\link{process.data}}.
 }
-\author{
-Jeff Laake
-}
 \references{
 Laake, J. and E. Rexstad (2007). RMark -- an alternative
 approach to building linear models in MARK. Program MARK: A Gentle
@@ -241,4 +238,6 @@ Introduction. E. Cooch and G. C. White.
 Pledger, S., K. H. Pollock, et al. (2003). Open capture-recapture models
 with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
 }
-
+\author{
+Jeff Laake
+}

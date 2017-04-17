@@ -54,4 +54,3 @@ following will create a numeric sex covariate.
 \preformatted{ dipper$numeric.sex=as.numeric(dipper$sex)-1 }
 }
 \keyword{datasets}
-

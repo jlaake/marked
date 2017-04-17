@@ -20,4 +20,3 @@ invert the hessian.
 \author{
 Jeff Laake <jeff.laake@noaa.gov>
 }
-

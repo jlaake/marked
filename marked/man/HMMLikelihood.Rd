@@ -2,8 +2,8 @@
 % Please edit documentation in R/HMMLikelihood.r
 \name{HMMLikelihood}
 \alias{HMMLikelihood}
-\alias{hmm.lnl}
 \alias{reals}
+\alias{hmm.lnl}
 \title{Hidden Markov Model likelihood functions}
 \usage{
 HMMLikelihood(par,type,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,fct_delta,ddl,
@@ -74,13 +74,12 @@ setting up parameters.
  
 For an R version of the HMMLikelihood and related code see \code{\link{R_HMMLikelihood}}
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
 }
 \seealso{
 R_HMMLikelihood
 }
-
+\author{
+Jeff Laake <jeff.laake@noaa.gov>
+}

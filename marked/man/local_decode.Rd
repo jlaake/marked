@@ -29,11 +29,10 @@ mod=crm(dipper,model="hmmcjs")
 local_decode(mod)
 }
 }
-\author{
-Jeff Laake
-}
 \references{
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. See page 80.
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-

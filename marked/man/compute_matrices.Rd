@@ -21,4 +21,3 @@ Computes gamma, dmat and delta (initial) matrices(arrays) and returns them in a 
 Jeff Laake
 }
 \keyword{utility}
-

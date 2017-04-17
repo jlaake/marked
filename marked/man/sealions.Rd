@@ -68,4 +68,3 @@ Phi.1=list(formula=~sex*bs(Age)+pup:weight+area)
 }
 }
 \keyword{datasets}
-

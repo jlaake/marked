@@ -23,4 +23,3 @@ Sets initial values specified in a list.
 \author{
 Jeff Laake <jeff.laake@noaa.gov>
 }
-

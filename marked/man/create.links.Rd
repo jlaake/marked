@@ -22,4 +22,3 @@ and remaining columns all 0.
 \author{
 Jeff Laake
 }
-

@@ -99,12 +99,11 @@ subscript out of bounds, it will cause R to terminate.  So make sure to save
 your workspace frequently if you use this function in its current
 implementation.
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Pledger, S., K. H. Pollock, et al. (2003). Open
 capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 Biometrics 59(4):786-794.
 }
-
+\author{
+Jeff Laake <jeff.laake@noaa.gov>
+}

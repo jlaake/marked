@@ -64,11 +64,10 @@ dipper.proc=process.data(dipper)
 ddl=make.design.data(dipper.proc)
 }
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{process.data}},\code{\link{merge_design.covariates}}
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-

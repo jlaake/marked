@@ -45,4 +45,3 @@ in the sense that you use indicator variables (0/1) as interactions.
 \author{
 Jeff Laake
 }
-

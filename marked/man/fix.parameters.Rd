@@ -27,4 +27,3 @@ crm model for a specified set of capture histories and occasions.
 \author{
 Jeff Laake
 }
-

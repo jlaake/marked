@@ -118,9 +118,7 @@ matrices for each parameter based on the formula provided for each
 parameter, 4) call to the specific function for model fitting (now either
 \code{\link{cjs}} or \code{\link{js}}). As with \code{mark} the calling
 arguments for \code{crm} are a compilation of the calling arguments for each
-of the functions it calls (with some arguments renamed to avoid conflicts).
-If data is a processed dataframe (see \code{\link{process.data}}) then it
-expects to find a value for \code{ddl}.  Likewise, if the data have not been
+of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
 processed, then \code{ddl} should be NULL.  This dual calling structure
 allows either a single call approach for each model or alternatively for the
 data to be processed and the design data (\code{ddl}) to be created once and
@@ -306,12 +304,11 @@ crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 }
 }
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{cjs}}, \code{\link{js}},
 \code{\link{make.design.data}},\code{\link{process.data}}
 }
+\author{
+Jeff Laake
+}
 \keyword{models}
-

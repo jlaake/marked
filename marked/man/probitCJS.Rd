@@ -55,6 +55,7 @@ and draws a sample from the posterior distribution using a Gibbs sampler.
        vectors and the Qs are specified via a list in order of the random effects specified in the 
        model statements.
 }
+
 \examples{
 \donttest{
 # This example is excluded from testing to reduce package check time
@@ -101,4 +102,3 @@ fit3$results$reals
 \author{
 Devin Johnson
 }
-
