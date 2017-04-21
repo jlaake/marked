@@ -266,6 +266,11 @@ create.dmdf=function(x,parameter,time.varying=NULL,fields=NULL)
 	   df=merge(df,timedf,by="occid")
 	   df$idocc=NULL
    }
+   if(any(time.intervals==0))
+   {
+	   firstocc=data.frame(id=factor(1:nrow(x$data)),firstocc=firstseen)
+	   df=merge(df,firstocc,by="id")
+   }
    df=df[order(df$seq),]
    df$age=df$time-df$cohort
    if(!is.null(x$data$initial.age)) df$age=df$age+x$data$initial.age[df$id]

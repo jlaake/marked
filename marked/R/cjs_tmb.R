@@ -282,6 +282,11 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		setup_tmb("cjsre_tmb",clean=clean)
 		cat("\nbuilding TMB program\n")                         
 		# Create AD function with data and parameters
+        # With INLA type approach will need to run MakeADFun 3x. 
+        # f1 - function with random= u's - optimize
+        # f2 - function with u's not random - optimize
+        # f3 - function with fixed effect parameter values specified at MLEs; use MAP to fix parameters; us not random - optimize
+        # https://github.com/James-Thorson/2016_Spatio-temporal_models/issues/8
 		f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
 							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
 							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
