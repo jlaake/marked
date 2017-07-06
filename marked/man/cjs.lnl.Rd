@@ -32,7 +32,7 @@ extract reals}
 \value{
 either -log likelihood value if \code{all=FALSE} or the entire
 list contents of the call to the FORTRAN subroutine if \code{all=TRUE}. The
-latter is used from \code{\link{cjs}} after optimization to extract the real
+latter is used from \code{\link{cjs_admb}} after optimization to extract the real
 parameter estimates at the final beta values.
 }
 \description{

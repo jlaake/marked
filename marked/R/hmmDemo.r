@@ -13,7 +13,7 @@
 #' 10) global_decode - state predictions for entire sequence for each individual.
 #' @author Jeff Laake
 #' @export hmmDemo
-#' @useDynLib marked
+#' @useDynLib marked, .registration = TRUE
 #' @keywords models
 #' @examples
 #' \donttest{

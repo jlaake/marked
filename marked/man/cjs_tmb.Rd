@@ -9,7 +9,7 @@ cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
   crossed = TRUE, compile = TRUE, extra.args = NULL, reml,
   clean = FALSE, getreals = FALSE, prior = FALSE, prior.list = NULL,
-  ...)
+  tmbfct = "f1", ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -67,6 +67,8 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{prior.list}{which contains for normal distributions 1) mu_phi_prior: vector of mu values for phi_beta, 2) sigma_phi_prior: vector of sigma values for phi_beta,
 3) mu_p_prior: vector of mu values for p_beta, 4) sigma_p_prior: vector of sigma values for p_beta, 5) random_mu_phi_prior: vector of mu values for ln sigma of random effects, 
 6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p.}
+
+\item{tmbfct}{either "f1" - default or "f2" - any random effects treated as fixed effects or "f3" fixed effects fixed at mode and no random effects.}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optim} or \code{\link{cjs.lnl}}}

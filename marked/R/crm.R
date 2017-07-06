@@ -12,7 +12,7 @@
 #' in the specified model, 3) \code{\link{create.dm}} to create the design
 #' matrices for each parameter based on the formula provided for each
 #' parameter, 4) call to the specific function for model fitting (now either
-#' \code{\link{cjs}} or \code{\link{js}}). As with \code{mark} the calling
+#' \code{\link{cjs_admb}} or \code{\link{js}}). As with \code{mark} the calling
 #' arguments for \code{crm} are a compilation of the calling arguments for each
 #' of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
 #' processed, then \code{ddl} should be NULL.  This dual calling structure
@@ -24,7 +24,7 @@
 #' control other aspects of the optimization.  The optimization is done with
 #' the R package/function \code{optimx} and the arguments \code{method} and
 #' \code{hessian} are described with the help for that function.  In addition,
-#' any arguments not matching those for \code{cjs} (the ...) are passed to
+#' any arguments not matching those for \code{cjs_admb} (the ...) are passed to
 #' \code{optimx} allowing any of the other parameters to be set.  If you set
 #' \code{debug=TRUE}, then at each function evaluation (\code{\link{cjs.lnl}}
 #' the current values of the parameters and -2*log-likelihood value are output.
@@ -203,8 +203,8 @@
 #' @author Jeff Laake
 #' @export crm
 #' @import optimx Matrix Rcpp numDeriv
-#' @useDynLib marked
-#' @seealso \code{\link{cjs}}, \code{\link{js}},
+#' @useDynLib marked,  .registration = TRUE
+#' @seealso \code{\link{cjs_admb}}, \code{\link{js}},
 #' \code{\link{make.design.data}},\code{\link{process.data}}
 #' @keywords models
 #' @examples
@@ -453,7 +453,7 @@ if(model=="CJS")
 				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,getreals=getreals,
 				prior=prior,prior.list=prior.list,...)
 	} else
-		runmodel=cjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+		runmodel=cjs_admb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
 if(model=="JS")
     runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,

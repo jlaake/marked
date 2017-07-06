@@ -60,7 +60,7 @@
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
-cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
 			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,clean=TRUE,...)
 {

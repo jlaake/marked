@@ -116,7 +116,7 @@ and package them into a list (processed data),2)
 in the specified model, 3) \code{\link{create.dm}} to create the design
 matrices for each parameter based on the formula provided for each
 parameter, 4) call to the specific function for model fitting (now either
-\code{\link{cjs}} or \code{\link{js}}). As with \code{mark} the calling
+\code{\link{cjs_admb}} or \code{\link{js}}). As with \code{mark} the calling
 arguments for \code{crm} are a compilation of the calling arguments for each
 of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
 processed, then \code{ddl} should be NULL.  This dual calling structure
@@ -128,7 +128,7 @@ There are some optional arguments that can be used to set initial values and
 control other aspects of the optimization.  The optimization is done with
 the R package/function \code{optimx} and the arguments \code{method} and
 \code{hessian} are described with the help for that function.  In addition,
-any arguments not matching those for \code{cjs} (the ...) are passed to
+any arguments not matching those for \code{cjs_admb} (the ...) are passed to
 \code{optimx} allowing any of the other parameters to be set.  If you set
 \code{debug=TRUE}, then at each function evaluation (\code{\link{cjs.lnl}}
 the current values of the parameters and -2*log-likelihood value are output.
@@ -305,7 +305,7 @@ crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 }
 }
 \seealso{
-\code{\link{cjs}}, \code{\link{js}},
+\code{\link{cjs_admb}}, \code{\link{js}},
 \code{\link{make.design.data}},\code{\link{process.data}}
 }
 \author{
