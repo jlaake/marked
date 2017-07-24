@@ -12,7 +12,7 @@
 #' @aliases cjs_delta mvmscjs_delta
 #' @export cjs_delta mvmscjs_delta
 #' @return 2-d array of initial state probability vectors for each id
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 cjs_delta=function(pars,m,F,T,start) 
 {

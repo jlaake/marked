@@ -32,5 +32,5 @@ vector of scaled parameter values for scale.par, and list of unscaled parameter 
 Set scale, scale dm and scale/unscale parameters
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

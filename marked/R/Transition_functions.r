@@ -10,7 +10,7 @@
 #' @aliases cjs_gamma ms_gamma ms2_gamma
 #' @export cjs_gamma ms_gamma ms2_gamma
 #' @return array of id and occasion-specific transition matrices - Gamma in Zucchini and MacDonald (2009)
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 cjs_gamma=function(pars,m,F,T) 
  {

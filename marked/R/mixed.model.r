@@ -39,7 +39,7 @@
 #' mixed.model returns a list (re.list) with an element for each random effect structure. The contents
 #' are a standard design matrix (re.dm) if indices==FALSE and a re.dm and re.indices which matches the 
 #' structure of mixed.model.admb. mixed.model will be more useful with R than ADMB.
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' 
 mixed.model.admb=function(formula,data)
 {

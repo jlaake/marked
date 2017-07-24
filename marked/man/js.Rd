@@ -87,5 +87,5 @@ for the analysis of capture-recapture experiments in open populations.
 Biometrics 52:860-873.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

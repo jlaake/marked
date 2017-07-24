@@ -7,7 +7,7 @@
 #' @export
 #' @return variance-covariance matrix for specified model or the model
 #' object with the stored vcv depending on whether the model has already been run
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 js.hessian=function(model)
 {
 	object=NULL

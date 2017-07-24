@@ -81,5 +81,5 @@ Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An 
 R_HMMLikelihood
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

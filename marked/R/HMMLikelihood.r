@@ -39,7 +39,7 @@
 #' @return HMMLikelihood returns log-likelihood for a single sequence and
 #' hmm.lnl returns the negative log-likelihood value for each capture history. reals
 #' returns either the column dimension of design matrix for parameter or the real parameter vector
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @seealso R_HMMLikelihood
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
 HMMLikelihood=function(par,type=NULL,xx,xstart,mx,T,freq=1,fct_dmat,fct_gamma,

@@ -161,5 +161,5 @@ if(class(mod1)[1]!="try-error") mod1
 Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

@@ -30,5 +30,5 @@ these all use cjs_delta to assign a known state.
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

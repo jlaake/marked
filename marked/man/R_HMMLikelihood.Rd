@@ -39,5 +39,5 @@ and then computes the gamma,dmat and delta matrices and calls R_HMMLikelihood fu
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. See page 45.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

@@ -27,7 +27,7 @@
 #' @param strata.labels labels for strata used in capture history; they are converted to numeric in the order listed. Only needed to specify unobserved strata. For any unobserved strata p=0..
 #' @export
 #' @return dataframe with simulated data
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @examples 
 #' # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
 #' df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),

@@ -146,5 +146,5 @@ initial
 m$results$reals
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

@@ -334,7 +334,7 @@
 #' evaluations} \item{reals}{dataframe of data and real S and p estimates for
 #' each animal-occasion excluding those that occurred before release}
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,

@@ -59,5 +59,5 @@ of indices per id to read in ragged array. It then changes re.indices to be an i
 to the indices within the id from 1 to the number of indices within the id.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

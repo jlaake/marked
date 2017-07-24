@@ -107,5 +107,5 @@ capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 Biometrics 59(4):786-794.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }

@@ -18,7 +18,7 @@
 #' @aliases R_HMMLikelihood loglikelihood
 #' @export R_HMMLikelihood loglikelihood
 #' @return both return log-likelihood, alpha, v and phi arrays 
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. See page 45. 
 R_HMMLikelihood=function(x,first,m,T,dmat,gamma,delta)
 {  
