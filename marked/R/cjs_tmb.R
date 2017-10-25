@@ -40,15 +40,17 @@
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
 #' @param scale vector of scale values for parameters
-#' @param use.admb if TRUE creates data file for admbcjs.tpl and runs admb optimizer
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param reml if set to TRUE uses cjs_reml if crossed 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param getreals  if TRUE, will compute real Phi and p values and std errors
-#' @param returnTMB If TRUE, the function will return the compiled TMB objective function that calculates the gradient
-#' and Hessian as well. This can be used for other optimization or MCMC routines.
+#' @param prior if TRUE will expect vectors of prior values in list prior.list
+#' @param prior.list which contains for normal distributions 1) mu_phi_prior: vector of mu values for phi_beta, 2) sigma_phi_prior: vector of sigma values for phi_beta,
+#' 3) mu_p_prior: vector of mu values for p_beta, 4) sigma_p_prior: vector of sigma values for p_beta, 5) random_mu_phi_prior: vector of mu values for ln sigma of random effects, 
+#' 6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p. 
+#' @param tmbfct either "f1" - default or "f2" - any random effects treated as fixed effects or "f3" fixed effects fixed at mode and no random effects.
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optim} or \code{\link{cjs.lnl}}
 #' @import R2admb optimx TMB
@@ -59,15 +61,16 @@
 #' converged, 5) count:\code{optim} results of number of function
 #' evaluations, 6) reals: dataframe of data and real Phi and p estimates for
 #' each animal-occasion excluding those that occurred before release, 7) vcv:var-cov matrix of betas if hessian=TRUE was set.
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
 cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		use.admb=FALSE,crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE, returnTMB=FALSE,...)
+		crossed=TRUE,compile=TRUE,extra.args=NULL,reml,clean=FALSE,getreals=FALSE,prior=FALSE,
+		prior.list=NULL,tmbfct="f1",...)
 {
-	if(use.admb)accumulate=FALSE
+	accumulate=FALSE
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
@@ -200,94 +203,221 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			p_idIndex=matrix(0,nrow=0,ncol=0)
 			p_refreq=vector("numeric",length=0)
 		}
+	
+		# if priors are desired, set up appropriate structure
+		if(prior)
+		{
+        # priors for fixed effects
+			if(is.null(prior.list)|| is.null(prior.list$mu_phi_prior)) 
+				mu_phi_prior=0
+			else
+				mu_phi_prior=prior.list$mu_phi_prior
+		  	if(length(mu_phi_prior)==1) mu_phi_prior=rep(mu_phi_prior,ncol(phidm))
+		   	if(length(mu_phi_prior)!=ncol(phidm))stop("\nMismatch between length of mu_phi_prior and number of phi_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$mu_p_prior)) 
+				mu_p_prior=0
+			else
+				mu_p_prior=prior.list$mu_p_prior
+		   	if(length(mu_p_prior)==1) mu_p_prior=rep(mu_p_prior,ncol(pdm))
+		   	if(length(mu_p_prior)!=ncol(pdm))stop("\nMismatch between length of mu_p_prior and number of p_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_phi_prior)) 
+				sigma_phi_prior=100
+			else
+				sigma_phi_prior=prior.list$sigma_phi_prior
+		   	if(length(sigma_phi_prior)==1) sigma_phi_prior=rep(sigma_phi_prior,ncol(phidm))
+		   	if(length(sigma_phi_prior)!=ncol(phidm))stop("\nMismatch between length of sigma_phi_prior and number of phi_betas")
+		   	if(is.null(prior.list)|| is.null(prior.list$sigma_p_prior)) 
+				sigma_p_prior=100
+			else
+				sigma_p_prior=prior.list$sigma_p_prior
+		   	if(length(sigma_p_prior)==1) sigma_p_prior=rep(sigma_p_prior,ncol(pdm))
+		   	if(length(sigma_p_prior)!=ncol(pdm))stop("\nMismatch between length of sigma_p_prior and number of p_betas")
+		# priors for random effects  
+	        if(phi_krand>0)
+			{	
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_phi_prior)) 
+					random_mu_phi_prior=0
+				else
+					random_mu_phi_prior=prior.list$random_mu_phi_prior
+				if(length(random_mu_phi_prior)==1) random_mu_phi_prior=rep(random_mu_phi_prior,phi_krand)
+				if(length(random_mu_phi_prior)!=phi_krand)stop("\nMismatch between length of random_mu_phi_prior and number of phi random effects")
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_phi_prior)) 
+					random_sigma_phi_prior=1
+				else
+					random_sigma_phi_prior=prior.list$random_sigma_phi_prior
+				if(length(random_sigma_phi_prior)==1) random_sigma_phi_prior=rep(random_sigma_phi_prior,phi_krand)
+				if(length(random_sigma_phi_prior)!=phi_krand)stop("\nMismatch between length of random_sigma_phi_prior and number of phi random effects")
+			} else {
+				random_mu_phi_prior=vector("numeric",length=0)
+				random_sigma_phi_prior=vector("numeric",length=0)
+			}
+			if(phi_krand>0)
+			{	
+				if(is.null(prior.list)|| is.null(prior.list$random_mu_p_prior)) 
+					random_mu_p_prior=0
+				else
+					random_mu_p_prior=prior.list$random_mu_p_prior
+			 	if(length(random_mu_p_prior)==1) random_mu_p_prior=rep(random_mu_p_prior,p_krand)
+				if(length(random_mu_p_prior)!=p_krand)stop("\nMismatch between length of random_mu_p_prior and number of p random effects")
+				if(is.null(prior.list)|| is.null(prior.list$random_sigma_p_prior)) 
+					random_sigma_p_prior=1
+				else
+					random_sigma_p_prior=prior.list$random_sigma_p_prior
+				if(length(random_sigma_p_prior)==1) random_sigma_p_prior=rep(random_sigma_p_prior,p_krand)
+				if(length(random_sigma_p_prior)!=p_krand)stop("\nMismatch between length of random_sigma_p_prior and number of p random effects")
+			} else{
+				random_mu_p_prior=vector("numeric",length=0)
+				random_sigma_p_prior=vector("numeric",length=0)
+			}
+		} else {
+		# no priors but need to create empty vectors
+	       mu_phi_prior=vector("numeric",length=0)
+		   sigma_phi_prior=vector("numeric",length=0)
+		   mu_p_prior=vector("numeric",length=0)
+		   sigma_p_prior=vector("numeric",length=0)
+		   random_mu_phi_prior=vector("numeric",length=0)
+		   random_sigma_phi_prior=vector("numeric",length=0)
+		   random_mu_p_prior=vector("numeric",length=0)
+		   random_sigma_p_prior=vector("numeric",length=0)
+	   }	
 		setup_tmb("cjsre_tmb",clean=clean)
 		cat("\nbuilding TMB program\n")                         
 		# Create AD function with data and parameters
-		f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
+        # With INLA type approach will need to run MakeADFun 3x. 
+        # f1 - function with random= u's - optimize
+        # f2 - function with u's not random - optimize
+        # f3 - function with fixed effect parameter values specified at MLEs; use MAP to fix parameters; us not random - optimize
+        # https://github.com/James-Thorson/2016_Spatio-temporal_models/issues/8
+		if(tmbfct=="f1")
+		{
+			f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
 							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
 							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
 							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
 							p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
-							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals)),
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals),
+							prior=as.numeric(prior),mu_phi_prior=mu_phi_prior,sigma_phi_prior=sigma_phi_prior,
+							mu_p_prior=mu_p_prior,sigma_p_prior=sigma_p_prior,random_mu_phi_prior=random_mu_phi_prior,
+							random_sigma_phi_prior=random_sigma_phi_prior,random_mu_p_prior=mu_p_prior,random_sigma_p_prior=sigma_p_prior),
 					        parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
 							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
 					        random=c("u_phi","u_p"),DLL="cjsre_tmb")
-		if(returnTMB) return(f)
-		cat("\nrunning TMB program\n")                         
-		if(method=="nlminb")
-		{
-			mod=nlminb(f$par,f$fn,f$gr,control=control,itnmax=itnmax,...)
-			lnl=mod$objective
-			par=mod$par
-			convergence=mod$convergence
-		} else
-		{
-			control$starttests=FALSE
-  		    mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
-			par <- coef(mod, order="value")[1, ]
-			mod=as.list(summary(mod, order="value")[1, ])
-			convergence=mod$convcode
-			lnl=mod$value		
-		}
-		fixed.npar=(ncol(phidm)+ncol(pdm)-2)
-		if(p_nre+phi_nre>0)
-		{
-			if(getreals) 
-				par_summary=sdreport(f,getReportCovariance=FALSE)
-			else
-				par_summary=sdreport(f)
-			par=par_summary$par.fixed[1:fixed.npar]
-			cjs.beta.fixed=unscale.par(par,scale)
-			cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
-			sigma=NULL
-			if(phi_krand>0)
-			{
-				Phi_sigma=cjs.beta.sigma[1:phi_krand]
-				names(Phi_sigma)=colnames(phi_randDM)
-				sigma=list(Phi_logsigma=Phi_sigma)
-			} 
-			if(p_krand>0)
-			{
-				p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
-			    names(p_sigma)=colnames(p_randDM)
-				sigma=c(sigma,list(p_logsigma=p_sigma))
-			}
-			cjs.beta=c(cjs.beta.fixed,sigma)
-			beta.vcv=par_summary$cov.fixed
-		}else
-		{	
-			cjs.beta=unscale.par(par,scale)
-			if(hessian) 
-			{
-				message("Computing hessian...")
-				beta.vcv=solve(f$he(par))
-				colnames(beta.vcv)=names(unlist(cjs.beta))
-				rownames(beta.vcv)=colnames(beta.vcv)
-			} else
-			   beta.vcv=NULL
-		}	
-		# Create results list 
-        if(getreals&p_nre+phi_nre>0)
-		{
-			reals=split(par_summary$value,names(par_summary$value))
-			reals.se=split(par_summary$sd,names(par_summary$value))	
-		}
-		else
-		{
-			reals=NULL
-			reals.se=NULL
-		}
-		res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
+		      cat("\nrunning TMB program\n")                         
+		      if(method=="nlminb")
+		      {
+			      mod=nlminb(f$par,f$fn,f$gr,control=control,itnmax=itnmax,...)
+			      lnl=mod$objective
+			      par=mod$par
+			      convergence=mod$convergence
+		      } else
+		      {
+			     control$starttests=FALSE
+  		         mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+			     par <- coef(mod, order="value")[1, ]
+			     mod=as.list(summary(mod, order="value")[1, ])
+			     convergence=mod$convcode
+			     lnl=mod$value		
+		       }
+		       fixed.npar=(ncol(phidm)+ncol(pdm)-2)
+		       if(p_nre+phi_nre>0)
+		       {
+			       if(getreals) 
+				      par_summary=sdreport(f,getReportCovariance=FALSE)
+			       else
+				      par_summary=sdreport(f,getJointPrecision=TRUE)
+
+			        par=par_summary$par.fixed[1:fixed.npar]
+			        cjs.beta.fixed=unscale.par(par,scale)
+			        cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
+			        sigma=NULL
+			        if(phi_krand>0)
+			        {
+			        	Phi_sigma=cjs.beta.sigma[1:phi_krand]
+				        names(Phi_sigma)=colnames(phi_randDM)
+				        sigma=list(Phi_logsigma=Phi_sigma)
+			        } 
+			        if(p_krand>0)
+			        {
+				        p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
+			            names(p_sigma)=colnames(p_randDM)
+				        sigma=c(sigma,list(p_logsigma=p_sigma))
+			        }
+			        cjs.beta=c(cjs.beta.fixed,sigma)
+			        beta.vcv=par_summary$cov.fixed
+		      }else
+		      {	
+			       cjs.beta=unscale.par(par,scale)
+			       if(hessian) 
+			       {
+				        message("Computing hessian...")
+				        beta.vcv=solve(f$he(par))
+				        colnames(beta.vcv)=names(unlist(cjs.beta))
+				        rownames(beta.vcv)=colnames(beta.vcv)
+			       } else
+			            beta.vcv=NULL
+		       }	
+		       # Create results list 
+               if(getreals&p_nre+phi_nre>0)
+		       {
+			           reals=split(par_summary$value,names(par_summary$value))
+			           reals.se=split(par_summary$sd,names(par_summary$value))	
+		        }
+		        else
+		        {
+			          reals=NULL
+		              reals.se=NULL
+		        }
+		        res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
 				beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
 				model_data=model_data,
 				options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
 						chunk_size=chunk_size,itnmax=itnmax,control=control))		
 		
-#  Restore non-accumulated, non-scaled dm's etc
-	res$model_data=model_data.save
-#  Assign S3 class values and return
-	class(res)=c("crm","mle","cjs")
-	return(res)
+#               Restore non-accumulated, non-scaled dm's etc
+	            res$model_data=model_data.save
+				res$tmbfct=f
+#               Assign S3 class values and return
+	            class(res)=c("crm","mle","cjs")
+	            return(res)
+		}
+		if(tmbfct=="f2")
+		{
+			f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
+							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
+							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
+							p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals),
+							prior=as.numeric(prior),mu_phi_prior=mu_phi_prior,sigma_phi_prior=sigma_phi_prior,
+							mu_p_prior=mu_p_prior,sigma_p_prior=sigma_p_prior,random_mu_phi_prior=random_mu_phi_prior,
+							random_sigma_phi_prior=random_sigma_phi_prior,random_mu_p_prior=mu_p_prior,random_sigma_p_prior=sigma_p_prior),
+					parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
+							log_sigma_phi=rep(-1,nphisigma),log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
+					,DLL="cjsre_tmb")
+			return(f)
+			
+		}	
+		if(tmbfct=="f3")
+		{
+			f = MakeADFun(data=list(m=model_data$imat$nocc,ch=model_data$imat$chmat,freq=model_data$imat$freq,frst=model_data$imat$first,
+							lst=model_data$imat$last,loc=model_data$imat$loc,tint=model_data$time.intervals,
+							phi_fixedDM=phidm,phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+							phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
+							p_fixedDM=pdm,p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+							p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,getreals=as.integer(getreals),
+							prior=as.numeric(prior),mu_phi_prior=mu_phi_prior,sigma_phi_prior=sigma_phi_prior,
+							mu_p_prior=mu_p_prior,sigma_p_prior=sigma_p_prior,random_mu_phi_prior=random_mu_phi_prior,
+							random_sigma_phi_prior=random_sigma_phi_prior,random_mu_p_prior=mu_p_prior,random_sigma_p_prior=sigma_p_prior),
+					parameters=list(phi_beta=initial$Phi,p_beta=initial$p,
+							log_sigma_phi=initial$log_sigma_phi,log_sigma_p=rep(-1,npsigma),u_phi=rep(0,phi_nre),u_p=rep(0,p_nre)),
+					map=list(phi_beta=factor(rep(NA,length(initial$Phi))),p_beta=factor(rep(NA,length(initial$p))),
+															log_sigma_phi=factor(rep(NA,nphisigma)),
+															log_sigma_p=factor(rep(NA,npsigma)))
+					,DLL="cjsre_tmb")
+			return(f)
+			
+		}	
+		
 }
 
 

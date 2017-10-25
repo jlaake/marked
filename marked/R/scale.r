@@ -17,7 +17,7 @@
 #' @param model_data list of data/design objects
 #' @return List of scale values for set.scale, model.data with scaled design matrices for scale.dm,
 #' vector of scaled parameter values for scale.par, and list of unscaled parameter vectors for unscale.par
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 set.scale=function(pars,model_data,scale)
 {
 	scale.list=vector("list",length(pars))

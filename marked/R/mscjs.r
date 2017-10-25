@@ -48,7 +48,7 @@
 #' evaluations} \item{reals}{dataframe of data and real S and p estimates for
 #' each animal-occasion excluding those that occurred before release}
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 #' @examples 
 #' \donttest{

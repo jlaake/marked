@@ -11,7 +11,7 @@
 #' @aliases cjs_dmat ms_dmat ums_dmat ums2_dmat
 #' @export cjs_dmat ms_dmat ums_dmat ums2_dmat mvms_dmat
 #' @return 4-d array of id and occasion-specific observation probability matrices - state-dependent distributions in Zucchini and MacDonald (2009)
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. 
   mvms_dmat=function(pars,m,F,T,sup) 
  {

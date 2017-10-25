@@ -35,10 +35,9 @@ R implementation of HMMs described in processed report except function HMMLikeli
 values for all capture histories and return  lnl, alpha, phi, v, dmat, and gamma values. loglikelihood is called with a fitted hmm model
 and then computes the gamma,dmat and delta matrices and calls R_HMMLikelihood function. These are not used by the fitting code.
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Zucchini, W. and I.L. MacDonald. 2009. Hidden Markov Models for Time Series: An Introduction using R. Chapman and Hall, Boca Raton, FL. 275p. See page 45.
 }
-
+\author{
+Jeff Laake
+}

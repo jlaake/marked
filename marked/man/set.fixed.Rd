@@ -22,4 +22,3 @@ design data list and returns the fixed values in the design data list.
 Jeff Laake
 }
 \keyword{utility}
-

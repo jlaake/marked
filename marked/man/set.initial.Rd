@@ -21,6 +21,5 @@ List of initial values for each parameter in the model
 Sets initial values specified in a list.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }
-

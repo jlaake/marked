@@ -93,7 +93,7 @@
 #' @param cjsenv environment for cjs to update iteration counter
 #' @return either -log likelihood value if \code{all=FALSE} or the entire
 #' list contents of the call to the FORTRAN subroutine if \code{all=TRUE}. The
-#' latter is used from \code{\link{cjs}} after optimization to extract the real
+#' latter is used from \code{\link{cjs_admb}} after optimization to extract the real
 #' parameter estimates at the final beta values.
 #' @author Jeff Laake
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open

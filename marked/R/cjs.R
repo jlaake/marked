@@ -56,11 +56,11 @@
 #' converged, 5) count:\code{optim} results of number of function
 #' evaluations, 6) reals: dataframe of data and real Phi and p estimates for
 #' each animal-occasion excluding those that occurred before release, 7) vcv:var-cov matrix of betas if hessian=TRUE was set.
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Pledger, S., K. H. Pollock, et al. (2003). Open
 #' capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 #' Biometrics 59(4):786-794.
-cjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
 			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,clean=TRUE,...)
 {

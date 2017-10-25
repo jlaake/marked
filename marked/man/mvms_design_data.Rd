@@ -28,4 +28,3 @@ mvms_design_data(x$df.states,transition=FALSE)
 \author{
 Jeff Laake
 }
-

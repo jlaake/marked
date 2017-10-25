@@ -40,7 +40,7 @@ needed to fit capture-recapture models (crm) which currently includes "cjs"
 Before jumping into the details it is useful to have an understanding of the
 differences between MARK (via the \code{mark in RMark} function) and the
 package \code{mra} written by Trent McDonald and how they relate to the
-implementation in \code{\link{cjs}}.  With MARK, animals can be placed in
+implementation in \code{\link{cjs_admb}}.  With MARK, animals can be placed in
 groups and the parameters for the model specified via PIMs (parameter
 index matrices) link the parameters to the specific animals.  For
 example, if for a particular group the \code{Phi} PIM is
@@ -92,7 +92,7 @@ every covariate is assumed to be time-varying and any factor variables like
 using the R facilities for handling factor variables in the formula to
 create the design matrix.
 
-In the \code{crm,cjs,js} functions in this package I have used basic idea in
+In the \code{crm,cjs_admb,js} functions in this package I have used basic idea in
 \code{mra} but I have taken a different approach to model development that
 allows for time-varying covariates but does not restrict each covariate to
 be time-varying and factor variables are used as such which removes the need
@@ -230,9 +230,6 @@ The behavior of create.dmdf can vary depending on the values of begin.time and
 time.intervals. An explanation of these values and how they can be used is given 
 in \code{\link{process.data}}.
 }
-\author{
-Jeff Laake
-}
 \references{
 Laake, J. and E. Rexstad (2007). RMark -- an alternative
 approach to building linear models in MARK. Program MARK: A Gentle
@@ -241,4 +238,6 @@ Introduction. E. Cooch and G. C. White.
 Pledger, S., K. H. Pollock, et al. (2003). Open capture-recapture models
 with heterogeneity: I. Cormack-Jolly-Seber model. Biometrics 59(4):786-794.
 }
-
+\author{
+Jeff Laake
+}

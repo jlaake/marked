@@ -20,4 +20,3 @@ Computes 1 to k-step forward transition proportions in each state with a single 
 Jeff Laake
 }
 \keyword{utility}
-

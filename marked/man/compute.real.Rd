@@ -69,4 +69,3 @@ xx=compute.real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 Jeff Laake
 }
 \keyword{utility}
-

@@ -13,7 +13,7 @@ crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   use.tmb = FALSE, crossed = NULL, reml = FALSE, compile = FALSE,
   extra.args = NULL, strata.labels = NULL, clean = NULL,
   save.matrices = TRUE, simplify = FALSE, getreals = FALSE,
-  check = FALSE, ...)
+  check = FALSE, prior = FALSE, prior.list = NULL, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -92,6 +92,10 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{check}{if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.}
 
+\item{prior}{if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb}
+
+\item{prior.list}{which contains list of prior parameters that will be model dependent}
+
 \item{...}{optional arguments passed to js or cjs and optimx}
 }
 \value{
@@ -112,11 +116,9 @@ and package them into a list (processed data),2)
 in the specified model, 3) \code{\link{create.dm}} to create the design
 matrices for each parameter based on the formula provided for each
 parameter, 4) call to the specific function for model fitting (now either
-\code{\link{cjs}} or \code{\link{js}}). As with \code{mark} the calling
+\code{\link{cjs_admb}} or \code{\link{js}}). As with \code{mark} the calling
 arguments for \code{crm} are a compilation of the calling arguments for each
-of the functions it calls (with some arguments renamed to avoid conflicts).
-If data is a processed dataframe (see \code{\link{process.data}}) then it
-expects to find a value for \code{ddl}.  Likewise, if the data have not been
+of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
 processed, then \code{ddl} should be NULL.  This dual calling structure
 allows either a single call approach for each model or alternatively for the
 data to be processed and the design data (\code{ddl}) to be created once and
@@ -126,7 +128,7 @@ There are some optional arguments that can be used to set initial values and
 control other aspects of the optimization.  The optimization is done with
 the R package/function \code{optimx} and the arguments \code{method} and
 \code{hessian} are described with the help for that function.  In addition,
-any arguments not matching those for \code{cjs} (the ...) are passed to
+any arguments not matching those for \code{cjs_admb} (the ...) are passed to
 \code{optimx} allowing any of the other parameters to be set.  If you set
 \code{debug=TRUE}, then at each function evaluation (\code{\link{cjs.lnl}}
 the current values of the parameters and -2*log-likelihood value are output.
@@ -219,27 +221,29 @@ For example, if you were to use ~time for Phi with survival fixed to 1 for time 
 be included.
 
 To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
-The following are instructions for installation with Windows. For other operating systems see (http://www.admb-project.org/downloads) and 
- (http://www.admb-project.org/tools/gcc/).
+The following are instructions for installation with Windows. For other operating systems see (\url{http://www.admb-project.org/downloads}) and 
+ (\url{http://www.admb-project.org/tools/gcc/}).
 
 Windows Instructions:
 
 1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
 
-2) Install ADMB 11: http://admb-project.googlecode.com/files/admb-11-mingw-gcc4.5-32bit.exe. Put the software in C:/admb to
+2) Install ADMB 11: \url{http://www.admb-project.org/downloads}. Put the software in C:/admb to
  avoid problems with spaces in directory name and for the function below to work.
 
-3) Install gcc 4.5 from: http://www.admb-project.org/tools/gcc/gcc452-win32.zip/view. Put in c:/MinGW
+3) Install gcc compiler from: \url{http://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
 
 I use the following function in R to setup R2admb to access ADMB rather than adding to my path so gcc versions
 with Rtools don't conflict.
 
+\preformatted{
 prepare_admb=function()
 {
   Sys.setenv(PATH = paste("c:/admb/bin;c:admb/utilities;c:/MinGW/bin;", 
         Sys.getenv("PATH"), sep = ";"))
     Sys.setenv(ADMB_HOME = "c:/admb")
     invisible()
+}
 }
 To use different locations you'll need to change the values used above
 
@@ -300,12 +304,11 @@ crm(ms,ms.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum)))
 }
 }
 }
+\seealso{
+\code{\link{cjs_admb}}, \code{\link{js}},
+\code{\link{make.design.data}},\code{\link{process.data}}
+}
 \author{
 Jeff Laake
 }
-\seealso{
-\code{\link{cjs}}, \code{\link{js}},
-\code{\link{make.design.data}},\code{\link{process.data}}
-}
 \keyword{models}
-

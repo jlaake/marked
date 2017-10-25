@@ -45,4 +45,3 @@ An example of the Mulstistrata (multi-state) model in which states are routes ta
 Megan Moore <megan.moore at noaa.gov>
 }
 \keyword{datasets}
-

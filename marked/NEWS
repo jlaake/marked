@@ -1,3 +1,22 @@
+marked 1.1.14 24 July 2017
+-----------------
+BUG FIXES
+
+* bug fixed in js.hessian which prevented computation of vcv matrix because of earlier change restructuring model object. Thanks to Bjorn Kroger for reporting problem.
+
+NEW FEATURES
+
+* addition of priors for cjs with TMB - still in testing phase
+
+CHANGES
+
+* make.design.data will now return an error if field names not in data are specified in static list.
+
+* in mvmscjs model, p and Phi can now also be all fixed values. Also, all parameters are now checked for empty columns because of fixed parameter values. Previously only Psi was.
+
+* create.dm now checks and traps for NA in any variable used in the formula and stops if it is encountered and reports problem variable. Previously a very obtuse R error was given.
+
+
 marked 1.1.13 5 December 2016
 -----------------
 BUG FIXES

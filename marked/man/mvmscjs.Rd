@@ -366,10 +366,9 @@ In a standard closed multi-state robust design, during the secondary periods Phi
 Any variation can be created simply by fixing the appropriate parameters. For example, with the sealions example, you might allow
 transitions between areas but assume no transitions for tag status.
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 }
-
+\author{
+Jeff Laake
+}

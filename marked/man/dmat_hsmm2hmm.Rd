@@ -22,4 +22,3 @@ matrix.
 Jeff Laake
 }
 \keyword{utility}
-

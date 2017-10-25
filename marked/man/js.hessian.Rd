@@ -18,6 +18,5 @@ A wrapper function that sets up call to hessian function to compute and then
 invert the hessian.
 }
 \author{
-Jeff Laake <jeff.laake@noaa.gov>
+Jeff Laake
 }
-

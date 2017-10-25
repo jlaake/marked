@@ -7,8 +7,9 @@
 cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   initial = NULL, method, hessian = FALSE, debug = FALSE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  use.admb = FALSE, crossed = TRUE, compile = TRUE, extra.args = NULL,
-  reml, clean = FALSE, getreals = FALSE, returnTMB = FALSE, ...)
+  crossed = TRUE, compile = TRUE, extra.args = NULL, reml,
+  clean = FALSE, getreals = FALSE, prior = FALSE, prior.list = NULL,
+  tmbfct = "f1", ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -49,8 +50,6 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{scale}{vector of scale values for parameters}
 
-\item{use.admb}{if TRUE creates data file for admbcjs.tpl and runs admb optimizer}
-
 \item{crossed}{if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration}
 
 \item{compile}{if TRUE forces re-compilation of tpl file}
@@ -63,8 +62,13 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{getreals}{if TRUE, will compute real Phi and p values and std errors}
 
-\item{returnTMB}{If TRUE, the function will return the compiled TMB objective function that calculates the gradient
-and Hessian as well. This can be used for other optimization or MCMC routines.}
+\item{prior}{if TRUE will expect vectors of prior values in list prior.list}
+
+\item{prior.list}{which contains for normal distributions 1) mu_phi_prior: vector of mu values for phi_beta, 2) sigma_phi_prior: vector of sigma values for phi_beta,
+3) mu_p_prior: vector of mu values for p_beta, 4) sigma_p_prior: vector of sigma values for p_beta, 5) random_mu_phi_prior: vector of mu values for ln sigma of random effects, 
+6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p.}
+
+\item{tmbfct}{either "f1" - default or "f2" - any random effects treated as fixed effects or "f3" fixed effects fixed at mode and no random effects.}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optim} or \code{\link{cjs.lnl}}}
@@ -97,12 +101,11 @@ subscript out of bounds, it will cause R to terminate.  So make sure to save
 your workspace frequently if you use this function in its current
 implementation.
 }
-\author{
-Jeff Laake <jeff.laake@noaa.gov>
-}
 \references{
 Pledger, S., K. H. Pollock, et al. (2003). Open
 capture-recapture models with heterogeneity: I. Cormack-Jolly-Seber model.
 Biometrics 59(4):786-794.
 }
-
+\author{
+Jeff Laake
+}

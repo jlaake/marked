@@ -24,4 +24,3 @@ matrix and dwell time distributions.
 Walter Zucchini
 }
 \keyword{utility}
-

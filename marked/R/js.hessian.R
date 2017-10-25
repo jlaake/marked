@@ -7,7 +7,7 @@
 #' @export
 #' @return variance-covariance matrix for specified model or the model
 #' object with the stored vcv depending on whether the model has already been run
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 js.hessian=function(model)
 {
 	object=NULL
@@ -26,7 +26,7 @@ js.hessian=function(model)
 	} else
 #   Called within model fitting code
 	{
-		scale=model$scale
+		scale=model$options$scale
 		model_data=model$model_data
 	}	
 #nobstot number of unique caught at least once by group if applicable

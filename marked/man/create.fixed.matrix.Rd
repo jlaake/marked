@@ -21,4 +21,3 @@ Creates fixed matrix in parameters from ddl$fix values
 Jeff Laake
 }
 \keyword{utility}
-

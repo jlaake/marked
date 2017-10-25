@@ -7,7 +7,7 @@
 #' formula and design data
 #' @param initial list of vectors for parameter initial values
 #' @return List of initial values for each parameter in the model
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 set.initial=function(pars,dml,initial)
 {
 #   if this is a previously run model, get initial values from it
@@ -62,5 +62,8 @@ set.initial=function(pars,dml,initial)
 		ptype=c(ptype,rep(parx,ncol(dml[[parx]]$fe)))	
 		names(par[[parx]])=colnames(dml[[parx]]$fe)
 	}
+	if(any(!names(initial)%in%pars))
+		par=c(par,initial[!names(initial)%in%pars])
+		
 	return(list(par=par,ptype=ptype))
 }

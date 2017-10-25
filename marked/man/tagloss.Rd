@@ -129,4 +129,3 @@ if(require(expm))
 }
 }
 \keyword{datasets}
-

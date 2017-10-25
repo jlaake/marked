@@ -334,7 +334,7 @@
 #' evaluations} \item{reals}{dataframe of data and real S and p estimates for
 #' each animal-occasion excluding those that occurred before release}
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
-#' @author Jeff Laake <jeff.laake@@noaa.gov>
+#' @author Jeff Laake 
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
@@ -437,7 +437,18 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		if(any(model_data$imat$freq!=1))stop("\n cannot use random effects with frequency >1")
 	}
 	write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
+
 	# Phi design matrix
+    # zero out rows with fixed parameters and remove any unneeded columns
+    if(!is.null(ddl$Phi$fix))
+        model_data$Phi.dm[!is.na(ddl$Phi$fix),]=0
+    if(ncol(model_data$Phi.dm)!=0)
+    {
+	    select=vector("logical",length=ncol(model_data$Phi.dm))
+	    for (i in 1:ncol(model_data$Phi.dm))
+	    	select[i]=any(model_data$Phi.dm[,i]!=0)
+	    model_data$Phi.dm=model_data$Phi.dm[,select,drop=FALSE]
+    }
 	phidm=model_data$Phi.dm
 	phifix=rep(-1,nrow(phidm))
 	if(!is.null(ddl$Phi$fix))
@@ -445,10 +456,22 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	slist=simplify_indices(cbind(phidm,phifix))
 	write(ncol(phidm),con,append=TRUE)
 	write(length(slist$set),con,append=TRUE)
-	write(t(phidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(phidm),append=TRUE)
+	if(ncol(phidm)>0)
+		write(t(phidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(phidm),append=TRUE)
 	write(phifix[slist$set],con,append=TRUE)
 	write(slist$indices[ddl$Phi.indices],con,append=TRUE)
+
 	# p design matrix
+    # zero out rows with fixed parameters and remove any unneeded columns
+    if(!is.null(ddl$p$fix))
+       model_data$p.dm[!is.na(ddl$p$fix),]=0
+    if(ncol(model_data$p.dm)!=0)
+    {
+	    select=vector("logical",length=ncol(model_data$p.dm))
+	    for (i in 1:ncol(model_data$p.dm))
+	    	select[i]=any(model_data$p.dm[,i]!=0)
+	    model_data$p.dm=model_data$p.dm[,select,drop=FALSE]
+    }
 	pdm=model_data$p.dm
 	pfix=rep(-1,nrow(pdm))
 	if(!is.null(ddl$p$fix))
@@ -456,17 +479,18 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	slist=simplify_indices(cbind(pdm,pfix))
 	write(ncol(pdm),con,append=TRUE)
 	write(length(slist$set),con,append=TRUE)
-	write(t(pdm[slist$set,,drop=FALSE]),con,ncolumns=ncol(pdm),append=TRUE)
+	if(ncol(pdm)>0)
+		write(t(pdm[slist$set,,drop=FALSE]),con,ncolumns=ncol(pdm),append=TRUE)
 	write(pfix[slist$set],con,append=TRUE)
 	write(slist$indices[ddl$p.indices],con,append=TRUE)
-	
     # write out indices for completing dmat
     write(nrow(sup$indices_forp),con,append=TRUE)
     write(t(sup$indices_forp),con,append=TRUE)
 
 	# Psi design matrix
-	# zero out subtracted stratum and remove any unneeded columns
-	model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
+	# zero out subtracted stratum (fixed) and remove any unneeded columns
+    if(!is.null(ddl$Psi$fix))
+	   model_data$Psi.dm[!is.na(ddl$Psi$fix),]=0
 	if(ncol(model_data$Psi.dm)!=0)
 	{
 		select=vector("logical",length=ncol(model_data$Psi.dm))
@@ -485,7 +509,17 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	   write(t(psidm[slist$set,,drop=FALSE]),con,ncolumns=ncol(psidm),append=TRUE)
 	write(psifix[slist$set],con,append=TRUE)
 	write(slist$indices[ddl$Psi.indices],con,append=TRUE)
+
 	# delta design matrix
+    if(!is.null(ddl$delta$fix))
+	    model_data$delta.dm[!is.na(ddl$delta$fix),]=0
+	if(ncol(model_data$delta.dm)!=0)
+	{
+		select=vector("logical",length=ncol(model_data$delta.dm))
+		for (i in 1:ncol(model_data$delta.dm))
+			select[i]=any(model_data$delta.dm[,i]!=0)
+		model_data$delta.dm=model_data$delta.dm[,select,drop=FALSE]
+	}
     deltadm=model_data$delta.dm
     deltafix=rep(-1,nrow(deltadm))
     if(!is.null(ddl$delta$fix))
@@ -497,7 +531,17 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
        write(t(deltadm[slist$set,,drop=FALSE]),con,ncolumns=ncol(deltadm),append=TRUE)
     write(deltafix[slist$set],con,append=TRUE)
     write(slist$indices[ddl$delta.indices],con,append=TRUE)
-    # pi design matrix
+
+	# pi design matrix
+    if(!is.null(ddl$pi$fix))
+	    model_data$pi.dm[!is.na(ddl$pi$fix),]=0
+	if(ncol(model_data$pi.dm)!=0)
+	{
+		select=vector("logical",length=ncol(model_data$pi.dm))
+		for (i in 1:ncol(model_data$pi.dm))
+			select[i]=any(model_data$pi.dm[,i]!=0)
+		model_data$pi.dm=model_data$pi.dm[,select,drop=FALSE]
+	}
     pidm=model_data$pi.dm
     pifix=rep(-1,nrow(pidm))
     if(!is.null(ddl$pi$fix))
@@ -523,8 +567,10 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	close(con)
 #   write out initial values for betas
 	con=file(paste(tpl,".pin",sep=""),open="wt")
-	write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
-	write(par$p,con,ncolumns=length(par$p),append=TRUE)
+	if(ncol(dml$Phi$fe)>0) 
+		write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
+	if(ncol(dml$p$fe)>0) 
+		write(par$p,con,ncolumns=length(par$p),append=TRUE)
 	if(ncol(dml$Psi$fe)>0) 
 		write(par$Psi,con,ncolumns=length(par$Psi),append=TRUE)
 	if(ncol(dml$pi$fe)>0) 

@@ -91,7 +91,10 @@ full.design.data=vector("list",length=length(parameters))
 		 if(is.null(parameters[[i]]$static))
 			 fields=NULL
 		 else
+		 {
 			 fields=parameters[[i]]$static   
+			 if(any(!fields%in%names(data$data)))stop(names(parameters)[i],": Not all fields listed in static are in data file")
+		 }
 		 full.design.data[[i]]=create.dmdf(data,parameters[[i]],time.varying=time.varying,fields=fields)
 		 if(is.null(full.design.data[[i]]))next
 	 }else
@@ -203,7 +206,13 @@ full.design.data=vector("list",length=length(parameters))
 		  full.design.data[[i]]$fix[as.character(full.design.data[[i]]$time)==as.character(full.design.data[[i]]$cohort)]=1	  
 		  full.design.data[[i]]$fix[as.numeric(as.character(full.design.data[[i]]$time))<as.numeric(as.character(full.design.data[[i]]$cohort))]=0  
 	  }	
-	  if(parameters[[i]]$firstonly) full.design.data[[i]]= full.design.data[[i]][as.character(full.design.data[[i]]$cohort)==as.character(full.design.data[[i]]$time),]
+	  # if time intervals include 0 for robust design, it uses firstocc=occ rather than using cohort=time
+	  if(parameters[[i]]$firstonly) 
+		  if(is.null(full.design.data[[i]]$firstocc))
+			  full.design.data[[i]]= full.design.data[[i]][as.character(full.design.data[[i]]$cohort)==as.character(full.design.data[[i]]$time),]
+	      else
+			  full.design.data[[i]]= full.design.data[[i]][full.design.data[[i]]$occ==full.design.data[[i]]$firstocc,]
+		  
 	  full.design.data[[i]]=droplevels(full.design.data[[i]])
 	  if(names(parameters)[i]=="tau"&!is.null(full.design.data[[i]]$tag1))
 	  {

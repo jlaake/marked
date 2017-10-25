@@ -59,11 +59,10 @@ Defines list of parameters used in the specified type of model
 (\code{model}) and adds default values for each parameter to the list of
 user specified values (eg formula, link etc).
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{setup.model}},\code{\link{valid.parameters}}
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-

@@ -17,11 +17,10 @@ prints a simple summary of the model to the screen and returns NULL.
 \description{
 Provides a printed simple summary of the model results.
 }
-\author{
-Jeff Laake
-}
 \seealso{
 \code{\link{crm}}
 }
+\author{
+Jeff Laake
+}
 \keyword{utility}
-
