@@ -12,7 +12,7 @@ Description: Functions for fitting various models to capture-recapture data
     estimation. There are also Hidden Markov model (HMM) implementations of CJS and
     multistate models with and without state uncertainty and a simulation capability for HMM models.
 Depends:
-    R (>= 2.15.0),
+    R (>= 3.2.0),
     lme4,
     methods,
     parallel
