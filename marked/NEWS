@@ -1,3 +1,10 @@
+marked 1.2.1 29 March 2018
+-----------------
+CHANGES
+
+* minor adjustment to Description file and new init.c for routine registration for CRAN pass
+
+
 marked 1.2.0 26 March 2018
 -----------------
 CHANGES
