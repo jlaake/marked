@@ -15,4 +15,3 @@ setup_tmb(tpl, clean = FALSE)
 Sets up executable for the .cpp file (tpl) by looking for exe in package directory or
 compiles cpp file in local directory (clean=FALSE) of from package directory.
 }
-

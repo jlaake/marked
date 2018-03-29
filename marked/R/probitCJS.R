@@ -110,7 +110,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   id = ddl$p$id
   if(is.phi.re){
     n.phi.re=sapply(restricted.dml$Phi$re$re.list, function(x){dim(x)[2]})
-    K.phi=do.call("cBind", restricted.dml$Phi$re$re.list)
+    K.phi=do.call("cbind", restricted.dml$Phi$re$re.list)
     ind.phi.re=rep(1:length(n.phi.re), n.phi.re)
     if(length(n.phi.re)>1){
       m.phi.re=model.matrix(~factor(ind.phi.re)-1)
@@ -121,7 +121,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   }
   if(is.p.re){
     n.p.re=sapply(restricted.dml$p$re$re.list, function(x){dim(x)[2]})
-    K.p=do.call("cBind", restricted.dml$p$re$re.list)
+    K.p=do.call("cbind", restricted.dml$p$re$re.list)
     ind.p.re=rep(1:length(n.p.re), n.p.re)
     if(length(n.p.re)>1){
       m.p.re=model.matrix(~factor(ind.p.re)-1)
@@ -379,7 +379,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
            model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe), 
            re.struct=list(Phi=re.struc.Phi, p=re.struc.p)
   )
-  #Make Phi.dm equal to cBind(dml$Phi$fe, K.phi) and include alpha.phi with the mcmc output
+  #Make Phi.dm equal to cbind(dml$Phi$fe, K.phi) and include alpha.phi with the mcmc output
   class(res)=c("crm","mcmc","probitCJS")
   return(res)
 }	### END OF FUNCTION ###

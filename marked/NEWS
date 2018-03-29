@@ -1,3 +1,9 @@
+marked 1.2.0 26 March 2018
+-----------------
+CHANGES
+
+* changed use of rBind and cBind to rbind and cbind for change in MATRIX package; requires >=R3.2.0 so version incremented
+
 marked 1.1.14 24 July 2017
 -----------------
 BUG FIXES

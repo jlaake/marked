@@ -1,18 +1,20 @@
 Package: marked
-Version: 1.1.14
-Date: 2017-07-24
+Version: 1.2.0
+Date: 2018-03-28
 Title: Mark-Recapture Analysis for Survival and Abundance Estimation
 Author: Jeff Laake <jefflaake@gmail.com>, Devin Johnson
-    <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>, example for simHMM from Jay Rotella
+    <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>, example for simHMM
+    from Jay Rotella
 Maintainer: Jeff Laake <jefflaake@gmail.com>
 Description: Functions for fitting various models to capture-recapture data
-    including mixed-effects Cormack-Jolly-Seber(CJS) and multistate models
-    and the multi-variate state model structure of Johnson et al. (2015) for survival
-    estimation and POPAN structured Jolly-Seber models for abundance
-    estimation. There are also Hidden Markov model (HMM) implementations of CJS and
-    multistate models with and without state uncertainty and a simulation capability for HMM models.
+    including mixed-effects Cormack-Jolly-Seber(CJS) and multistate models and
+    the multi-variate state model structure of Johnson et al. (2015) for survival
+    estimation and POPAN structured Jolly-Seber models for abundance estimation.
+    There are also Hidden Markov model (HMM) implementations of CJS and multistate
+    models with and without state uncertainty and a simulation capability for HMM
+    models.
 Depends:
-    R (>= 2.15.0),
+    R (>= 3.2.0),
     lme4,
     methods,
     parallel
@@ -37,4 +39,5 @@ SystemRequirements: ADMB version 11 <http://admb-project.org/> for
 LazyLoad: yes
 License: GPL (>=2)
 RoxygenNote: 6.0.1
-References: Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
+References: Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015.
+    Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.

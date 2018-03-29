@@ -120,7 +120,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 			  if(!is.null(x$fix)&&any(!is.na(x$fix)))
 				  dm1[!is.na(x$fix[lower:upper]),]=0
 			  drop=drop&apply(dm1,2,function(x) all(x==0))
-			  dm=rBind(dm,dm1)
+			  dm=rbind(dm,dm1)
 		  }
 	  }
    }
@@ -138,7 +138,7 @@ create.dm=function(x, formula, time.bins=NULL, cohort.bins=NULL, age.bins=NULL, 
 		   if(!is.null(x$fix)&&any(!is.na(x$fix)))
 			   dm1[!is.na(x$fix[(upper+1):nrow(x)]),]=0
 		   drop=drop&apply(dm1,2,function(x) all(x==0))
-		   dm=rBind(dm,dm1) 
+		   dm=rbind(dm,dm1) 
 	   }
 #   dm[(upper+1):nrow(x),]=as(model.matrix(formula,x[(upper+1):nrow(x),,drop=FALSE]),"sparseMatrix")    
    colnames(dm)=colnames(mm)
