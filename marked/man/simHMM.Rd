@@ -53,6 +53,7 @@ or the processed dataframe and design data list are provided. Formula for the mo
 the data are provided in model.parameters and parameter values are provided in initial.
 }
 \examples{
+\donttest{
 # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
 df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),
    stringsAsFactors=FALSE))
@@ -144,6 +145,7 @@ m <- crm(sd, rddl, model.parameters = modelspec,
 m$results$beta
 initial
 m$results$reals
+}
 }
 \author{
 Jeff Laake

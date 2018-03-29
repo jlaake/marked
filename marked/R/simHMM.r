@@ -29,6 +29,7 @@
 #' @return dataframe with simulated data
 #' @author Jeff Laake 
 #' @examples 
+#' \donttest{
 #' # simulate phi(.) p(.) with 1000 Females and 100 males, 3 occasions all released on first occasion
 #' df=simHMM(data.frame(ch=c("100","110"),sex=factor(c("F","M")),freq=c(1000,100),
 #'    stringsAsFactors=FALSE))
@@ -120,6 +121,7 @@
 #'m$results$beta
 #'initial
 #'m$results$reals
+#'}
 
 simHMM=function(data,ddl=NULL,begin.time=1,model="hmmCJS",title="",model.parameters=list(),
 		design.parameters=list(),initial=NULL,groups=NULL,time.intervals=NULL,accumulate=TRUE,strata.labels=NULL)
