@@ -1,6 +1,6 @@
 Package: marked
-Version: 1.2.1
-Date: 2018-03-29
+Version: 1.2.2
+Date: 2018-07-13
 Title: Mark-Recapture Analysis for Survival and Abundance Estimation
 Author: Jeff Laake <jefflaake@gmail.com>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>, example for simHMM

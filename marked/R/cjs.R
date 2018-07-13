@@ -64,7 +64,15 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
             hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
 			use.admb=FALSE,crossed=TRUE,compile=FALSE,extra.args=NULL,reml,clean=TRUE,...)
 {
-   if(use.admb)accumulate=FALSE
+  if(ncol(dml$Phi$fe)==0){
+    message("Cannot use CJS with all values of Phi fixed")
+    return(NULL)
+  }
+  if(ncol(dml$p$fe)==0&use.admb){
+    message("Cannot use CJS with all values of p fixed with admb code; set use.admb=FALSE")
+    return(NULL)
+  }
+  if(use.admb)accumulate=FALSE
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
@@ -195,8 +203,8 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
 	   # indicator for loss on capture 
 	   write(model_data$imat$loc,con,ncolumns=n,append=TRUE)
 	   write(t(model_data$time.intervals),con,ncolumns=nocc-1,append=TRUE)
-       #phi dm portion
-       phidm=model_data$Phi.dm
+     #phi dm portion
+     phidm=model_data$Phi.dm
 	   phidm=cbind(phidm,rep(-1,nrow(phidm)))
 	   if(model_data$Phi.fixed[1,1]!= -1)
 	   {
@@ -216,7 +224,7 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
        }
 	   mixed.model.dat(phimixed,con,!crossed,n)
 	   # p dm portion
-       pdm=model_data$p.dm
+     pdm=model_data$p.dm
 	   pdm=cbind(pdm,rep(-1,nrow(pdm)))
 	   if(model_data$p.fixed[1,1]!= -1)
 	   {
@@ -239,7 +247,7 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
        # setup initial value file (.pin)
 	   con=file(paste(tpl,".pin",sep=""),open="wt")
 	   write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
-	   write(par$p,con,ncolumns=length(par$p),append=TRUE)
+     write(par$p,con,ncolumns=length(par$p),append=TRUE)
 	   if(is.null(extra.args)) extra.args=""
 	   if(nphisigma+npsigma>0) 
 	   {

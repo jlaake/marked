@@ -109,42 +109,23 @@ cjs.lnl=function(par,model_data,Phi.links=NULL,p.links=NULL,debug=FALSE,all=FALS
 	nocc=model_data$imat$nocc
 	nphi=ncol(model_data$Phi.dm)
 	np=ncol(model_data$p.dm)
-	beta.phi=par[1:nphi]
-	beta.p=par[(nphi+1):(nphi+np)]
-	Phibeta=as.vector(model_data$Phi.dm%*%beta.phi)
-#	if(length(Phi.links>0))
-#	{
-#		Phibeta[Phi.links]=as.vector((sin(Phi.dm[Phi.links,,drop=FALSE]%*%beta.phi)+1)/2)
-#	    Phibeta[Phi.links]=log(1/(1/Phibeta[Phi.links]-1))
-#	}
+	# allow for possibility that all parameter values are fixed for Phi or p
+	if(nphi!=0)
+	{
+	  beta.phi=par[1:nphi]
+	  Phibeta=as.vector(model_data$Phi.dm%*%beta.phi)
+	}
+	else 
+	  Phibeta=0
+	if(np!=0){
+	  beta.p=par[(nphi+1):(nphi+np)]
+	  pbeta=as.vector(model_data$p.dm%*%beta.p)
+	}
+	else 
+	  pbeta=0
 	Phibeta=matrix(Phibeta,ncol=nocc-1,nrow=nrow(model_data$Phi.dm)/(nocc-1),byrow=TRUE)
-	pbeta=as.vector(model_data$p.dm%*%beta.p)
-#	if(length(p.links>0))
-#	{
-#	   pbeta[p.links]=as.vector((sin(p.dm[p.links,,drop=FALSE]%*%beta.p)+1)/2)
-#	   pbeta[p.links]=log(1/(1/pbeta[p.links]-1))
-#    }
 	pbeta=matrix(pbeta,ncol=nocc-1,nrow=nrow(model_data$p.dm)/(nocc-1),byrow=TRUE)	
-#   put Fortran code in a separate function with arguments shown and vector of indices
-#   use parLapply with that function and its arguments and index matrix
-#   get list - use do.call and sum lnl and use c for p0.
-# attempt to parallelize code
-#	split_vec=function(nrow,nc)
-#	{
-#		nx=floor(nrow/nc)
-#		return(cbind(seq(1,nrow,nx)[1:nc],
-#						c(seq(nx,nrow,nx)[1:(nc-1)],nrow)))
-#	}   
-#	if(nc>1 & nrow(Phibeta)>5*nc)
-#	{
-#	   res=parLapply(cl,1:nc, cjs.parallel,chmat=model_data$imat$chmat,Phibeta=Phibeta,pbeta=pbeta,
-#			first=model_data$imat$first,last=model_data$imat$last,freq=model_data$imat$freq,
-#			loc=model_data$imat$loc,Phi.fixed=model_data$Phi.fixed,p.fixed=model_data$p.fixed,
-#			time.intervals=model_data$time.intervals,vec=split_vec(nrow(Phibeta),nc))
-#	   lnl=list(lnl=sum(unlist(lapply(res,function(x) x$lnl))))
-#	   lnl$p0=unlist(lapply(res,function(x) x$p0))
-#   } else
-  	   lnl=.Fortran("cjs",as.double(model_data$imat$chmat),as.double(Phibeta),as.double(pbeta),
+  lnl=.Fortran("cjs",as.double(model_data$imat$chmat),as.double(Phibeta),as.double(pbeta),
 			as.double(model_data$imat$first),as.double(model_data$imat$last),as.double(model_data$imat$freq),
 			as.integer(model_data$imat$loc),as.double(model_data$Phi.fixed),as.double(model_data$p.fixed),
 			as.double(model_data$time.intervals),as.integer(nrow(model_data$imat$chmat)),           
