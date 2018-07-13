@@ -143,8 +143,11 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  if(mcmc)
 		  real=convert.link.to.real(t(design%*%t(results$beta.mcmc[[parameter]])),links=link,fixed=fixedvalues)
 	  else
-		  real=convert.link.to.real(design%*%beta,links=link,fixed=fixedvalues)
-     # Set fixed real parameters to their fixed values
+	    if(ncol(design)>0)
+	      real=convert.link.to.real(design%*%beta,links=link,fixed=fixedvalues)
+	    else
+	      real=rep(NA,nrow(design))
+	    # Set fixed real parameters to their fixed values
      real[fixedparms]=fixedvalues[fixedparms]
   }
 # Summarize reals for mcmc models or create dataframe with estimate=real for non-mcmc models
@@ -285,13 +288,20 @@ compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  linkse[is.na(linkse)]=0
 	  linkse[is.infinite(linkse)]=0
 	  link.se[ind]=linkse
-	  link.values=design%*%beta
-	  link.values[ind]=suppressWarnings(log(real[ind]/(1-real[ind])))
-	  link.values[ind][abs(real[ind]-1)<1e-7]=100
-	  link.values[ind][abs(real[ind]-0)<1e-7]=-100
-	  links[ind]="logit"
-	  real.lcl=convert.link.to.real(link.values-1.96*link.se,links=links)
-	  real.ucl=convert.link.to.real(link.values+1.96*link.se,links=links)
+	  if(ncol(design)>0)
+	  {
+	    link.values=design%*%beta
+	    link.values[ind]=suppressWarnings(log(real[ind]/(1-real[ind])))
+	    link.values[ind][abs(real[ind]-1)<1e-7]=100
+	    link.values[ind][abs(real[ind]-0)<1e-7]=-100
+	    links[ind]="logit"
+	    real.lcl=convert.link.to.real(link.values-1.96*link.se,links=links)
+	    real.ucl=convert.link.to.real(link.values+1.96*link.se,links=links)
+	  } else
+	  {
+	    real.lcl=reals$estimate
+	    real.ucl=reals$estimate
+	  }
 #     Set v-c values of fixed parameters to 0
 	  vcv.real[fixedparms,]=0
 	  vcv.real[,fixedparms]=0

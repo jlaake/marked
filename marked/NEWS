@@ -1,8 +1,8 @@
-marked 1.2.2 13 Jult 2018
+marked 1.2.2 13 July 2018
 -----------------
 CHANGES
 
-* for model mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in a R error.
+* for models hmmmscjs and mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in R errors.
 
 marked 1.2.1 29 March 2018
 -----------------
