@@ -1,8 +1,14 @@
-marked 1.2.2 13 July 2018
+marked 1.2.2 8 Aug 2018
 -----------------
+BUG FIXES
+
+* In mvmscjs the parameters were not in the correct order so the admb code did not work with the sealions example because the hessian was not in the expected order.  Thanks to Jaume Forcada for reporting the problem.
+
 CHANGES
 
 * for models hmmmscjs and mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in R errors.
+
+* Change was made in create.dmdf. For model mvmscjs, previously if there were no uncertain states, the design data for delta was set to NULL.  This doesn't work with the admb code so the design data is created and to make all states certain you need to set fix=1 for all records in the design data. The example for mstrata has been expanded to indclude a model for straight multistate data without uncertainty that uses admb code for mvmscjs.
 
 marked 1.2.1 29 March 2018
 -----------------

@@ -327,15 +327,12 @@ create.base.dmdf=function(x,parameter)
 	occasions=begin.num:(parameter$begin+nocc)
 	sl=factor(x$strata.labels)
 	nstrata=length(sl)
-    # MVMS model is currently split off but eventually this should be merged in with
+  # MVMS model is currently split off but eventually this should be merged in with
 	# other bi-level MS models
 	if(nchar(x$model)>=4 & substr(x$model,1,4)=="MVMS")
 	{
 		if(!is.null(parameter$obs) & parameter$obs)
-			if(any(x$strata.list$uncertain))
-			   dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
-	        else
-				return(NULL)
+		   dfl=mvms_design_data(x$strata.list$df.states,x$strata.list$df,transition=parameter$tostrata)
 		else
 		   dfl=mvms_design_data(x$strata.list$df.states,transition=parameter$tostrata)
 		df=expand.grid(occ=occasions,id=factor(1:nrow(x$data)))

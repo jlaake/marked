@@ -571,12 +571,12 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 		write(par$Phi,con,ncolumns=length(par$Phi),append=FALSE)
 	if(ncol(dml$p$fe)>0) 
 		write(par$p,con,ncolumns=length(par$p),append=TRUE)
+	if(ncol(dml$delta$fe)>0) 
+	  write(par$delta,con,ncolumns=length(par$delta),append=TRUE)
 	if(ncol(dml$Psi$fe)>0) 
 		write(par$Psi,con,ncolumns=length(par$Psi),append=TRUE)
 	if(ncol(dml$pi$fe)>0) 
 		write(par$pi,con,ncolumns=length(par$pi),append=TRUE)
-	if(ncol(dml$delta$fe)>0) 
-	    write(par$delta,con,ncolumns=length(par$delta),append=TRUE)
 	close(con)   
 	if(hessian)
 		xx=run_admb(tpl,extra.args=extra.args)
@@ -607,6 +607,7 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 	res$cor=NULL
 	res$maxgrad=NULL
 	results=c(beta=beta,neg2lnl=-2*res$loglik,AIC=-2*res$loglik+2*res$npar,convergence=convergence)
+	results$hessian=res$hes
 	results$optim.details=optim.details
 	results$options=options
 	results$coeflist=res$coeflist

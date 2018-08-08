@@ -207,11 +207,13 @@ NULL
 #' ms1.ddl=make.design.data(ms1)
 #' ms2.ddl=make.design.data(ms2)
 #' ms3.ddl=make.design.data(ms3)
+#' ms3.ddl$delta$fix=1
 #' 
 #' # following requires ADMB or the exe constructed from ADMB and links set for ADMB
 #' mod1=try(crm(ms1,ms1.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
 #'       p=list(formula=~time)),hessian=TRUE))
 #' if(class(mod1)[1]!="try-error") mod1
+#' if(class(mod1)[1]!="try-error") file.remove("multistate.std")
 #' 
 #' mod2=crm(ms2,ms2.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
 #'       p=list(formula=~time)),hessian=TRUE)
@@ -220,6 +222,11 @@ NULL
 #' mod3=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
 #'       p=list(formula=~time)),hessian=TRUE)
 #' mod3
+#'
+#' mod4=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#'       p=list(formula=~time)),hessian=TRUE,use.admb=TRUE)
+#' if(class(mod4)[1]!="try-error") mod4
+#' if(class(mod4)[1]!="try-error")file.remove("mvms.std")
 #' }
 NULL
 

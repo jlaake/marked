@@ -3,12 +3,12 @@
 DATA_SECTION 
     init_int n;                            // number of capture histories
     init_int m;                            // number of capture occasions
-	init_int nS;                           // number of states excluding death state
-	init_int nobs;                         // number of possible observations including 0
-	init_int nd;                           // number of records in delta design data per id-occ
+	  init_int nS;                           // number of states excluding death state
+	  init_int nobs;                         // number of possible observations including 0
+	  init_int nd;                           // number of records in delta design data per id-occ
     init_imatrix ch(1,n,1,m);              // capture history matrix; uses numeric values for observations (1=0 not seen)
     init_ivector frst(1,n);                // occasion first seen for each history
-	init_vector freq(1,n);                 // frequency of each capture history
+	  init_vector freq(1,n);                 // frequency of each capture history
     init_matrix tint(1,n,1,m-1);           // time interval between occasions for each history-interval
     init_int kphi;                         // number of columns in the design matrix for Phi - survival
     init_int nrowphi;                      // number of rows in the simplified design matrix for Phi - survival
@@ -33,18 +33,18 @@ DATA_SECTION
     init_int npos;                           // number of positions in dmat containing p and delta
     init_imatrix ipos(1,npos,1,2);           // 2 column matrix of row and col values of positions for p and delta    
 	
- 	int nT;                                  // number of transitions excluding death
-	int all_nT;                              // number of transitions for all histories
-	!! nT=nS*nS*(m-1);                       
-	!! all_nT=n*nT;                       
-	init_int kpsi;                           // number of columns in Psi design matrix
+ 	  int nT;                                  // number of transitions excluding death
+	  int all_nT;                              // number of transitions for all histories
+	  !! nT=nS*nS*(m-1);                       
+	  !! all_nT=n*nT;                       
+	  init_int kpsi;                           // number of columns in Psi design matrix
     init_int nrowpsi;                        // number of rows in the simplified design matrix for psi
     init_matrix psidm(1,nrowpsi,1,kpsi);     // design matrix for psi
     init_vector psifix(1,nrowpsi);           // psi fixed values
     init_ivector psiindex(1,all_nT);         // psi indices
 
     int dcells;                              // number of cells in delta to sum over
-	!! dcells=npos/nS;              
+	  !! dcells=npos/nS;              
     init_int kd;                             // number of columns in the design matrix for delta
     init_int nrowd;                          // number of rows in the simplified design matrix for delta
 
@@ -65,11 +65,11 @@ DATA_SECTION
 PARAMETER_SECTION
     init_vector phibeta(1,kphi);       // parameter vector for Phi
     init_vector pbeta(1,kp);           // parameter vector for p
+    init_vector dbeta(1,kd);           // parameter vector for delta
     init_vector psibeta(1,kpsi);       // parameter vector for psi
     init_vector pibeta(1,kpi);         // parameter vector for pi
-    init_vector dbeta(1,kd);           // parameter vector for delta
     
-	objective_function_value g; 
+	  objective_function_value g; 
 
 PROCEDURE_SECTION
     int i,j,k,bindex,bindex2,k2;       // indices and counters
@@ -142,12 +142,12 @@ PROCEDURE_SECTION
   	       for (k=1;k<=nS;k++)                        
            {   
 	           p((j-1)*nS+k)=uniquep(pindex(bindex+(j-1)*nS+k));
-               phi((j-1)*nS+k)=pow(uniquephi(phiindex(bindex+(j-1)*nS+k)),tint(i,j));     
+             phi((j-1)*nS+k)=pow(uniquephi(phiindex(bindex+(j-1)*nS+k)),tint(i,j));     
 	           psisum=0;
-	           for(k2=1;k2<=nS;k2++)              
-		           psisum=psisum+uniquepsi(psiindex(bindex2+(k-1)*nS+k2));
-  	           for(k2=1;k2<=nS;k2++)
-	               psi(j,k,k2)=uniquepsi(psiindex(bindex2+(k-1)*nS+k2))/psisum;
+	           for(k2=1;k2<=nS;k2++)
+                psisum=psisum+uniquepsi(psiindex(bindex2+(k-1)*nS+k2));
+  	         for(k2=1;k2<=nS;k2++)	             
+	             psi(j,k,k2)=uniquepsi(psiindex(bindex2+(k-1)*nS+k2))/psisum;
 	       }
 	       bindex2=bindex2+nS*nS;   
         }        
@@ -156,15 +156,15 @@ PROCEDURE_SECTION
   	       for (k=1;k<=nS;k++)                        
            {   
 	           deltasum=0;
-	           for(k2=1;k2<=dcells;k2++)              
+	           for(k2=1;k2<=dcells;k2++)
 	               deltasum=deltasum+uniquedelta(dindex(bindex4+(k-1)*dcells+k2));
 	           for(k2=1;k2<=dcells;k2++)              
 	               delta(j,(k-1)*dcells+k2)=uniquedelta(dindex(bindex4+(k-1)*dcells+k2))/deltasum;
-	       }
-	       bindex4=bindex4+npos;      
-        }        
+	        }
+	        bindex4=bindex4+npos;      
+      }        
 
-        ll_i(i,phi,p,psi,pi,delta,ipos);                 // compute neg log likelihod and increment
+     ll_i(i,phi,p,psi,pi,delta,ipos);                 // compute neg log likelihod and increment
      }
      if(debug>0)
      {
@@ -198,7 +198,7 @@ FUNCTION dvar3_array get_dmat(const int i, const dvar_vector& p, const dvar_matr
            dmat(j,1,icol)=0;  
         } else
         {	    
-	       dmat(j,irow,icol)=p(bindex+icol)*delta(j,k);  
+	         dmat(j,irow,icol)=p(bindex+icol)*delta(j,k);  
            dmat(j,1,icol)=1-p(bindex+icol);
         }  
 	  }
@@ -209,20 +209,20 @@ FUNCTION dvar3_array get_dmat(const int i, const dvar_vector& p, const dvar_matr
 
 FUNCTION dvar3_array get_gamma(const int i, const dvar_vector& phi, const dvar3_array& psi )
 	int j,k,index,k2;
-	dvar3_array gamma(1,m-1,1,nS+1,1,nS+1);    // transition probability matrices for individual i
+	dvar3_array gamma(1,m-1,1,nS+1,1,nS+1);      // transition probability matrices for individual i
 
-	gamma.initialize();                        // initialize all transitions to zero
+	  gamma.initialize();                        // initialize all transitions to zero
     index=1;
     for(j=1;j<=m-1;j++)                        // loop over intervals 
-	{
-	    for(k=1;k<=nS;k++)                     // loop over states creating p and gamma values
-		{
+	  {
+	    for(k=1;k<=nS;k++)                       // loop over states creating p and gamma values
+		  {
 	       for(k2=1;k2<=nS;k2++)
-		     gamma(j,k,k2)=psi(j,k,k2)*phi(index);    // adjust psi for survival
-		   gamma(j,k,nS+1)=1-phi(index);              // add death state value for each state
-		   index++;
-		}
-		gamma(j,nS+1,nS+1)=1;                             // death is an absorbing state
+		       gamma(j,k,k2)=psi(j,k,k2)*phi(index);    // adjust psi for survival
+		     gamma(j,k,nS+1)=1-phi(index);              // add death state value for each state
+		     index++;
+		  }
+		  gamma(j,nS+1,nS+1)=1;                         // death is an absorbing state
     }
 	return gamma;
 
@@ -233,12 +233,12 @@ FUNCTION void ll_i(const int i, const dvar_vector& phi, const dvar_vector& p, co
 //  it appear a little more complex.
 	dvar3_array gamma(1,m-1,1,nS+1,1,nS+1); // transition probability matrices for individual i
 	dvar3_array dmat(1,m,1,nobs,1,nS+1);    // observation probability matrices for individual i
-    dvariable u;                            // sum of state probabilities
+  dvariable u;                            // sum of state probabilities
 	dvar_vector pS(1,nS+1);                 // update vector for prob of being in state j=1,nS + death       
 	dvar_vector S(1,nS+1);                  // prob of being in state j=1,nS + death for each occasion
 	dvar_vector v(1,nS+1);                  // temporary update vector
 	dvariable Lglki;                        // log-likelihood accumulator
-    int j;                                  // loop variable
+  int j;                                  // loop variable
      
 //  compute transition matrices for each occasion
 	gamma=get_gamma(i,phi,psi);
@@ -246,19 +246,19 @@ FUNCTION void ll_i(const int i, const dvar_vector& phi, const dvar_vector& p, co
 	dmat=get_dmat(i,p,delta,ipos);
 //  HMM algorithm
 	pS.initialize();                                    // initialize values to 0
-    Lglki.initialize();	
+  Lglki.initialize();	
 	S.initialize();                                     // initialize values to 0
 	for(j=1;j<=nS;j++)
 	  S(j)=pi(j);                                       // set state prob to pi for first observation
-    for(j=frst(i);j<=m;j++)                             // loop over possible occasions from first(i)+1 to m
-    {
-        if(j==frst(i))
-          pS=S;
-        else
-          pS=S*gamma(j-1);        	                    // previous scaled state probability*transition matrix
-        v=elem_prod(pS,dmat(j,ch(i,j)));                // v is temp state vector alpha in Z&M
+  for(j=frst(i);j<=m;j++)                             // loop over possible occasions from first(i)+1 to m
+  {
+      if(j==frst(i))
+        pS=S;
+      else
+        pS=S*gamma(j-1);        	                    // previous scaled state probability*transition matrix
+      v=elem_prod(pS,dmat(j,ch(i,j)));                // v is temp state vector alpha in Z&M
     	u=sum(v);                                       // sum across states
-        S=v/u;                                          // update S;S is normalized alpha(j) (phi) in Z&M
+      S=v/u;                                          // update S;S is normalized alpha(j) (phi) in Z&M
 	    Lglki+=log(u);    	                            // accumulate log-likelihood value
 	}
 	g-=freq(i)*Lglki;
