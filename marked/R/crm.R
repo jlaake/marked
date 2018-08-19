@@ -390,7 +390,7 @@ if(substr(model,1,4)=="MVMS")
 		if(any(bad_Psi))message("\n Warning: Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
 	}
 }
-if(model=="MSCJS"| (substr(model,1,4)=="MVMS" &use.admb)) 
+if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
 {
 	fullddl=ddl
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
@@ -489,7 +489,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	}else{
 		mx=list(ns=length(data.proc$strata.list$states),na=length(data.proc$strata.list[[names(data.proc$strata.list)[names(data.proc$strata.list)!="states"]]]))
 	}
-	if(use.admb & model=="MVMSCJS") 
+	if((use.admb | use.tmb) & model=="MVMSCJS") 
 	{
 		# call HMMlikelihood to check for problems in setup
 		xx=HMMLikelihood(par=unlist(initial.list$par),xx=data.proc$ehmat,mx=mx,
@@ -497,8 +497,12 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
 				parameters=parameters,sup=sup,check=TRUE)
 		# call mvmscjs to run admb program
-		runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+		if(use.admb)
+		  runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
+		else
+		  runmodel=mvmscjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+		                   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
 		par=coef(runmodel)[,1]
 		runmodel$options=c(runmodel$options,list(accumulate=accumulate,initial=initial.list$par,method=method,
 				chunk_size=chunk_size,itnmax=itnmax,control=control))

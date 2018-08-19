@@ -617,7 +617,7 @@ mvmscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 #  Restore non-accumulated, non-scaled dm's etc
 	res$model_data=model_data.save
 #  Assign S3 class values and return
-	class(res)=c("crm","admb","mle","mscjs")
+	class(res)=c("crm","admb","mle","mvmscjs")
 	return(res)
 }
 

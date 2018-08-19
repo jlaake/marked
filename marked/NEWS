@@ -1,4 +1,4 @@
-marked 1.2.2 8 Aug 2018
+marked 1.2.2  19 Aug 2018
 -----------------
 BUG FIXES
 
@@ -9,6 +9,9 @@ CHANGES
 * for models hmmmscjs and mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in R errors.
 
 * Change was made in create.dmdf. For model mvmscjs, previously if there were no uncertain states, the design data for delta was set to NULL.  This doesn't work with the admb code so the design data is created and to make all states certain you need to set fix=1 for all records in the design data. The example for mstrata has been expanded to indclude a model for straight multistate data without uncertainty that uses admb code for mvmscjs.
+
+NEW
+* added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion exampple.
 
 marked 1.2.1 29 March 2018
 -----------------

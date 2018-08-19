@@ -1,4 +1,4 @@
-// TMB Version: Fixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states
+// TMB Version: Mixed-effect Multi-State Cormack-Jolly-Seber model with unobservable states
 // Jeff Laake; 22 Feb 2017
 
 #include <TMB.hpp>                              // Links in the TMB libraries
@@ -82,15 +82,15 @@ Type objective_function<Type>::operator() ()
     Type psisum;                        // sum of psi for each state to normalize with
 
     array<Type> psi(m-1,nS,nS);         // matrix for psis for each occasion 
-	array<Type> gamma(m-1,nS+1,nS+1);   // transition probability matrices for individual i
-	array<Type> dmat(m-1,nS+1,nS+1);    // observation probability matrices for individual i
+	  array<Type> gamma(m-1,nS+1,nS+1);   // transition probability matrices for individual i
+	  array<Type> dmat(m-1,nS+1,nS+1);    // observation probability matrices for individual i
     Type u;                             // sum of state probabilities
-	vector<Type> pS(nS+1);              // update vector for prob of being in state j=1,nS + death       
-	vector<Type> S(nS+1);               // prob of being in state j=1,nS + death for each occasion
-	vector<Type> v(nS+1);               // temporary update vector
-	vector<Type> vec;                   // temporary vector
-	Type Lglki=0;                       // log-likelihood accumulator
-	Type mu;
+	  vector<Type> pS(nS+1);              // update vector for prob of being in state j=1,nS + death       
+	  vector<Type> S(nS+1);               // prob of being in state j=1,nS + death for each occasion
+  	vector<Type> v(nS+1);               // temporary update vector
+	  vector<Type> vec;                   // temporary vector
+	  Type Lglki=0;                       // log-likelihood accumulator
+	  Type mu;
     int nphicounts=n;                   // number of counts for phi random effects by id
     if(phi_nre==0)nphicounts=0;
     int npcounts=n;                     // number of counts for p random effects by id
@@ -242,8 +242,8 @@ Type objective_function<Type>::operator() ()
 	       dmat(j-1,0,nS)=1;
 	    }
         //  HMM algorithm
-	    pS.setZero();                                    // initialize values to 0
-        Lglki=0;	
+	    pS.setZero();                                      // initialize values to 0
+      Lglki=0;	
 	    S.setZero();                                     
 	    S(ch(i-1,frst(i-1)-1)-1)=1;                        // set state prob to 1 for observed state at first observation
         for(j=frst(i-1)+1;j<=m;j++)                      // loop over possible occasions from first(i)+1 to m
