@@ -46,7 +46,8 @@ Type objective_function<Type>::operator() ()
 
     DATA_INTEGER(initknown);                    // if 1 then delta not used on release occasion
     DATA_INTEGER(debug);                        // if 1 then write out parameters and likelihood at each iteration.
-
+    DATA_INTEGER(getreals);
+    
     PARAMETER_VECTOR(phibeta);                  // parameter vector for Phi
     PARAMETER_VECTOR(pbeta);                    // parameter vector for p
     PARAMETER_VECTOR(dbeta);                    // parameter vector for delta
@@ -157,7 +158,14 @@ Type objective_function<Type>::operator() ()
 	        }
 	        bindex4=bindex4+npos;      
         }        
-
+        if(getreals==1)
+        {
+          ADREPORT(phi);
+          ADREPORT(p);
+          ADREPORT(psi);
+          ADREPORT(pi);
+          ADREPORT(delta);
+        }
 	    
 	      // ********************************  gamma *************************** 
 	      //  compute transition matrices for each occasion

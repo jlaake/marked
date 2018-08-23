@@ -322,6 +322,7 @@
 #' @param extra.args optional character string that is passed to admb if use.admb==TRUE
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param sup supplemental index values for constructing mvms model
+#' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -337,7 +338,7 @@
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -518,7 +519,8 @@ mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initia
 	                        nrowd=length(delta_slist$set),	ddm=deltadm[delta_slist$set,,drop=FALSE],
 	                        dfix=deltafix[delta_slist$set],dindex=delta_slist$indices[ddl$delta.indices],
 	                        nrowpi=length(pi_slist$set),	pidm=pidm[pi_slist$set,,drop=FALSE],
-	                        pifix=pifix[pi_slist$set],piindex=pi_slist$indices[ddl$pi.indices],initknown=unkinit,debug=as.numeric(debug)),
+	                        pifix=pifix[pi_slist$set],piindex=pi_slist$indices[ddl$pi.indices],initknown=unkinit,debug=as.numeric(debug),
+	                        getreals=as.integer(getreals)),
   	                      parameters=list(phibeta=par$Phi,pbeta=par$p,dbeta=par$delta,psibeta=par$Psi,pibeta=par$pi),DLL="mvms_tmb")
 	cat("\nrunning TMB program\n")                         
 	if(method=="nlminb")
@@ -536,6 +538,10 @@ mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initia
 	  convergence=mod$convcode
 	  lnl=mod$value		
 	}
+	if(getreals)
+	  par_summary=sdreport(f,getReportCovariance=FALSE)
+	else
+	  par_summary=sdreport(f,getJointPrecision=TRUE)
 	res=mod
 	cjs.beta=unscale.par(par,scale)
 	if(hessian) 
@@ -546,9 +552,18 @@ mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initia
 	  rownames(beta.vcv)=colnames(beta.vcv)
 	} else
 	  beta.vcv=NULL
-    reals=NULL
-    reals.se=NULL
-    res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
+	# Create results list 
+	if(getreals)
+	{
+	  reals=split(par_summary$value,names(par_summary$value))
+	  reals.se=split(par_summary$sd,names(par_summary$value))	
+	}
+	else
+	{
+	  reals=NULL
+	  reals.se=NULL
+	}
+  res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
          beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
          model_data=model_data,
          options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,

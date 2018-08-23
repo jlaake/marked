@@ -91,81 +91,81 @@ Type objective_function<Type>::operator() ()
        vector<Type> phi_u(phi_idIndex.cols());    // just for this capture history copied from full vectors
        p_u.setZero();	   
        phi_u.setZero();	   
-	   phi.setZero();
-	   p.setZero();
- 	   if(nphicounts >0)                          // if any random effects for phi, copy values from u_phi to phi_u
-	   {
-   		  if(phi_counts(i-1)==0)
-		     phi_u(0)=0;
-		  else
-		    for(j=0;j<=phi_counts(i-1)-1;j++)
-			    phi_u(j)=u_phi(phi_idIndex(i-1,j)-1);
-	    } 
+	     phi.setZero();
+	     p.setZero();
+ 	     if(nphicounts >0)                          // if any random effects for phi, copy values from u_phi to phi_u
+	     {
+   		    if(phi_counts(i-1)==0)
+		         phi_u(0)=0;
+		      else
+		         for(j=0;j<=phi_counts(i-1)-1;j++)
+			          phi_u(j)=u_phi(phi_idIndex(i-1,j)-1);
+	     } 
 
-            if(npcounts >0)                           // if any random effects for p, copy values from u_phi to phi_u
-	    {
-   		   if(p_counts(i-1)==0)
-		      p_u(0)=0;
-		   else
-		     for(j=0;j<=p_counts(i-1)-1;j++)
-		        p_u(j)=u_p(p_idIndex(i-1,j)-1);
-	    } 
+       if(npcounts >0)                           // if any random effects for p, copy values from u_phi to phi_u
+	     {
+   		    if(p_counts(i-1)==0)
+		         p_u(0)=0;
+		      else
+		         for(j=0;j<=p_counts(i-1)-1;j++)
+		            p_u(j)=u_p(p_idIndex(i-1,j)-1);
+	      } 
 		
    	    for(j=0;j<=m-1;j++)              // loop over all occasions              
-            {   
- 	      phicumprod(j)=1.0;             // set cummulative survival to 1
-              cump(j)=1.0;                   // set cummulative p to 1
-             }	
+        {   
+ 	          phicumprod(j)=1.0;             // set cummulative survival to 1
+            cump(j)=1.0;                   // set cummulative p to 1
+        }	
        
-            i1=(m-1)*(i-1);                   // compute beginning index in design matrix
+        i1=(m-1)*(i-1);                   // compute beginning index in design matrix
        
-	    for(j=frst(i-1)+1;j<=m;j++)       // loop over occasions from frst to m
-	    {
-	       i2=i1+j-1;                     // increment index in design matrix
+	      for(j=frst(i-1)+1;j<=m;j++)       // loop over occasions from frst to m
+	      {
+	        i2=i1+j-1;                      // increment index in design matrix
 
          /////// phi computation //////////
-	      if(phi_fixedDM(i2-1,kphi)== -1)
-	      {
-	        mu=0;
-	        for(L=1;L<=kphi;L++)
-                mu+=phi_fixedDM(i2-1,L-1)*phi_beta(L-1);    // fixed portion of mean 
-			if(nphicounts>0)
-			if(phi_counts(i-1) > 0)	                        // random portion of mean if any
+	        if(phi_fixedDM(i2-1,kphi)== -1)
 	        {
-	            for(L=1;L<=phi_krand;L++)
-		          if(phi_randIndex(i2-1,L-1)>0)
-	                 mu+=phi_randDM(i2-1,L-1)*phi_u(phi_randIndex(i2-1,L-1)-1)*exp(log_sigma_phi(L-1));
-            }	
-            phi(j-2)=1/(1+exp(-mu));                        // compute phi for the interval
-            if(tint(i-1,j-2)!=1)
+	           mu=0;
+	           for(L=1;L<=kphi;L++)
+                 mu+=phi_fixedDM(i2-1,L-1)*phi_beta(L-1);    // fixed portion of mean 
+			       if(nphicounts>0)
+			          if(phi_counts(i-1) > 0)	                        // random portion of mean if any
+	              {
+	                 for(L=1;L<=phi_krand;L++)
+		                  if(phi_randIndex(i2-1,L-1)>0)
+	                       mu+=phi_randDM(i2-1,L-1)*phi_u(phi_randIndex(i2-1,L-1)-1)*exp(log_sigma_phi(L-1));
+                 }	
+              phi(j-2)=1/(1+exp(-mu));                        // compute phi for the interval
+              if(tint(i-1,j-2)!=1)
                 phi(j-2)=pow(phi(j-2),tint(i-1,j-2));       // adjust phi for the time interval length
-	      } else
-	        phi(j-2)=phi_fixedDM(i2-1,kphi);                // real fixed value for this phi
+	          } else
+	              phi(j-2)=phi_fixedDM(i2-1,kphi);                // real fixed value for this phi
 	        
  		  /////// p computation /////////
 	      if(p_fixedDM(i2-1,kp)== -1)
 	      {
    	        mu=0;
-	        for(L=1;L<=kp;L++)
+	          for(L=1;L<=kp;L++)
                 mu+=p_fixedDM(i2-1,L-1)*p_beta(L-1);         // fixed portion of mean 
-			if(npcounts>0)
-			if(p_counts(i-1) > 0)	                         // random portion of mean if any
-	        {
-	           for(L=1;L<=p_krand;L++)
-                   if(p_randIndex(i2-1,L-1)>0)
-	                    mu+=p_randDM(i2-1,L-1)*p_u(p_randIndex(i2-1,L-1)-1)*exp(log_sigma_p(L-1));
-            }	
-            p(j-2)=1/(1+exp(-mu));                                     
+			      if(npcounts>0)
+			         if(p_counts(i-1) > 0)	                         // random portion of mean if any
+	             {
+	                for(L=1;L<=p_krand;L++)
+                     if(p_randIndex(i2-1,L-1)>0)
+	                       mu+=p_randDM(i2-1,L-1)*p_u(p_randIndex(i2-1,L-1)-1)*exp(log_sigma_p(L-1));
+                }	
+                p(j-2)=1/(1+exp(-mu));                                     
           } else
-	         p(j-2)=p_fixedDM(i2-1,kp);                      // real fixed value for this p
+	           p(j-2)=p_fixedDM(i2-1,kp);                      // real fixed value for this p
 			 
-	  phicumprod(j-1)=phicumprod(j-2)*phi(j-2);                             // compute cummulative survival
-	  cump(j-1)=cump(j-2)*((1-p(j-2))*(1-ch(i-1,j-1))+p(j-2)*ch(i-1,j-1));  // compute cummulative capture probability
+	       phicumprod(j-1)=phicumprod(j-2)*phi(j-2);                             // compute cummulative survival
+	       cump(j-1)=cump(j-2)*((1-p(j-2))*(1-ch(i-1,j-1))+p(j-2)*ch(i-1,j-1));  // compute cummulative capture probability
        } 
        pch=0.0;                                                      // initialize prob of the capture history to 0
        for(j=lst(i-1);j<=((1-loc(i-1))*m+loc(i-1)*lst(i-1));j++)     // loop over last occasion to m unless loss on capture
        {                                                             // to compute prob of the capture history 
-          if(loc(i-1)==1 | j==m)
+          if((loc(i-1)==1) | (j==m))
              pch=pch+cump(j-1)*phicumprod(j-1);                      // probability of history given possible last occasion alive
           else       
              pch=pch+cump(j-1)*phicumprod(j-1)*(1-phi(j-1));         // probability of history given possible last occasion alive
@@ -173,13 +173,10 @@ Type objective_function<Type>::operator() ()
        f-= log(pch+1E-24)*freq(i-1);                                 // sum log-likelihood log(pr(ch))
        
        if(getreals==1)                                               // if requested report phi and p real values
-	   {
-	      ADREPORT(phi);
-	      ADREPORT(p);
-	   }    
+	     {
+	        ADREPORT(phi);
+	        ADREPORT(p);
+	     }    
 	}
-    ADREPORT(u_phi);
-    ADREPORT(u_p);
-	
     return f;
 }

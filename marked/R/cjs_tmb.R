@@ -319,13 +319,12 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			     lnl=mod$value		
 		       }
 		       fixed.npar=(ncol(phidm)+ncol(pdm)-2)
+		       if(getreals) 
+		         par_summary=sdreport(f,getReportCovariance=FALSE)
+		       else
+		         par_summary=sdreport(f,getJointPrecision=TRUE)
 		       if(p_nre+phi_nre>0)
 		       {
-			       if(getreals) 
-				      par_summary=sdreport(f,getReportCovariance=FALSE)
-			       else
-				      par_summary=sdreport(f,getJointPrecision=TRUE)
-
 			        par=par_summary$par.fixed[1:fixed.npar]
 			        cjs.beta.fixed=unscale.par(par,scale)
 			        cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
@@ -357,28 +356,34 @@ cjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NU
 			            beta.vcv=NULL
 		       }	
 		       # Create results list 
-               if(getreals&p_nre+phi_nre>0)
+           if(getreals)
 		       {
 			           reals=split(par_summary$value,names(par_summary$value))
-			           reals.se=split(par_summary$sd,names(par_summary$value))	
+			           reals.se=split(par_summary$sd,names(par_summary$value))		
+			           names(reals)=c("p","Phi")
+			           names(reals.se)=c("p","Phi")
+			           reals$Phi[ddl$S$Time<ddl$Phi$Cohort]=NA
+			           reals.se$Phi[ddl$S$Time<ddl$Phi$Cohort]=NA
+			           reals$p[ddl$p$Time<ddl$p$Cohort]=NA
+			           reals.se$p[ddl$p$Time<ddl$p$Cohort]=NA
 		        }
 		        else
 		        {
-			          reals=NULL
+  			          reals=NULL
 		              reals.se=NULL
 		        }
 		        res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-				beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
-				model_data=model_data,
-				options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
-						chunk_size=chunk_size,itnmax=itnmax,control=control))		
+				    beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
+				    model_data=model_data,
+				    options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
+						              chunk_size=chunk_size,itnmax=itnmax,control=control))		
 		
-#               Restore non-accumulated, non-scaled dm's etc
-	            res$model_data=model_data.save
-				res$tmbfct=f
-#               Assign S3 class values and return
-	            class(res)=c("crm","mle","cjs")
-	            return(res)
+#           Restore non-accumulated, non-scaled dm's etc
+	          res$model_data=model_data.save
+				    res$tmbfct=f
+#           Assign S3 class values and return
+	          class(res)=c("crm","mle","cjs")
+	          return(res)
 		}
 		if(tmbfct=="f2")
 		{
