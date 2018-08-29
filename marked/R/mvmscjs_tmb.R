@@ -295,7 +295,9 @@
 #'
 #' 
 #' @param x processed dataframe created by process.data
-#' @param ddl list of dataframes for design data; created by call to
+#' @param ddl simplified list of dataframes for design data; created by call to
+#' \code{\link{make.design.data}}
+#' @param fullddl list of dataframes for design data; created by call to
 #' \code{\link{make.design.data}}
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
@@ -336,9 +338,9 @@
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
 #' @author Jeff Laake 
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
-mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals=FALSE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -546,7 +548,7 @@ mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initia
 	cjs.beta=unscale.par(par,scale)
 	if(hessian) 
 	{
-	  message("Computing hessian...")
+	  message("Inverting hessian...")
 	  beta.vcv=solve(f$he(par))
 	  colnames(beta.vcv)=names(unlist(cjs.beta))
 	  rownames(beta.vcv)=colnames(beta.vcv)
@@ -556,7 +558,19 @@ mvmscjs_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initia
 	if(getreals)
 	{
 	  reals=split(par_summary$value,names(par_summary$value))
-	  reals.se=split(par_summary$sd,names(par_summary$value))	
+	  reals.se=split(par_summary$sd,names(par_summary$value))
+    names(reals)=c("delta","p","Phi","pi","Psi")
+    names(reals.se)=c("delta","p","Phi","pi","Psi")
+    reals$S[fullddl$S$Time<fullddl$S$Cohort]=NA
+    reals.se$S[fullddl$S$Time<fullddl$S$Cohort]=NA
+    reals$p[fullddl$p$Time<fullddl$p$Cohort]=NA
+    reals.se$p[fullddl$p$Time<fullddl$p$Cohort]=NA
+    reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
+    reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
+    reals$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
+    reals.se$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
+    reals$delta=as.vector(aperm(array(reals$delta,dim=c(model_data$imat$nocc,nrow(sup$indices_forp))),c(2,1)))
+    reals.se$delta=as.vector(aperm(array(reals.se$delta,dim=c(model_data$imat$nocc,nrow(sup$indices_forp))),c(2,1)))
 	}
 	else
 	{

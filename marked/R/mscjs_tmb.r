@@ -301,8 +301,10 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 		reals.se$S[fullddl$S$Time<fullddl$S$Cohort]=NA
 		reals$p[fullddl$p$Time<fullddl$p$Cohort]=NA
 		reals.se$p[fullddl$p$Time<fullddl$p$Cohort]=NA
-		reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,(length(strata.labels))^2,length(model_data$imat$freq))),c(2,1,3)))
-		reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,(length(strata.labels))^2,length(model_data$imat$freq))),c(2,1,3)))
+		reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
+		reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
+#		reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,(length(strata.labels))^2,length(model_data$imat$freq))),c(2,1,3)))
+#		reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,(length(strata.labels))^2,length(model_data$imat$freq))),c(2,1,3)))
 		reals$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
 		reals.se$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
 	}

@@ -158,14 +158,6 @@ Type objective_function<Type>::operator() ()
 	        }
 	        bindex4=bindex4+npos;      
         }        
-        if(getreals==1)
-        {
-          ADREPORT(phi);
-          ADREPORT(p);
-          ADREPORT(psi);
-          ADREPORT(pi);
-          ADREPORT(delta);
-        }
 	    
 	      // ********************************  gamma *************************** 
 	      //  compute transition matrices for each occasion
@@ -253,6 +245,14 @@ Type objective_function<Type>::operator() ()
            Rcout << "\npsi " <<psibeta;
            Rcout <<  "\npi " <<pibeta;
            Rcout <<  "\n-lnl = " << g << "\n";
+         }
+         if(getreals==1)
+         {
+           ADREPORT(delta);
+           ADREPORT(p);
+           ADREPORT(phi);
+           ADREPORT(pi);
+           ADREPORT(psi);
          }
     }
     return g;      
