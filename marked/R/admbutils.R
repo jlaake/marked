@@ -68,16 +68,17 @@ invisible()
 #' @export 
 setup_tmb=function(tpl,clean=FALSE)
 {
+  message("TMB program setup\n")
 	sdir=system.file(package="marked")
 #   if argument clean is TRUE, delete dll and cpp files as well
 	if(clean)
 	{
-		cat("\n deleting old TMB program and rebuilding")
+		message("deleting old TMB program and rebuilding\n")
 		if(file.exists(paste(tpl,".cpp",sep=""))) unlink(paste(tpl,".cpp",sep=""))
 		if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
 		if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
 		file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
-		cat("\n compiling and linking TMB program\n")
+		message("compiling and linking TMB program\n")
 		compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
 		dyn.load(dynlib(tpl))                           # Dynamically link the C++ code
 	} else
@@ -88,20 +89,21 @@ setup_tmb=function(tpl,clean=FALSE)
 			file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
 			if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
 			if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
-			cat("\n compiling and linking TMB program\n")
-			compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
+		  message("compiling and linking TMB program\n")
+		  compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
 			dyn.load(dynlib(tpl))          # Dynamically link the C++ code
 		} else
 		{
 			if(file.exists(paste(tpl,".dll",sep="")))
 			{
+			  message("loading existing TMB program\n")
 				if(!is.loaded(dynlib(tpl))) {
 					dyn.load(dynlib(tpl))
 				}
 			} else
 			{
 				if(file.exists(paste(tpl,".o",sep=""))) unlink(paste(tpl,".o",sep=""))
-				cat("\n compiling and linking TMB program\n")
+				message("compiling and linking TMB program\n")
 				compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
 				if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
 				dyn.load(dynlib(tpl))          # Dynamically link the C++ code
