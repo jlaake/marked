@@ -19,7 +19,7 @@
 #' calculation of reals from mlogits when some are fixed
 #' @return vector of real parameter values
 #' @author Jeff Laake
-#' @seealso \code{\link{inverse.link}},\code{\link{compute.real}}
+#' @seealso \code{\link{inverse.link}},\code{\link{compute_real}}
 #' @keywords utility
 convert.link.to.real=function(x,model=NULL,links=NULL,fixed=NULL)
 {

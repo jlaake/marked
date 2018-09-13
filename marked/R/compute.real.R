@@ -39,9 +39,9 @@
 #' dipper.ddl=make.design.data(dipper.proc)
 #' mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,
 #'  model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
-#' xx=compute.real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
+#' xx=compute_real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 #' @keywords utility
-compute.real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE)
+compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE)
 {
 #  Note that the vector indices has 3 different meanings in the code as the code progresses.
 # if ddl not specified return results stored in model

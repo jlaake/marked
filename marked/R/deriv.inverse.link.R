@@ -19,7 +19,7 @@
 #' @param link Type of link function (e.g., "logit")
 #' @return Vector of derivative values computed at values of real parameters
 #' @author Jeff Laake
-#' @seealso \code{\link{inverse.link}}, \code{\link{compute.real}}
+#' @seealso \code{\link{inverse.link}}, \code{\link{compute_real}}
 #' @keywords utility
 deriv_inverse.link <-
 function(real,x,link)

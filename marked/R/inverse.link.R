@@ -18,7 +18,7 @@
 #' group will have a different set of \code{pent} parameters which are
 #' identified by a different grouping of the "mlogit" parameters (i.e.,
 #' "mlogit(1)" for group 1, "mlogit(2)" for group 2 etc).  Thus, in computing
-#' real parameter values (see \code{\link{compute.real}}) which may have
+#' real parameter values (see \code{\link{compute_real}}) which may have
 #' varying links, those with "mlogit" are not used with this function using
 #' \code{link="mlogit"}.  Instead, the link is temporarily altered to be of
 #' type "log" (i.e., inverse=exp(x)) and then summed over sets with a common
@@ -30,7 +30,7 @@
 #' @param link Type of link function (e.g., "logit")
 #' @return Vector of real values computed from \code{x=X*Beta}
 #' @author Jeff Laake
-#' @seealso \code{\link{compute.real}},\code{\link{deriv_inverse.link}}
+#' @seealso \code{\link{compute_real}},\code{\link{deriv_inverse.link}}
 #' @keywords utility
 inverse.link <-
 function(x,link)
