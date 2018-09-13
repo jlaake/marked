@@ -5,15 +5,16 @@
 \title{Capture-recapture model fitting function}
 \usage{
 crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
-  model.parameters = list(), design.parameters = list(), initial = NULL,
-  groups = NULL, time.intervals = NULL, debug = FALSE, method = "BFGS",
-  hessian = FALSE, accumulate = TRUE, chunk_size = 1e+07,
-  control = list(), refit = 1, itnmax = 5000, scale = NULL,
-  run = TRUE, burnin = 100, iter = 1000, use.admb = FALSE,
-  use.tmb = FALSE, crossed = NULL, reml = FALSE, compile = FALSE,
-  extra.args = NULL, strata.labels = NULL, clean = NULL,
-  save.matrices = TRUE, simplify = FALSE, getreals = FALSE,
-  check = FALSE, prior = FALSE, prior.list = NULL, ...)
+  model.parameters = list(), design.parameters = list(),
+  initial = NULL, groups = NULL, time.intervals = NULL,
+  debug = FALSE, method = "BFGS", hessian = FALSE,
+  accumulate = TRUE, chunk_size = 1e+07, control = list(),
+  refit = 1, itnmax = 5000, scale = NULL, run = TRUE,
+  burnin = 100, iter = 1000, use.admb = FALSE, use.tmb = FALSE,
+  crossed = NULL, reml = FALSE, compile = FALSE, extra.args = NULL,
+  strata.labels = NULL, clean = NULL, save.matrices = TRUE,
+  simplify = FALSE, getreals = FALSE, check = FALSE, prior = FALSE,
+  prior.list = NULL, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -118,7 +119,8 @@ matrices for each parameter based on the formula provided for each
 parameter, 4) call to the specific function for model fitting (now either
 \code{\link{cjs_admb}} or \code{\link{js}}). As with \code{mark} the calling
 arguments for \code{crm} are a compilation of the calling arguments for each
-of the functions it calls (with some arguments renamed to avoid conflicts).#' expects to find a value for \code{ddl}.  Likewise, if the data have not been
+of the functions it calls (with some arguments renamed to avoid conflicts).
+expects to find a value for \code{ddl}.  Likewise, if the data have not been
 processed, then \code{ddl} should be NULL.  This dual calling structure
 allows either a single call approach for each model or alternatively for the
 data to be processed and the design data (\code{ddl}) to be created once and
