@@ -288,7 +288,7 @@ NULL
 #' # formulas
 #' Psi.1=list(formula=~-1+ AtoS:sex + AtoS:sex:bs(Age) + StoA:sex + StoA:sex:bs(Age) + 
 #'                      I(lpm+rpm) +I(lpm+rpm):Age + lpm:rpm)
-#' p.1=list(formula=~time*area)
+#' p.1=list(formula=~-1+time:area)
 #' delta.1=list(formula= ~ -1 + obs.ltag.u + obs.rtag.u + obs.ltag.u:obs.rtag.u)
 #' Phi.1=list(formula=~sex*bs(Age)+pup:weight+area)
 #' 
