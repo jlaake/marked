@@ -315,7 +315,7 @@ probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=
   message("MCMC complete, processing output...")
   
   ### MAKE SOME OUTPUT ### jll 2 July changed to summarize betas as well 
-  ### 21 Sept jll removed real computations; it is now in compute.real called from crm
+  ### 21 Sept jll removed real computations; it is now in compute_real called from crm
   phibeta.mcmc = mcmc(beta.z.stor)
   #summ.phi = summary(phibeta.mcmc)
   hpd.phi = HPDinterval(phibeta.mcmc)
