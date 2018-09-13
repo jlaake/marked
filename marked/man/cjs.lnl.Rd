@@ -4,8 +4,8 @@
 \alias{cjs.lnl}
 \title{Likelihood function for Cormack-Jolly-Seber model}
 \usage{
-cjs.lnl(par, model_data, Phi.links = NULL, p.links = NULL, debug = FALSE,
-  all = FALSE, cjsenv)
+cjs.lnl(par, model_data, Phi.links = NULL, p.links = NULL,
+  debug = FALSE, all = FALSE, cjsenv)
 }
 \arguments{
 \item{par}{vector of parameter values}

@@ -34,7 +34,7 @@ real for any set of parameters.  The appropriate links are obtained from
 will over-ride those in \code{model}.
 }
 \seealso{
-\code{\link{inverse.link}},\code{\link{compute.real}}
+\code{\link{inverse.link}},\code{\link{compute_real}}
 }
 \author{
 Jeff Laake

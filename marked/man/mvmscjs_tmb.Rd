@@ -4,15 +4,19 @@
 \alias{mvmscjs_tmb}
 \title{TMB version: Fitting function for Multivariate Multistate CJS with uncertainty models}
 \usage{
-mvmscjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
-  initial = NULL, method, hessian = FALSE, debug = FALSE,
-  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  re = FALSE, compile = FALSE, extra.args = "", clean = TRUE, sup, ...)
+mvmscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
+  accumulate = TRUE, initial = NULL, method, hessian = FALSE,
+  debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
+  control = NULL, scale, re = FALSE, compile = FALSE,
+  extra.args = "", clean = TRUE, sup, getreals = FALSE, ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
 
-\item{ddl}{list of dataframes for design data; created by call to
+\item{ddl}{simplified list of dataframes for design data; created by call to
+\code{\link{make.design.data}}}
+
+\item{fullddl}{list of dataframes for design data; created by call to
 \code{\link{make.design.data}}}
 
 \item{dml}{list of design matrices created by \code{\link{create.dm}} from
@@ -57,6 +61,8 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
 
 \item{sup}{supplemental index values for constructing mvms model}
+
+\item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
 
 \item{...}{not currently used}
 }

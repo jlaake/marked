@@ -35,7 +35,7 @@ probabilities sum to 1.  However, if there are several groups then each
 group will have a different set of \code{pent} parameters which are
 identified by a different grouping of the "mlogit" parameters (i.e.,
 "mlogit(1)" for group 1, "mlogit(2)" for group 2 etc).  Thus, in computing
-real parameter values (see \code{\link{compute.real}}) which may have
+real parameter values (see \code{\link{compute_real}}) which may have
 varying links, those with "mlogit" are not used with this function using
 \code{link="mlogit"}.  Instead, the link is temporarily altered to be of
 type "log" (i.e., inverse=exp(x)) and then summed over sets with a common
@@ -43,7 +43,7 @@ value for "mlogit(j)" to construct the inverse for "mlogit" as
 \code{exp(x)/(1+sum(exp(x))}.
 }
 \seealso{
-\code{\link{compute.real}},\code{\link{deriv_inverse.link}}
+\code{\link{compute_real}},\code{\link{deriv_inverse.link}}
 }
 \author{
 Jeff Laake

@@ -7,7 +7,8 @@
 mvmscjs(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   initial = NULL, method, hessian = FALSE, debug = FALSE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  re = FALSE, compile = FALSE, extra.args = "", clean = TRUE, sup, ...)
+  re = FALSE, compile = FALSE, extra.args = "", clean = TRUE, sup,
+  ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

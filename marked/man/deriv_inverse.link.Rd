@@ -33,7 +33,7 @@ loglog=-real*x*log(real), cloglog=-log(1-real)*x*(1-real), identity=x,
 mlogit=x*real*(1-real)) }
 }
 \seealso{
-\code{\link{inverse.link}}, \code{\link{compute.real}}
+\code{\link{inverse.link}}, \code{\link{compute_real}}
 }
 \author{
 Jeff Laake
