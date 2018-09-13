@@ -69,8 +69,8 @@ predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,v
 	{
 		results=NULL
 		for (parameter in names(object$model.parameters))
-			results[[parameter]]=compute.real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include)
+			results[[parameter]]=compute_real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include)
 		return(results)
 	} else
-		return(compute.real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include))	
+		return(compute_real(object,parameter,ddl,dml,unique,vcv,se,chat,subset=substitute(subset),select,include=object$model.parameters[[parameter]]$include))	
 }
