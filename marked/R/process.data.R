@@ -170,6 +170,9 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
         stop(paste("\nCapture history length is not constant. ch must be a character string",
             "\n row numbers with incorrect ch length",paste(row.names(data[ch.lengths!=nocc,]),collapse=","),"\n"))
    }
+   # check to see if any names in data are reserved age,Age,group,time,Time,cohort,Cohort,occ,id
+   if(any(names(data)%in%c("age","Age","group","time","Time","cohort","Cohort","occ","id")))
+     stop("\nnames in data cannot include reserved names of age,Age,group,time,Time,cohort,Cohort,occ\n")
    #
    #  Setup model
    #
