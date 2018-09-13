@@ -199,6 +199,7 @@
 #'              rnorm sd nlminb
 #' @importFrom utils capture.output flush.console
 #'             read.delim
+#' @import data.table
 #' @return crm model object with class=("crm",submodel) where submodel is
 #' either "CJS" or "JS" at present.
 #' @author Jeff Laake
@@ -323,8 +324,8 @@ for (i in 1:length(parameters))
 #				re_names=re_names[re_names!="time"]
 #				if(!all(re_names %in% names(data.proc$data)))
 #				{
-#					cat("\n data cannot be accumulated (freq>1) unless the following fields are in the data\n")
-#					cat(paste(re_names),"\n")
+#					message("\n data cannot be accumulated (freq>1) unless the following fields are in the data\n")
+#					message(paste(re_names),"\n")
 #					stop()
 #				}
 #			}
@@ -391,15 +392,16 @@ if(substr(model,1,4)=="MVMS")
 		if(any(bad_Psi))message("\n Warning: Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
 	}
 }
+fullddl=ddl
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
 {
-	fullddl=ddl
+  message("Simplifying design data\n")
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 }
 if(simplify)
 {
 	simplify=FALSE
-	message("simplify argument has been disabled")
+	message("\nsimplify argument has been disabled")
 }
 #if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS")))
 #{
@@ -413,18 +415,30 @@ for (i in 1:length(parameters))
 	{
 		if(!is.null(ddl[[i]]$fix) && all(!is.na(ddl[[i]]$fix)))
 		{
-			message(paste("All values for",names(parameters)[i],"have been fixed. Setting formula to ~0"))
+			message(paste("All values for",names(parameters)[i],"have been fixed. Setting formula to ~0\n"))
 			parameters[[i]]$formula=~0
 		} else {
 			if(parameters[[i]]$formula==~0)
-				stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated"))
+				stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated.\n"))
 		}
 	} else
 	   if(parameters[[i]]$formula==~0)
-		   stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated"))
+		   stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated.\n"))
 }
 # Create design matrices for each parameter
+message("Creating design matrices\n")
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
+if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))&(check|save.matrices)) {
+  fulldml=dml
+  for(parx in names(dml))
+  {
+    fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],]
+  }
+} else
+
+#  fulldml=create.dml(fullddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
+
+  fulldml=dml
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)
@@ -493,10 +507,14 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	if((use.admb | use.tmb) & model=="MVMSCJS") 
 	{
 		# call HMMlikelihood to check for problems in setup
-		xx=HMMLikelihood(par=unlist(initial.list$par),xx=data.proc$ehmat,mx=mx,
-				type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-				fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,
-				parameters=parameters,sup=sup,check=TRUE)
+	  if(check)
+	  {
+	    message("Checking for problems in design data setup\n")
+	    xx=HMMLikelihood(par=unlist(initial.list$par),xx=data.proc$ehmat,mx=mx,
+	                     type=initial.list$ptype,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+	                     fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=fullddl,dml=fulldml,
+	                     parameters=parameters,sup=sup,check=TRUE)
+	  }
 		# call mvmscjs to run admb program
 		if(use.admb)
 		  runmodel=mvmscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
@@ -528,7 +546,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		if(save.matrices)
 		{
 			runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-					fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
+					fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=fullddl,dml=fulldml,parameters=parameters,return.mat=TRUE,sup=sup)
 			if(model=="HMMCJS")
 			{
 				dimnames(runmodel$mat$gamma)[3:4]=list(c("Alive","Dead"),c("Alive","Dead"))
@@ -576,7 +594,7 @@ object=list(model=model,data=data.proc,model.parameters=parameters,design.parame
 class(object)=class(runmodel)
 if(!use.tmb&!re & model!="MSCJS" & (nchar(model)<4 | (nchar(model)>=4 & substr(model,1,4)!="MVMS")))
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
-cat(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
+message(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }
 # solvecov code was taken from package fpc: Christian
