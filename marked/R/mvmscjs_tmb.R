@@ -348,7 +348,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
 	if(!is.null(ddl$Phi$time.interval))
-		time.intervals=matrix(ddl$Phi$time.interval,nrow(x$data),ncol=nocc-1,byrow=TRUE)
+		time.intervals=matrix(fullddl$Phi$time.interval[fullddl$Phi$stratum==x$strata.labels[1]],nrow(x$data),ncol=nocc-1,byrow=TRUE)
 	else
 	if(is.vector(x$time.intervals))
 		time.intervals=matrix(x$time.intervals,nrow=nrow(x$data),ncol=nocc-1,byrow=TRUE)
@@ -409,7 +409,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 		stop("random effect portion not completed for this model")
 	# setup tmb exe and cleanup old files
 	setup_tmb("mvms_tmb",clean=clean)
-	cat("\nbuilding TMB program\n")
+
 	
 	# Number of observations
 	n=length(model_data$imat$freq)
@@ -549,7 +549,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	if(hessian) 
 	{
 	  message("Inverting hessian...")
-	  beta.vcv=solve(f$he(par))
+	  beta.vcv=solvecov(f$he(par))$inv
 	  colnames(beta.vcv)=names(unlist(cjs.beta))
 	  rownames(beta.vcv)=colnames(beta.vcv)
 	} else
