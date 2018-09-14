@@ -431,9 +431,7 @@ dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.paramete
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))&(check|save.matrices)) {
   fulldml=dml
   for(parx in names(dml))
-  {
-    fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],]
-  }
+    fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],,drop=FALSE]
 } else
 
 #  fulldml=create.dml(fullddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
