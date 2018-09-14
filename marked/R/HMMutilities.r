@@ -170,19 +170,24 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
 		message("Not an HMM model. Returning NULL")
 		return(NULL)
 	}
-	if(is.null(ddl)){
-		message("\nddl argument required.")
-		return(NULL)
-	}
 	if(is.null(state.names))
 		if(!is.null(object$data$strata.labels))
 			state.names=c(object$data$strata.labels,"Dead")
 		else
 			state.names=c("Alive","Dead")
-	parmlist=compute_matrices(object,ddl=ddl)
-	dmat=parmlist$dmat
-	gamma=parmlist$gamma
-	delta=parmlist$delta
+  if(is.null(object$results$mat))
+  {
+    if(is.null(ddl)){
+      message("\nddl argument required.")
+      return(NULL)
+    }
+    parmlist=compute_matrices(object,ddl=ddl)
+  }
+  else
+    parmlist=object$results$mat
+  dmat=parmlist$dmat
+  gamma=parmlist$gamma
+  delta=parmlist$delta
 	x=object$data$ehmat
 	T=object$data$nocc
 	m=object$data$m
