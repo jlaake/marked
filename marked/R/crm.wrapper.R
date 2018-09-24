@@ -41,6 +41,7 @@
 #' @param external if TRUE, model results are stored externally; otherwise they are stored in crmlist
 #' @param run if TRUE, fit models; otherwise just create dml to test if model data are correct for formula
 #' @param env environment to find model specifications if not parent.frame
+#' @param replace if TRUE replace any existing externally saved model
 #' @param ... aditional arguments passed to crm; for rerun_crm can be used to set hessian=TRUE for specific models after they have been run
 #' @param parameters character vector of parameter names
 #' @param x filename of externally stored model
@@ -60,7 +61,7 @@
 #' @import parallel
 #' @seealso \code{\link{crm}}
 #' @keywords models
-crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,...)
+crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TRUE,run=TRUE,env=NULL,replace=FALSE,...)
 {
 	if(is.null(env))env=parent.frame()
 	results=vector("list",length=nrow(model.list)+1)
@@ -99,7 +100,13 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		if(external)
 		{
 			assign(as.character(as.name(model.name)),mymodel)
-			eval(parse(text=paste("save(",model.name,', file="',base,model.name,'.rda")',sep="")))
+		  filename=paste(base,model.name,".rda",sep="")
+		  if(file.exists(filename))
+		    if(!replace)
+		      stop(paste(filename," already exists. Use replace=TRUE if you want to over-write existing file\n"))
+		    else
+		      file.remove(filename)
+		  eval(parse(text=paste("save(",model.name,', file="',base,model.name,'.rda")',sep="")))
 			results[[i]]=paste(model.name,".rda",sep="")
 		} else
 			results[[i]]=mymodel
