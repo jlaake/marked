@@ -175,7 +175,7 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
 			state.names=c(object$data$strata.labels,"Dead")
 		else
 			state.names=c("Alive","Dead")
-  if(is.null(object$results$mat))
+  if(is.null(object$results$mat)| !is.null(ddf))
   {
     if(is.null(ddl)){
       message("\nddl argument required.")
@@ -184,7 +184,10 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
     parmlist=compute_matrices(object,ddl=ddl)
   }
   else
-    parmlist=object$results$mat
+    if(is.null(mat))
+       parmlist=object$results$mat
+    else
+       parmlist=mat
   dmat=parmlist$dmat
   gamma=parmlist$gamma
   delta=parmlist$delta
