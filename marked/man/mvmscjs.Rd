@@ -4,17 +4,19 @@
 \alias{mvmscjs}
 \title{Fitting function for Multivariate Multistate CJS with uncertainty models}
 \usage{
-mvmscjs(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
-  initial = NULL, method, hessian = FALSE, debug = FALSE,
-  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  re = FALSE, compile = FALSE, extra.args = "", clean = TRUE, sup,
-  ...)
+mvmscjs(x, ddl, fullddl, dml, model_data = NULL, parameters,
+  accumulate = TRUE, initial = NULL, method, hessian = FALSE,
+  debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
+  control = NULL, scale, re = FALSE, compile = FALSE,
+  extra.args = "", clean = TRUE, sup, ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
 
 \item{ddl}{list of dataframes for design data; created by call to
-\code{\link{make.design.data}}}
+\code{\link{make.design.data}} and then simplified}
+
+\item{fullddl}{list of dataframes for design data prior to simplification}
 
 \item{dml}{list of design matrices created by \code{\link{create.dm}} from
 formula and design data}

@@ -13,11 +13,10 @@ mvmscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
 \arguments{
 \item{x}{processed dataframe created by process.data}
 
-\item{ddl}{simplified list of dataframes for design data; created by call to
-\code{\link{make.design.data}}}
+\item{ddl}{list of dataframes for design data; created by call to
+\code{\link{make.design.data}} and then simplified}
 
-\item{fullddl}{list of dataframes for design data; created by call to
-\code{\link{make.design.data}}}
+\item{fullddl}{list of dataframes for design data prior to simplification}
 
 \item{dml}{list of design matrices created by \code{\link{create.dm}} from
 formula and design data}

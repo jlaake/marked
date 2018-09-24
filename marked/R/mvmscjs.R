@@ -296,7 +296,8 @@
 #' 
 #' @param x processed dataframe created by process.data
 #' @param ddl list of dataframes for design data; created by call to
-#' \code{\link{make.design.data}}
+#' \code{\link{make.design.data}} and then simplified
+#' @param fullddl list of dataframes for design data prior to simplification
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
 #' @param model_data a list of all the relevant data for fitting the model including
