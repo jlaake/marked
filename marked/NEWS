@@ -1,4 +1,4 @@
-marked 1.2.2  19 Aug 2018
+marked 1.2.2  20 Sept 2018
 -----------------
 BUG FIXES
 
@@ -8,10 +8,18 @@ CHANGES
 
 * for models hmmmscjs and mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in R errors.
 
+* in crm.wrapper with external=TRUE, if file already exists code will be stopped unless new argument replace=TRUE is specified.
+
 * Change was made in create.dmdf. For model mvmscjs, previously if there were no uncertain states, the design data for delta was set to NULL.  This doesn't work with the admb code so the design data is created and to make all states certain you need to set fix=1 for all records in the design data. The example for mstrata has been expanded to indclude a model for straight multistate data without uncertainty that uses admb code for mvmscjs.
 
+* code in simplify_ddl was modified to use package data.table which substantially sped up the simplification of the ddl for any given model.
+
+* in global_decode, if ddl is not specified and list of dmat, gamma, delta matrices are in object$results$mat it will use those values.
+
+* added argument useHess to TMB versions of code; if TRUE uses hessian in optimization.  This is typically slower but can be more precise in finding max.
+
 NEW
-* added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion exampple.
+* added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
 
 marked 1.2.1 29 March 2018
 -----------------
