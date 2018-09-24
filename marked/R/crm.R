@@ -162,7 +162,7 @@
 #' named from previous analysis only relevant values are used
 #' @param groups Vector of names factor variables for creating groups
 #' @param time.intervals Intervals of time between the capture occasions
-#' @param method optimization method for function \code{optimx}
+#' @param method optimization method 
 #' @param debug if TRUE, shows optimization output
 #' @param hessian if TRUE, computes v-c matrix using hessian
 #' @param accumulate if TRUE, like capture-histories are accumulated to reduce
@@ -191,6 +191,7 @@
 #' @param check if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.
 #' @param prior if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb
 #' @param prior.list which contains list of prior parameters that will be model dependent
+#' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @importFrom graphics boxplot par
 #' @importFrom stats as.formula binomial coef density
@@ -263,11 +264,18 @@
 #' }
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
- groups = NULL, time.intervals = NULL,debug=FALSE, method="BFGS", hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
+ groups = NULL, time.intervals = NULL,debug=FALSE, method=NULL, hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,check=FALSE,prior=FALSE,prior.list=NULL,...)
+ strata.labels=NULL,clean=NULL,save.matrices=TRUE,simplify=FALSE,getreals=FALSE,check=FALSE,prior=FALSE,prior.list=NULL,useHess=FALSE,...)
 {
 model=toupper(model)
+if(is.null(method))
+{
+  if(substr(model,1,4)=="MVMS")
+    method="nlminb"
+  else
+    method="BFGS"
+}
 ptm=proc.time()
 if(is.null(crossed))crossed=FALSE
 if(crossed)accumulate=FALSE
@@ -366,30 +374,45 @@ if(is.null(ddl))
 	design.parameters=ddl$design.parameters
 }
 ddl=set.fixed(ddl,parameters) #   setup fixed values if old way used
-if(substr(model,1,4)=="MVMS")
+if(substr(model,1,4)=="MVMS"&check)
 {
+  check_mlogit=function(x){ifelse(sum(x,na.rm=TRUE)==0||(any(is.na(x))&!(any(x[!is.na(x)]==1))),TRUE,FALSE)}
 	if(is.null(ddl$pi$fix))
 		message("\n Warning: No values provided for fix for pi. Must have a reference cell via formula.")
 	else
 	{
-		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),function(x){ifelse(!is.null(x) && any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-		if(any(bad_pi))message("\n Warning: Check values of fix for pi. Reference cell (fix=1) should be set if any are estimated (fix=NA)")
+		bad_pi=sapply(split(ddl$pi$fix,ddl$pi$id),check_mlogit)
+		if(any(bad_pi))
+		  {
+		    message("\n Check values of fix for pi with id:")
+		    cat(names(which(bad_pi)))
+		  }
 	}
 	if(is.null(ddl$delta$fix))
 	{
 		message("\n Warning: No values provided for fix for delta. Must have a reference cell via formula.")
 	}else
 	{
-		bad_delta=sapply(split(ddl$delta$fix,list(ddl$delta$id,ddl$delta$occ,ddl$delta$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-	    if(any(bad_delta))message("\n Warning: Check values of fix for delta. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
+	  xx=list(id=ddl$delta$id,occ=ddl$delta$occ,stratum=ddl$delta$stratum)
+		bad_delta=sapply(split(ddl$delta$fix,xx),check_mlogit)
+	  if(any(bad_delta))
+	  {
+	     message("\n Warning: Check values of fix for delta for the following records with id.occ.stratum.")
+	     cat(names(which(bad_delta)))  
+	  }
 	}
 	if(is.null(ddl$Psi$fix))
 	{
-		message("\n Warning: No values provided for fix for delta. Must have a reference cell via formula.")
+		message("\n Warning: No values provided for fix for Psi. Must have a reference cell via formula.")
 	}else
 	{
-		bad_Psi=sapply(split(ddl$Psi$fix,list(ddl$Psi$id,ddl$Psi$occ,ddl$Psi$stratum)),function(x){ifelse(!is.null(x) &&any(is.na(x))&!(any(x[!is.na(x)]==1)),TRUE,FALSE)})
-		if(any(bad_Psi))message("\n Warning: Check values of fix for Psi. Reference cell (fix=1) should be set if any are estimated (fix=NA). Must have a reference cell via formula.")
+	  xx=list(id=ddl$Psi$id,occ=ddl$Psi$occ,stratum=ddl$Psi$stratum)
+	  bad_Psi=sapply(split(ddl$Psi$fix,xx),check_mlogit)
+	  if(any(bad_Psi))
+	  {
+	    message("\n Warning: Check values of fix for Psi for the following records with id.occ.stratum.")
+	    cat(names(which(bad_Psi)))  
+	  }
 	}
 }
 fullddl=ddl
@@ -464,7 +487,7 @@ if(model=="CJS")
 	{
 		runmodel=cjs_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				refit=refit,control=control,itnmax=itnmax,scale=scale,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,getreals=getreals,
-				prior=prior,prior.list=prior.list,...)
+				prior=prior,prior.list=prior.list,useHess=useHess,...)
 	} else
 		runmodel=cjs_admb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
@@ -475,7 +498,7 @@ if(model=="MSCJS")
 	if(use.tmb)
 	{
 		runmodel=mscjs_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,...)
+				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,useHess=useHess,...)
   }else{
 	    runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
@@ -519,7 +542,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
 		else
 		  runmodel=mvmscjs_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		                   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,getreals=getreals,...)
+		                   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,getreals=getreals,useHess=useHess,...)
 		par=coef(runmodel)[,1]
 		runmodel$options=c(runmodel$options,list(accumulate=accumulate,initial=initial.list$par,method=method,
 				chunk_size=chunk_size,itnmax=itnmax,control=control))
