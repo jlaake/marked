@@ -39,6 +39,7 @@
 #' @param extra.args optional character string that is passed to admb 
 #' @param clean if TRUE, deletes the tpl and executable files for amdb 
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -54,7 +55,7 @@
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,getreals=FALSE, ...)
+		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,getreals=FALSE, useHess=FALSE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -111,7 +112,6 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	scale=set.scale(names(dml),model_data,scale)
 	model_data=scale.dm(model_data,scale)
 	setup_tmb("multistate_tmb",clean=clean)
-	cat("\nbuilding TMB program\n")
 
 	# S design matrix
 	phidm=as.matrix(model_data$S.dm)
@@ -233,14 +233,20 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	cat("\nrunning TMB program\n")                         
 	if(method=="nlminb")
 	{
-		mod=nlminb(f$par,f$fn,f$gr,control=control,itnmax=itnmax,...)
+	  if(!useHess)
+		   mod=nlminb(f$par,f$fn,f$gr,control=control,...)
+	  else
+	    mod=nlminb(f$par,f$fn,f$gr,f$he,control=control,...)
 		lnl=mod$objective
 		par=mod$par
 		convergence=mod$convergence
 	} else
 	{
 		control$starttests=FALSE
-		mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+		if(!useHess)
+		   mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+		else
+		  mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
 		par <- coef(mod, order="value")[1, ]
 		mod=as.list(summary(mod, order="value")[1, ])
 	    convergence=mod$convcode

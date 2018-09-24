@@ -295,10 +295,9 @@
 #'
 #' 
 #' @param x processed dataframe created by process.data
-#' @param ddl simplified list of dataframes for design data; created by call to
-#' \code{\link{make.design.data}}
-#' @param fullddl list of dataframes for design data; created by call to
-#' \code{\link{make.design.data}}
+#' @param ddl list of dataframes for design data; created by call to
+#' \code{\link{make.design.data}} and then simplified
+#' @param fullddl list of dataframes for design data prior to simplification
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
 #' @param model_data a list of all the relevant data for fitting the model including
@@ -325,6 +324,7 @@
 #' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
 #' @param sup supplemental index values for constructing mvms model
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -340,7 +340,7 @@
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals=FALSE,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals=FALSE,useHess=FALSE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -527,14 +527,20 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	cat("\nrunning TMB program\n")                         
 	if(method=="nlminb")
 	{
-	  mod=nlminb(f$par,f$fn,f$gr,control=control,itnmax=itnmax,...)
+	  if(!useHess)
+	    mod=nlminb(f$par,f$fn,f$gr,control=control)
+	  else
+	    mod=nlminb(f$par,f$fn,f$gr,f$he,control=control)
 	  lnl=mod$objective
 	  par=mod$par
 	  convergence=mod$convergence
 	} else
 	{
 	  control$starttests=FALSE
-	  mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+	  if(!useHess)
+	    mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	  else
+	    mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method)
 	  par <- coef(mod, order="value")[1, ]
 	  mod=as.list(summary(mod, order="value")[1, ])
 	  convergence=mod$convcode
@@ -542,8 +548,8 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	}
 	if(getreals)
 	  par_summary=sdreport(f,getReportCovariance=FALSE)
-	else
-	  par_summary=sdreport(f,getJointPrecision=TRUE)
+#	else
+#	  par_summary=sdreport(f,getJointPrecision=TRUE)
 	res=mod
 	cjs.beta=unscale.par(par,scale)
 	if(hessian) 
