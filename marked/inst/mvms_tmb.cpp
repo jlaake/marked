@@ -230,7 +230,7 @@ Type objective_function<Type>::operator() ()
 	        u=sum(v);                                     // sum across states
 	        if(u==0) {
 	          Rcout << "\n Check Psi or p values set to 0";
-	          Rcout << "\n i = " << i << " ch = " << ch(i);
+	          Rcout << "\n i = " << i << " j = " << j << " ch = " << ch(i,j-1);
 	        }
 	        S=v/u;                                        // update S;S is normalized alpha(j) (phi) in Z&M
 	        Lglki+=log(u);    	                           // accumulate log-likelihood value
