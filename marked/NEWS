@@ -18,6 +18,8 @@ CHANGES
 
 * added argument useHess to TMB versions of code; if TRUE uses hessian in optimization.  This is typically slower but can be more precise in finding max.
 
+* default value for save.matrices has been changed to FALSE for HMM and MVMS models.
+
 NEW
 * added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
 
