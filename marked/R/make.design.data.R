@@ -226,6 +226,9 @@ full.design.data=vector("list",length=length(parameters))
    full.design.data$ehmat=data$ehmat
    if(data$model=="MVMSCJS")
 	   full.design.data=initiate_pi(data,full.design.data)
+   # reset rownames
+   for(i in 1:length(parameters))
+     rownames(full.design.data[[i]]))=NULL
    return(full.design.data)
 }
 #' Setup fixed values for pi in design data

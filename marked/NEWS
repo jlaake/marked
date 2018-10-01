@@ -20,6 +20,8 @@ CHANGES
 
 * default value for save.matrices has been changed to FALSE for HMM and MVMS models.
 
+* in make.design.data rownames are reset so they are in numeric order; should not affect code and more for readability for some parameters.
+
 NEW
 * added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
 
