@@ -4,6 +4,8 @@ BUG FIXES
 
 * In mvmscjs the parameters were not in the correct order so the admb code did not work with the sealions example because the hessian was not in the expected order.  Thanks to Jaume Forcada for reporting the problem.
 
+* fixed bug in make.design.data that was preventing use of newdata in predict.crm and using subtract.stratum for some models.
+
 CHANGES
 
 * for models hmmmscjs and mscjs, all parameter values can be fixed (eg, ddl$p$fix=1). Previously this resulted in R errors.
