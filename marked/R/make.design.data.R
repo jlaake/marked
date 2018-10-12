@@ -169,24 +169,22 @@ full.design.data=vector("list",length=length(parameters))
 	  } 
 	  if(!is.null(parameters[[i]]$tostrata) && parameters[[i]]$tostrata)
 	  {
+	    if(parameters[[i]]$whichlevel==0)
+	      field="stratum"
+	    else
+	      if(parameters[[i]]$whichlevel==1)
+	        field="state"  
+  	    else
+	        field=names(data$strata.list)[oth.index]
 		  if(is.null(parameters[[i]]$subtract.stratum)) 
 		  {
 			  if(parameters[[i]]$whichlevel==0)
-			  {
-				  field="stratum"
 			  	  parameters[[i]]$subtract.stratum=data$strata.labels
-			  }
 			  else
 			      if(parameters[[i]]$whichlevel==1)
-				  {
-					  field="state"  
-					  parameters[[i]]$subtract.stratum=data$strata.list$states
-				  }
-				  else
-				  {
-					  field=names(data$strata.list)[oth.index]
+   					  parameters[[i]]$subtract.stratum=data$strata.list$states
+  				  else
 					  parameters[[i]]$subtract.stratum=data$strata.list[[oth.index]]
-				  }
 		  }	  	  
 		  if(toupper(parameters[[i]]$subtract.stratum)[1]!="NONE")
 		  {
@@ -228,7 +226,7 @@ full.design.data=vector("list",length=length(parameters))
 	   full.design.data=initiate_pi(data,full.design.data)
    # reset rownames
    for(i in 1:length(parameters))
-     rownames(full.design.data[[i]]))=NULL
+     rownames(full.design.data[[i]])=NULL
    return(full.design.data)
 }
 #' Setup fixed values for pi in design data

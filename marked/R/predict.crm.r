@@ -34,18 +34,60 @@
 #' xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
 #' xx
 #' @keywords utility
-predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,...)
+predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,real.ids=NULL,...)
 {
+  if(object$model=="MVMSCJS")
+  {
+    if(!is.null(newdata))message("\nargument newdata ignored for this model\n")
+    if(!object$results$options$use.tmb)
+      stop("Real predictions for MVMS model only works with TMB")
+    if(is.null(ddl))
+        stop("Must specify ddl argument")
+    else  {
+       emptyids=is.null(object$results$real.ids)&is.null(real.ids)
+       if(!emptyids)
+       {
+         if(is.null(object$results$real.ids)&!is.null(real.ids))
+           newids=TRUE
+         else
+           if(!is.null(object$results$real.ids)&is.null(real.ids))
+             newids=TRUE
+           else
+             if(length(real.ids)!=length(object$results$real.ids))
+               newids=TRUE
+             else
+               newids=!all(real.ids%in%object$results$real.ids)
+       } else
+         newids=FALSE
+       if(is.null(object$results$reals) | newids)
+          object=crm(object$data,ddl=ddl,model.parameters=object$model.parameters,optimize=FALSE,getreals=TRUE,
+                           real.ids=real.ids,initial=object,use.tmb=TRUE,clean=FALSE,save.matrices=FALSE,check=FALSE)
+       for(par in names(object$results$reals))
+          object$results$reals[[par]]=cbind(ddl[[par]][ddl[[par]]$id %in% object$results$real.ids,],estimate=object$results$reals[[par]],se=object$results$reals.se[[par]])
+       return(list(reals=object$results$reals))
+    }
+  }
 	if(!is.null(newdata))
 	{
 		if(is.data.frame(newdata))
 		{
-			newdata$ch=paste(rep("1",object$data$nocc),collapse="")
-			newdata.proc=process.data(newdata,model=object$model,begin.time=object$data$begin.time,groups=names(object$data$group.covariates),accumulate=FALSE)
+		  if(object$model=="CJS")
+			   newdata$ch=paste(rep("1",object$data$nocc),collapse="")
+		  else
+		     newdata$ch=paste(rep(object$data$strata.labels[1],object$data$nocc),collapse="")
+		  if(!is.null(object$data$group.covariates))
+		  {
+		    covs=apply(object$data$group.covariates,2,function(x) rep(as.character(x),each=nrow(newdata)))
+		    if(nrow(object$data$group.covariates)>1)
+		      for(i in 2:nrow(object$data$group.covariates))
+		        newdata=rbind(newdata,newdata)
+		    newdata=cbind(newdata,covs)
+		  }
+			newdata.proc=process.data(newdata,model=object$model,begin.time=object$data$begin.time,groups=names(object$data$group.covariates),strata.labels=object$data$strata.labels,accumulate=FALSE)
 			ddl=make.design.data(newdata.proc,parameters=object$design.parameters)
 			dml=create.dml(ddl,model.parameters=object$model.parameters,design.parameters=object$design.parameters)
-		    object$results$model_data$Phi.dm=dml$Phi$fe
-			object$results$model_data$p.dm=dml$p$fe		
+		  #object$results$model_data$Phi.dm=dml$Phi$fe
+			#object$results$model_data$p.dm=dml$p$fe		
 		}else
 			stop("Invalid newdata")
 	} else
