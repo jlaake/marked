@@ -46,7 +46,8 @@ Type objective_function<Type>::operator() ()
 
     DATA_INTEGER(initknown);                    // if 1 then delta not used on release occasion
     DATA_INTEGER(debug);                        // if 1 then write out parameters and likelihood at each iteration.
-    DATA_INTEGER(getreals);
+    DATA_INTEGER(getreals);                     // if 1 then write out real parameters for AD listed in id
+    DATA_IVECTOR(ids);                          // if 1 write out real parameter for that particular id
     
     PARAMETER_VECTOR(phibeta);                  // parameter vector for Phi
     PARAMETER_VECTOR(pbeta);                    // parameter vector for p
@@ -248,11 +249,14 @@ Type objective_function<Type>::operator() ()
          }
          if(getreals==1)
          {
-           ADREPORT(delta);
-           ADREPORT(p);
-           ADREPORT(phi);
-           ADREPORT(pi);
-           ADREPORT(psi);
+           if(ids(i)==1)
+           {
+             ADREPORT(delta);
+             ADREPORT(p);
+             ADREPORT(phi);
+             ADREPORT(pi);
+             ADREPORT(psi);
+           }
          }
     }
     return g;      
