@@ -298,12 +298,9 @@
 #' @param ddl list of dataframes for design data; created by call to
 #' \code{\link{make.design.data}} and then simplified
 #' @param fullddl list of dataframes for design data prior to simplification
-#' @param dml list of design matrices created by \code{\link{create.dm}} from
-#' formula and design data
+#' @param dml list of design matrices created by \code{\link{create.dm}} from formula and design data
 #' @param model_data a list of all the relevant data for fitting the model including
-#' imat, Phi.dm,p.dm,Psi.dm,Phi.fixed,p.fixed,Psi.fixed and time.intervals. It is used to save values
-#' and avoid accumulation again if the model was re-rerun with an additional call to cjs when
-#' using autoscale or re-starting with initial values.  It is stored with returned model object.
+#' imat, Phi.dm,p.dm,Psi.dm,Phi.fixed,p.fixed,Psi.fixed and time.intervals. It is stored with returned model object.
 #' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
 #' @param accumulate if TRUE will accumulate capture histories with common
 #' value and with a common design matrix for S and p to speed up execution
@@ -317,14 +314,15 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
-#' @param scale vector of scale values for parameters
-#' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
-#' @param compile if TRUE forces re-compilation of tpl file
-#' @param extra.args optional character string that is passed to admb if use.admb==TRUE
-#' @param clean if TRUE, deletes the tpl and executable files for amdb if use.admb=T
-#' @param sup supplemental index values for constructing mvms model
+#' @param re currently ignored
+#' @param compile if TRUE forces re-compilation of cpp file
+#' @param clean if TRUE, deletes the cpp and dll for tmb if use.tmb=TRUE
+#' @param sup supplemental index values for constructing mvms model; these are defined in the crm code
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param real.ids vector of id values for which real parameters should be output with std error information
 #' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
+#' @param optimize if TRUE, optimizes to get parameter estimates; set to FALSE to extract estimates of ADREPORTed values only
+#' @param vcv if TRUE, computes var-covariance matrix of ADREPORTed values
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -339,8 +337,8 @@
 #' @author Jeff Laake 
 #' @references Johnson, D. S., J. L. Laake, S. R. Melin, and DeLong, R.L. 2015. Multivariate State Hidden Markov Models for Mark-Recapture Data. 31:233-244.
 mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
-		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,sup,getreals=FALSE,useHess=FALSE,...)
+		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,
+		re=FALSE,compile=FALSE,clean=TRUE,sup,getreals=FALSE,real.ids=NULL,useHess=FALSE,optimize=TRUE,vcv=FALSE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -401,6 +399,8 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 #   p.links=create.links(p.dm)
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
+#  scaling set to 1 but call needed to change dm to regular matrix; if scale used at some point
+#  need to scale hessian after fitting
 	scale=1
 	scale=set.scale(names(dml),model_data,scale)
 	model_data=scale.dm(model_data,scale)
@@ -408,8 +408,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	if(re)
 		stop("random effect portion not completed for this model")
 	# setup tmb exe and cleanup old files
-	setup_tmb("mvms_tmb",clean=clean)
-
+	setup_tmb("mvms_tmb",clean=clean,debug=debug)
 	
 	# Number of observations
 	n=length(model_data$imat$freq)
@@ -438,7 +437,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	phifix=rep(-1,nrow(phidm))
 	if(!is.null(ddl$Phi$fix))
 		phifix[!is.na(ddl$Phi$fix)]=ddl$Phi$fix[!is.na(ddl$Phi$fix)]
-	phi_slist=simplify_indices(cbind(phidm,phifix))
+	phi_slist=simplify_indices(cbind(as.matrix(phidm),phifix))
 
 	# p design matrix
     # zero out rows with fixed parameters and remove any unneeded columns
@@ -509,7 +508,18 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	# unkinit set to 0 unless all unknown or all known at initial release;
 	# when unkinit=0, delta is applied in dmat
 	unkinit=as.numeric(all(is.na(xstart[,1])) | all(!is.na(xstart[,1])))
-
+  
+	ids=vector("integer",length=n)
+	if(!is.null(real.ids))
+	{
+	  if(all(real.ids>=1 &real.ids<=n))
+	    ids[real.ids]=1
+	  else
+	    stop("invalid values for real.ids")
+	} else
+	  ids=rep(1,n)
+	
+	
 	f = MakeADFun(data=list(n=n,m=nocc,nS=nS, nobs=nobs,ch=chmat,frst=model_data$imat$first,freq=model_data$imat$freq,
 	                        tint=model_data$time.intervals,nrowphi=length(phi_slist$set),phidm=phidm[phi_slist$set,,drop=FALSE],
 	                        phifix=phifix[phi_slist$set],phiindex=phi_slist$indices[ddl$Phi.indices],
@@ -522,39 +532,61 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	                        dfix=deltafix[delta_slist$set],dindex=delta_slist$indices[ddl$delta.indices],
 	                        nrowpi=length(pi_slist$set),	pidm=pidm[pi_slist$set,,drop=FALSE],
 	                        pifix=pifix[pi_slist$set],piindex=pi_slist$indices[ddl$pi.indices],initknown=unkinit,debug=as.numeric(debug),
-	                        getreals=as.integer(getreals)),
+	                        getreals=as.integer(getreals),ids=ids),
   	                      parameters=list(phibeta=par$Phi,pbeta=par$p,dbeta=par$delta,psibeta=par$Psi,pibeta=par$pi),DLL="mvms_tmb")
-	cat("\nrunning TMB program\n")                         
-	if(method=="nlminb")
+	if(optimize)
 	{
-	  if(!useHess)
-	    mod=nlminb(f$par,f$fn,f$gr,control=control)
-	  else
-	    mod=nlminb(f$par,f$fn,f$gr,f$he,control=control)
-	  lnl=mod$objective
-	  par=mod$par
-	  convergence=mod$convergence
+	  if(debug)cat("\nrunning TMB program\n")                         
+	  if(method=="nlminb")
+	  {
+	    if(!useHess)
+	      if(debug)
+	        mod=nlminb(f$par,f$fn,f$gr,control=control)
+	      else
+	        capture.output(mod<-nlminb(f$par,f$fn,f$gr,control=control))
+	    else
+	      if(debug)
+	          mod=nlminb(f$par,f$fn,f$gr,f$he,control=control)
+	      else
+	        capture.output(mod<-nlminb(f$par,f$fn,f$gr,f$he,control=control))
+	      
+	    lnl=mod$objective
+	    par=mod$par
+	    convergence=mod$convergence
+	  } else
+	  {
+	    control$starttests=FALSE
+	    if(!useHess)
+	      if(debug)
+	        mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	      else
+	        capture.output(mod<-optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method))
+	    else
+	      if(debug)
+	         mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	      else
+	        capture.output(mod<-optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method))
+	    par <- coef(mod, order="value")[1, ]
+	    mod=as.list(summary(mod, order="value")[1, ])
+	    convergence=mod$convcode
+	    lnl=mod$value		
+	  }
 	} else
 	{
-	  control$starttests=FALSE
-	  if(!useHess)
-	    mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method)
-	  else
-	    mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method)
-	  par <- coef(mod, order="value")[1, ]
-	  mod=as.list(summary(mod, order="value")[1, ])
-	  convergence=mod$convcode
-	  lnl=mod$value		
+	  lnl=f$fn(f$par)
+	  mod=NULL
+	  convergence=0
 	}
 	if(getreals)
-	  par_summary=sdreport(f,getReportCovariance=FALSE)
-#	else
-#	  par_summary=sdreport(f,getJointPrecision=TRUE)
+	  if(!debug) 
+	    capture.output(par_summary<-sdreport(f,getReportCovariance=vcv))
+	  else
+	    par_summary<-sdreport(f,getReportCovariance=vcv)
 	res=mod
 	cjs.beta=unscale.par(par,scale)
 	if(hessian) 
 	{
-	  message("Inverting hessian...")
+	  if(debug)message("Inverting hessian...")
 	  beta.vcv=solvecov(f$he(par))$inv
 	  colnames(beta.vcv)=names(unlist(cjs.beta))
 	  rownames(beta.vcv)=colnames(beta.vcv)
@@ -567,14 +599,14 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	  reals.se=split(par_summary$sd,names(par_summary$value))
     names(reals)=c("delta","p","Phi","pi","Psi")
     names(reals.se)=c("delta","p","Phi","pi","Psi")
-    reals$S[fullddl$S$Time<fullddl$S$Cohort]=NA
-    reals.se$S[fullddl$S$Time<fullddl$S$Cohort]=NA
-    reals$p[fullddl$p$Time<fullddl$p$Cohort]=NA
-    reals.se$p[fullddl$p$Time<fullddl$p$Cohort]=NA
-    reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
-    reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),length(model_data$imat$freq))),c(3,2,1,4)))
-    reals$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
-    reals.se$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
+    #reals$S[fullddl$S$Time<fullddl$S$Cohort]=NA
+    #reals.se$S[fullddl$S$Time<fullddl$S$Cohort]=NA
+    #reals$p[fullddl$p$Time<fullddl$p$Cohort]=NA
+    #reals.se$p[fullddl$p$Time<fullddl$p$Cohort]=NA
+    reals$Psi=as.vector(aperm(array(reals$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),sum(ids))),c(3,2,1,4)))
+    reals.se$Psi=as.vector(aperm(array(reals.se$Psi,dim=c(model_data$imat$nocc-1,length(strata.labels),length(strata.labels),sum(ids))),c(3,2,1,4)))
+    #reals$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
+    #reals.se$Psi[fullddl$Psi$Time<fullddl$Psi$Cohort]=NA
     reals$delta=as.vector(aperm(array(reals$delta,dim=c(model_data$imat$nocc,nrow(sup$indices_forp))),c(2,1)))
     reals.se$delta=as.vector(aperm(array(reals.se$delta,dim=c(model_data$imat$nocc,nrow(sup$indices_forp))),c(2,1)))
 	}
@@ -584,7 +616,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	  reals.se=NULL
 	}
   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
-         beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,convergence=convergence,optim.details=mod,
+         beta.vcv=beta.vcv,reals=reals,reals.se=reals.se,real.ids=real.ids,convergence=convergence,optim.details=mod,
          model_data=model_data,
          options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
                       chunk_size=chunk_size,itnmax=itnmax,control=control))		
