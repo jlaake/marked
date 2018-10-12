@@ -177,8 +177,8 @@
 #' @param run if TRUE, it runs model; otherwise if FALSE can be used to test model build components 
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
-#' @param use.admb if TRUE creates data file for cjs.tpl and runs admb optimizer
-#' @param use.tmb if TRUE runs TMB for cjs
+#' @param use.admb if TRUE uses ADMB for cjs, mscjs or mvms models
+#' @param use.tmb if TRUE runs TMB for cjs, mscjs or mvms models
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param reml if TRUE uses restricted maximum likelihood
 #' @param compile if TRUE forces re-compilation of tpl file
@@ -188,10 +188,12 @@
 #' @param save.matrices for HMM models this option controls whether the gamma,dmat and delta matrices are saved in the model object
 #' @param simplify if TRUE, design matrix is simplified to unique valus including fixed values
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
+#' @param real.ids vector of id values for which real parameters should be output with std error information for TMB models; if NULL all ids used
 #' @param check if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.
 #' @param prior if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb
 #' @param prior.list which contains list of prior parameters that will be model dependent
 #' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
+#' @param optimize if TRUE, optimizes to get parameter estimates; set to FALSE to extract estimates of ADREPORTed values only
 #' @param ... optional arguments passed to js or cjs and optimx
 #' @importFrom graphics boxplot par
 #' @importFrom stats as.formula binomial coef density
@@ -266,7 +268,7 @@
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method=NULL, hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
  control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
- strata.labels=NULL,clean=NULL,save.matrices=FALSE,simplify=FALSE,getreals=FALSE,check=FALSE,prior=FALSE,prior.list=NULL,useHess=FALSE,...)
+ strata.labels=NULL,clean=NULL,save.matrices=FALSE,simplify=FALSE,getreals=FALSE,real.ids=NULL,check=FALSE,prior=FALSE,prior.list=NULL,useHess=FALSE,optimize=TRUE,...)
 {
 model=toupper(model)
 if(is.null(method))
@@ -289,8 +291,8 @@ if(is.null(data$data))
       warning("Warning: specification of ddl ignored, as data have not been processed")
       ddl=NULL
    }
-   message("Model: ",model,"\n")
-   message("Processing data...\n")
+   if(debug)message("Model: ",model,"\n")
+   if(debug)message("Processing data...\n")
    flush.console()
    data.proc=process.data(data,begin.time=begin.time, model=model,mixtures=1, 
 	   groups = groups, age.var = NULL, initial.ages = NULL, 
@@ -357,7 +359,7 @@ if(use.tmb&is.null(clean))clean=FALSE
 #
 if(is.null(ddl)) 
 {
-	message("Creating design data...\n")
+  if(debug)message("Creating design data...\n")
 	flush.console()
 	ddl=make.design.data(data.proc,design.parameters)
 } else
@@ -418,7 +420,7 @@ if(substr(model,1,4)=="MVMS"&check)
 fullddl=ddl
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
 {
-  message("Simplifying design data\n")
+  if(debug)message("Simplifying design data\n")
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 }
 if(simplify)
@@ -449,16 +451,13 @@ for (i in 1:length(parameters))
 		   stop(paste("Cannot use formula ~0 for",names(parameters)[i],"when some of the parameters must be estimated.\n"))
 }
 # Create design matrices for each parameter
-message("Creating design matrices\n")
+if(debug)message("Creating design matrices\n")
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
 if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))&(check|save.matrices)) {
   fulldml=dml
   for(parx in names(dml))
     fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],,drop=FALSE]
 } else
-
-#  fulldml=create.dml(fullddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
-
   fulldml=dml
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
@@ -481,7 +480,7 @@ if("nlminb"%in%method)
 	control$iter.max=itnmax
 }
 # Call estimation function which depends on the model
-message("Fitting model\n")
+if(debug)message("Fitting model\n")
 if(model=="CJS")
 	if(use.tmb)
 	{
@@ -542,10 +541,10 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 				refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,...)
 		else
 		  runmodel=mvmscjs_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-		                   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,sup=sup,getreals=getreals,useHess=useHess,...)
+		                   refit=refit,control=control,itnmax=itnmax,re=FALSE,compile=compile,clean=clean,sup=sup,getreals=getreals,real.ids=real.ids,useHess=useHess,optimize=optimize,...)
 		par=coef(runmodel)[,1]
 		runmodel$options=c(runmodel$options,list(accumulate=accumulate,initial=initial.list$par,method=method,
-				chunk_size=chunk_size,itnmax=itnmax,control=control))
+				chunk_size=chunk_size,itnmax=itnmax,control=control,use.tmb=use.tmb,use.admb=use.admb))
 		
 	} else
 	{
@@ -562,7 +561,7 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 		if(hessian)runmodel$hessian=attr(runmodel$optim.details,"details")$nhatend
 		runmodel$convergence=runmodel$optim.details$convcode
 		runmodel$options=list(accumulate=accumulate,initial=initial.list$par,method=method,
-				chunk_size=chunk_size,itnmax=itnmax,control=control)
+				chunk_size=chunk_size,itnmax=itnmax,control=control,use.tmb=use.tmb,use.admb=use.admb)
 	}
 		if(save.matrices)
 		{
@@ -615,6 +614,9 @@ object=list(model=model,data=data.proc,model.parameters=parameters,design.parame
 class(object)=class(runmodel)
 if(!use.tmb&!re & model!="MSCJS" & (nchar(model)<4 | (nchar(model)>=4 & substr(model,1,4)!="MVMS")))
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
+#if(use.tmb & (nchar(model)>=4 & substr(model,1,4)=="MVMS") & getreals)
+#  object$results$reals=predict(object,ddl=ddl,real.ids=real.ids,se=hessian)
+
 message(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }
