@@ -76,7 +76,7 @@ setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 		if(debug)message("deleting old TMB program and rebuilding\n")
 		if(file.exists(paste(tpl,".cpp",sep=""))) unlink(paste(tpl,".cpp",sep=""))
 		if(tpl%in%names(getLoadedDLLs()))dyn.unload(dynlib(tpl))
-		if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
+	  if(file.exists(dynlib(tpl))) unlink(dynlib(tpl))
 		file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
 		if(debug)message("compiling and linking TMB program\n")
 		compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
@@ -84,7 +84,7 @@ setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 	} else
 	{
 	  # if dll is available load it
-	  if(file.exists(paste(tpl,".dll",sep="")))
+	  if(file.exists(dynlib(tpl)))
 	  {
 	    if(debug)message("loading existing TMB program\n")
 	    if(!tpl%in%names(getLoadedDLLs())) {
@@ -96,7 +96,7 @@ setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 		{
 			file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
 			if(tpl%in%names(getLoadedDLLs()))dyn.unload(dynlib(tpl))
-			if(file.exists(paste(tpl,".dll",sep=""))) unlink(paste(tpl,".dll",sep=""))
+			if(file.exists(dynlib(tpl))) unlink(dynlib(tpl))
 	    if(debug)message("compiling and linking TMB program\n")
 		  compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
 			dyn.load(dynlib(tpl))          # Dynamically link the C++ code
