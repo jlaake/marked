@@ -418,7 +418,7 @@ if(substr(model,1,4)=="MVMS"&check)
 	}
 }
 fullddl=ddl
-if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
+if(model=="MSCJS" | model=="MSLD" | (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
 {
   if(debug)message("Simplifying design data\n")
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
@@ -453,10 +453,13 @@ for (i in 1:length(parameters))
 # Create design matrices for each parameter
 if(debug)message("Creating design matrices\n")
 dml=create.dml(ddl,model.parameters=parameters,design.parameters=design.parameters,chunk_size=chunk_size,simplify=simplify,use.admb=use.admb)
-if(model=="MSCJS"| (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))&(check|save.matrices)) {
+if(model=="MSCJS"| model=="MSLD"|(substr(model,1,4)=="MVMS" & (use.admb | use.tmb))&(check|save.matrices)) {
   fulldml=dml
   for(parx in names(dml))
+  {
     fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],,drop=FALSE]
+    parameters[[parx]]$indices=ddl[[paste(parx,".indices",sep="")]]    
+  }
 } else
   fulldml=dml
 # For HMM call set.initial to get ptype and set initial values
@@ -501,7 +504,10 @@ if(model=="MSCJS")
   }else{
 	    runmodel=mscjs(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
-    }
+  }
+if(model=="MSLD")
+    runmodel=msld_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+                       refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,useHess=useHess,...)
 if(model=="PROBITCJS")
 {
 	if(is.null(initial))

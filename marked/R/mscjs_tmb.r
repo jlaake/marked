@@ -22,7 +22,7 @@
 #' using autoscale or re-starting with initial values.  It is stored with returned model object.
 #' @param parameters equivalent to \code{model.parameters} in \code{\link{crm}}
 #' @param accumulate if TRUE will accumulate capture histories with common
-#' value and with a common design matrix for S and p to speed up execution
+#' value and with a common design matrix all parameters to speed up execution
 #' @param initial list of initial values for parameters if desired; if each is a named vector
 #' from previous run it will match to columns with same name
 #' @param method method to use for optimization; see \code{optim}
@@ -36,8 +36,8 @@
 #' @param scale vector of scale values for parameters
 #' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
 #' @param compile if TRUE forces re-compilation of tpl file
-#' @param extra.args optional character string that is passed to admb 
-#' @param clean if TRUE, deletes the tpl and executable files for amdb 
+#' @param extra.args optional character string that is passed to tmb
+#' @param clean if TRUE, deletes the dll and recompiles 
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
 #' @param ... not currently used

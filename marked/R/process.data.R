@@ -13,7 +13,7 @@
 #' history (\code{ch}) and a chosen \code{model} to define the relevant values.
 #' For example, number of capture occasions (\code{nocc}) is automatically
 #' computed based on the length of the encounter history (\code{ch}) in
-#' \code{data}. Currently, only 2 types of models are accepted in marked: cjs and js.  
+#' \code{data}. 
 #' The default time interval is unit time (1) and if this is
 #' adequate, the function will assign the appropriate length.  A processed data
 #' frame can only be analyzed using the model that was specified.  The
@@ -181,11 +181,16 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    # the bayesian models cannot deal with accumulation
    if(!model.list$accumulate)accumulate=FALSE
    ch.values=unique(unlist(strsplit(data$ch,",")))
-   nocc=model.list$nocc
+   nocc=model.list$nocc/model.list$divisor
    nocc.secondary=NULL
    num=model.list$num
-   if(model.list$strata&is.null(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
-	   stop("\nstrata.labels must be specified for stratified models\n")
+   if(model.list$strata)
+   {
+     if(is.null(strata.labels)&!model%in%c("HMMCJS2TL","HMMCJS1TL"))
+	      stop("\nstrata.labels must be specified for stratified models\n")
+     if(model=="MSLD" & "1" %in%strata.labels)
+        stop("1 cannot be used as a stratum label because it is reserved for a recovery in the MSLD model")
+   }
    if(model.list$IShmm)
    {
 	   model.list=setupHMM(model.list,model,strata.labels)
@@ -199,7 +204,10 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    } else
    {
 	   # Get unique ch values and use as strata.labels unless they are specified   
-	   inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
+	   if(model=="MSLD")
+	     inp.strata.labels=sort(ch.values[!(ch.values %in% c("0","1"))])
+	   else
+	     inp.strata.labels=sort(ch.values[!(ch.values %in% c("0"))])
 	   if(substr(model,1,4)%in%c("HMMU","MVMS"))
 	   {
 		   if(substr(model,1,4)=="MVMS")
@@ -222,8 +230,43 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 		   if(nstrata<2)stop("\nAny multistrata model must have at least 2 strata\n")
 	   } else
 		   unobserved=0
-	   
    }
+   #
+   #  If MS live-dead model, make sure there are no observations after recovery
+   #
+   if(model=="MSLD"){
+     test_recoveries=function(x) 
+     {
+       xx=strsplit(x,",")[[1]]
+       ipos=grep("1",xx)
+       if(length(ipos)==0)
+         return(FALSE)
+       else
+         if(ipos[1]==length(xx))
+           return(FALSE)
+       else
+         return(any(xx[(ipos[1]+1):length(xx)]!="0"))
+     }
+     tr=sapply(data$ch,test_recoveries)
+     if(any(tr)) stop(paste("The following records have a recapture after dead recovery:",paste(which(tr),collapse=",")))
+   # Also, modify capture history to make into a single observation by positioning any recovery as a 1 
+   # for the occasion after the interval in which it was recovered
+     modify_recoveries=function(x) 
+     {
+       xx=strsplit(x,",")[[1]]
+       ipos=grep("1",xx)
+       if(length(ipos)==0)
+         return(paste(c(xx[seq(1,length(xx)-1,2)],"0"),collapse=""))
+       else
+         if(ipos[1]==length(xx))
+           return(paste(c(xx[seq(1,length(xx)-1,2)],"1"),collapse=""))
+       else
+         return(paste(c(xx[seq(1,ipos[1]-1,2)],"1",rep("0",length(seq(ipos[1]+1,length(xx)-1,2)))),collapse=""))
+     }
+     data$ch=sapply(data$ch,modify_recoveries)
+     nocc=nocc+1
+   }
+   
    #
    #     If time intervals specified make sure there are nocc-1 of them if a vector
    #     and if a matrix rows must match number of animals and # cols = nocc+num
