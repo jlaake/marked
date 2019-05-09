@@ -224,6 +224,13 @@ full.design.data=vector("list",length=length(parameters))
    full.design.data$ehmat=data$ehmat
    if(data$model=="MVMSCJS")
 	   full.design.data=initiate_pi(data,full.design.data)
+   if(data$model=="MSLD")
+   {
+     if(is.null(full.design.data$p$fix))full.design.data$p$fix=NA
+     full.design.data$p$fix[full.design.data$p$occ==max(full.design.data$p$occ)]=0
+     full.design.data$Psi$fix[full.design.data$Psi$occ==max(full.design.data$Psi$occ)&
+                              full.design.data$Psi$stratum!=full.design.data$Psi$tostratum]=0
+   }
    # reset rownames
    for(i in 1:length(parameters))
      rownames(full.design.data[[i]])=NULL

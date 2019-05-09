@@ -1,5 +1,10 @@
-marked 1.2.2  20 Sept 2018
+marked 1.2.2  8 May 2019
 -----------------
+NEW
+* added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
+
+* added model MSLD for multistate live recapture and dead recovery in TMB.
+
 BUG FIXES
 
 * In mvmscjs the parameters were not in the correct order so the admb code did not work with the sealions example because the hessian was not in the expected order.  Thanks to Jaume Forcada for reporting the problem.
@@ -24,8 +29,6 @@ CHANGES
 
 * in make.design.data rownames are reset so they are in numeric order; should not affect code and more for readability for some parameters.
 
-NEW
-* added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
 
 marked 1.2.1 29 March 2018
 -----------------

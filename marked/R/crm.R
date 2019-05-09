@@ -348,12 +348,12 @@ if(re&!use.tmb) {
 	use.admb=TRUE
 	if(is.null(clean))clean=TRUE
 }
-if(use.admb | (!use.tmb &toupper(model)=="MSCJS"))
+if(use.admb | (!use.tmb &toupper(model)%in%c("MSCJS")))
 {
 	if(!re) crossed=FALSE
 	if(is.null(clean))clean=TRUE
 }
-if(use.tmb&is.null(clean))clean=FALSE
+if((use.tmb|toupper(model)%in%c("MSLD"))&is.null(clean))clean=FALSE
 #
 # If the design data have not been constructed, do so now
 #

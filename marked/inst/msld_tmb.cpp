@@ -8,7 +8,7 @@ Type objective_function<Type>::operator() ()
 {
   DATA_INTEGER(n);                            // number of capture histories
   DATA_INTEGER(m);                            // number of capture occasions
-  DATA_INTEGER(nS);                           // number of states excluding death state
+  DATA_INTEGER(nS);                           // number of states excluding death states (newly dead and dead)
   DATA_IMATRIX(ch);                           // capture history matrix; uses numeric values for states
   DATA_IVECTOR(frst);                         // occasion first seen for each history
   DATA_VECTOR(freq);                          // frequency of each capture history
@@ -93,13 +93,13 @@ Type objective_function<Type>::operator() ()
   vector<Type> uniquepsi(nrowpsi);     // temp vector for psis 
   Type psisum;                         // sum of psi for each state to normalize with
   
-  array<Type> psi(m-1,nS,nS);         // matrix for psis for each occasion 
-  array<Type> gamma(m-1,nS+1,nS+1);   // transition probability matrices for individual i
-  array<Type> dmat(m-1,nS+1,nS+1);    // observation probability matrices for individual i
-  Type u;                             // sum of state probabilities
-  vector<Type> pS(nS+1);              // update vector for prob of being in state j=1,nS + death       
-  vector<Type> S(nS+1);               // prob of being in state j=1,nS + death for each occasion
-  vector<Type> v(nS+1);               // temporary update vector
+  array<Type> psi(m-1,nS,nS);             // matrix for psis for each occasion 
+  array<Type> gamma(m-1,2*nS+1,2*nS+1);   // transition probability matrices for individual i
+  array<Type> dmat(m-1,nS+2,2*nS+1);      // observation probability matrices for individual i
+  Type u;                                 // sum of state probabilities
+  vector<Type> pS(2*nS+1);              // update vector for prob of being in state j=1,2*nS + 1       
+  vector<Type> S(2*nS+1);               // prob of being in state j=1,2*nS + 1 for each occasion
+  vector<Type> v(2*nS+1);               // temporary update vector
   vector<Type> vec;                   // temporary vector
   Type Lglki=0;                       // log-likelihood accumulator
   Type mu;
@@ -228,7 +228,7 @@ Type objective_function<Type>::operator() ()
                 if(r_randIndex(i2-1,L-1)>0)
                   mu+=r_randDM(i2-1,L-1)*r_u(r_randIndex(i2-1,L-1)-1)*exp(log_sigma_r(L-1));
             }	
-            r((j-1)*nS+k-1)=pow(1/(1+exp(-(uniquer(idx)+mu))),tint(i-1,j-1)); 
+            r((j-1)*nS+k-1)=(1/(1+exp(-(uniquer(idx)+mu)))); 
         }
         else
           r((j-1)*nS+k-1)=rfix(idx);     
@@ -277,10 +277,11 @@ Type objective_function<Type>::operator() ()
       {
         for(k2=1;k2<=nS;k2++)
           gamma(j-1,k-1,k2-1)=psi(j-1,k-1,k2-1)*phi(bindex-1);    // adjust psi for survival
-        gamma(j-1,k-1,nS)=1-phi(bindex-1);              // add death state value for each state
+        gamma(j-1,k-1,nS+k-1)=1-phi(bindex-1);                    // add newly dead state value for each state
+        gamma(j-1,nS+k-1,2*nS)=1;                                 // newly dead to permanently dead transition
         bindex++;
       }
-      gamma(j-1,nS,nS)=1;                             // death is an absorbing state
+      gamma(j-1,2*nS,2*nS)=1;                                    // permanently dead is an absorbing state
     }
     
     
@@ -292,25 +293,27 @@ Type objective_function<Type>::operator() ()
       for(k=1;k<=nS;k++)
       {
         dmat(j-1,k,k-1)=p(bindex-1);  
-        dmat(j-1,0,k-1)=1-dmat(j-1,k,k-1);  
+        dmat(j-1,0,k-1)=1-dmat(j-1,k,k-1);
+        dmat(j-1,0,nS+k-1)=1-r(bindex-1);  //did not recover newly dead
+        dmat(j-1,nS+1,nS+k-1)=r(bindex-1); // recovered newly dead
         bindex++;
       }
-      dmat(j-1,0,nS)=1;
+      dmat(j-1,0,2*nS)=1;                   //cannot observe permanently dead
     }
     //  HMM algorithm
     pS.setZero();                                      // initialize values to 0
     Lglki=0;	
     S.setZero();                                     
     S(ch(i-1,frst(i-1)-1)-1)=1;                        // set state prob to 1 for observed state at first observation
-    for(j=frst(i-1)+1;j<=m;j++)                      // loop over possible occasions from first(i)+1 to m
+    for(j=frst(i-1)+1;j<=m;j++)                       // loop over possible occasions from first(i)+1 to m
     {
-      for(k=1;k<=nS+1;k++)
+      for(k=1;k<=2*nS+1;k++)
       {
         pS(k-1)=0;
-        for(k2=1;k2<=nS+1;k2++)
+        for(k2=1;k2<=2*nS+1;k2++)
           pS(k-1)+= S(k2-1)*gamma(j-2,k2-1,k-1);
       }
-      for(k=1;k<=nS+1;k++)
+      for(k=1;k<=2*nS+1;k++)
       {
         v(k-1)=pS(k-1)*dmat(j-2,ch(i-1,j-1),k-1); // v is temp state vector alpha in Z&M
       }

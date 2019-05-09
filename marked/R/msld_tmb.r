@@ -55,7 +55,7 @@
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,getreals=FALSE, useHess=FALSE,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=FALSE,getreals=FALSE, useHess=FALSE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -70,7 +70,7 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 		time.intervals=x$time.intervals
 
 #  Store data from x$data into x
-	strata.labels=x$strata.labels
+	strata.labels=c(x$strata.labels,"1")
 	uS=x$unobserved
 	x=x$data
 #  set default frequencies if not used
@@ -79,9 +79,12 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 #  get first and last vectors, loc and chmat with process.ch and store in imat
 	ch=x$ch
 	imat=process.ch(ch,freq,all=FALSE)
-	chmat=matrix((unlist(strsplit(ch,","))),byrow=TRUE,ncol=nocc,nrow=length(ch))
-	for(nlabel in 1:length(strata.labels))
-		chmat=t(apply(chmat,1,sub,pattern=strata.labels[nlabel],replacement=nlabel))
+	chmat=matrix((unlist(strsplit(ch,""))),byrow=TRUE,ncol=nocc,nrow=length(ch))
+	for(i in 1:length(strata.labels))
+	{
+	  nlabel=length(strata.labels)-i+1
+	  chmat=t(apply(chmat,1,sub,pattern=strata.labels[nlabel],replacement=nlabel))
+	}
 	chmat=t(apply(chmat,1,function(x) as.numeric(x)))
 #  Use specified initial values or create if null
 	if(is.null(initial))
@@ -248,7 +251,7 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 		psi_idIndex=matrix(0,nrow=0,ncol=0)
 	}
 	
-	f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,nS=length(strata.labels),
+	f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,nS=length(strata.labels)-1,
 					ch=chmat,frst=model_data$imat$first,freq=model_data$imat$freq,tint=model_data$time.intervals,
 					nrowphi=length(phi_slist$set),	phidm=phidm[phi_slist$set,,drop=FALSE],
 					phifix=phifix[phi_slist$set],phiindex=phi_slist$indices[ddl$S.indices],
@@ -282,14 +285,23 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 		convergence=mod$convergence
 	} else
 	{
-		control$starttests=FALSE
-		if(!useHess)
-		   mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
-		else
-		  mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
-		par <- coef(mod, order="value")[1, ]
-		mod=as.list(summary(mod, order="value")[1, ])
-	    convergence=mod$convcode
+		if(method=="SANN")
+		{		  
+		  control$maxit=itnmax
+		  mod=optim(f$par,f$fn,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+		  par=mod$par
+		  convergence=mod$convergence
+    } else
+    {
+      control$starttests=FALSE
+      if(!useHess)
+        mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+      else
+        mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+      par <- coef(mod, order="value")[1, ]
+      mod=as.list(summary(mod, order="value")[1, ])
+      convergence=mod$convcode
+    }
 		lnl=mod$value		
 	}
 	fixed.npar=ncol(phidm)+ncol(rdm)+ncol(pdm)+ncol(psidm)
