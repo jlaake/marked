@@ -7,8 +7,9 @@
 mvmscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
   accumulate = TRUE, initial = NULL, method, hessian = FALSE,
   debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
-  control = NULL, scale, re = FALSE, compile = FALSE,
-  extra.args = "", clean = TRUE, sup, getreals = FALSE, ...)
+  control = NULL, re = FALSE, compile = FALSE, clean = TRUE, sup,
+  getreals = FALSE, real.ids = NULL, useHess = FALSE,
+  optimize = TRUE, vcv = FALSE, ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -18,13 +19,10 @@ mvmscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
 
 \item{fullddl}{list of dataframes for design data prior to simplification}
 
-\item{dml}{list of design matrices created by \code{\link{create.dm}} from
-formula and design data}
+\item{dml}{list of design matrices created by \code{\link{create.dm}} from formula and design data}
 
 \item{model_data}{a list of all the relevant data for fitting the model including
-imat, Phi.dm,p.dm,Psi.dm,Phi.fixed,p.fixed,Psi.fixed and time.intervals. It is used to save values
-and avoid accumulation again if the model was re-rerun with an additional call to cjs when
-using autoscale or re-starting with initial values.  It is stored with returned model object.}
+imat, Phi.dm,p.dm,Psi.dm,Phi.fixed,p.fixed,Psi.fixed and time.intervals. It is stored with returned model object.}
 
 \item{parameters}{equivalent to \code{model.parameters} in \code{\link{crm}}}
 
@@ -49,19 +47,23 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{control}{control string for optimization functions}
 
-\item{scale}{vector of scale values for parameters}
+\item{re}{currently ignored}
 
-\item{re}{if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer}
+\item{compile}{if TRUE forces re-compilation of cpp file}
 
-\item{compile}{if TRUE forces re-compilation of tpl file}
+\item{clean}{if TRUE, deletes the cpp and dll for tmb if use.tmb=TRUE}
 
-\item{extra.args}{optional character string that is passed to admb if use.admb==TRUE}
-
-\item{clean}{if TRUE, deletes the tpl and executable files for amdb if use.admb=T}
-
-\item{sup}{supplemental index values for constructing mvms model}
+\item{sup}{supplemental index values for constructing mvms model; these are defined in the crm code}
 
 \item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
+
+\item{real.ids}{vector of id values for which real parameters should be output with std error information}
+
+\item{useHess}{if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution}
+
+\item{optimize}{if TRUE, optimizes to get parameter estimates; set to FALSE to extract estimates of ADREPORTed values only}
+
+\item{vcv}{if TRUE, computes var-covariance matrix of ADREPORTed values}
 
 \item{...}{not currently used}
 }

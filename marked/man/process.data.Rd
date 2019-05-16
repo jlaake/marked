@@ -84,7 +84,7 @@ extent. Thus, it is necessary to process a dataframe with the encounter
 history (\code{ch}) and a chosen \code{model} to define the relevant values.
 For example, number of capture occasions (\code{nocc}) is automatically
 computed based on the length of the encounter history (\code{ch}) in
-\code{data}. Currently, only 2 types of models are accepted in marked: cjs and js.  
+\code{data}. 
 The default time interval is unit time (1) and if this is
 adequate, the function will assign the appropriate length.  A processed data
 frame can only be analyzed using the model that was specified.  The

@@ -5,6 +5,8 @@ NEW
 
 * added model MSLD for multistate live recapture and dead recovery in TMB.
 
+* added simulated annealing method (SANN) with optim for MSLD, MSCJS and MVMSCJS models. Note that this method does not implement a convergence criterion and simply runs until itnmax iterations are completed. You can get a report of iteration results using control=list(trace=1). You can also set the temp with control.  See ?optim for complete help on SANN.
+
 BUG FIXES
 
 * In mvmscjs the parameters were not in the correct order so the admb code did not work with the sealions example because the hessian was not in the expected order.  Thanks to Jaume Forcada for reporting the problem.

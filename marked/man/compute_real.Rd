@@ -7,7 +7,7 @@
 compute_real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
   vcv = FALSE, se = FALSE, chat = 1, subset = NULL,
   select = NULL, showDesign = FALSE, include = NULL,
-  uselink = FALSE)
+  uselink = FALSE, merge = FALSE)
 }
 \arguments{
 \item{model}{model object}
@@ -35,6 +35,8 @@ compute_real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
 \item{include}{vector of field names always to be included even when select or unique specified}
 
 \item{uselink}{default FALSE; if TRUE uses link values in evaluating uniqueness}
+
+\item{merge}{default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates}
 }
 \value{
 A data frame (\code{real}) is returned if \code{vcv=FALSE};

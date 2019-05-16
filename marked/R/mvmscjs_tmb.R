@@ -555,21 +555,30 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	    convergence=mod$convergence
 	  } else
 	  {
-	    control$starttests=FALSE
-	    if(!useHess)
-	      if(debug)
-	        mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	    if(method=="SANN")
+	    {		  
+	      control$maxit=itnmax
+	      mod=optim(f$par,f$fn,hessian=FALSE,control=control,itnmax=itnmax,method=method,...)
+	      par=mod$par
+	      convergence=mod$convergence
+	    } else
+	    {
+	      control$starttests=FALSE
+	      if(!useHess)
+	        if(debug)
+	          mod=optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	        else
+	          capture.output(mod<-optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method))
 	      else
-	        capture.output(mod<-optimx(f$par,f$fn,f$gr,hessian=FALSE,control=control,itnmax=itnmax,method=method))
-	    else
-	      if(debug)
-	         mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method)
-	      else
-	        capture.output(mod<-optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method))
-	    par <- coef(mod, order="value")[1, ]
-	    mod=as.list(summary(mod, order="value")[1, ])
-	    convergence=mod$convcode
-	    lnl=mod$value		
+	        if(debug)
+	           mod=optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method)
+	        else
+	           capture.output(mod<-optimx(f$par,f$fn,f$gr,f$he,hessian=FALSE,control=control,itnmax=itnmax,method=method))
+	        par <- coef(mod, order="value")[1, ]
+	        mod=as.list(summary(mod, order="value")[1, ])
+	        convergence=mod$convcode
+	     }
+	     lnl=mod$value
 	  }
 	} else
 	{
