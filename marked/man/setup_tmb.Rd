@@ -4,7 +4,7 @@
 \alias{setup_tmb}
 \title{TMB setup}
 \usage{
-setup_tmb(tpl, clean = FALSE)
+setup_tmb(tpl, clean = FALSE, debug = FALSE)
 }
 \arguments{
 \item{tpl}{character string for admb template file}

@@ -7,14 +7,14 @@
 crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
   model.parameters = list(), design.parameters = list(),
   initial = NULL, groups = NULL, time.intervals = NULL,
-  debug = FALSE, method = "BFGS", hessian = FALSE,
-  accumulate = TRUE, chunk_size = 1e+07, control = list(),
-  refit = 1, itnmax = 5000, scale = NULL, run = TRUE,
-  burnin = 100, iter = 1000, use.admb = FALSE, use.tmb = FALSE,
-  crossed = NULL, reml = FALSE, compile = FALSE, extra.args = NULL,
-  strata.labels = NULL, clean = NULL, save.matrices = TRUE,
-  simplify = FALSE, getreals = FALSE, check = FALSE, prior = FALSE,
-  prior.list = NULL, ...)
+  debug = FALSE, method = NULL, hessian = FALSE, accumulate = TRUE,
+  chunk_size = 1e+07, control = list(), refit = 1, itnmax = 5000,
+  scale = NULL, run = TRUE, burnin = 100, iter = 1000,
+  use.admb = FALSE, use.tmb = FALSE, crossed = NULL, reml = FALSE,
+  compile = FALSE, extra.args = NULL, strata.labels = NULL,
+  clean = NULL, save.matrices = FALSE, simplify = FALSE,
+  getreals = FALSE, real.ids = NULL, check = FALSE, prior = FALSE,
+  prior.list = NULL, useHess = FALSE, optimize = TRUE, ...)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -44,7 +44,7 @@ named from previous analysis only relevant values are used}
 
 \item{debug}{if TRUE, shows optimization output}
 
-\item{method}{optimization method for function \code{optimx}}
+\item{method}{optimization method}
 
 \item{hessian}{if TRUE, computes v-c matrix using hessian}
 
@@ -69,9 +69,9 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{iter}{number of iterations after burnin for mcmc (not realistic default)}
 
-\item{use.admb}{if TRUE creates data file for cjs.tpl and runs admb optimizer}
+\item{use.admb}{if TRUE uses ADMB for cjs, mscjs or mvms models}
 
-\item{use.tmb}{if TRUE runs TMB for cjs}
+\item{use.tmb}{if TRUE runs TMB for cjs, mscjs or mvms models}
 
 \item{crossed}{if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration}
 
@@ -91,11 +91,17 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
 
+\item{real.ids}{vector of id values for which real parameters should be output with std error information for TMB models; if NULL all ids used}
+
 \item{check}{if TRUE values of gamma, dmat and delta are checked to make sure the values are valid with initial parameter values.}
 
 \item{prior}{if TRUE will expect vectors of prior values in list prior.list; currently only implemented for cjsre_tmb}
 
 \item{prior.list}{which contains list of prior parameters that will be model dependent}
+
+\item{useHess}{if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution}
+
+\item{optimize}{if TRUE, optimizes to get parameter estimates; set to FALSE to extract estimates of ADREPORTed values only}
 
 \item{...}{optional arguments passed to js or cjs and optimx}
 }

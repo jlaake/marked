@@ -9,7 +9,7 @@ cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
   chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
   crossed = TRUE, compile = TRUE, extra.args = NULL, reml,
   clean = FALSE, getreals = FALSE, prior = FALSE,
-  prior.list = NULL, tmbfct = "f1", ...)
+  prior.list = NULL, tmbfct = "f1", useHess = FALSE, ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -69,6 +69,8 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 6) random_sigma_phi_prior: vector of sigma values for ln sigma_phi, 7) random_mu_p_prior: vector of mu values for ln sigma_p, 8) random_sigma_p_prior: vector of sigma values for ln sigma_p.}
 
 \item{tmbfct}{either "f1" - default or "f2" - any random effects treated as fixed effects or "f3" fixed effects fixed at mode and no random effects.}
+
+\item{useHess}{if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optim} or \code{\link{cjs.lnl}}}

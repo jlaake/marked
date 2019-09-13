@@ -8,7 +8,8 @@ mscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
   accumulate = TRUE, initial = NULL, method, hessian = FALSE,
   debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
   control = NULL, scale, re = FALSE, compile = FALSE,
-  extra.args = "", clean = TRUE, getreals = FALSE, ...)
+  extra.args = "", clean = TRUE, getreals = FALSE, useHess = FALSE,
+  ...)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -61,6 +62,8 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{clean}{if TRUE, deletes the tpl and executable files for amdb}
 
 \item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
+
+\item{useHess}{if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution}
 
 \item{...}{not currently used}
 }

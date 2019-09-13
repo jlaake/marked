@@ -1,0 +1,742 @@
+---
+title: "marked Package Vignette"
+author: "Jeff L. Laake, Devin S. Johnson, and Paul B. Conn"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    base_format: rmarkdown::html_vignette
+    number_sections: false
+vignette: >
+  %\VignetteIndexEntry{"marked Package Vignette"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+bibliography: "markedWriteupBib.bib"
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Summary {-}
+
+We describe an R package called `marked` for analysis of mark-recapture data. Currently, the package is capable of fitting Cormack-Jolly-Seber (CJS) models with maximum likelihood estimation (MLE) and Bayesian Markov Chain Monte Carlo (MCMC) methods. In addition, Jolly-Seber (JS) models can be fitted with MLE. Additional models will be added as the package is updated. We provide some example analyses with the well-known dipper data and compare run timing and results with MARK. For analysis with several thousand or more capture histories and several time-varying covariates, the run times with `marked` are substantially less. By providing this open source software, we hope to expand the analyst's toolbox and enble the knowledgeable user
+to understand fully the models and software. 
+
+# Introduction {-}
+
+Currently the most comprehensive software for analysis of capture-recapture
+data is MARK [@White1999]. MARK is a FORTRAN program for
+fitting capture-recapture models that are manually constructed with
+a graphical user interface. RMark [@Laake2008] is an R package
+that constructs models for MARK with user-specified formulas to replace
+the manual model creation. With RMark and MARK most currently available
+capture-recapture models can be fitted and manipulated in R. Additional
+R packages for analysis of capture-recapture data have been made available
+including Rcapture [@Baillargeon2007], mra [@McDonald2005],
+secr [@Borchers2008], BTSPAS [@Schwarz2009], SPACECAP
+[@Royle2009], and BaSTA [@Colchero2012]. Rcapture
+fits closed and open models in a log-linear framework. The mra package
+fits Cormack-Jolly-Seber (CJS) and the Huggins closed model with a
+``regression approach'' to model specification. The secr and SPACECAP
+packages provide spatially explicit modeling of closed capture-recapture
+data and BTSPAS fits time-stratified Petersen models in a Bayesian
+framework. BaSTA estimates survival with covariates from capture-recapture/recovery
+data in a Bayesian framework when many individuals are of unknown
+age. Each package is designed for a unique niche or structure. We
+believe these alternative packages in R are useful because they expand
+the analyst's toolbox and the code is open source which enables the
+knowledgeable user to understand fully what the software is doing.
+Also, this independent innovation provides testing for existing software
+and potential gains in developer knowledge to improve existing software.
+
+We developed this R package we named `marked` for analysis with
+marked animals in contrast to the R package unmarked [@Fiske2011]
+that focuses on analysis with unmarked animals. The original impetus
+for the package was to implement the CJS model using the hierarchical
+likelihood construction described by @Pledger2003 and to improve
+on execution times with RMark/MARK [@White1999;@Laake2008]
+for analysis of our own large data sets with many time-varying individual
+(animal-specific) covariates. Subsequently, we implemented the Jolly-Seber
+model with the @Schwarz1996 POPAN structure where the hierarchical
+likelihood construction idea extended to the entry of animals into
+the population. We also added a Bayesian Markov Chain Monte Carlo
+(MCMC) implementation of the CJS model based on the approach used
+by @ALBERT:1993fk for analyzing binary data with a probit
+regression model. 
+
+# Background {-}
+
+We assume you know and understand mark-recapture terminology and models.
+For background material on capture-recapture and MARK refer to [http://www.phidot.org/software/mark/docs/book/](http://www.phidot.org/software/mark/docs/book/).
+In the appendix, we provide a comparison of the MARK and `marked`
+data and model structures and details on likelihood construction for
+the CJS and JS models. Our focus in the vignette will be to provide
+examples on the use of `marked`.
+
+# Dipper data example {-}
+
+Anyone who has used RMark will find it easy to use `marked`
+because it has nearly identical syntax and structure with a few minor
+differences. The structure of the input dataframe for `marked`
+is also identical to RMark. Any dataframe with a character field named
+`ch` containing the capture history will work with `marked`.
+If the capture history represents more than one animal then the dataframe
+should contain the additional numeric field named `freq`, which
+is the number of animals represented by that capture history. However,
+it is not necessary to accumulate capture histories in the input data
+because the `process.data` step will accumulate duplicated
+records by default. There can be any number of additional fields,
+some of which can be used as covariates in the analysis. Some of the
+functions in `marked` and RMark have the same name (e.g., `process.data`,
+`make.design.data`), so only one of the packages should be
+loaded in R to avoid aliasing and resulting errors.
+
+We will start by fitting the simplest CJS model with constant $\phi$
+and $p$. The dipper data contain 294 records with the capture history
+(`ch`) and a factor variable `sex` with values Female
+or Male. Models are fitted with the function `crm` ([*c*]apture-[*r*]ecapture
+[*m*]odel). After a call to library to attach the package, and
+data to retrieve the dipper data from the package, the model is fitted
+with `crm` and assigned to the object named `model`:
+```{r, comment="", prompt=TRUE, message=FALSE}
+library(marked) 
+library(ggplot2)
+data(dipper)
+model=crm(dipper)
+```
+For this example, we are using the default CJS model and
+a default formula of `~ 1` (constant) for each parameter.
+The function `crm` calls three functions in turn: 1) `process.data`
+to process the data, 2) `make.design.data` to create the list
+of parameter-specific dataframes, and 3) `cjs`, to fit the
+CJS model with the defined formulas. The code reports progress and
+some results as it executes. We'll suppress these messages in later
+examples but show them here to explain some of the messages. When
+it processes the data, it collapses the 294 rows into 55 which are
+the unique number of rows in the data including `ch` and `sex`.
+After processing, it creates the design data and the design matrices
+for each parameter. Prior to the optimization, it also collapses the
+histories further from 55 to 32 which it can do here because `sex`
+is not used in either formula. The final steps are to compute initial
+values for the parameters and find the MLEs with the selected optimization
+method(s). As it progresses, the value of -2log-likelihood is reported
+every 100 evaluations of the objective function. It is not shown above
+because there were fewer than 100 function evaluations for this example.
+A brief listing of the model results is obtained by typing model which
+invokes the function `print.crm` because `class(model)="crm"`.
+
+```{r, comment="",prompt=TRUE}
+model
+```
+
+The output includes the number of parameters (`npar`),
+-2log-likelihood, Akaike's Information Criterion (`AIC`), and
+the estimates for $\phi$ and $p$. 
+
+Estimates of precision are not shown because the default is `hessian}=FALSE
+and it must be set to TRUE to get estimates of precision. This default
+was chosen because the `marked` package does not count parameters
+from the hessian, so there is no need to compute it for each model
+as with MARK. The hessian may never be needed if the model is clearly
+inferior. Also, this allows the model to be fitted again from the
+final or different estimates to check for convergence without the
+penalty of computing the hessian at the final values each time. Separate
+functions (`cjs.hessian` and `js.hessian`) are provided
+to compute and store in the model the variance-covariance matrix from
+the hessian at the final estimates as shown below:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE}
+model=cjs.hessian(model)
+model
+```
+
+Once the hessian has been computed, printing the model will
+display the standard errors and 95% normal confidence intervals for
+the parameter estimates on the link scale (e.g., logit for $\phi$
+and $p$). You can set `hessian=TRUE` in the call to `crm`
+if you want to compute it when the model is fitted. 
+
+You'll never fit only one model to data, so the most efficient approach
+is to call `process.data` and `make.design.data` separately
+and pass the results to `crm` so they can be used for each
+fitted model as shown below:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE,results='hide'}
+dipper.proc=process.data(dipper)
+dipper.ddl=make.design.data(dipper.proc)
+Phi.sex=list(formula=~sex)
+model=crm(dipper.proc,dipper.ddl,model.parameters=list(Phi=Phi.sex),
+          accumulate=FALSE)
+```
+
+Collapsing capture history records is controlled by the
+`accumulate` arguments in `process.data` and `crm`.
+In the above example, `accumulate` was TRUE for the `process.data`
+step but it was turned off for the model fit because it would have
+not resulted in any accumulation with the sex term in the model. Typically
+the default values are optimal but if you are fitting many models
+and most are complex models, then it may save time to accumulate in
+the `process.data` step but not for the model fitting step. 
+
+If you fit more than a few models, use `crm.wrapper` rather
+than `crm`. It fits a set of models and returns a list with
+a model selection table that summarizes the fit of all the models.
+By default, `crm.wrapper` stores the model results externally
+and in the list it only stores the names of the files containing the
+models. If you set `external=FALSE`, then it will store the
+model results in the list as shown in the example below.
+
+```{r, comment="",prompt=TRUE,tidy=FALSE,results='hide',message=FALSE}
+dipper.proc=process.data(dipper)
+dipper.ddl=make.design.data(dipper.proc)
+fit.models=function()
+{
+  Phi.sex=list(formula=~sex)
+  Phi.time=list(formula=~time)
+  p.sex=list(formula=~sex)
+  p.dot=list(formula=~1)
+  cml=create.model.list(c("Phi","p"))
+  results=crm.wrapper(cml,data=dipper.proc, ddl=dipper.ddl,
+                      external=FALSE,accumulate=FALSE)
+  return(results)
+}
+dipper.models=fit.models()
+```
+
+The model selection table is displayed with:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE}
+dipper.models
+```
+
+A non-zero value for convergence means the model did not
+converge. If the models are not stored externally, an individual model
+can be extracted from the list with either the model number which
+is listed in the model table or with the model name which is the model
+formula specifications pasted together as shown below:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE}
+dipper.models[[1]]
+dipper.models[["Phi.sex.p.dot"]]
+```
+
+If the models are stored externally (by setting `external=TRUE` in the `crm.wrapper` call), they can be retrieved
+with the function `load.model` as shown below:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE,results='hide',echo=FALSE, message=FALSE}
+dipper.proc=process.data(dipper)
+dipper.ddl=make.design.data(dipper.proc)
+fit.models=function()
+{
+  Phi.sex=list(formula=~sex)
+  Phi.time=list(formula=~time)
+  p.sex=list(formula=~sex)
+  p.dot=list(formula=~1)
+  cml=create.model.list(c("Phi","p"))
+  results=crm.wrapper(cml,data=dipper.proc, ddl=dipper.ddl,
+                      external=TRUE,accumulate=FALSE, replace=TRUE)
+  return(results)
+}
+dipper.models=fit.models()
+```
+
+```{r, comment="",prompt=TRUE,tidy=FALSE}
+model=load.model(dipper.models[[1]])
+model
+```
+
+To make the analysis more interesting, we will add some covariates
+for $\phi$ and p. For $\phi$, we will add a static covariate `weight`
+which is a random value between 1 and 10. For $\phi$, we also add
+a time-varying covariate `Flood` which is the same for all
+dippers but varies by time with a 0 value for times 1,4,5,6 and a
+value of 1 for times 2 and 3. For p, we will add a time-varying individual
+covariate `td` (trap dependence) which is the 0/1 value of
+the capture from the previous occasion. Static covariates are entered
+in the dataframe in a single column and time-varying covariates have
+a column and name for each occasion with the appropriate time appended
+at the end of each name. In this case, `Flood` will be `Flood1,...,Flood6`
+and for `td` it will be `td2,...,td7` because time for
+$\phi$  is based on the time at the beginning of the interval and
+for `p` it is the time for the capture occasion. Below the
+names of the covariates in the dataframe are shown after they are
+created:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE}
+data(dipper)
+# Add a dummy weight field which are random values from 1 to 10
+set.seed(123)
+dipper$weight=round(runif(nrow(dipper),0,9),0)+1
+# Add Flood covariate
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+colnames(Flood)=paste("Flood",1:6,sep="")
+dipper=cbind(dipper,Flood)
+# Add td covariate, but exclude first release as a capture
+# splitCH and process.ch are functions in the marked package
+td=splitCH(dipper$ch)
+td=td[,1:6]
+releaseocc=process.ch(dipper$ch)$first
+releaseocc=cbind(1:length(releaseocc),releaseocc)
+releaseocc=releaseocc[releaseocc[,2]<nchar(dipper$ch[1]),]
+td[releaseocc]=0
+colnames(td)=paste("td",2:7,sep="")
+dipper=cbind(dipper,td)
+# show names
+names(dipper)
+
+```
+
+Next we process the data with the default CJS model and make the design
+data with parameters that identify which covariates to use for each
+parameter. By default, each covariate in the dataframe is added to
+the design data of each parameter but the argument static can be used
+to limit the variables appended and the time-varying argument is needed
+to identify which covariates vary by time and should be collapsed
+into a single column. If we did not include the static argument for
+$\phi$, then `weight` and each of the `td` columns
+would also be included and for `p`, weight and each of the
+`Flood` columns would be included. If `td` was added
+to the time-varying argument for $\phi$ and `Flood` was added
+for `p`, then we would have also needed to add `td1`
+and `Flood7` due to the different time labels for $\phi$ and
+`p`. We have no intention to use those variables so it is best
+to specify what is needed. After specifying the design lists for $\phi$
+and `p`, they are used in the call to `make.design.data`
+and the resulting dataframe names are shown below:
+
+```{r, comment="",prompt=TRUE,tidy=FALSE,results='hide'}
+# Process data
+dipper.proc=process.data(dipper)
+# Create design data with static and time varying covariates
+design.Phi=list(static=c("weight"),time.varying=c("Flood"))
+design.p=list(static=c("sex"),time.varying=c("td"),
+                        age.bins=c(0,1,20))
+design.parameters=list(Phi=design.Phi,p=design.p)
+ddl=make.design.data(dipper.proc,parameters=design.parameters)
+names(ddl$Phi)
+names(ddl$p)
+```
+
+Next we define the models for $\phi$ and $p$ that we want
+to fit and call crm.
+
+```{r, comment="",prompt=TRUE,tidy=FALSE,results='hide'}
+Phi.sfw=list(formula=~Flood+weight)
+p.ast=list(formula=~age+sex+td)
+model=crm(dipper.proc,ddl,hessian=TRUE,
+           model.parameters=list(Phi=Phi.sfw,p=p.ast))
+```
+
+Below we create a range of data values to compute predicted $\phi$
+values and then plot the results for Flood and non-Flood years for
+a range of weights. Not surprising that the slope for weight is nearly
+0 because the weight values were generated randomly.
+
+```{r, fig=TRUE,comment="",prompt=TRUE,tidy=FALSE}
+newdipper=expand.grid(sex=c("Male","Female"),weight=1:10,Flood1=0,
+      Flood2=1,Flood3=1,Flood4=0,Flood5=0,Flood6=0,td2=0,td3=c(0,1),
+      td4=c(0,1),td5=c(0,1),td6=c(0,1),td7=c(0,1)) 
+reals=predict(model,newdata=newdipper,se=TRUE)
+reals$Phi$Flood=factor(reals$Phi$Flood,labels=c("Non-flood","Flood"))
+ggplot(reals$Phi,aes(weight,estimate,ymin=lcl,ymax=ucl))+
+      geom_errorbar(width=0.2)+geom_point()+geom_line()+
+      xlab("\nWeight")+ylab("Survival\n")+facet_grid(Flood~.)
+```
+
+Fitting an MCMC CJS model (`probitCJS`) to the dipper data
+is quite similar to the MLE models with the added arguments `burnin`
+and `iter` to control the number of burnin iterations
+and the number of iterations to perform after the burnin
+process. The following fits `Phi(~Flood) p(~sex+time)`
+with low values set for `burnin` and `iter` to reduce
+the vignette build time. 
+
+```{r, comment="",prompt=TRUE,tidy=FALSE, results='hide'}
+data(dipper)
+# Add Flood covariate
+Flood=matrix(rep(c(0,1,1,0,0,0),each=nrow(dipper)),ncol=6)
+colnames(Flood)=paste("Flood",1:6,sep="")
+dipper=cbind(dipper,Flood)
+design.parameters=list(Phi=list(time.varying="Flood"))
+model.parameters=list(Phi=list(formula=~Flood),
+                     p=list(formula=~time+sex))
+MCMCfit=crm(dipper,model="probitCJS",
+            model.parameters=model.parameters,
+            design.parameters=design.parameters,
+            burnin=1000,iter=5000) 
+```
+
+The results shown are the mode,mean,standard deviation, and 95\% highest
+posterior density interval for the beta parameters and unique $\phi$
+and $p$ real values.
+
+```{r, comment="",prompt=TRUE}
+# beta estimates
+MCMCfit
+```
+
+```{r, comment="",prompt=TRUE}
+# real estimates
+MCMCfit$results$reals
+```
+
+
+# References {-}
+<div id="refs"></div>
+
+# Appendix {-}
+
+## Model construction {-}
+
+The manner in which models are constructed in the `marked` package
+is different than in MARK. We start by describing how MARK specifies
+and constructs models and how the `marked` package differs.
+The likelihood for CJS/JS is a product multinomial and the multinomial
+cell probabilities are functions of the parameters. We will focus
+on CJS which has two types of parameters: $p$ (capture/recapture
+probability) and $\phi$ (apparent survival). Each cell is associated
+with a release cohort and recapture time (occasion). The cohorts can
+be further split into groups based on categorical variables (e.g.,
+sex). In MARK, a parameter index matrix (PIM) is used to specify the
+parameters. Each cell can have a unique index for each type of parameter
+type (e.g., $p$ and $\phi$). As a very simple example, we will consider
+a CJS model for a single group with k=4 occasions. For this structure
+the PIMS are triangular with a row for each cohort released at each
+occasion (time) and the column representing the occasions (times)
+following the release. Using an unique index for each potential parameter,
+the PIMS would be:
+
+```{r, comment="",prompt=TRUE, echo=FALSE}
+library(kableExtra)
+
+tab <- rbind(
+  c("1", " 1"," 2"," 3"," 7"," 8"," 9"),
+  c("2", NA, " 4"," 5", NA, "10","11"),
+  c("3", NA, NA, " 6", NA, NA, " 12")
+)
+colnames(tab) <- c("Cohort", "2", "3", "4", "2", "3", "4")
+
+options(knitr.kable.NA = '')
+knitr::kable(tab, "html", row.names = FALSE, align = c("l",rep("r",6)), booktabs=TRUE) %>% 
+  kableExtra::kable_styling(full_width = FALSE) %>% 
+  kableExtra::add_header_above(c(" "=1, "Time" = 3, "Time" = 3), line = FALSE) %>% 
+  kableExtra::add_header_above(c(" "=1, "$\\phi$" = 3, "$p$" = 3)) %>% 
+  kableExtra::column_spec(c(1,4), border_right = TRUE) %>% 
+  kableExtra::column_spec(1:7, width_min="3em", monospace = TRUE)
+
+```
+
+The index 5 represents survival of the second release cohort
+between occasions 3 and 4 and index 8 represents recapture probability
+of the first release cohort on the third occasion. A separate set
+of PIMS is created for each group defined in the data. For this example,
+if there were $g$ groups there would be $g\times 12$ possible
+unique indices.
+
+Some reduced models with constraints on parameters can be constructed
+by modifying the PIMS. For example, a model with constant survival
+and capture probability (Phi(.)p(.)) could be specified by setting
+all of the PIM values to 1 for the $\phi$ PIM and 2 for the $p$
+PIM. Not all reduced models can be specified by modifying the PIMS
+and more generally reduced models are constructed with a design matrix
+which is a set of linear constraints. Each parameter index specifies
+a row in the design matrix which can be used to apply constraints
+on the parameters and to relate covariates to the parameters. The
+PIM approach minimizes the work of manually creating a design matrix
+by reducing the set of potential parameters and thus the number of
+rows in the design matrix. For our example, there would be 12 rows
+in the design matrix and each column in the design matrix ($X$) represents
+one of the parameters in the vector$\beta$. If a logit link is used,
+the real parameters $\theta$ (e.g., $\phi$ and $p$ in CJS) are:
+
+\begin{equation}
+  \theta=\frac{1}{1+\exp(-X\beta)}
+  (\#eq:link)
+\end{equation}
+
+To specify the Phi(.)p(.) model, the design matrix ($X$)
+would have 12 rows and 2 columns. The first column in $X$ would have
+a 1 in the first six rows (indices 1-6) and a 0 in the last six rows
+(indices 7-12). The second column would have 0 in the first six rows
+and a 1 in the last 6 rows. The resulting model would have two parameters
+with the first representing $\phi$ and the second $p$.
+
+To automate the creation of design matrices with formula, the RMark
+package creates "design data" which are data about the parameters
+like cohort, time, group, and any related variables. However, having
+a single $X$ becomes problematic with individual covariates (variables
+that differ for animals in the same group/cohort). In MARK, these
+individual covariates are entered into the design matrix as a covariate
+name. When the real parameters are computed, the name of the covariate
+is replaced with the value for an animal. If there are only a few
+individual covariates and small number of animals, the time required
+for replacement and computation is minor, but when the individual
+covariates differ in time, there is a different covariate name for
+each time and most rows in the design matrix must be recomputed which
+results in longer execution times for large models. 
+
+Even if computation time is not limiting, we agree with @McDonald2005
+that the PIMs used in MARK can be quite confusing to the novice user
+because they are an additional layer of abstraction from the data.
+PIMS are useful for manual model creation, but they become an unnecessary
+nuisance when models and design matrices are created with formula.
+Explicit PIMS can be avoided by having an underlying real parameter
+for each animal for each occasion regardless of the release cohort.
+It can be viewed as a rectangular matrix with a column for each animal
+and a row for each occasion. That was the solution of @McDonald2005
+who in their mra package use a rectangular covariate matrices as predictor
+for the real parameters as in standard regression. 
+
+We use a similar approach that we believe is simpler for the user.
+For a specified model structure (e.g., CJS), the `marked` package
+creates from the raw data, a list of dataframes. Each dataframe contains
+the covariate data for a type of parameter in the model (e.g., $\phi$
+and $p$). The dataframes contain a record for each animal-occasion
+and the columns are the covariates. Each record contains the covariate
+values for that animal-occasion. If the covariate is constant across
+time then the value is the same value in each record for an animal
+and the value may be different for each occasion if the covariate
+is time-varying. Time-varying covariates must be named in the raw
+data in a certain manner and specified in the processing step. Each
+column in the dataframe is a vector that is equivalent to one of the
+covariate matrices in mra; however, rather than specifying the model
+as a set of covariate matrices, the standard R model formula (e.g.,
+`~time+sex`) can be used with the dataframe for each
+parameter which is even closer to a typical regression analysis.
+
+A separate dataframe is created for each parameter to allow different
+data (e.g., time values for $\phi$ and $p$) and number of occasions
+(e.g., $\phi$ and $p$ in CJS) for each parameter. For $\phi$ and
+$p$ in the CJS model, there are $n(k-1)$ rows for $n$ animals and
+$k-1$ occasions for each parameter but time is labeled by 1 to $k-1$
+for $\phi$ and 2 to $k$ for $p$. For the JS model, there are $n(k-1)$
+records for survival probability and entry probability, but for capture
+probability there are $nk$ records because the initial capture event
+is modeled. 
+
+The parameter-specific animal-occasion dataframes are automatically
+created from the user's data which contain a single record per animal
+containing the capture history and any covariates. Some covariates
+like cohort, age, and time are generated automatically for each record.
+Other static and time-varying covariates specified in the data are
+added. Static variables (e.g., sex) are repeated for each occasion
+for each animal. Time-varying covariates are specified in the data
+using a naming convention of `vt` where `v` is the covariate
+name and `t` is a numeric value for the time (occasion) (e.g.,
+td19 contains the value of covariate td at time 19). The time-varying
+covariates are collapsed in the animal-occasion dataframes to a single
+column with the name identified by `v` and each record contains
+the appropriate value for the occasion. All of this is transparent
+to the user who only needs to specify a dataframe, the type of model
+(e.g., CJS), the variables that should be treated as time-varying,
+and the formula for each parameter.
+
+With the R function model.matrix, the formula is applied to the dataframe
+to create the design matrix for each parameter (e.g, $X_{\phi}$,$X_{p}$).
+They are each equivalent to a portion of the design matrix in MARK
+for an animal which are then "stacked on top of one another" to
+make a matrix for all animals. For maximum likelihood estimation (MLE),
+equation \@ref(eq:link) (or similar inverse link function) is applied
+and the resulting vector is converted to a matrix with $n$ rows and
+a column for each required occasion ($k-1$ or $k$). For Bayesian
+MCMC inference in `marked`, only$X\beta$ are needed for updating.
+
+
+## Model fitting {-}
+
+Currently there are only three types of models implemented in the
+`marked` package: 1) CJS, 2) JS, and 3) probitCJS. The first
+two are based on MLE and the third is an MCMC implementation. The likelihoods for CJS and JS were developed
+hierarchically as described by @Pledger2003 for CJS. For simplicity
+we only consider a single animal to avoid the additional subscript.
+Let $\omega$ be a capture history vector having value $\omega_{j}$=
+1 when the animal was initially captured and released or recaptured
+at occasion $j$ and $\omega_{j}$= 0 if the animal was not
+captured on occasion $j$, for occasions $j=1,\dots,k$.
+The probability of observing a particular capture history $Pr(\omega)$
+for CJS can be divided into two pieces ($Pr(\omega)=Pr(\omega_{1})Pr(\omega_{2})$:
+1) $\omega_{1}$ is the portion of the capture history from the initial
+release (i.e., first 1) to the last occasion it was sighted (i.e.,
+last 1), and 2) $\omega_{2}$ is from the last 1 to the last occasion.
+$Pr(\omega_{1})$ is easily computed because the time period when
+the animal was available for capture is known but $Pr(\omega_{2})$
+is more difficult to compute because it is unknown whether the animal
+survived until the last occasion, or if it died, when it died. Typically,
+$Pr(\omega_{2})$ has been computed recursively (Nichols 2005). A
+hierarchical construction is more direct and understandable. As described
+in @Pledger2003, we let $f$ be the occasion an animal
+was released and let $d$ be the occasion after which the animal
+is no longer available to be recaptured due to death or termination
+of the study. Then $Pr(\omega|\, f)=\sum_{d}Pr(\omega|\, f,\, d)Pr(d\,|\, f)$
+where the conditional probability $Pr(\omega|\, f,\, d)$ is:
+$$
+Pr(\omega|\, f,\, d)=\prod_{j=f+1}^{d}p_{j}^{\omega_{j}}(1-p_{j})^{(1-\omega_{j})}
+$$
+and the departure probability is 
+$$
+Pr(d\,|\, f)=\left(\prod_{j=f}^{d-1}\phi_{j}\right)(1-\phi_{d})
+$$
+Viewed in this way, it is possible to construct the likelihood values
+for all of the observations with a set of matrices as we describe
+in the Appendix. 
+
+The hierarchical approach is easily extended to JS. Now the capture
+history has an additional component with $Pr(\omega)=Pr(\omega_{0})Pr(\omega_{1})Pr(\omega_{2})$
+where $\omega_{0}$ is the portion of the capture history vector from
+the first occasion ($j$=1) to the occasion the animal was first
+seen ($j=f$). The $Pr(\omega_{0})$ is similar to $Pr(\omega_{2})$
+but now it is $e$, the occasion at which the animal was first
+available for capture (i.e., entered in the prior interval) that is
+unknown. The CJS likelihood provides $Pr(\omega|\, f)$ so we only
+need to compute $Pr(\omega_{0})=\sum_{e=0}^{f-1}Pr(\omega_{0}|\, e)\pi_{e}$
+where $\pi_{e}$ is the probability of an animal enters the population
+in the interval between occasion $e$ and $e+1$ ($\sum_{e=1}^{k-1}\pi_{e}=1-\pi_{0}$;
+pent parameters in MARK and specified as $\beta$ by \citet{Schwarz1996})
+and 
+$$
+Pr(\omega_{0}|\, e)=\left(\prod_{j=e+1}^{f-1}(1-p_{j})\right)p_{f}
+$$
+
+The JS likelihood also contains a component for animals
+that entered but were never seen. The details for the JS likelihood
+construction are provided in the Appendix.
+
+The MLEs are obtained numerically by finding the minimum of the negative
+log-likelihood using optimization methods provided through the optimx
+R package (Nash and ). The default optimization method is BFGS but
+you can specify alternate methods and several methods used independently
+or in sequence as described by Nash and (). Initial values for parameters
+can either be provided as a constant (e.g., 0) or as a vector from
+the results of a previously fitted similar model. If initial values
+are not specified then they are computed using general linear models
+(GLM) that provide approximations. Using the underlying idea in @Manly1968
+we compute initial estimates for capture-probability $p$ for occasions
+2 to $k-1$ using a binomial GLM with the formula for $p$ which is
+fitted to a sequence of Bernoulli random variables that are a subset
+of the capture history values $y_{ij}$ $i=1,...,n$ and $j=f_{i}+1,...,l_{i}-1$
+where $f_{i}$ and $l_{i}$ are the first and last occasions the $i^{th}$
+animal was seen. A similar but more ad-hoc idea is used for $\phi$.
+We know the animal is alive between $f_{i}$ and $l_{i}$ and assume
+that the animal dies at occasion $l_{i}+1\leq k$. We use a binomial
+GLM with the formula for $\phi$ fitted to the $y_{ij}^{*}$ $i=1,...,n$
+and $j=f_{i}+1,...,l_{i}+1\leq k$ where $y_{ij}^{*}$=1 for $j=f_{i}+1,...,l_{i}$
+and $y_{ij}^{*}$=0 for $j=l_{i}+1\leq k$. For $\phi$ and $p$,
+a logit link is used for MLE and a probit link for MCMC. For JS, a
+log link is used for $f^{0}$, the number never captured and the estimate
+of super-population size is the total number of individual animals
+plus $f^{0}$. Also, for JS a multinomial logit link is used for $\pi_{e}$.
+The initial value is set to 0 for any $\beta$ that is not estimated
+(e.g., $p_{K}$ in CJS or $p_{1}$,$\pi_{e}$, $N$ for JS). 
+
+
+## Likelihood details {-}
+
+Here we provide some details for the likelihoods that are computed
+in cjs.lnl and cjs.f for the CJS model and in js.lnl for the JS model.
+Let $\phi$,$M$ $p$ be $n\times k$ matrices which are functions
+of the parameters where$\phi_{ij}$ is the survival probability for
+animal $i$ from occasion $j-1$ to $j$ ($\phi_{i1}=1$ ), $m_{ij}$
+is the probability of dying in the interval $j$ to $j+1$ ($m_{ik}=1)$
+and $p_{ij}$ is the capture probability for animal $i$ on occasion
+$j$ ($p_{i1}=0$). In addition we define a series of matrices and
+vectors computed from the data in the function process.ch. Let $C$
+be an $n\times k$ matrix of the capture history values and $f_{i}$and
+$l_{i}$ are the first and last occasions the $i^{th}$ animal was
+seen. Derived from those values are $n\times k$ matrices $L$, $F$
+and $F^{+}$ which contain 0 except that $L_{ij}=1\; j\geq l_{i}$,$F_{ij}=1\; j\geq f_{i}$
+and $F_{ij}^{+}=1\; j>f_{i}$. The likelihood calculation has the
+following steps where the matrix multiplication is element-wise and
+$1$ and represents an $n\times k$ matrix where each element is 1:
+
+1. Construct the $n\times k$ matrix $\phi'=1-F^{+}+\phi F^{+}$which
+is the $\phi$ matrix modified such that $\phi_{ij}=1$ for $j\leq f_{i}$.
+2. Construct the $n\times k$ matrix $\phi*$from $\phi'$ where $\phi_{ij}*=\prod_{i=1}^{j}\phi_{ij}'$.
+3. Construct the $n\times k$ matrix $p'=1-F^{+}+F^{+}(Cp+(1-C)(1-p))$.
+4. Construct the $n\times k$ matrix $p*$from $p'$ where $p_{ij}*=\prod_{i=1}^{j}p_{ij}'$.
+5. Compute $n\times1$ vector of probabilities of observed capture histories
+$Pr(\omega_{i})\; i=1,...,n$ which are the sums of the rows of $LM\phi^{*}p^{*}$.
+6. Compute the log-likelihood $\sum_{i=1}^{n}\ln(Pr(\omega_{i}))$
+
+The R code translates from the mathematics quite literally as: 
+
+```{r, eval=FALSE}
+ Phiprime = 1-Fplus + Phi*Fplus
+ Phistar = t(apply(Phiprime,1,cumprod))
+ pprime = (1-Fplus)+Fplus*(C*p+(1-C)*(1-p))
+ pstar = t(apply(pprime,1,cumprod))
+ pomega = rowSums(L*M*Phistar*pstar)
+ lnl = sum(log(pomega))
+```
+
+While this code is simple it is faster if the apply is replaced
+with a loop because there are far more rows than occasions or replaced
+with compiled code which we did with a FORTRAN subroutine (cjs.f called
+from cjs.lnl).
+
+The Jolly-Seber likelihood can be partitioned into 3 components: 1)
+CJS likelihood for $Pr(\omega_{1})Pr(\omega_{2})$ treating the first
+``1'' as a release, 2) a likelihood component for $Pr(\omega_{0})$;
+entry and first observation, 3) a component for those that entered
+before each occasion but were never seen. We define an additional
+$n\times k$ matrix $\pi$ which are the entry probabilities into
+the population (specified as $\beta$ by @Schwarz1996) with
+the obvious constraint that $\sum_{j=0}^{k-1}\pi_{ij}=1$ and $N_{g}\: g=1,...,G$
+is the abundance of animals in each of the defined $G$ groups (e.g.,
+male/female) that were in the population at some time (super-population
+size). $N_{g}=n_{g}+f_{g}^{0}$ where $n_{g}$ is the number observed
+in the group and $f_{g}^{0}$ are the estimated number of animals
+in the group that were never seen.
+
+The same hierarchical approach used for CJS can be used for the second
+component. Construct the capture history probability for a given entry
+time and then sum over all possible entry times. . The second component
+is constructed with the following steps:
+
+1. Construct the $n\times k$ matrix $E=(1-p)\phi(1-F)+F$,
+2. Construct the $n\times k$ matrix $E*$where $E_{ij}*=\prod_{l=j}^{k}E_{il}$,
+3. Compute $n\times1$ vector of probabilities $Pr(\omega')$ which are
+the sums of the rows of $E*(1-F^{+})\pi$ multiplied by the vector
+$p_{if_{i}}\: i=1,...,n$, 
+4. Compute the log-likelihood $\sum_{i=1}^{n}\ln(Pr(\omega_{i}'))$.
+
+For the third likelihood component for missed animals, we constructed
+$G\times k$ dummy capture histories of all 0's except for a ``1''
+at the occasion the animals entered. From the CJS portion of the code,
+we obtained $p_{gj}^{0}$ the probability that an animal released
+in group $g$ on occasion $j$ would never be captured. The final
+log-likelihood component is:
+$$
+\sum_{g=1}^{G}f_{g}^{0}\ln\left[\sum_{j=1}^{k}\pi_{g,j-1}(1-p_{gj})p_{gj}^{0}\right]+\ln(N_{g}!)-\ln(f_{g}^{0}!)
+$$
+
+
+The JS log-likelihood is the total of the 3 components plus $-\sum_{g=1}^{G}\sum_{j=1}^{k}\ln(n_{gj}!)$
+which do not depend on the parameters but is added after optimization
+in function js, to be consistent with the output from MARK.
+
+With the structure we have used, the design matrices can become quite
+large and available memory could become limiting. For the design matrices,
+we use sparse matrices with the R package Matrix (citation). In addition,
+for MLE analysis, we use the following to reduce the required memory:
+
+1. We reduce the data to $n^{*}\leq n$ individuals by aggregating records
+with identical data and using the frequencies ($f_{1},...,f_{n^{*}};n=\sum_{i=1\:}^{n^{*}}f_{i}$)
+in the likelihood. 
+2. We construct the design matrix $X$ incrementally with a user-specified
+size of data chunk that is processed at one time.
+3. We retain only the rows of $X$ which are unique for the design and
+including any fixed parameters which can be animal-specific. 
+
+For Bayesian MCMC inference, we cannot aggregate records but we reduce
+the required memory by:
+
+1. Eliminating the unused animal-occasion data for occasions prior to
+and including the release occasion for the animal, and
+2. Storing only the unique values of the real parameters which are unique
+rows of $X_{\phi}$and $X_{p}$.
+
+## Appendix References {-}
+<div id="refs"></div>

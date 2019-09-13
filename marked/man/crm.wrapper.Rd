@@ -42,6 +42,8 @@ type; if NULL it is created; For rerun_crm, must be the same ddl as used with or
 
 \item{env}{environment to find model specifications if not parent.frame}
 
+\item{replace}{if TRUE replace any existing externally saved model}
+
 \item{...}{aditional arguments passed to crm; for rerun_crm can be used to set hessian=TRUE for specific models after they have been run}
 
 \item{parameters}{character vector of parameter names}
