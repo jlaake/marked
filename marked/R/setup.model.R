@@ -39,7 +39,7 @@ setup.model <-
 	fdir=system.file(package="marked")	
 	fdir=file.path(fdir,"models.txt")	
 	model_definitions=read.delim(fdir,header=TRUE,
-			colClasses=c("character",rep("numeric",1),rep("logical",4)))
+			colClasses=c("character",rep("numeric",1),rep("logical",4),rep("numeric",1)))
 	model_def=model_definitions[model_definitions$model==model,]	
 	if(nrow(model_def)==0)
 		stop("Invalid type of model = ",model," Valid types are\n", paste(model_definitions$model,collapse="\n"))

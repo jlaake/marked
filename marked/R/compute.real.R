@@ -26,6 +26,7 @@
 #' @param showDesign if TRUE, show design matrix instead of data 
 #' @param include vector of field names always to be included even when select or unique specified
 #' @param uselink default FALSE; if TRUE uses link values in evaluating uniqueness
+#' @param merge default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates
 #' @export
 #' @return A data frame (\code{real}) is returned if \code{vcv=FALSE};
 #' otherwise, a list is returned also containing vcv.real: \item{real}{ data
@@ -41,7 +42,7 @@
 #'  model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
 #' xx=compute_real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 #' @keywords utility
-compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE)
+compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE,merge=FALSE)
 {
 #  Note that the vector indices has 3 different meanings in the code as the code progresses.
 # if ddl not specified return results stored in model
@@ -119,7 +120,7 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   }
   varnames=unique(varnames)
   if(any(!select%in%names(df))) 
-	  warning(paste("These variable names not in data for real estimates: ",paste(varnames[!select%in%names(df)],collapse=""),sep=""))
+	  warning(paste("For parameter ",parameter," these variable names not in data for real estimates: ",paste(varnames[!select%in%names(df)],collapse=","),sep=""))
   varnames=varnames[varnames%in%names(df)]
   df=df[,varnames,drop=FALSE]
 # Check to make sure dimensions of beta and design matrix match
@@ -127,12 +128,29 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   beta=results$beta[[parameter]]
   if(mcmc)
   {
-	  if(ncol(design)!=ncol(model$results$beta.mcmc[[parameter]]))
-   	     stop("Mismatch between number of design columns and length of beta")
+    used=names(model$results$beta.mcmc[[parameter]])%in%colnames(design)
+    if(ncol(design)!=ncol(model$results$beta.mcmc[[parameter]]))
+	  {
+	    warning(paste("Mismatch between number of design columns and length of beta for parameter ",parameter,
+	                  " Make sure ddl contains all needed data values. Not using following beta values: ",
+                    paste(names(model$results$beta.mcmc[[parameter]])[!used],collapse=",")))
+	  } 
   } else
   {
-	  if(ncol(design)!=length(beta))
-         stop("Mismatch between number of design columns and length of beta")
+    used=names(beta)%in%colnames(design)
+    if(ncol(design)!=length(beta))
+	  {
+	    warning(paste("Mismatch between number of design columns and length of beta for parameter ",parameter,
+	                  " Make sure ddl contains all needed data values. Not using following beta values: ",
+	                  paste(names(beta)[!used],collapse=",")))
+	  }
+  }
+  if(any(!used))
+  {
+    newdesign=matrix(0,ncol=length(used),nrow=nrow(design))
+    colnames(newdesign)=names(used)
+    newdesign[,used]=design
+    design=newdesign
   }
 # Compute real parameters using function convert.link.to.real
 # added code to handle all parameters being fixed
@@ -313,6 +331,7 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
     }   
 #  Setup subset or get unique records 
 	#reals=reals[do.call(order, reals),]
+  if(merge)reals=cbind(data,reals)
 	rownames(reals)=NULL
 	if(vcv)
 		return(list(real=reals,vcv=vcv.real))

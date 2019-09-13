@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Package: marked
 Version: 1.2.2
 Date: 2018-09-12
@@ -42,3 +43,48 @@ VignetteBuilder: knitr
 License: GPL (>=2)
 RoxygenNote: 6.1.1
 Encoding: UTF-8
+=======
+Package: marked
+Version: 1.2.2
+Date: 2018-09-12
+Title: Mark-Recapture Analysis for Survival and Abundance Estimation
+Author: Jeff Laake <jefflaake@gmail.com>, Devin Johnson
+    <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>, example for simHMM
+    from Jay Rotella
+Maintainer: Jeff Laake <jefflaake@gmail.com>
+Description: Functions for fitting various models to capture-recapture data
+    including mixed-effects Cormack-Jolly-Seber(CJS) and multistate models and
+    the multi-variate state model structure for survival
+    estimation and POPAN structured Jolly-Seber models for abundance estimation.
+    There are also Hidden Markov model (HMM) implementations of CJS and multistate
+    models with and without state uncertainty and a simulation capability for HMM
+    models.
+Depends:
+    R (>= 3.2.0),
+    lme4,
+    methods,
+    parallel
+Imports:
+    graphics,
+    stats,
+    utils,
+    R2admb,
+    truncnorm,
+    coda,
+    Matrix,
+    numDeriv,
+    expm,
+    Rcpp (>= 0.9.13),
+    TMB,
+    optimx (>= 2013.8.6),
+    data.table
+Suggests:
+    ggplot2
+LinkingTo: Rcpp
+SystemRequirements: ADMB version 11 <http://admb-project.org/> for
+    use.admb=TRUE; see readme.txt
+LazyLoad: yes
+License: GPL (>=2)
+RoxygenNote: 6.1.1
+Encoding: UTF-8
+>>>>>>> devel
