@@ -7,3 +7,4 @@ mcmcTesting.R
 *.so
 marked.Rcheck
 *.tar.gz
+.DS_Store
