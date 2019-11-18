@@ -1,4 +1,4 @@
-marked 1.2.2  8 May 2019
+marked 1.2.2  17 November 2019
 -----------------
 NEW
 * added TMB version of mvmscjs in mvmscjs_tmb R code and mvmscjs_tmb.cpp code. It is an order of magnitude faster than ADMB code for the sealion example. For this model, the default method is nlminb for optimization because it performs better in general.  Setting method can over-ride the default.
