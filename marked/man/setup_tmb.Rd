@@ -10,6 +10,8 @@ setup_tmb(tpl, clean = FALSE, debug = FALSE)
 \item{tpl}{character string for admb template file}
 
 \item{clean}{if TRUE, deletes the tpl (.cpp) and executable files in local directory and copies from package directory}
+
+\item{debug}{if TRUE, writes out debug line values in code}
 }
 \description{
 Sets up executable for the .cpp file (tpl) by looking for exe in package directory or

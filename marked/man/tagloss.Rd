@@ -77,20 +77,20 @@ ddl$p$fix[ddl$p$perm=="no"&ddl$p$tag1==1&ddl$p$tag2==1]=0
 # parameter the intercept is removed automatically. Also tag loss is independent in this
 # model.
 mod0=crm(dp,ddl,model.parameters=list(tau=list(formula=~I(tag1+tag2))),
-        initial=list(Phi=2,p=.3,tau=c(-1)),hessian=TRUE)
+        initial=list(Phi=2,p=.3,tau=c(-1)),hessian=TRUE,save.matrices=TRUE)
 # now fit a model allowing different loss rates for each tag but still independent
 mod1=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
-        initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
+        initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE,save.matrices=TRUE)
 # now fit the model that was used to generate the data with dependence
 mod2=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2+tag1:tag2)),
-        initial=list(Phi=2,p=.3,tau=c(-2,-1,3)),hessian=TRUE)
+        initial=list(Phi=2,p=.3,tau=c(-2,-1,3)),hessian=TRUE,save.matrices=TRUE)
 # Now treat all as not permanently marked
 tagloss$ch=gsub("--","0",tagloss$ch)
 dp=process.data(tagloss,model="hmmcjs2tl")
 ddl=make.design.data(dp)
 ddl$p$fix[ddl$p$tag1==1&ddl$p$tag2==1]=0
 mod3=crm(dp,ddl,model.parameters=list(tau=list(formula=~tag1+tag2)),
-        initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE)
+        initial=list(Phi=2,p=.3,tau=c(-2,-1)),hessian=TRUE,save.matrices=TRUE)
 # Model 2 is the best model but note that even though the tag loss model is
 # incorrect in models 0 and 1 which assume independence, the survival estimate is
 # only slightly less than for model 2. The model compensates by increasing the indiviudal

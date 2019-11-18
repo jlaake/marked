@@ -65,6 +65,7 @@ invisible()
 #' 
 #' @param tpl character string for admb template file
 #' @param clean if TRUE, deletes the tpl (.cpp) and executable files in local directory and copies from package directory
+#' @param debug if TRUE, writes out debug line values in code
 #' @export 
 setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 {

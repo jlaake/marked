@@ -5,7 +5,8 @@
 \title{Compute estimates of real parameters}
 \usage{
 \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
-                   vcv=FALSE,se=FALSE,chat=1,subset,select,...)
+                   vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,
+                   real.ids=NULL,merge=FALSE,...)
 }
 \arguments{
 \item{object}{model object;}
@@ -27,6 +28,8 @@
 \item{subset}{logical expression using fields in real dataframe}
 
 \item{select}{character vector of field names in real that you want to include}
+
+\item{real.ids}{animal ids passed to TMB code for computation of real parameter values}
 
 \item{merge}{default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates}
 

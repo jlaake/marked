@@ -123,7 +123,7 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  warning(paste("For parameter ",parameter," these variable names not in data for real estimates: ",paste(varnames[!select%in%names(df)],collapse=","),sep=""))
   varnames=varnames[varnames%in%names(df)]
   df=df[,varnames,drop=FALSE]
-# Check to make sure dimensions of beta and design matrix match
+# Check to make sure dimensions and names for beta and design matrix match
   results=model$results
   beta=results$beta[[parameter]]
   if(mcmc)
@@ -134,7 +134,13 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	    warning(paste("Mismatch between number of design columns and length of beta for parameter ",parameter,
 	                  " Make sure ddl contains all needed data values. Not using following beta values: ",
                     paste(names(model$results$beta.mcmc[[parameter]])[!used],collapse=",")))
-	  } 
+    } 
+    if(any(!used))
+    {
+      warning(paste("Mismatch between design column names and names for beta for parameter ",parameter,
+                    " Make sure ddl structure is correct. Not using following beta values: ",
+                    paste(names(model$results$beta.mcmc[[parameter]])[!used],collapse=",")))
+    }  
   } else
   {
     used=names(beta)%in%colnames(design)
@@ -143,13 +149,21 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	    warning(paste("Mismatch between number of design columns and length of beta for parameter ",parameter,
 	                  " Make sure ddl contains all needed data values. Not using following beta values: ",
 	                  paste(names(beta)[!used],collapse=",")))
-	  }
+    }
+    if(any(!used))
+    {
+      warning(paste("Mismatch between design column names and names for beta for parameter ",parameter,
+                    " Make sure ddl structure is correct. Not using following beta values: ",
+                    paste(names(beta)[!used],collapse=",")))
+    }
+                    
   }
+  
   if(any(!used))
   {
     newdesign=matrix(0,ncol=length(used),nrow=nrow(design))
-    colnames(newdesign)=names(used)
-    newdesign[,used]=design
+    colnames(newdesign)=colnames(design)
+    newdesign[,used]=design[,used]
     design=newdesign
   }
 # Compute real parameters using function convert.link.to.real

@@ -9,7 +9,8 @@
 #' change the levels of any factor variable or modify the design data in anyway that changes the design matrix.
 #' 
 #' @usage \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
-#'                    vcv=FALSE,se=FALSE,chat=1,subset,select,...)
+#'                    vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,
+#'                    real.ids=NULL,merge=FALSE,...)
 #' @param object model object;
 #' @param newdata a dataframe for crm 
 #' @param ddl list of dataframes for design data
@@ -19,7 +20,8 @@
 #' @param se logical; if TRUE, computes std errors and conf itervals of real estimates
 #' @param chat over-dispersion value
 #' @param subset logical expression using fields in real dataframe
-#' @param select character vector of field names in real that you want to include 
+#' @param select character vector of field names in real that you want to include
+#' @param real.ids animal ids passed to TMB code for computation of real parameter values
 #' @param merge default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates
 #' @param ... generic arguments not used here
 #' @return A data frame (\code{real}) is returned if \code{vcv=FALSE};
@@ -40,8 +42,8 @@
 #' xx=predict(mod.Phisex.pdot,newdata=dipper[c(1,23),],vcv=TRUE)
 #' xx
 #' @keywords utility
-predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,
-                       select=NULL,real.ids=NULL,merge=FALSE,...)
+predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,vcv=FALSE,se=FALSE,
+                       chat=1,subset=NULL,select=NULL,real.ids=NULL,merge=FALSE,...)
 {
   # if(object$model=="MVMSCJS")
   # {

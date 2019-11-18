@@ -10,7 +10,7 @@
 \title{Automation of model runs}
 \usage{
 crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
-              external=TRUE,run=TRUE,env=NULL,...)
+              external=TRUE,run=TRUE,env=NULL,replace=FALSE,...)
 
         create.model.list(parameters)
 

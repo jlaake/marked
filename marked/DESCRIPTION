@@ -14,7 +14,7 @@ Description: Functions for fitting various models to capture-recapture data
     models with and without state uncertainty and a simulation capability for HMM
     models.
 Depends:
-    R (>= 3.2.0),
+    R (>= 3.5.0),
     lme4,
     methods,
     parallel
@@ -31,13 +31,17 @@ Imports:
     Rcpp (>= 0.9.13),
     TMB,
     optimx (>= 2013.8.6),
-    data.table
+    data.table,
+    knitr,
+    kableExtra,
+    bookdown
 Suggests:
     ggplot2
 LinkingTo: Rcpp
 SystemRequirements: ADMB version 11 <http://admb-project.org/> for
     use.admb=TRUE; see readme.txt
 LazyLoad: yes
+VignetteBuilder: knitr
 License: GPL (>=2)
 RoxygenNote: 6.1.1
 Encoding: UTF-8

@@ -618,7 +618,7 @@ if(!is.null(runmodel$convergence) && runmodel$convergence!=0&!use.admb)
 
 object=list(model=model,data=data.proc,model.parameters=parameters,design.parameters=design.parameters,results=runmodel)
 class(object)=class(runmodel)
-if(!use.tmb&!re & model!="MSCJS" & (nchar(model)<4 | (nchar(model)>=4 & substr(model,1,4)!="MVMS")))
+if(!use.tmb&!re & !model%in%c("MSCJS","MSLD") & (nchar(model)<4 | (nchar(model)>=4 & substr(model,1,4)!="MVMS")))
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 #if(use.tmb & (nchar(model)>=4 & substr(model,1,4)=="MVMS") & getreals)
 #  object$results$reals=predict(object,ddl=ddl,real.ids=real.ids,se=hessian)

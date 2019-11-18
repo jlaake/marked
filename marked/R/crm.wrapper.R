@@ -18,7 +18,7 @@
 #' 
 #' @aliases  crm.wrapper create.model.list model.table load.model rerun_crm crmlist_fromfiles
 #' @usage  crm.wrapper(model.list,data,ddl=NULL,models=NULL,base="",
-#'               external=TRUE,run=TRUE,env=NULL,...)
+#'               external=TRUE,run=TRUE,env=NULL,replace=FALSE,...)
 #' 
 #'         create.model.list(parameters)
 #' 
