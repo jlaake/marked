@@ -26,7 +26,7 @@ the field fix which can be used to fix the value of pi for an individual with kn
 at release. It also sets up the mlogit structure for pi by setting one of the fixed values to 1
 such that the value for pi is computed by subtraction.  By default it chooses the first factor level
 of each of the state variables that is unknown.  If some of the state variables are known but others are not, 
-it sets fix to 0 for the values of the known state variables that don't match the known value.
+it sets fix to 0 for the values of the known state variables that don't match the known value.  
 
 For example, with a bivariate case with first state A,B or C and second variable 1 or 2.  Only the second
 variable can be unknown. There are 6 possible combinations of the state variables: A1,A2,B2,B2,C1,C2.

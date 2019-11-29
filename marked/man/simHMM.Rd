@@ -4,10 +4,20 @@
 \alias{simHMM}
 \title{Simulates data from Hidden Markov Model}
 \usage{
-simHMM(data, ddl = NULL, begin.time = 1, model = "hmmCJS",
-  title = "", model.parameters = list(), design.parameters = list(),
-  initial = NULL, groups = NULL, time.intervals = NULL,
-  accumulate = TRUE, strata.labels = NULL)
+simHMM(
+  data,
+  ddl = NULL,
+  begin.time = 1,
+  model = "hmmCJS",
+  title = "",
+  model.parameters = list(),
+  design.parameters = list(),
+  initial = NULL,
+  groups = NULL,
+  time.intervals = NULL,
+  accumulate = TRUE,
+  strata.labels = NULL
+)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one column named ch (a character field containing the capture history) or a processed dataframe}

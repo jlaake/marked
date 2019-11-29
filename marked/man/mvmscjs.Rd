@@ -4,11 +4,30 @@
 \alias{mvmscjs}
 \title{Fitting function for Multivariate Multistate CJS with uncertainty models}
 \usage{
-mvmscjs(x, ddl, fullddl, dml, model_data = NULL, parameters,
-  accumulate = TRUE, initial = NULL, method, hessian = FALSE,
-  debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
-  control = NULL, scale, re = FALSE, compile = FALSE,
-  extra.args = "", clean = TRUE, sup, ...)
+mvmscjs(
+  x,
+  ddl,
+  fullddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method,
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  re = FALSE,
+  compile = FALSE,
+  extra.args = "",
+  clean = TRUE,
+  sup,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}
@@ -131,7 +150,7 @@ providing the maximum structure from which specific models can be built.. For ex
 Thus, capture probability could be allowed to differ for each occasion, individual, age, strata, or any combination thereof.  In practice, such a model would
  be overparameterized, but this structure allows maximum flexibility; users still need to use formula to provide specific constraints to reduce the number of 
 parameters to a reasonable level. With this design data approach essentially there is a place holder for each possible p and any or all of those values 
-can be fixed to a real value.
+can be fixed to a real value. 
 
 "Real" parameters can be fixed by adding a field called fix to the design data for a parameter. The value of fix should be either NA if 
 the parameter is to be estimated or it should be the value of the real parameter (inverse link value). For example, we could fix the capture probability 
@@ -151,7 +170,7 @@ the value of fix is set to 1. So if fix is the inverse logit value why is it bei
 set to 1 for the mlogit?  Because the link for these parameters is actually a log-link and the inverse link is exp(link).
 So the link value is fixed to 0 and the inverse link ("real value") is exp(0)=1. The mlogit parameter is constructed
 by dividing each exp() value by the sum of the exp() values across the set defining the possible classes for the multinomial. 
-Following along with the example,
+Following along with the example, 
 
 \preformatted{
 Psi_AtoB=exp(beta_AtoB)/(1+exp(beta_AtoB)+exp(beta_AtoC))
@@ -187,7 +206,7 @@ p is recapture/resighting probability.  While I'll often fall back and call it c
 recapture or resighting because this model is based on a Cormack-Jolly-Seber (CJS) formulation which does not model initial "capture"
 probability and only models events after they are marked and released. p also uses the logit link and it is an occasion parameter because
 it describes an event associated with an occasion. Because they are "recaptures", there are J-1 design data records for
-each individual at times 2,...,J.
+each individual at times 2,...,J. 
 
 An example of using fix for p is given in the sealions example.  For the data, there was no survey effort in stratum A for the last occasion.
 \preformatted{
@@ -350,7 +369,7 @@ are observable and X which is unobservable.  For Psi you can have transitions to
 set fix=0 for p for X because it can't be seen. Also, if you were to set the formula for Phi to be ~stratum there are no data in X so it will not be able to
 estimate survival in X. So don't do that.  Likewise, the unobservable state value X should not be in a formula for delta because it represents
 certainty/uncertainty of state variables for observations and there are no observations in X. Also, because this is a CJS formulation that is
-conditional on the first release (observation), the formula for pi cannot include X, again because there are no observations.
+conditional on the first release (observation), the formula for pi cannot include X, again because there are no observations. 
 
 To avoid including parameters for levels of a factor for unobservable state values, the easiest approach is to set fix values for the
 design data rows for the unobservable states.  For example, if fix=0 for p for stratum X, then ~stratum could be used in the formula

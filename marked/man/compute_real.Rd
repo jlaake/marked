@@ -4,10 +4,22 @@
 \alias{compute_real}
 \title{Compute estimates of real parameters}
 \usage{
-compute_real(model, parameter, ddl = NULL, dml = NULL, unique = TRUE,
-  vcv = FALSE, se = FALSE, chat = 1, subset = NULL,
-  select = NULL, showDesign = FALSE, include = NULL,
-  uselink = FALSE, merge = FALSE)
+compute_real(
+  model,
+  parameter,
+  ddl = NULL,
+  dml = NULL,
+  unique = TRUE,
+  vcv = FALSE,
+  se = FALSE,
+  chat = 1,
+  subset = NULL,
+  select = NULL,
+  showDesign = FALSE,
+  include = NULL,
+  uselink = FALSE,
+  merge = FALSE
+)
 }
 \arguments{
 \item{model}{model object}
@@ -55,7 +67,7 @@ summaries.  The likelihood model code is complicated primarily by the mlogit par
 1) log link and 2) summation to normalize. The mlogit is handled differently depending on the model.
 For MS and JS models, one of the parameters is computed by subtraction (specified as addone==TRUE) whereas the
 HMM models (addone=FALSE) specify a parameter for each cell and one is fixed by the user to 1. The latter is preferable
-because it then provides an estimate and a std error for each parameter whereas the subtracted value is not provided for MS and JS.
+because it then provides an estimate and a std error for each parameter whereas the subtracted value is not provided for MS and JS.  
 
 This function differs from compute.real in RMark because it only computes the values for a single parameter whereas the function 
 with the same name in RMark can compute estimates from multiple parameters (eg Phi and p).

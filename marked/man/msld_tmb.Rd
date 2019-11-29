@@ -4,12 +4,31 @@
 \alias{msld_tmb}
 \title{Fitting function for Multistate CJS live-dead models with TMB}
 \usage{
-msld_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
-  accumulate = TRUE, initial = NULL, method, hessian = FALSE,
-  debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
-  control = NULL, scale, re = FALSE, compile = FALSE,
-  extra.args = "", clean = FALSE, getreals = FALSE,
-  useHess = FALSE, ...)
+msld_tmb(
+  x,
+  ddl,
+  fullddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method,
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  re = FALSE,
+  compile = FALSE,
+  extra.args = "",
+  clean = FALSE,
+  getreals = FALSE,
+  useHess = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

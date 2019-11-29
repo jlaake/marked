@@ -4,17 +4,48 @@
 \alias{crm}
 \title{Capture-recapture model fitting function}
 \usage{
-crm(data, ddl = NULL, begin.time = 1, model = "CJS", title = "",
-  model.parameters = list(), design.parameters = list(),
-  initial = NULL, groups = NULL, time.intervals = NULL,
-  debug = FALSE, method = NULL, hessian = FALSE, accumulate = TRUE,
-  chunk_size = 1e+07, control = list(), refit = 1, itnmax = 5000,
-  scale = NULL, run = TRUE, burnin = 100, iter = 1000,
-  use.admb = FALSE, use.tmb = FALSE, crossed = NULL, reml = FALSE,
-  compile = FALSE, extra.args = NULL, strata.labels = NULL,
-  clean = NULL, save.matrices = FALSE, simplify = FALSE,
-  getreals = FALSE, real.ids = NULL, check = FALSE, prior = FALSE,
-  prior.list = NULL, useHess = FALSE, optimize = TRUE, ...)
+crm(
+  data,
+  ddl = NULL,
+  begin.time = 1,
+  model = "CJS",
+  title = "",
+  model.parameters = list(),
+  design.parameters = list(),
+  initial = NULL,
+  groups = NULL,
+  time.intervals = NULL,
+  debug = FALSE,
+  method = NULL,
+  hessian = FALSE,
+  accumulate = TRUE,
+  chunk_size = 1e+07,
+  control = list(),
+  refit = 1,
+  itnmax = 5000,
+  scale = NULL,
+  run = TRUE,
+  burnin = 100,
+  iter = 1000,
+  use.admb = FALSE,
+  use.tmb = FALSE,
+  crossed = NULL,
+  reml = FALSE,
+  compile = FALSE,
+  extra.args = NULL,
+  strata.labels = NULL,
+  clean = NULL,
+  save.matrices = FALSE,
+  simplify = FALSE,
+  getreals = FALSE,
+  real.ids = NULL,
+  check = FALSE,
+  prior = FALSE,
+  prior.list = NULL,
+  useHess = FALSE,
+  optimize = TRUE,
+  ...
+)
 }
 \arguments{
 \item{data}{Either the raw data which is a dataframe with at least one
@@ -214,7 +245,7 @@ as a template:
 \code{fixed=cbind(1:nrow(dipper),rep(2,nrow(dipper)),rep(1,nrow(dipper)))))}
 
 The above sets \code{Phi} to 1 for the interval between occasions 2 and 3
-for all animals.
+for all animals. 
 
 Alternatively, you could do as follows:
 
@@ -230,19 +261,19 @@ be included.
 
 To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
 The following are instructions for installation with Windows. For other operating systems see (\url{http://www.admb-project.org/downloads}) and 
- (\url{http://www.admb-project.org/tools/gcc/}).
+ (\url{http://www.admb-project.org/tools/gcc/}). 
 
 Windows Instructions:
 
-1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
+ 1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
 
-2) Install ADMB 11: \url{http://www.admb-project.org/downloads}. Put the software in C:/admb to
+ 2) Install ADMB 11: \url{http://www.admb-project.org/downloads}. Put the software in C:/admb to
  avoid problems with spaces in directory name and for the function below to work.
 
-3) Install gcc compiler from: \url{http://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
+ 3) Install gcc compiler from: \url{http://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
 
 I use the following function in R to setup R2admb to access ADMB rather than adding to my path so gcc versions
-with Rtools don't conflict.
+with Rtools don't conflict. 
 
 \preformatted{
 prepare_admb=function()

@@ -40,8 +40,8 @@ data(mstrata)
 mod=crm(mstrata,model="hmmMSCJS",strata.labels=c("A","B","C"))
 #' x=hmmDemo(mod)
 # state predictions are normalized by likelihood value which = rowSums(alpha*beta)
-cat(paste("\\nrowsums = ",rowSums(x$alpha[45,,]*x$beta[45,,],na.rm=TRUE)[2],
-   "which matches likelihood value",exp(x$lnl[45]),"\\n"))
+cat(paste("\nrowsums = ",rowSums(x$alpha[45,,]*x$beta[45,,],na.rm=TRUE)[2],
+   "which matches likelihood value",exp(x$lnl[45]),"\n"))
 # state predictions given the data
 x$stateprob[45,,]
 }

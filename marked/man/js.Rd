@@ -5,10 +5,24 @@
 \title{Fitting function for Jolly-Seber model using Schwarz-Arnason POPAN
 formulation}
 \usage{
-js(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
-  initial = NULL, method = "BFGS", hessian = FALSE, debug = FALSE,
-  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  ...)
+js(
+  x,
+  ddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method = "BFGS",
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

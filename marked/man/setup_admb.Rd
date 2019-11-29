@@ -4,8 +4,7 @@
 \alias{setup_admb}
 \title{ADMB setup}
 \usage{
-setup_admb(tpl, compile = FALSE, clean = TRUE, safe = TRUE,
-  re = FALSE)
+setup_admb(tpl, compile = FALSE, clean = TRUE, safe = TRUE, re = FALSE)
 }
 \arguments{
 \item{tpl}{character string for admb template file}

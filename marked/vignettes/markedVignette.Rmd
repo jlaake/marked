@@ -70,7 +70,7 @@ regression model.
 # Background {-}
 
 We assume you know and understand mark-recapture terminology and models.
-For background material on capture-recapture and MARK refer to [http://www.phidot.org/software/mark/docs/book/](http://www.phidot.org/software/mark/docs/book/).
+For background material on capture-recapture and MARK refer to  http://www.phidot.org/software/mark/docs/book/.
 In the appendix, we provide a comparison of the MARK and `marked`
 data and model structures and details on likelihood construction for
 the CJS and JS models. Our focus in the vignette will be to provide
@@ -136,7 +136,7 @@ The output includes the number of parameters (`npar`),
 -2log-likelihood, Akaike's Information Criterion (`AIC`), and
 the estimates for $\phi$ and $p$. 
 
-Estimates of precision are not shown because the default is `hessian}=FALSE
+Estimates of precision are not shown because the default is `hessian=FALSE`
 and it must be set to TRUE to get estimates of precision. This default
 was chosen because the `marked` package does not count parameters
 from the hessian, so there is no need to compute it for each model

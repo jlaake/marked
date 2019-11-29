@@ -4,8 +4,16 @@
 \alias{probitCJS}
 \title{Perform MCMC analysis of a CJS model}
 \usage{
-probitCJS(ddl, dml, parameters, design.parameters, burnin, iter,
-  initial = NULL, imat = NULL)
+probitCJS(
+  ddl,
+  dml,
+  parameters,
+  design.parameters,
+  burnin,
+  iter,
+  initial = NULL,
+  imat = NULL
+)
 }
 \arguments{
 \item{ddl}{list of dataframes for design data; created by call to

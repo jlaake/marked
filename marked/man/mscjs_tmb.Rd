@@ -4,12 +4,31 @@
 \alias{mscjs_tmb}
 \title{Fitting function for Multistate CJS models with TMB}
 \usage{
-mscjs_tmb(x, ddl, fullddl, dml, model_data = NULL, parameters,
-  accumulate = TRUE, initial = NULL, method, hessian = FALSE,
-  debug = FALSE, chunk_size = 1e+07, refit, itnmax = NULL,
-  control = NULL, scale, re = FALSE, compile = FALSE,
-  extra.args = "", clean = TRUE, getreals = FALSE, useHess = FALSE,
-  ...)
+mscjs_tmb(
+  x,
+  ddl,
+  fullddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method,
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  re = FALSE,
+  compile = FALSE,
+  extra.args = "",
+  clean = TRUE,
+  getreals = FALSE,
+  useHess = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

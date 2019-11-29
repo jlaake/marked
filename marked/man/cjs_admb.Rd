@@ -4,11 +4,30 @@
 \alias{cjs_admb}
 \title{Fitting function for CJS models}
 \usage{
-cjs_admb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
-  initial = NULL, method, hessian = FALSE, debug = FALSE,
-  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  use.admb = FALSE, crossed = TRUE, compile = FALSE,
-  extra.args = NULL, reml, clean = TRUE, ...)
+cjs_admb(
+  x,
+  ddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method,
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  use.admb = FALSE,
+  crossed = TRUE,
+  compile = FALSE,
+  extra.args = NULL,
+  reml,
+  clean = TRUE,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

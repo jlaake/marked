@@ -4,12 +4,34 @@
 \alias{cjs_tmb}
 \title{Fitting function for CJS models}
 \usage{
-cjs_tmb(x, ddl, dml, model_data = NULL, parameters, accumulate = TRUE,
-  initial = NULL, method, hessian = FALSE, debug = FALSE,
-  chunk_size = 1e+07, refit, itnmax = NULL, control = NULL, scale,
-  crossed = TRUE, compile = TRUE, extra.args = NULL, reml,
-  clean = FALSE, getreals = FALSE, prior = FALSE,
-  prior.list = NULL, tmbfct = "f1", useHess = FALSE, ...)
+cjs_tmb(
+  x,
+  ddl,
+  dml,
+  model_data = NULL,
+  parameters,
+  accumulate = TRUE,
+  initial = NULL,
+  method,
+  hessian = FALSE,
+  debug = FALSE,
+  chunk_size = 1e+07,
+  refit,
+  itnmax = NULL,
+  control = NULL,
+  scale,
+  crossed = TRUE,
+  compile = TRUE,
+  extra.args = NULL,
+  reml,
+  clean = FALSE,
+  getreals = FALSE,
+  prior = FALSE,
+  prior.list = NULL,
+  tmbfct = "f1",
+  useHess = FALSE,
+  ...
+)
 }
 \arguments{
 \item{x}{processed dataframe created by process.data}

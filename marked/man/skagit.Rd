@@ -24,13 +24,13 @@ An example of the Mulstistrata (multi-state) model in which states are routes ta
 #       1A
 #        |
 #        2A
-#      /     \\
+#      /     \
 #    3A        3B
-#   /  \\      /  \\ 
+#   /  \      /  \ 
 # 4A   4B    4A  4B       
-#  |     \\    /   |
+#  |     \    /   |
 #   5A    5B  5A   5B
-#      \\   \\   /    /
+#      \   \   /    /
 #            6
 # 
 # from 3A and 3B they can branch to either 4A or 4B; branches merge at 6  
