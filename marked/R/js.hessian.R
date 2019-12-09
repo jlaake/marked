@@ -34,7 +34,7 @@ js.hessian=function(model)
 	jsenv=environment()
 	vcv=numDeriv::hessian(js.lnl,scale.par(model$beta,scale),model_data=model$model_data,nobstot=model$ns,jsenv=jsenv)
 	vcv=try(solvecov(vcv))
-	if(class(vcv)[1]=="try-error")
+	if(is(vcv,"try-error"))
 	{
 		warning("Unable to invert hessian")
 		return(NULL)

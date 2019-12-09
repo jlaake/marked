@@ -16,15 +16,15 @@ print.crm=function(x,...)
 {
    if(mode(x)=="character")x=load.model(x)
    if(!is.null(x$results))x=x$results
-   if(class(x)[2]=="admb" & class(x)[3]=="cjs")
+   if(is(x,"admb") & is(x,"cjs"))
    {
 	   class(x)[1]="admb"
-       print(x)
+     print(x)
    }
    else
    {
 	   cat("\ncrm Model Summary\n")
-       if(class(x)[2]=="mcmc")
+       if(is(x,"mcmc"))
 	       cat("\nNpar : ",sum(sapply(x$beta,nrow)))   
        else
        {

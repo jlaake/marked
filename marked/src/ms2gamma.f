@@ -6,7 +6,7 @@
        DOUBLE PRECISION AMAT(MA,MA),ALPHA(N,MA*MA*(T-1))
 C      Loop over each capture history and T-1 occasions       
        DO 10 I=1,N
-       DO 10 J=F(I),T-1
+       DO 8 J=F(I),T-1
            INDEX=(J-1)*MS*MA
            DO 4 K=1,MS*MA
               INDEX=INDEX+1
@@ -20,8 +20,9 @@ C      Loop over each capture history and T-1 occasions
               TMAT(I,J,NS,L)=0.0D0
   7        CONTINUE
            TMAT(I,J,NS,NS)=1.0D0
+   8   CONTINUE
   10   CONTINUE
-       DO 20 I=1,N
+       DO 25 I=1,N
        DO 20 J=F(I),T-1
            INDEX=(J-1)*MS*MS
            DO 13 K=1,MS
@@ -49,7 +50,7 @@ C      Loop over each capture history and T-1 occasions
                  AMAT(K,L)=AMAT(K,L)/ROWSUM
   16          CONTINUE    
   17       CONTINUE         
-           DO 18 K=1,NS-1
+           DO 19 K=1,NS-1
            DO 18 L=1,NS-1
               INDEXA1=INT((K-1)/MS)+1
               INDEXA2=INT((L-1)/MS)+1
@@ -58,7 +59,9 @@ C      Loop over each capture history and T-1 occasions
               TMAT(I,J,K,L)=TMAT(I,J,K,L)*
      *          AMAT(INDEXA1,INDEXA2)*PSIMAT(INDEXS1,INDEXS2)
   18       CONTINUE
+  19       CONTINUE
   20   CONTINUE
+  25   CONTINUE
        RETURN
        END
   

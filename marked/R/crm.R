@@ -633,7 +633,7 @@ solvecov=function (m, cmax = 1e+10)
 {
 	options(show.error.messages = FALSE)
 	covinv <- try(solve(m))
-	if (class(covinv)[1] != "try-error")
+	if (!is(covinv,"try-error"))
 		coll = FALSE
 	else {
 		p <- nrow(m)

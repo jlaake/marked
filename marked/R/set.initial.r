@@ -11,8 +11,8 @@
 set.initial=function(pars,dml,initial)
 {
 #   if this is a previously run model, get initial values from it
-	if(class(initial)[1]=="crm")
-		if(class(initial)[2]=="mcmc")
+	if(is(initial,"crm"))
+		if(is(initial,"mcmc"))
 			initial=lapply(initial$results$beta,function(x){z=x$mean;names(z)=rownames(x);z})	    
 	    else
 			initial=initial$results$beta

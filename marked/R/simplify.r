@@ -1,6 +1,6 @@
 simplify_indices=function(x)
 {
-   # if(class(x)=="dgCMatrix")x=as.matrix(x)
+    #if(is(x,"dgCMatrix"))x=as.matrix(x)
     nms = colnames(x)
     df=data.table(x)
     u_rows=which(!duplicated(df))

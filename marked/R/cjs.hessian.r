@@ -33,7 +33,7 @@ cjs.hessian=function(model)
 	cjsenv=environment()
 	vcv=numDeriv::hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
 	vcv=try(solvecov(vcv))
-	if(class(vcv)[1]=="try-error")
+	if(is(vcv,"try-error"))
 	{
 		warning("Unable to invert hessian")
 		return(NULL)

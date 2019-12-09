@@ -10,7 +10,7 @@ vignette: >
   %\VignetteIndexEntry{"marked Package Vignette"}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-bibliography: "markedWriteupBib.bib"
+bibliography: "markedWriteUpBib.bib"
 ---
 
 ```{r setup, include = FALSE}

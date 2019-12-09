@@ -153,6 +153,7 @@ function(data,begin.time=1,model="CJS",mixtures=1,groups=NULL,allgroups=FALSE,ag
 initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NULL)
 {
    model=toupper(model)
+   if(is(data,"data.table"))data=as.data.frame(data)
    dataname=substitute(data)
   #
   #  Compute number of occasions and check validity of model

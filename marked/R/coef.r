@@ -14,7 +14,7 @@
 coef.crm=function(object,...)
 {
 	if("results"%in%names(object)) object=object$results
-	if(class(object)[2]=="mcmc")
+	if(is(object,"mcmc"))
 	{
 		beta=do.call(rbind,object$beta)
 		indices=grep("\\.",rownames(beta))
@@ -22,7 +22,7 @@ coef.crm=function(object,...)
 	}
 	else
 	{
-		if(class(object)[2]=="admb" & class(object)[3]=="cjs")
+		if(is(object,"admb") & is(object,"cjs"))
 		{
 			class(object)[1]="admb"
 			beta=coef(object)

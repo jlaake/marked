@@ -5,15 +5,16 @@
        DOUBLE PRECISION PSIMAT(M,M),PSIX,PSISUM
 C      Loop over each capture history and T-1 intervals
        DO 30 I=1,N
-	   IF(F(I).LT.T) THEN
-       DO 27 J=1,T-1
-C        Zero out values for intervals before first
-         IF(J.LT.F(I)) THEN
-           DO 1 K=1,M
-           DO 1 L=1,M
-             TMAT(I,J,K,L)=0.0D0
- 1         CONTINUE
-        ELSE   
+         IF(F(I).LT.T) THEN
+           DO 27 J=1,T-1
+C          Zero out values for intervals before first
+           IF(J.LT.F(I)) THEN
+             DO 2 K=1,M
+             DO 1 L=1,M
+               TMAT(I,J,K,L)=0.0D0
+ 1           CONTINUE
+ 2           CONTINUE
+         ELSE   
 C          For remaining intervals compute Psi matrix
            INDEX=(J-1)*(M-1)
            DO 4 K=1,M-1
@@ -46,10 +47,11 @@ C          For remaining intervals compute Psi matrix
               PSIMAT(M,L)=1.0D0
   19       CONTINUE
 C          Multiply survival matrix in TMAT and Psi matrix and store in TMAT
-           DO 25 K=1,M
+           DO 26 K=1,M
            DO 25 L=1,M
               TMAT(I,J,K,L)=PSIMAT(K,L)*TMAT(I,J,K,L)
   25       CONTINUE
+  26       CONTINUE
        ENDIF
   27   CONTINUE
        ENDIF

@@ -1,3 +1,28 @@
+marked 1.2.6  7 December 2019
+-----------------
+BUG FIXES
+
+* more changes to FORTRAN files to avoid warnings.
+
+* process.data will now change any data.table to a data.frame. Caused issues with second vignette in RWildbook.
+
+
+marked 1.2.5  6 December 2019
+-----------------
+BUG FIXES
+
+* more changes to FORTRAN files to avoid warnings on use of multiple DO's to a single continue and tabs. 
+
+
+marked 1.2.4  5 December 2019
+-----------------
+BUG FIXES
+
+* changes to FORTRAN files to avoid warnings on use of multiple DO's to a single continue and tabs. 
+
+* changes to use is() function instead of class which can always return more than one value which can cause problems.
+
+
 marked 1.2.3  29 November 2019
 -----------------
 BUG FIXES

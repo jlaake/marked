@@ -73,7 +73,7 @@
 #' # to change the value from 1 to 0 which forces movement from B to A in the interval 5 to 6. If
 #' # this is not done then Psi B to B=Psi B to A=0.5 because each is 1 and when they are normalized
 #' # they are divided by the sum which is 2 (1/2).
-#' if(class(try(setup_admb("mscjs")))[1]!="try-error")
+#' if(!is(try(setup_admb("mscjs")),"try-error"))
 #' {
 #' data(skagit)
 #' skagit.processed=process.data(skagit,model="Mscjs",groups=c("tag"),strata.labels=c("A","B"))
@@ -124,7 +124,7 @@
 #'#
 #'mod1=crm(skagit.processed,skagit.ddl,
 #' model.parameters=list(S=S.stratumxtime,p= p.timexstratum.tag,Psi=Psi.sxtime),hessian=TRUE)
-#' if(class(mod1)[1]!="try-error") mod1
+#' if(!is(mod1,"try-error")) mod1
 #'} }
 mscjs=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
