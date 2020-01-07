@@ -101,7 +101,10 @@ setup.parameters <-
 			if(!is.na(parameter_definitions[i,j]) & parameter_definitions[i,j]!="" & !names(parameter_definitions)[j]%in%names(parameters[[par.list[i]]]))
 				pars[[par.list[i]]][names(parameter_definitions)[j]]=list(parameter_definitions[i,j])
 		if(pars[[par.list[i]]]$formula!=" " && is.character(pars[[par.list[i]]]$formula))
-			pars[[par.list[i]]]$formula=as.formula(pars[[par.list[i]]]$formula)
+		{
+		  pars[[par.list[i]]]$formula=as.formula(pars[[par.list[i]]]$formula)
+		  attributes(pars[[par.list[i]]]$formula)$.Environment=NULL
+		}
 		if(is.null(pars[[par.list[i]]]$num))pars[[par.list[i]]]$num=NA
 		if(!is.na(pars[[par.list[i]]]$num)&&pars[[par.list[i]]]$num==1)pars[[par.list[i]]]$num=-(nocc-1)
 		if(!is.null(pars[[par.list[i]]]$share) && pars[[par.list[i]]]$share && is.null(pars[[par.list[i]]]$pair)) pars[[par.list[i]]]$share=NULL

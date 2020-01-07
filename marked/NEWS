@@ -1,3 +1,14 @@
+marked 1.2.7  7 January 2020
+-----------------
+CHANGES
+
+* ddl argument to crm can now be specified as "external" and the ddl should be "save"d to a file "ddl.rda". This can save memory when the ddl gets extremely large (eg 6GB) and it is used with a model that simplifies the ddl. 
+
+* in a related change for msld_tmb, the full ddl is written to a tmp.rda and read in when needed. This saves memory for tmb to build optimization function (MakeAdfun) and run the optimization.
+
+* in crm.wrapper previously it was passing entire model for the initial values if a saved external model was found. Now it only passes the beta list and it removes the model once it is loaded and beta list extracted. This can save a considerable amount of memory if the saved model is large.
+
+
 marked 1.2.6  7 December 2019
 -----------------
 BUG FIXES

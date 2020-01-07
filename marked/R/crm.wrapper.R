@@ -91,7 +91,8 @@ crm.wrapper <- function(model.list,data,ddl=NULL,models=NULL,base="",external=TR
 		if(file.exists(paste(model.name,".rda",sep=""))&is.null(list(...)$initial))
 		{
 			load(paste(model.name,".rda",sep=""))
-			initial=eval(parse(text=model.name))
+			initial=eval(parse(text=paste(model.name,"$results$beta",sep="")))
+			eval(parse(text=paste("rm(",model.name,")")))
 			mymodel=crm(data=data,ddl=ddl,model.parameters=model.parameters,run=run,initial=initial,...)
 		} else
 		{

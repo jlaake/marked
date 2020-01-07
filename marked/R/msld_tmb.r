@@ -12,8 +12,6 @@
 #' @param x processed dataframe created by process.data
 #' @param ddl list of simplified dataframes for design data; created by call to
 #' \code{\link{make.design.data}}
-#' @param fullddl list of complete dataframes for design data; created by call to
-#' \code{\link{make.design.data}}
 #' @param dml list of design matrices created by \code{\link{create.dm}} from
 #' formula and design data
 #' @param model_data a list of all the relevant data for fitting the model including
@@ -53,10 +51,12 @@
 #' \item{vcv}{var-cov matrix of betas if hessian=TRUE was set}
 #' @author Jeff Laak
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
-msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
+msld_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
 		re=FALSE,compile=FALSE,extra.args="",clean=FALSE,getreals=FALSE, useHess=FALSE,...)
 {
+  # load fullddl
+  load("tmp.rda")
 	accumulate=FALSE
 	nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
@@ -250,7 +250,9 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 		psi_counts=vector("integer",length=0)
 		psi_idIndex=matrix(0,nrow=0,ncol=0)
 	}
-	
+	rm(fullddl)
+	gc()
+	message("Building optimization function")
 	f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,nS=length(strata.labels)-1,
 					ch=chmat,frst=model_data$imat$first,freq=model_data$imat$freq,tint=model_data$time.intervals,
 					nrowphi=length(phi_slist$set),	phidm=phidm[phi_slist$set,,drop=FALSE],
@@ -305,7 +307,7 @@ msld_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,i
 		lnl=mod$value		
 	}
 	fixed.npar=ncol(phidm)+ncol(rdm)+ncol(pdm)+ncol(psidm)
-	
+	load("tmp.rda")
 	if(getreals)
 	  par_summary=sdreport(f,getReportCovariance=FALSE)
 	else

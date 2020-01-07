@@ -303,6 +303,8 @@ else
 	data.proc=data
 	model=data$model
 }
+if(model=="MSLD")
+  use.tmb=TRUE
 #
 # Setup parameter list
 #
@@ -357,6 +359,7 @@ if((use.tmb|toupper(model)%in%c("MSLD"))&is.null(clean))clean=FALSE
 #
 # If the design data have not been constructed, do so now
 #
+external.ddl=FALSE
 if(is.null(ddl)) 
 {
   if(debug)message("Creating design data...\n")
@@ -364,6 +367,18 @@ if(is.null(ddl))
 	ddl=make.design.data(data.proc,design.parameters)
 } else
 {
+  if(is.character(ddl)&&toupper(ddl)=="EXTERNAL")
+  {
+    external.ddl=TRUE
+    if(file.exists("ddl.rda"))
+    {
+      load(file="ddl.rda")
+      if(!exists("ddl")) stop("\nexternal ddl.rda file must contain object named ddl")
+    } else
+    {
+      stop("\nCannot find external file named ddl.rda")
+    }
+  }
 	for (i in 1:length(parameters))
 	{
 		if(!is.null(ddl[[i]]$order))
@@ -417,9 +432,9 @@ if(substr(model,1,4)=="MVMS"&check)
 	  }
 	}
 }
-fullddl=ddl
 if(model=="MSCJS" | model=="MSLD" | (substr(model,1,4)=="MVMS" & (use.admb | use.tmb))) 
 {
+  fullddl=ddl
   if(debug)message("Simplifying design data\n")
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 }
@@ -428,11 +443,6 @@ if(simplify)
 	simplify=FALSE
 	message("\nsimplify argument has been disabled")
 }
-#if(simplify & !(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS")))
-#{
-#	simplify=FALSE
-#	message("Can only use simplify with HMM models. simplify set to FALSE")
-#}
 # check to see if all values for a parameter have been fixed.  If so, then set formula to ~0
 for (i in 1:length(parameters))
 {
@@ -460,8 +470,7 @@ if(model=="MSCJS"| model=="MSLD"|(substr(model,1,4)=="MVMS" & (use.admb | use.tm
     fulldml[[parx]]$fe=dml[[parx]]$fe[ddl[[paste(parx,".indices",sep="")]],,drop=FALSE]
     parameters[[parx]]$indices=ddl[[paste(parx,".indices",sep="")]]    
   }
-} else
-  fulldml=dml
+} 
 # For HMM call set.initial to get ptype and set initial values
 if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	initial.list=set.initial(names(dml),dml,initial)
@@ -506,8 +515,13 @@ if(model=="MSCJS")
 				   refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,...)
   }
 if(model=="MSLD")
-    runmodel=msld_tmb(data.proc,ddl,fullddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-                       refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,useHess=useHess,...)
+{
+  save(fullddl,file="tmp.rda")
+  rm(fullddl)
+  runmodel=msld_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
+                    refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,useHess=useHess,...)
+  load("tmp.rda")
+}
 if(model=="PROBITCJS")
 {
 	if(is.null(initial))
@@ -571,9 +585,13 @@ if(substr(model,1,3)=="HMM"|(nchar(model)>=4 &substr(model,1,4)=="MVMS"))
 	}
 		if(save.matrices)
 		{
-			runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
-					fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=fullddl,dml=fulldml,parameters=parameters,return.mat=TRUE,sup=sup)
-			if(model=="HMMCJS")
+		  if(!is.null(fullddl))
+			   runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+				   	fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=fullddl,dml=fulldml,parameters=parameters,return.mat=TRUE,sup=sup)
+		  else
+		    runmodel$mat=HMMLikelihood(par=par,type=initial.list$ptype,xx=data.proc$ehmat,mx=mx,T=data.proc$nocc,xstart=data.proc$start,freq=data.proc$freq,
+		                               fct_dmat=data.proc$fct_dmat,fct_gamma=data.proc$fct_gamma,fct_delta=data.proc$fct_delta,ddl=ddl,dml=dml,parameters=parameters,return.mat=TRUE,sup=sup)
+		  if(model=="HMMCJS")
 			{
 				dimnames(runmodel$mat$gamma)[3:4]=list(c("Alive","Dead"),c("Alive","Dead"))
 				dimnames(runmodel$mat$dmat)[3:4]=list(c("Missed","Seen"),c("Alive","Dead"))
@@ -622,7 +640,7 @@ if(!use.tmb&!re & !model%in%c("MSCJS","MSLD") & (nchar(model)<4 | (nchar(model)>
    object$results$reals=predict(object,ddl=ddl,unique=TRUE,se=hessian)
 #if(use.tmb & (nchar(model)>=4 & substr(model,1,4)=="MVMS") & getreals)
 #  object$results$reals=predict(object,ddl=ddl,real.ids=real.ids,se=hessian)
-
+if(file.exists("tmp.rda"))unlink("tmp.rda")
 message(paste("\nElapsed time in minutes: ",round((proc.time()[3]-ptm[3])/60,digits=4),"\n"))
 return(object)
 }
