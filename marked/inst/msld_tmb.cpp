@@ -1,5 +1,5 @@
 // TMB Version: Mixed-effect Multi-State Cormack-Jolly-Seber + recovery model with unobservable states
-// Jeff Laake; 18 Mar 2019
+// Jeff Laake; 9 Jan 2020 - added dmat/gamma report
 
 #include <TMB.hpp>                              // Links in the TMB libraries
 
@@ -15,7 +15,7 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(tint);                          // time interval between occasions for each history-interval
   
   DATA_INTEGER(nrowphi);                      // number of rows in the simplified design matrix for Phi - survival
-                                              // last column in each design matrix is either -1 (estimated) or a fixed value
+  // last column in each design matrix is either -1 (estimated) or a fixed value
   DATA_MATRIX(phidm);                         // design matrix for Phi
   DATA_VECTOR(phifix);                        // phi fixed values
   DATA_IVECTOR(phiindex);                     // phi indices
@@ -25,9 +25,9 @@ Type objective_function<Type>::operator() ()
   DATA_IMATRIX(phi_randIndex);                // phi random effect indices for DM
   DATA_IVECTOR(phi_counts);                   // count of phi random effect indices by id
   DATA_IMATRIX(phi_idIndex);                  // phi random effect indices by id
-
+  
   DATA_INTEGER(nrowr);                        // number of rows in the simplified design matrix for r - recovery
-                                              // last column in each design matrix is either -1 (estimated) or a fixed value
+  // last column in each design matrix is either -1 (estimated) or a fixed value
   DATA_MATRIX(rdm);                           // design matrix for r
   DATA_VECTOR(rfix);                          // r fixed values
   DATA_IVECTOR(rindex);                       // r indices
@@ -96,6 +96,8 @@ Type objective_function<Type>::operator() ()
   array<Type> psi(m-1,nS,nS);             // matrix for psis for each occasion 
   array<Type> gamma(m-1,2*nS+1,2*nS+1);   // transition probability matrices for individual i
   array<Type> dmat(m-1,nS+2,2*nS+1);      // observation probability matrices for individual i
+  array<double> allgamma(n,m-1,2*nS+1,2*nS+1);   // transition probability matrices for all individuals
+  array<double> alldmat(n,m-1,nS+2,2*nS+1);      // observation probability matrices  for all individuals
   Type u;                                 // sum of state probabilities
   vector<Type> pS(2*nS+1);              // update vector for prob of being in state j=1,2*nS + 1       
   vector<Type> S(2*nS+1);               // prob of being in state j=1,2*nS + 1 for each occasion
@@ -132,6 +134,8 @@ Type objective_function<Type>::operator() ()
   uniquer=rdm*rbeta;    
   uniquep=pdm*pbeta;
   uniquepsi=psidm*psibeta;
+  alldmat.setZero();
+  allgamma.setZero();
   
   for(i=1;i<=n;i++)                                     // loop over capture histories - one per capture history
   {
@@ -216,7 +220,7 @@ Type objective_function<Type>::operator() ()
         }
         else
           phi((j-1)*nS+k-1)=phifix(idx);     
-
+        
         idx=rindex(i2-1)-1;
         if(rfix(idx)< -0.5)
         {
@@ -276,14 +280,19 @@ Type objective_function<Type>::operator() ()
       for(k=1;k<=nS;k++)                     // loop over states creating p and gamma values
       {
         for(k2=1;k2<=nS;k2++)
-          gamma(j-1,k-1,k2-1)=psi(j-1,k-1,k2-1)*phi(bindex-1);    // adjust psi for survival
+        {          
+          gamma(j-1,k-1,k2-1)=psi(j-1,k-1,k2-1)*phi(bindex-1);      // adjust psi for survival
+          allgamma(i-1,j-1,k-1,k2-1)=asDouble(gamma(j-1,k-1,k2-1));
+        }
         gamma(j-1,k-1,nS+k-1)=1-phi(bindex-1);                    // add newly dead state value for each state
+        allgamma(i-1,j-1,k-1,nS+k-1)=asDouble(gamma(j-1,k-1,nS+k-1));
         gamma(j-1,nS+k-1,2*nS)=1;                                 // newly dead to permanently dead transition
+        allgamma(i-1,j-1,nS+k-1,2*nS)=1;
         bindex++;
       }
       gamma(j-1,2*nS,2*nS)=1;                                    // permanently dead is an absorbing state
+      allgamma(i-1,j-1,2*nS,2*nS)=1;
     }
-    
     
     //  compute state dependent observation matrices for each occasion
     dmat.setZero();
@@ -296,9 +305,15 @@ Type objective_function<Type>::operator() ()
         dmat(j-1,0,k-1)=1-dmat(j-1,k,k-1);
         dmat(j-1,0,nS+k-1)=1-r(bindex-1);  //did not recover newly dead
         dmat(j-1,nS+1,nS+k-1)=r(bindex-1); // recovered newly dead
+        
+        alldmat(i-1,j-1,k,k-1)=asDouble(dmat(j-1,k,k-1));  
+        alldmat(i-1,j-1,0,k-1)=asDouble(dmat(j-1,0,k-1));
+        alldmat(i-1,j-1,0,nS+k-1)=asDouble(dmat(j-1,0,nS+k-1));
+        alldmat(i-1,j-1,nS+1,nS+k-1)=asDouble(dmat(j-1,nS+1,nS+k-1));
         bindex++;
       }
       dmat(j-1,0,2*nS)=1;                   //cannot observe permanently dead
+      alldmat(i-1,j-1,0,2*nS)=1;
     }
     //  HMM algorithm
     pS.setZero();                                      // initialize values to 0
@@ -327,7 +342,8 @@ Type objective_function<Type>::operator() ()
       
     }
     g-=freq(i-1)*Lglki;
-    
   }
+  REPORT(alldmat);
+  REPORT(allgamma);
   return g;
 }
