@@ -336,31 +336,42 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
    number.of.ch=nrow(data)
    # start - for each ch, the first non-zero x value and the occasion of the first non-zero value
    #  if strata.labels then the first non-zreo x is matched to strata.labels to exclude possible "U" values
-   if(is.null(model.list$hmm$strata.labels))
-       start=t(sapply(data$ch,function(x){
-					xx=strsplit(x,",")[[1]]
-					ich=min(which(strsplit(x,",")[[1]]!="0"))
-					return(c(as.numeric(factor(xx[ich],levels=model.list$hmm$ObsLevels))-1,ich))
-				}))
-   else
-	   if(is.null(model.list$hmm$obs_strata_map))
-	       start=t(sapply(data$ch,function(x){
-						   xx=strsplit(x,",")[[1]]
-						   ich=min(which(strsplit(x,",")[[1]]!="0"))
-						   return(c(match(xx[ich],model.list$hmm$strata.labels),ich))
-					   }))
+   if(model=="MSLD")
+   {
+     start=t(sapply(data$ch,function(x) {
+       xx = strsplit(x, "")[[1]]
+       ich = min(which(strsplit(x, "")[[1]] != "0"))
+       return(c(as.numeric(factor(xx[ich], levels = strata.labels)), ich))
+     }))
+   } else {
+      if(is.null(model.list$hmm$strata.labels))
+          start=t(sapply(data$ch,function(x){
+				   	xx=strsplit(x,",")[[1]]
+					  ich=min(which(strsplit(x,",")[[1]]!="0"))
+					  return(c(as.numeric(factor(xx[ich],levels=model.list$hmm$ObsLevels))-1,ich))
+				   }))
        else
-		   start=t(sapply(data$ch,function(x){
-							   xx=strsplit(x,",")[[1]]
-							   ich=min(which(strsplit(x,",")[[1]]!="0"))
-							   return(c(model.list$hmm$obs_strata_map[match(xx[ich],model.list$hmm$ObsLevels)],ich))
-						   }))
-   
+	        if(is.null(model.list$hmm$obs_strata_map))
+	           start=t(sapply(data$ch,function(x){
+						     xx=strsplit(x,",")[[1]]
+						     ich=min(which(strsplit(x,",")[[1]]!="0"))
+						     return(c(match(xx[ich],model.list$hmm$strata.labels),ich))
+					       }))
+           else
+		           start=t(sapply(data$ch,function(x){
+							       xx=strsplit(x,",")[[1]]
+							       ich=min(which(strsplit(x,",")[[1]]!="0"))
+							       return(c(model.list$hmm$obs_strata_map[match(xx[ich],model.list$hmm$ObsLevels)],ich))
+						         }))
+   }
    # create encounter history matrix
    if(model.list$IShmm)
       ehmat=t(sapply(strsplit(data$ch,","),function(x) as.numeric(factor(x,levels=model.list$hmm$ObsLevels))))
    else
-	  ehmat=process.ch(data$ch)$chmat
+     if(model=="MSLD")
+       ehmat=t(sapply(strsplit(data$ch,""),function(x) as.numeric(factor(x,levels=c("0",strata.labels,"1")))))
+     else
+	      ehmat=process.ch(data$ch)$chmat
    #
    #  If there are no factors then
    #     if already has freq variable return the input data set as a list

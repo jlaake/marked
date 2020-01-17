@@ -438,6 +438,8 @@ if(model=="MSCJS" | model=="MSLD" | (substr(model,1,4)=="MVMS" & (use.admb | use
   if(debug)message("Simplifying design data\n")
 	ddl=simplify_ddl(ddl,parameters) # add indices to ddl and reduce ddl to unique values used
 }
+else 
+  fullddl=NULL
 if(simplify)
 {
 	simplify=FALSE
@@ -519,7 +521,25 @@ if(model=="MSLD")
   save(fullddl,file="tmp.rda")
   rm(fullddl)
   runmodel=msld_tmb(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=accumulate,chunk_size=chunk_size,
-                    refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,clean=clean,getreals=getreals,useHess=useHess,...)
+                    refit=refit,control=control,itnmax=itnmax,scale=scale,re=re,compile=compile,extra.args=extra.args,
+                    clean=clean,getreals=getreals,useHess=useHess,savef=save.matrices,...)
+  if(save.matrices){
+    runmodel$mat=runmodel$f$report()
+    names(runmodel$mat)=c("dmat","gamma") 
+    runmodel$mat$delta=matrix(0,nrow=nrow(data.proc$data),ncol=length(data.proc$strata.labels)*2+1)
+    for(i in 1:nrow(data.proc$data))
+        runmodel$mat$delta[i,data.proc$start[i,1]]=1
+    # Adjust dmat to have nocc+1 entries for time to work with global decode
+    temp=array(0,dim=c(dim(runmodel$mat$dmat)[1],dim(runmodel$mat$dmat)[2]+1,dim(runmodel$mat$dmat)[3],dim(runmodel$mat$dmat)[4]))
+    temp[,2:dim(temp)[2],,]=runmodel$mat$dmat
+    for(i in 1:nrow(temp))
+      for(j in 1:length(data.proc$strata.labels))
+      {
+        temp[i,dp$start[i,2],j+1,j]=1
+        temp[i,dp$start[i,2],1,j]=0
+      }
+    runmodel$mat$dmat=temp
+  }
   load("tmp.rda")
 }
 if(model=="PROBITCJS")

@@ -167,8 +167,11 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
 {  	
 	if(!substr(object$model,1,3)=="HMM"&!substr(object$model,1,4)=="MVMS")
 	{
-		message("Not an HMM model. Returning NULL")
-		return(NULL)
+	  if(is.null(object$results$mat))
+	  {
+	    message("Not an HMM model. Returning NULL")
+	    return(NULL)
+	  }
 	}
 	if(is.null(state.names))
 		if(!is.null(object$data$strata.labels))
@@ -190,7 +193,10 @@ global_decode=function(object,ddl=NULL,state.names=NULL)
   delta=parmlist$delta
 	x=object$data$ehmat
 	T=object$data$nocc
-	m=object$data$m
+	if(is.null(object$data$m))
+	  m=dim(dmat)[4]
+	else
+	  m=object$data$m
 	first=object$data$start[,2]
 	states=matrix(NA,nrow=nrow(x),ncol=T)
 	for(i in 1:nrow(x))

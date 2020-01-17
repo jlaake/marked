@@ -38,6 +38,7 @@
 #' @param clean if TRUE, deletes the dll and recompiles 
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
+#' @param savef if TRUE, save optimization function in model for reporting
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -53,7 +54,7 @@
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 msld_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=FALSE,getreals=FALSE, useHess=FALSE,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=FALSE,getreals=FALSE, useHess=FALSE,savef=FALSE,...)
 {
   # load fullddl
   load("tmp.rda")
@@ -385,9 +386,11 @@ msld_tmb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
 			options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
 			chunk_size=chunk_size,itnmax=itnmax,control=control))		
 		
-#  Restore non-accumulated, non-scaled dm's etc
+# Restore non-accumulated, non-scaled dm's etc
 	res$model_data=model_data.save
-#  Assign S3 class values and return
+# if savef add it to the model
+	if(savef)res$f=f
+# Assign S3 class values and return
 	class(res)=c("crm","admb","mle","mscjs")
 	return(res)
 }

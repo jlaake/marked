@@ -8,6 +8,8 @@ CHANGES
 
 * in crm.wrapper previously it was passing entire model for the initial values if a saved external model was found. Now it only passes the beta list and it removes the model once it is loaded and beta list extracted. This can save a considerable amount of memory if the saved model is large.
 
+* global_decode will use the matrices in results$mat even if the model is not HMM. MSLD model outputs dmat and gamma from TMB code but does not have HMM functions for HMMLikelihood.  Many of the TMB functions may be moved in this direction.
+
 
 marked 1.2.6  7 December 2019
 -----------------
