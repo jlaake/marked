@@ -6,20 +6,20 @@
 \usage{
 \method{predict}{crm}(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,
                    vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,
-                   real.ids=NULL,merge=FALSE,...)
+                   real.ids=NULL,merge=FALSE,unit_scale=TRUE,...)
 }
 \arguments{
 \item{object}{model object;}
 
 \item{newdata}{a dataframe for crm}
 
-\item{ddl}{list of dataframes for design data}
+\item{ddl}{list of dataframes for design data; if specified forces computation even if estimates are in model object}
 
 \item{parameter}{name of real parameter to be computed (eg "Phi")}
 
-\item{unique}{TRUE if only unique values should be returned}
+\item{unique}{TRUE if only unique values should be returned; if TRUE forces computation even if estimates are in model object}
 
-\item{vcv}{logical; if TRUE, computes and returns v-c matrix of real estimates}
+\item{vcv}{logical; if TRUE, computes and returns v-c matrix of real estimates; if TRUE forces computation even if estimates are in model object}
 
 \item{se}{logical; if TRUE, computes std errors and conf itervals of real estimates}
 
@@ -32,6 +32,8 @@
 \item{real.ids}{animal ids passed to TMB code for computation of real parameter values}
 
 \item{merge}{default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates}
+
+\item{unit_scale}{default TRUE, if FALSE any time scaled parameter (e.g. Phi,S) is scaled when computing real value such that it represents the length of the interval rather than a unit interval}
 
 \item{...}{generic arguments not used here}
 }
@@ -50,6 +52,10 @@ range of the values in ddl for each parameter. Make sure to include a complete s
 the factor levels and individual covariates used in the formulas for the model object or you will receive an
 error that the number of columns in the design matrix does not match the number of beta parameters.  You cannot 
 change the levels of any factor variable or modify the design data in anyway that changes the design matrix.
+}
+\details{
+If the real estimates are in the model object and se and vcv are FALSE and ddl not specified, 
+the code will simply pull the values from the model object.
 }
 \examples{
 data(dipper)

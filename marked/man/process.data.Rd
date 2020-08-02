@@ -55,17 +55,19 @@ must be specified}
 \value{
 from \code{process.data} processed.data (a list with the following elements)
 \item{data}{original raw dataframe with group factor variable added if
-groups were defined} \item{model}{type of analysis model (eg, "cjs" or "js")}
+groups were defined} 
+\item{model}{type of analysis model (eg, "cjs" or "js")}
 \item{freq}{a dataframe of frequencies (same # of rows
 as data, number of columns is the number of groups in the data. The column
 names are the group labels representing the unique groups that have one or
-more capture histories.} \item{nocc}{number of capture occasions}
+more capture histories.} 
+\item{nocc}{number of capture occasions}
 \item{time.intervals}{length of time intervals between capture occasions}
-\item{begin.time}{time of first capture occasion} \item{initial.ages}{an initial age for
+\item{begin.time}{time of first capture occasion} 
+\item{initial.ages}{an initial age for
 each group in the data; Note that this is not the original argument but is a
-vector with the initial age for each group. In the first example below
-\code{proc.example.data$initial.ages} is a vector with 16 elements as
-follows 0 1 1 2 0 1 1 2 0 1 1 2 0 1 1 2} \item{group.covariates}{factor covariates used to define groups}
+vector with the initial age for each group. }
+\item{group.covariates}{factor covariates used to define groups}
 from accumulate_data a dataframe with same column structure as argument with addition of freq (if not any)
 and reduced to unique rows with freq accumulating number of records.
 }
@@ -128,19 +130,14 @@ accumulated because at present it doesn't use values of time.intervals to determ
 
 \code{groups} is a vector of variable names that are contained in
 \code{data}.  Each must be a factor variable. A group is created for each
-unique combination of the levels of the factor variables.  In the first
-example given below \code{groups=c("sex","age","region")}. which creates
-groups defined by the levels of \code{sex}, \code{age} and \code{region}.
-There should be 2(sexes)*3(ages)*4(regions)=24 groups but in actuality there
-are only 16 in the data because there are only 2 age groups for each sex.
-Age group 1 and 2 for M and age groups 2 and 3 for F.  This was done to
-demonstrate that the code will only use groups that have 1 or more capture
-histories unless \code{allgroups=TRUE}.
+unique combination of the levels of the factor variables.  For
+example \code{groups=c("sex","ageclass","region")} creates
+groups defined by the levels of \code{sex}, \code{ageclass} and \code{region}.
+the code will only use groups that have 1 or more capture histories unless \code{allgroups=TRUE}.
 
 The argument \code{age.var=2} specifies that the second grouping variable in
 \code{groups} represents an age variable.  It could have been named
-something different than age. If a variable in \code{groups} is named
-\code{age} then it is not necessary to specify \code{age.var}.
+something different than ageclass but it should not be named age as that is reserved in marked. 
 \code{initial.age} specifies that the age at first capture of the age levels. For example
 initial.age=0:2 specifies that the initial.ages are 0,1 and 2 for the age class levels 
  designated as 1,2,3. The actual ages
@@ -151,19 +148,20 @@ is 0 for each group, in which case, \code{age} represents time since marking
 (first capture) rather than the actual age of the animal. If the data contains an initial.age field
 then it overrides any other values and lets each animal have a unique initial.age at first capture/release.
 
-The following variable names are reserved and should be used as follows:
+The following variable names are reserved and should not be used in the data:
 id (animal id)
 ch(capture history)
 freq (number of animals with that ch/data)
-The following variable names are reserved and should not be used in the data:
-occ,age,time,cohort,Age,Time,Cohort,Y,Z,initial.age,begin.time,time.interval,fix
+occ,age,time,cohort,Age,Time,Cohort,time.interval,fix
 }
 \examples{
 
 
 data(dipper)
-dipper.process=process.data(dipper)
-accumulate_data(dipper)
+dipper.process=process.data(dipper,groups="sex")
+# create some artificial age data as an example
+dipper$ageclass=factor(c(rep("A",100),rep("J",194)))
+dipper.process=process.data(dipper,groups=c("sex","ageclass"),age.var=2,initial.ages=c(1,0))
 
 }
 \seealso{

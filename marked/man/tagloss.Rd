@@ -4,10 +4,12 @@
 \name{tagloss}
 \alias{tagloss}
 \title{Tag loss example}
-\format{A data frame with 1000 observations on the following 2 variables.
+\format{
+A data frame with 1000 observations on the following 2 variables.
 \describe{ \item{ch}{a character vector containing the encounter history of
 each bird} \item{perm}{a factor variable indicating whether the animal is 
-permanently marked ("yes") or not ("no") }}}
+permanently marked ("yes") or not ("no") }}
+}
 \description{
 A simulated data set of double tag loss with 1/2 of the animals with a 
 permanent mark. The data are simulated with tag-specific loss rates and

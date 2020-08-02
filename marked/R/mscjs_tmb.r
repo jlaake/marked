@@ -40,6 +40,7 @@
 #' @param clean if TRUE, deletes the dll and recompiles 
 #' @param getreals if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete
 #' @param useHess if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution
+#' @param savef if TRUE, save the makeAdFun result from TMB to report real values and matrices
 #' @param ... not currently used
 #' @export
 #' @return The resulting value of the function is a list with the class of
@@ -55,7 +56,7 @@
 #' @references Ford, J. H., M. V. Bravington, and J. Robbins. 2012. Incorporating individual variability into mark-recapture models. Methods in Ecology and Evolution 3:1047-1054.
 mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method,
 		hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,
-		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,getreals=FALSE, useHess=FALSE,...)
+		re=FALSE,compile=FALSE,extra.args="",clean=TRUE,getreals=FALSE, useHess=FALSE,savef=TRUE,...)
 {
 	accumulate=FALSE
 	nocc=x$nocc
@@ -119,32 +120,34 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	if(!is.null(ddl$S$fix))
 		phifix[!is.na(ddl$S$fix)]=ddl$S$fix[!is.na(ddl$S$fix)]
 	phi_slist=simplify_indices(cbind(phidm,phifix))
-	phimixed=mixed.model.admb(parameters$S$formula,fullddl$S)
-	nphisigma=0
-	if(!is.null(phimixed$re.dm))nphisigma=ncol(phimixed$re.dm)
-	if(!is.null(phimixed$re.dm))
-	{
-		phimixed$re.indices[fullddl$S$Time<fullddl$S$Cohort,]=NA
-		phimixed=reindex(phimixed,fullddl$S$id)
-		
-		# random effect data
-		phi_krand=ncol(phimixed$re.dm)
-		phi_randDM=phimixed$re.dm
-		phi_randIndex=phimixed$re.indices
-		phi_counts=phimixed$index.counts
-		mx=max(phimixed$index.counts)
-		phi_idIndex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
-		phi_nre=max(phi_idIndex)
-		if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
-		if(phi_krand==1)phi_randIndex=matrix(as.vector(t(phi_randIndex)),ncol=1)
-	} else {
-		phi_nre=0
-		phi_krand=0
-		phi_randDM=matrix(0,nrow=0,ncol=0)
-		phi_randIndex=matrix(0,nrow=0,ncol=0)
-		phi_counts=vector("integer",length=0)
-		phi_idIndex=matrix(0,nrow=0,ncol=0)
-	}
+	phi_relist=setup_re(fullddl$S,parameters$S$formula)
+	
+	# phimixed=mixed.model.admb(parameters$S$formula,fullddl$S)
+	# nphisigma=0
+	# if(!is.null(phimixed$re.dm))nphisigma=ncol(phimixed$re.dm)
+	# if(!is.null(phimixed$re.dm))
+	# {
+	# 	phimixed$re.indices[fullddl$S$Time<fullddl$S$Cohort,]=NA
+	# 	phimixed=reindex(phimixed,fullddl$S$id)
+	# 	
+	# 	# random effect data
+	# 	phi_krand=ncol(phimixed$re.dm)
+	# 	phi_randDM=phimixed$re.dm
+	# 	phi_randIndex=phimixed$re.indices
+	# 	phi_counts=phimixed$index.counts
+	# 	mx=max(phimixed$index.counts)
+	# 	phi_idIndex=t(sapply(phimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+	# 	phi_nre=max(phi_idIndex)
+	# 	if(nrow(phi_idIndex)==1)phi_idIndex=t(phi_idIndex)
+	# 	if(phi_krand==1)phi_randIndex=matrix(as.vector(t(phi_randIndex)),ncol=1)
+	# } else {
+	# 	phi_nre=0
+	# 	phi_krand=0
+	# 	phi_randDM=matrix(0,nrow=0,ncol=0)
+	# 	phi_randIndex=matrix(0,nrow=0,ncol=0)
+	# 	phi_counts=vector("integer",length=0)
+	# 	phi_idIndex=matrix(0,nrow=0,ncol=0)
+	# }
 	
 	
 	# p design matrix
@@ -153,83 +156,103 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	if(!is.null(ddl$p$fix))
 		pfix[!is.na(ddl$p$fix)]=ddl$p$fix[!is.na(ddl$p$fix)]
 	p_slist=simplify_indices(cbind(pdm,pfix))
-	pmixed=mixed.model.admb(parameters$p$formula,fullddl$p)
-	npsigma=0
-	if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
+	p_relist=setup_re(fullddl$p,parameters$p$formula)
 	
-	if(!is.null(pmixed$re.dm))
-	{
-		pmixed$re.indices[fullddl$p$Time<fullddl$Cohort,]=NA
-		pmixed=reindex(pmixed,fullddl$p$id)
-		# random effect data	
-		p_krand=ncol(pmixed$re.dm)
-		p_randDM=pmixed$re.dm
-		p_randIndex=pmixed$re.indices
-		p_counts=pmixed$index.counts
-		mx=max(pmixed$index.counts)
-		p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
-		if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
-		p_nre=max(p_idIndex)
-		if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)
-	} else {
-		p_nre=0
-		p_krand=0
-		p_randDM=matrix(0,nrow=0,ncol=0)
-		p_randIndex=matrix(0,nrow=0,ncol=0)
-		p_counts=vector("integer",length=0)
-		p_idIndex=matrix(0,nrow=0,ncol=0)
-	}
-	
+	# pmixed=mixed.model.admb(parameters$p$formula,fullddl$p)
+	# npsigma=0
+	# if(!is.null(pmixed$re.dm))npsigma=ncol(pmixed$re.dm)
+	# 
+	# if(!is.null(pmixed$re.dm))
+	# {
+	# 	pmixed$re.indices[fullddl$p$Time<fullddl$Cohort,]=NA
+	# 	pmixed=reindex(pmixed,fullddl$p$id)
+	# 	# random effect data	
+	# 	p_krand=ncol(pmixed$re.dm)
+	# 	p_randDM=pmixed$re.dm
+	# 	p_randIndex=pmixed$re.indices
+	# 	p_counts=pmixed$index.counts
+	# 	mx=max(pmixed$index.counts)
+	# 	p_idIndex=t(sapply(pmixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+	# 	if(nrow(p_idIndex)==1)p_idIndex=t(p_idIndex)
+	# 	p_nre=max(p_idIndex)
+	# 	if(p_krand==1)p_randIndex=matrix(as.vector(t(p_randIndex)),ncol=1)
+	# } else {
+	# 	p_nre=0
+	# 	p_krand=0
+	# 	p_randDM=matrix(0,nrow=0,ncol=0)
+	# 	p_randIndex=matrix(0,nrow=0,ncol=0)
+	# 	p_counts=vector("integer",length=0)
+	# 	p_idIndex=matrix(0,nrow=0,ncol=0)
+	# }
+	# 
 	#Psi design matrix
 	psidm=as.matrix(model_data$Psi.dm)
 	psifix=rep(-1,nrow(psidm))
 	if(!is.null(ddl$Psi$fix))
 		psifix[!is.na(ddl$Psi$fix)]=ddl$Psi$fix[!is.na(ddl$Psi$fix)]
 	psi_slist=simplify_indices(cbind(psidm,psifix))
-	psimixed=mixed.model.admb(parameters$Psi$formula,fullddl$Psi)
-	npsisigma=0
-	if(!is.null(psimixed$re.dm))npsisigma=ncol(psimixed$re.dm)
+	psi_relist=setup_re(fullddl$Psi,parameters$Psi$formula)
 	
-	if(!is.null(psimixed$re.dm))
-	{
-		psimixed$re.indices[fullddl$Psi$Time<fullddl$Cohort,]=NA
-		psimixed=reindex(psimixed,fullddl$Psi$id)
-		# random effect data	
-		psi_krand=ncol(psimixed$re.dm)
-		psi_randDM=psimixed$re.dm
-		psi_randIndex=psimixed$re.indices
-		psi_counts=psimixed$index.counts
-		mx=max(psimixed$index.counts)
-		psi_idIndex=t(sapply(psimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
-		if(nrow(psi_idIndex)==1)psi_idIndex=t(psi_idIndex)
-		psi_nre=max(psi_idIndex)
-		if(psi_krand==1)psi_randIndex=matrix(as.vector(t(psi_randIndex)),ncol=1)
-	} else {
-		psi_nre=0
-		psi_krand=0
-		psi_randDM=matrix(0,nrow=0,ncol=0)
-		psi_randIndex=matrix(0,nrow=0,ncol=0)
-		psi_counts=vector("integer",length=0)
-		psi_idIndex=matrix(0,nrow=0,ncol=0)
-	}
+	
+	# psimixed=mixed.model.admb(parameters$Psi$formula,fullddl$Psi)
+	# npsisigma=0
+	# if(!is.null(psimixed$re.dm))npsisigma=ncol(psimixed$re.dm)
+	# 
+	# if(!is.null(psimixed$re.dm))
+	# {
+	# 	psimixed$re.indices[fullddl$Psi$Time<fullddl$Cohort,]=NA
+	# 	psimixed=reindex(psimixed,fullddl$Psi$id)
+	# 	# random effect data	
+	# 	psi_krand=ncol(psimixed$re.dm)
+	# 	psi_randDM=psimixed$re.dm
+	# 	psi_randIndex=psimixed$re.indices
+	# 	psi_counts=psimixed$index.counts
+	# 	mx=max(psimixed$index.counts)
+	# 	psi_idIndex=t(sapply(psimixed$used.indices,function(x) return(c(x,rep(0,mx-length(x))))))
+	# 	if(nrow(psi_idIndex)==1)psi_idIndex=t(psi_idIndex)
+	# 	psi_nre=max(psi_idIndex)
+	# 	if(psi_krand==1)psi_randIndex=matrix(as.vector(t(psi_randIndex)),ncol=1)
+	# } else {
+	# 	psi_nre=0
+	# 	psi_krand=0
+	# 	psi_randDM=matrix(0,nrow=0,ncol=0)
+	# 	psi_randIndex=matrix(0,nrow=0,ncol=0)
+	# 	psi_counts=vector("integer",length=0)
+	# 	psi_idIndex=matrix(0,nrow=0,ncol=0)
+	# }
+	# nrowphi=length(phi_slist$set),	phidm=phidm[phi_slist$set,,drop=FALSE],
+	# phifix=phifix[phi_slist$set],phiindex=phi_slist$indices[ddl$S.indices],
+	# phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
+	# phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
+	# nrowp=length(p_slist$set),pdm=pdm[p_slist$set,,drop=FALSE],
+	# pfix=pfix[p_slist$set],pindex=p_slist$indices[ddl$p.indices],
+	# p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
+	# p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,
+	# nrowpsi=length(psi_slist$set),	psidm=psidm[psi_slist$set,,drop=FALSE],
+	# psifix=psifix[psi_slist$set],psiindex=psi_slist$indices[ddl$Psi.indices],
+	# psi_nre=psi_nre,psi_krand=psi_krand,psi_randDM=psi_randDM,
+	# psi_randIndex=psi_randIndex,psi_counts=psi_counts,psi_idIndex=psi_idIndex,
 	
 	f = MakeADFun(data=list(n=length(model_data$imat$freq),m=model_data$imat$nocc,nS=length(strata.labels),
 					ch=chmat,frst=model_data$imat$first,freq=model_data$imat$freq,tint=model_data$time.intervals,
 					nrowphi=length(phi_slist$set),	phidm=phidm[phi_slist$set,,drop=FALSE],
 					phifix=phifix[phi_slist$set],phiindex=phi_slist$indices[ddl$S.indices],
-					phi_nre=phi_nre,phi_krand=phi_krand,phi_randDM=phi_randDM,
-					phi_randIndex=phi_randIndex,phi_counts=phi_counts,phi_idIndex=phi_idIndex,
-					nrowp=length(p_slist$set),pdm=pdm[p_slist$set,,drop=FALSE],
-					pfix=pfix[p_slist$set],pindex=p_slist$indices[ddl$p.indices],
-					p_nre=p_nre,p_krand=p_krand,p_randDM=p_randDM,
-					p_randIndex=p_randIndex,p_counts=p_counts,p_idIndex=p_idIndex,
+					phi_nre=phi_relist$nre,phi_krand=phi_relist$krand,phi_randDM=phi_relist$randDM,phi_randDM_i=phi_relist$randDM_i,
+					phi_randIndex=phi_relist$randIndex,phi_randIndex_i=phi_relist$randIndex_i,phi_counts=phi_relist$counts,phi_idIndex=phi_relist$idIndex,
+					phi_idIndex_i=phi_relist$idIndex_i,
+					nrowp=length(p_slist$set),pdm=pdm[p_slist$set,,drop=FALSE],pfix=pfix[p_slist$set],pindex=p_slist$indices[ddl$p.indices],
+					p_nre=p_relist$nre,p_krand=p_relist$krand,p_randDM=p_relist$randDM, p_randDM_i=p_relist$randDM_i, 
+					p_randIndex=p_relist$randIndex,p_randIndex_i=p_relist$randIndex_i,p_counts=p_relist$counts,
+					p_idIndex=p_relist$idIndex,p_idIndex_i=p_relist$idIndex_i,
 					nrowpsi=length(psi_slist$set),	psidm=psidm[psi_slist$set,,drop=FALSE],
 					psifix=psifix[psi_slist$set],psiindex=psi_slist$indices[ddl$Psi.indices],
-					psi_nre=psi_nre,psi_krand=psi_krand,psi_randDM=psi_randDM,
-					psi_randIndex=psi_randIndex,psi_counts=psi_counts,psi_idIndex=psi_idIndex,getreals=as.integer(getreals)),
-			        parameters=list(phibeta=par$S,pbeta=par$p,psibeta=par$Psi,log_sigma_phi=rep(-1,nphisigma),
-					log_sigma_p=rep(-1,npsigma),log_sigma_psi=rep(-1,npsisigma),u_phi=rep(0,phi_nre),
-					u_p=rep(0,p_nre),u_psi=rep(0,psi_nre)),random=c("u_phi","u_p","u_psi"),DLL="multistate_tmb")
+					psi_nre=psi_relist$nre,psi_krand=psi_relist$krand,psi_randDM=psi_relist$randDM,psi_randDM_i=psi_relist$randDM_i,
+					psi_randIndex=psi_relist$randIndex,psi_randIndex_i=psi_relist$randIndex_i,psi_counts=psi_relist$counts,psi_idIndex=psi_relist$idIndex,
+					psi_idIndex_i=psi_relist$idIndex_i,
+					getreals=as.integer(getreals)),
+			        parameters=list(phibeta=par$S,pbeta=par$p,psibeta=par$Psi,log_sigma_phi=rep(-1,phi_relist$nsigma),
+					log_sigma_p=rep(-1,p_relist$nsigma),log_sigma_psi=rep(-1,psi_relist$nsigma),u_phi=rep(0,phi_relist$nre),
+					u_p=rep(0,p_relist$nre),u_psi=rep(0,psi_relist$nre)),random=c("u_phi","u_p","u_psi"),DLL="multistate_tmb")
 	cat("\nrunning TMB program\n")                         
 	if(method=="nlminb")
 	{
@@ -267,28 +290,28 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	  par_summary=sdreport(f,getReportCovariance=FALSE)
 	else
 	  par_summary=sdreport(f,getJointPrecision=TRUE)
-	if(p_nre+phi_nre>0)
+	if(p_relist$nre+phi_relist$nre+psi_relist$nre>0)
 	{
 	 	par=par_summary$par.fixed[1:fixed.npar]
 		cjs.beta.fixed=unscale.par(par,scale)
 		cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
 		sigma=NULL
-		if(phi_krand>0)
+		if(phi_relist$krand>0)
 		{
-			Phi_sigma=cjs.beta.sigma[1:phi_krand]
-			names(Phi_sigma)=colnames(phi_randDM)
+			Phi_sigma=cjs.beta.sigma[1:phi_relist$krand]
+			names(Phi_sigma)=colnames(phi_relist$randDM)
 			sigma=list(Phi_logsigma=Phi_sigma)
 		} 
-		if(p_krand>0)
+		if(p_relist$krand>0)
 		{
-			p_sigma=cjs.beta.sigma[(phi_krand+1):(phi_krand+p_krand)]
-			names(p_sigma)=colnames(p_randDM)
+			p_sigma=cjs.beta.sigma[(phi_relist$krand+1):(phi_relist$krand+p_relist$krand)]
+			names(p_sigma)=colnames(p_relist$randDM)
 			sigma=c(sigma,list(p_logsigma=p_sigma))
 		}
-		if(psi_krand>0)
+		if(psi_relist$krand>0)
 		{
-			Psi_sigma=cjs.beta.sigma[(phi_krand+p_krand+1):(phi_krand+p_krand+psi_krand)]
-			names(Psi_sigma)=colnames(psi_randDM)
+			Psi_sigma=cjs.beta.sigma[(phi_relist$krand+p_relist$krand+1):(phi_relist$krand+p_relist$krand+psi_relist$krand)]
+			names(Psi_sigma)=colnames(psi_relist$randDM)
 			sigma=c(sigma,list(Psi_logsigma=Psi_sigma))
 		} 
 		cjs.beta=c(cjs.beta.fixed,sigma)
@@ -333,7 +356,7 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 			model_data=model_data,
 			options=list(scale=scale,accumulate=accumulate,initial=initial,method=method,
 			chunk_size=chunk_size,itnmax=itnmax,control=control))		
-		
+	 if(savef)res$f=f	
 #  Restore non-accumulated, non-scaled dm's etc
 	res$model_data=model_data.save
 #  Assign S3 class values and return

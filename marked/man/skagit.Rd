@@ -4,10 +4,12 @@
 \name{skagit}
 \alias{skagit}
 \title{An example of the Mulstistrata (multi-state) model in which states are routes taken by migrating fish.}
-\format{A data frame with 100 observations on the following 2 variables.
+\format{
+A data frame with 100 observations on the following 2 variables.
 \describe{ \item{ch}{capture history} 
  \item{tag}{tag type v7 or v9}
-}}
+}
+}
 \description{
 An example of the Mulstistrata (multi-state) model in which states are routes taken by migrating fish.
 }

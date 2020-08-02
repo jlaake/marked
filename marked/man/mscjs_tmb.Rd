@@ -27,6 +27,7 @@ mscjs_tmb(
   clean = TRUE,
   getreals = FALSE,
   useHess = FALSE,
+  savef = TRUE,
   ...
 )
 }
@@ -83,6 +84,8 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 \item{getreals}{if TRUE, compute real values and std errors for TMB models; may want to set as FALSE until model selection is complete}
 
 \item{useHess}{if TRUE, the TMB hessian function is used for optimization; using hessian is typically slower with many parameters but can result in a better solution}
+
+\item{savef}{if TRUE, save the makeAdFun result from TMB to report real values and matrices}
 
 \item{...}{not currently used}
 }

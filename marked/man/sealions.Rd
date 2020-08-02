@@ -4,11 +4,13 @@
 \name{sealions}
 \alias{sealions}
 \title{Multivariate State example data}
-\format{A data frame with 485 observations on the following 3 variables.
+\format{
+A data frame with 485 observations on the following 3 variables.
 \describe{ \item{ch}{a character vector of 3-character values for each occasion separated by commas.} 
  \item{sex}{the sex of the sea lion designated as F or M}
  \item{weight}{the anomaly of the weight from the sex-specific mean}
-}}
+}
+}
 \description{
 An example data set using California sea lions to demonstrate the Multivariate
 state model with 3 variables defining the states : area, ltag and rtag.  The left tag (ltag) and

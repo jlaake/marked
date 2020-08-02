@@ -18,7 +18,8 @@ compute_real(
   showDesign = FALSE,
   include = NULL,
   uselink = FALSE,
-  merge = FALSE
+  merge = FALSE,
+  unit_scale = TRUE
 )
 }
 \arguments{
@@ -30,7 +31,7 @@ compute_real(
 
 \item{dml}{design matrix list}
 
-\item{unique}{TRUE if only unique values should be returned}
+\item{unique}{TRUE if only unique values should be returned unless non-NULL subset is specified}
 
 \item{vcv}{logical; if TRUE, computes and returns v-c matrix of real estimates}
 
@@ -38,7 +39,7 @@ compute_real(
 
 \item{chat}{over-dispersion value}
 
-\item{subset}{logical expression using fields in real dataframe}
+\item{subset}{logical expression using fields in real dataframe; if used gives all estimates which ignores unique=TRUE}
 
 \item{select}{character vector of field names in real that you want to include}
 
@@ -48,7 +49,9 @@ compute_real(
 
 \item{uselink}{default FALSE; if TRUE uses link values in evaluating uniqueness}
 
-\item{merge}{default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates}
+\item{merge}{default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates but only if unique=FALSE}
+
+\item{unit_scale}{default TRUE, if FALSE any time scaled parameter (e.g. Phi,S) is scaled when computing real value such that it represents the length of the interval rather than a unit interval}
 }
 \value{
 A data frame (\code{real}) is returned if \code{vcv=FALSE};

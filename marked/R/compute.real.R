@@ -17,16 +17,17 @@
 #' @param parameter name of real parameter to be computed (eg "Phi" or "p")
 #' @param ddl list of design data 
 #' @param dml design matrix list
-#' @param unique TRUE if only unique values should be returned
+#' @param unique TRUE if only unique values should be returned unless non-NULL subset is specified
 #' @param vcv logical; if TRUE, computes and returns v-c matrix of real estimates
 #' @param se logical; if TRUE, computes std errors and conf itervals of real estimates
 #' @param chat over-dispersion value
-#' @param subset logical expression using fields in real dataframe
+#' @param subset logical expression using fields in real dataframe; if used gives all estimates which ignores unique=TRUE
 #' @param select character vector of field names in real that you want to include 
 #' @param showDesign if TRUE, show design matrix instead of data 
 #' @param include vector of field names always to be included even when select or unique specified
 #' @param uselink default FALSE; if TRUE uses link values in evaluating uniqueness
-#' @param merge default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates
+#' @param merge default FALSE but if TRUE, the ddl for the parameter is merged (cbind) to the estimates but only if unique=FALSE
+#' @param unit_scale default TRUE, if FALSE any time scaled parameter (e.g. Phi,S) is scaled when computing real value such that it represents the length of the interval rather than a unit interval
 #' @export
 #' @return A data frame (\code{real}) is returned if \code{vcv=FALSE};
 #' otherwise, a list is returned also containing vcv.real: \item{real}{ data
@@ -42,9 +43,16 @@
 #'  model.parameters=list(Phi=list(formula=~sex+time),p=list(formula=~1)),hessian=TRUE)
 #' xx=compute_real(mod.Phisex.pdot,"Phi",unique=TRUE,vcv=TRUE)
 #' @keywords utility
-compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE,merge=FALSE)
+compute_real<-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,se=FALSE,chat=1,subset=NULL,
+                        select=NULL,showDesign=FALSE,include=NULL,uselink=FALSE,merge=FALSE,unit_scale=TRUE)
 {
 #  Note that the vector indices has 3 different meanings in the code as the code progresses.
+# if unique=TRUE, set merge=FALSE if set TRUE
+  if(unique&merge)
+  {
+    message("setting merge to FALSE because unique=TRUE")
+    merge=FALSE
+  }
 # if ddl not specified return results stored in model
   if(is.null(ddl))return(model$results$reals)
 # set mcmc value
@@ -54,24 +62,33 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   if(!is.null(dml))
 	  design=dml[[parameter]]$fe  
   else
-	design=model$results$model_data[[paste(parameter,"dm",sep=".")]]
+	  design=model$results$model_data[[paste(parameter,"dm",sep=".")]]
+#
 # remove unneeded reals - values that occurred before cohort was released; here indces represents the real
 # parameters to be used
+#
+  indices=1:nrow(data)
   if(!is.null(data$Time)&model$model.parameter[[parameter]]$type=="Triang")
   {
 	  indices=which(data$Time>=data$Cohort)
 	  data=data[indices,,drop=FALSE]
-	  design=design[indices,,drop=FALSE]
-  }
-# for abundance parameters only use those with non-zero freq
-  if(parameter!="N" &!is.null(data$freq))
+  } else
+#
+# for non-abundance parameters in JS model only use those with non-zero freq
+  if(model$model=="JS"&parameter!="N" &!is.null(data$freq))
   {
 	  indices=which(data$freq!=0)
 	  data=data[indices,,drop=FALSE]
-	  design=design[indices,,drop=FALSE]
   }
+# For models that are simplified, get the indices for the simplified dm
+  if(!is.null(model$model.parameters[[parameter]]$indices))
+    design=design[model$model.parameters[[parameter]]$indices[indices],,drop=FALSE]
+  else
+    design=design[indices,,drop=FALSE]
+#
 # design is a sparse matrix and this changes it to a std matrix
   design=as.matrix(design)
+#
 # Set up links; for HMM models ulink (utlimate link) is used for mlogit parameters which have a temp "log" link
 # ulink is known because there are mlogit variables named in parameters.txt for the parameter. Parameters such as pent in JS and
 # Psi in MSCJS, the link is mlogit (rather than log) 
@@ -81,15 +98,18 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   {
 	  link=paste("mlogit",apply(data[,model$model.parameter[[parameter]]$mlogit,drop=FALSE],1,paste,collapse=""),sep="")
       addone=TRUE
-  } else {
+  } else 
+  {
     if(!is.null(model$model.parameter[[parameter]]$mlogit))
-	{
-		addone=FALSE
-		ulink=paste("mlogit",apply(data[,model$model.parameter[[parameter]]$mlogit,drop=FALSE],1,paste,collapse=""),sep="")
-	}
+	  {
+		  addone=FALSE
+		  ulink=paste("mlogit",apply(data[,model$model.parameter[[parameter]]$mlogit,drop=FALSE],1,paste,collapse=""),sep="")
+	  }
   }
   if(length(link)>1)link=link[indices] 
+#
 # If there are any fixed parameters (fix in ddl), create boolean for fixed values (fixedparms) and store values (fixedvalues)
+#
   if(!is.null(data$fix))
   {
 	  fixedparms=!is.na(data$fix)
@@ -99,30 +119,43 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  fixedparms=rep(FALSE,nrow(data))
 	  fixedvalues=rep(NA,nrow(data))
   }
-# Next select the variables to be extracted for the real parameter calculations; by default this is the variables in the 
-# model formula and if any variables for this parameter are needed for mlogit parameter setup (include) these are also selected.
+
+# add fixedvalues and ulink to df
   if(!is.null(ulink))
 	  df=cbind(data,fixed=fixedvalues,link=ulink)
   else
 	  df=cbind(data,fixed=fixedvalues)
+
+# add time.interval if in data
+  if(!is.null(data$time.interval)&!unit_scale)
+    df$time.interval=data$time.interval
+
+#
+# Next select the variables to be extracted for the real parameter calculations; by default this is the variables in the 
+# model formula and if any variables for this parameter are needed for mlogit parameter setup (include) these are also selected.
   if(unique)
   {
 	  if(!is.null(ulink)&uselink)
   	     varnames=c(select,include,all.vars(model$model.parameters[[parameter]]$formula),"occ","fixed","link")
-	 else
+	  else
  	     varnames=c(select,include,all.vars(model$model.parameters[[parameter]]$formula),"occ","fixed")
   } else
   {
 	  if(!is.null(ulink)&uselink)	
-  	      varnames=c(include,select,"fixed","link")
+  	    varnames=c(include,select,"fixed","link")
 	  else
 	      varnames=c(include,select,"fixed")
   }
+  if(!unit_scale&!is.null(df$time.interval))varnames=c(varnames,"time.interval")
   varnames=unique(varnames)
+#
+# check to make sure any "select"ed variables are in the data; ignore those that are not
   if(any(!select%in%names(df))) 
 	  warning(paste("For parameter ",parameter," these variable names not in data for real estimates: ",paste(varnames[!select%in%names(df)],collapse=","),sep=""))
   varnames=varnames[varnames%in%names(df)]
   df=df[,varnames,drop=FALSE]
+  
+#
 # Check to make sure dimensions and names for beta and design matrix match
   results=model$results
   beta=results$beta[[parameter]]
@@ -158,7 +191,8 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
     }
                     
   }
-  
+#
+# select only those colnames in design matrix that are in beta  
   if(any(!used))
   {
     newdesign=matrix(0,ncol=length(used),nrow=nrow(design))
@@ -166,7 +200,10 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
     newdesign[,used]=design[,used]
     design=newdesign
   }
-# Compute real parameters using function convert.link.to.real
+#
+# Compute real parameter estimates
+#
+# Uses function convert.link.to.real
 # added code to handle all parameters being fixed
   if(length(beta)==0)
 	  real=fixedvalues
@@ -176,8 +213,11 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 		  real=convert.link.to.real(t(design%*%t(results$beta.mcmc[[parameter]])),links=link,fixed=fixedvalues)
 	  else
 	    if(ncol(design)>0)
+	    {
 	      real=convert.link.to.real(design%*%beta,links=link,fixed=fixedvalues)
-	    else
+	      if(!is.null(df$time.interval))
+	        real=real^df$time.interval
+	    } else
 	      real=rep(NA,nrow(design))
 	    # Set fixed real parameters to their fixed values
      real[fixedparms]=fixedvalues[fixedparms]
@@ -249,9 +289,12 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
   }	  
   df=df[,!names(df)%in%"fixed",drop=FALSE]
   if(showDesign)
-	  reals=cbind(design,reals)
+	  reals=cbind(as.data.frame(design),estimate=reals)
   else
-	  reals=cbind(df,reals)
+	  reals=cbind(df,estimate=reals)
+  
+#  v-c matrix or std error calculations  
+#  
 #  If vcv or se do computations. for non-mlogit parameters this is accomplished with the
 #  calls to compute deriv.real and vcv.real. Below, the confidence interval for each parameter
 #  is approximated.
@@ -264,12 +307,23 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	 indices=grep(paste(parameter,"\\.",sep=""),colnames(results$beta.vcv))
 	 if(substr(link[1],1,6)!="mlogit")
 	 {
-	    deriv.real=as.matrix(deriv_inverse.link(real,design,link))
+	    if(is.null(df$time.interval))
+	      deriv.real=as.matrix(deriv_inverse.link(real,design,link))
+	    else
+	      deriv.real=as.matrix(deriv_inverse.link(real^(1/df$time.interval),design,link))
 	    vcv.real=deriv.real%*%results$beta.vcv[indices,indices,drop=FALSE]%*%t(deriv.real)
+	    if(!is.null(df$time.interval))
+	    {
+#       reals$estimate has already been converted to interval S^t;so (S^/1/t) = unit interval S and then S^(t-1)
+	      deriv.real=diag(df$time.interval*(real^(1/df$time.interval))^(df$time.interval-1),nrow=length(reals$estimate),ncol=length(reals$estimate))
+	      vcv.real=deriv.real%*%vcv.real%*%t(deriv.real)
+	    }
 	 } 
-#   To handle any mlogit parameters compute pseudo-real estimates using log in place of mlogit;
-#   This is not needed for HMM mlogit parameters because it is done above
-	 if(substr(link[1],1,6)=="mlogit"| !is.null(model$model.parameter[[parameter]]$mlogit))
+	 
+#	 Standard errors and v-c matrix for mlogit parameters
+#  To handle any mlogit parameters compute pseudo-real estimates using log in place of mlogit;
+#  This is not needed for HMM mlogit parameters because it is done above
+	 if(substr(link[1],1,6)=="mlogit" | !is.null(model$model.parameter[[parameter]]$mlogit))
 	 {
 	    if(addone)
 	    {
@@ -302,10 +356,15 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 		deriv.pseudo=(diag(nrow=nrow(vcv.pseudo))*bottom-pseudo.real*pbottom)/bottom^2
 		deriv.pseudo[is.nan(deriv.pseudo)]=0
 		vcv.real=deriv.pseudo%*%vcv.pseudo%*%t(deriv.pseudo)
-	  }
+	 }
+	 
+#   Adjust for over-dispersion	  
 	  vcv.real=chat*vcv.real
-#     Compute conf interval taking into account use of logit transform for mlogit
-#     and any 0-1 link (loglog,cloglog,sin,logit)
+
+#   Confidence intervals
+#
+#   Compute conf interval taking into account use of logit transform for mlogit
+#   and any 0-1 link (loglog,cloglog,sin,logit)
 	  link.se=suppressWarnings(sqrt(chat*diag(design%*%results$beta.vcv[indices,indices]%*%t(design))))
 	  link.se[is.na(link.se)]=0
 	  if(is.null(ulink))
@@ -342,11 +401,14 @@ compute_real <-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,
 	  fixed=rep("",dim(design)[1])
 	  fixed[fixedparms]="Fixed"
 	  reals=cbind(reals,data.frame(se=se.real,lcl=real.lcl,ucl=real.ucl))   
-    }   
-#  Setup subset or get unique records 
-	#reals=reals[do.call(order, reals),]
+  }   
+  
+#   
+# merge data if TRUE 
   if(merge)reals=cbind(data,reals)
 	rownames(reals)=NULL
+	
+# return values	
 	if(vcv)
 		return(list(real=reals,vcv=vcv.real))
     else

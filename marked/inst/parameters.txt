@@ -51,5 +51,5 @@ MVMS	pi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"id,stratum"	id	FALSE
 MSLD	S	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
 MSLD	r	0	-1	1	Triang	logit	~1	TRUE	FALSE	FALSE	0	TRUE	FALSE			FALSE	FALSE
 MSLD	p	1	0	0	Triang	logit	~1	TRUE	FALSE	TRUE	0	FALSE	FALSE			FALSE	FALSE
-MSLD	Psi	0	-1	0	Triang	mlogit	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
+MSLD	Psi	0	-1	0	Triang	log	~1	TRUE	TRUE	FALSE	0	FALSE	FALSE	"stratum,tostratum"	"id,occ,stratum"	FALSE	FALSE
 

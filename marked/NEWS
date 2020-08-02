@@ -1,5 +1,9 @@
-marked 1.2.7  7 January 2020
+marked 1.2.7  2 August 2020
 -----------------
+NEW
+
+* added argument unit_scale to crm, predict.crm, and compute_real. If set to FALSE the real value estimates for variables like Phi and S are based on the interval length rather than on unit scale (e.g., annual if unit is 1 year).
+
 CHANGES
 
 * ddl argument to crm can now be specified as "external" and the ddl should be "save"d to a file "ddl.rda". This can save memory when the ddl gets extremely large (eg 6GB) and it is used with a model that simplifies the ddl. 
@@ -9,6 +13,12 @@ CHANGES
 * in crm.wrapper previously it was passing entire model for the initial values if a saved external model was found. Now it only passes the beta list and it removes the model once it is loaded and beta list extracted. This can save a considerable amount of memory if the saved model is large.
 
 * global_decode will use the matrices in results$mat even if the model is not HMM. MSLD model outputs dmat and gamma from TMB code but does not have HMM functions for HMMLikelihood.  Many of the TMB functions may be moved in this direction.
+
+* crmlist_fromfiles was changed so it saves name of external file including .rda so it is consistent with crm.wrapper when external=TRUE
+
+* patched code in cjs.initial such that if glm fails that the initial values are set to 0 rather than failing altogether
+
+* fixed wrong or unclear text in the help files for process.data crm thanks to comments from Jason Baker.
 
 
 marked 1.2.6  7 December 2019

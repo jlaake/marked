@@ -228,7 +228,7 @@ crmlist_fromfiles=function(filenames=NULL,external=TRUE)
 			gc()
 		}
 	    else
-		   model.list[[m]]=m
+		   model.list[[m]]=paste(m,".rda",sep="")
 	}
 	model.list$model.table=mtable
 	class(model.list)="crmlist"

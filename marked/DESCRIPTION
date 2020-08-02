@@ -1,6 +1,6 @@
 Package: marked
 Version: 1.2.7
-Date: 2020-01-07
+Date: 2020-08-02
 Title: Mark-Recapture Analysis for Survival and Abundance Estimation
 Author: Jeff Laake <jefflaake@gmail.com>, Devin Johnson
     <devin.johnson@noaa.gov>, Paul Conn <paul.conn@noaa.gov>, example for simHMM
@@ -43,5 +43,5 @@ SystemRequirements: ADMB version 11 <http://admb-project.org/> for
 LazyLoad: yes
 VignetteBuilder: knitr
 License: GPL (>=2)
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
 Encoding: UTF-8

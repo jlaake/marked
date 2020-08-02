@@ -44,6 +44,7 @@ crm(
   prior.list = NULL,
   useHess = FALSE,
   optimize = TRUE,
+  unit_scale = TRUE,
   ...
 )
 }
@@ -66,8 +67,8 @@ type; if NULL it is created}
 \item{design.parameters}{Specification of any grouping variables for design
 data for each parameter}
 
-\item{initial}{Optional vector of initial values for beta parameters; if
-named from previous analysis only relevant values are used}
+\item{initial}{Optional list of named vectors of initial values for beta parameters or a previously
+run model}
 
 \item{groups}{Vector of names factor variables for creating groups}
 
@@ -134,11 +135,12 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{optimize}{if TRUE, optimizes to get parameter estimates; set to FALSE to extract estimates of ADREPORTed values only}
 
+\item{unit_scale}{default TRUE, if FALSE any time scaled parameter (e.g. Phi,S) is scaled when computing real value such that it represents the length of the interval rather than a unit interval}
+
 \item{...}{optional arguments passed to js or cjs and optimx}
 }
 \value{
-crm model object with class=("crm",submodel) where submodel is
-either "CJS" or "JS" at present.
+crm model object with class=("crm",submodel), eg "CJS".
 }
 \description{
 Fits user specified models to some types of capture-recapture wholly in R
@@ -153,21 +155,20 @@ and package them into a list (processed data),2)
 \code{\link{make.design.data}} to create the design data for each parameter
 in the specified model, 3) \code{\link{create.dm}} to create the design
 matrices for each parameter based on the formula provided for each
-parameter, 4) call to the specific function for model fitting (now either
-\code{\link{cjs_admb}} or \code{\link{js}}). As with \code{mark} the calling
+parameter, 4) call to the specific function for model fitting. As with \code{mark} the calling
 arguments for \code{crm} are a compilation of the calling arguments for each
 of the functions it calls (with some arguments renamed to avoid conflicts).
 expects to find a value for \code{ddl}.  Likewise, if the data have not been
 processed, then \code{ddl} should be NULL.  This dual calling structure
-allows either a single call approach for each model or alternatively for the
-data to be processed and the design data (\code{ddl}) to be created once and
+allows either a single call approach for each model or alternatively the preferred method
+where the data area processed and the design data (\code{ddl}) created once and
 then a whole series of models can be analyzed without repeating those steps.
 
 There are some optional arguments that can be used to set initial values and
 control other aspects of the optimization.  The optimization is done with
 the R package/function \code{optimx} and the arguments \code{method} and
 \code{hessian} are described with the help for that function.  In addition,
-any arguments not matching those for \code{cjs_admb} (the ...) are passed to
+any arguments not matching those in the fitting functions (eg \code{cjs_admb}) are passed to
 \code{optimx} allowing any of the other parameters to be set.  If you set
 \code{debug=TRUE}, then at each function evaluation (\code{\link{cjs.lnl}}
 the current values of the parameters and -2*log-likelihood value are output.
@@ -180,18 +181,14 @@ use other link functions. Following the notation of MARK, the parameters in
 the link space are referred to as \code{beta} and those in the actual
 parameter space of \code{Phi} and \code{p} as reals.
 
-Initial values can be set in 2 ways.  To set a baseline intial value for the
-intercept of \code{Phi} \code{p} set those arguments to some real value in
-the open interval (0,1). All non-intercept beta parameters are set to zero.
-Alternatively, you can specify in \code{initial}, a vector of initial values
-for the beta parameters (on the logit scale).  This is most easily done by
-passing the results from a previous model run using the result list element
-\code{beta} as described below.  The code will match the names of the
+Initial values can be set in 2 ways.  1) Define a list of named vectors with 
+the initial beta parameter values (eg logit link) in \code{initial}. 
+The names of the vectors should be the parameter names in the model. Any unspecified
+values are set to 0. 2) Specify a previously run model for initial. The code will match the names of the
 current design matrix to the names in \code{beta} and use the appropriate
-initial values. Any non-specified values are set to 0.  If there are no
-names associated with the \code{initial} vector then they are simply used in
-the specified order. If you do not specify initial values it is equivalent
-to setting \code{Phi} and \code{p} to 0.5.
+initial values. Any non-specified values are set to 0.  If no value is specified for initial,
+all beta are started at a value of 0, except for the CJS model which attempts to use a glm approach to
+setting starting values. If the glm fails then they are set to 0.
 
 If you have a study with unequal time intervals between capture occasions,
 then these can be specified with the argument \code{time.intervals}.
@@ -292,16 +289,24 @@ contains in your .First or .Rprofile so it runs each time you start R.
 \examples{
 {
 # cormack-jolly-seber model
-# fit 3 cjs models with crm
+# fit cjs models with crm
 data(dipper)
 dipper.proc=process.data(dipper,model="cjs",begin.time=1)
 dipper.ddl=make.design.data(dipper.proc)
 mod.Phit.pt=crm(dipper.proc,dipper.ddl,
    model.parameters=list(Phi=list(formula=~time),p=list(formula=~time)))
 mod.Phit.pt
-mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,groups="sex",
+mod.Phisex.pdot=crm(dipper.proc,dipper.ddl,
    model.parameters=list(Phi=list(formula=~sex),p=list(formula=~1)))
 mod.Phisex.pdot
+# demo initial value setting
+mod.Phisex.ptime=crm(dipper.proc,dipper.ddl,
+   model.parameters=list(Phi=list(formula=~sex),p=list(formula=~time)),initial=mod.Phit.pt)
+mod.Phisex.ptime
+mod.Phisex.ptime=crm(dipper.proc,dipper.ddl,
+   model.parameters=list(Phi=list(formula=~sex),p=list(formula=~time)),initial=list(Phi=0,p=0))
+mod.Phisex.ptime
+
 ## if you have RMark installed you can use this code to run the same models 
 ## by removing the comment symbol
 #library(RMark)
@@ -318,6 +323,22 @@ mod.Phisex.pdot
 # jolly seber model
 crm(dipper,model="js",groups="sex",
    model.parameters=list(pent=list(formula=~sex),N=list(formula=~sex)),accumulate=FALSE)
+# examples showing use of unit.scale
+dipper.proc=process.data(dipper,model="cjs",begin.time=1,time.intervals=c(.1,.2,.3,.4,.5,.6))
+dipper.ddl=make.design.data(dipper.proc)
+mod.Phit.p=crm(dipper.proc,dipper.ddl,
+               model.parameters=list(Phi=list(formula=~time),p=list(formula=~1)),
+               hessian=TRUE,unit_scale=TRUE)
+mod.Phit.p
+mod.Phit.p$results$reals
+
+dipper.proc=process.data(dipper,model="cjs",begin.time=1,time.intervals=c(.1,.2,.3,.4,.5,.6))
+dipper.ddl=make.design.data(dipper.proc)
+mod.Phit.p=crm(dipper.proc,dipper.ddl,
+               model.parameters=list(Phi=list(formula=~time),p=list(formula=~1)),
+               hessian=TRUE,unit_scale=FALSE)
+mod.Phit.p
+mod.Phit.p$results$reals
 \donttest{
 # This example is excluded from testing to reduce package check time
 # if you have RMark installed you can use this code to run the same models 

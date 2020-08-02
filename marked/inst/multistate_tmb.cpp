@@ -15,17 +15,20 @@ Type objective_function<Type>::operator() ()
   DATA_MATRIX(tint);                          // time interval between occasions for each history-interval
   
   DATA_INTEGER(nrowphi);                      // number of rows in the simplified design matrix for Phi - survival
-                                              // last column in each design matrix is either -1 (estimated) or a fixed value
+  // last column in each design matrix is either -1 (estimated) or a fixed value
   DATA_MATRIX(phidm);                         // design matrix for Phi
   DATA_VECTOR(phifix);                        // phi fixed values
   DATA_IVECTOR(phiindex);                     // phi indices
   DATA_INTEGER(phi_nre);                      // number of random effects for phi
   DATA_INTEGER(phi_krand);                    // number of columns in phi random effect DM
   DATA_MATRIX(phi_randDM);                    // phi random effect DM
+  DATA_IVECTOR(phi_randDM_i);                 // phi random DM indices
   DATA_IMATRIX(phi_randIndex);                // phi random effect indices for DM
+  DATA_IVECTOR(phi_randIndex_i);              // phi random effect index indices
   DATA_IVECTOR(phi_counts);                   // count of phi random effect indices by id
   DATA_IMATRIX(phi_idIndex);                  // phi random effect indices by id
-  
+  DATA_IVECTOR(phi_idIndex_i);                // phi random effect id index indices
+ 
   DATA_INTEGER(nrowp);                        // number of rows in the simplified design matrix for p
   DATA_MATRIX(pdm);                           // design matrix for p
   DATA_VECTOR(pfix);                          // p fixed values
@@ -33,9 +36,12 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(p_nre);                        // number of random effects for p
   DATA_INTEGER(p_krand);                      // number of columns in p random effect DM
   DATA_MATRIX(p_randDM);                      // p random effect DM
-  DATA_IMATRIX(p_randIndex);                  // p random effect indices for DM; index into phi_u
+  DATA_IVECTOR(p_randDM_i);                   // p random DM indices
+  DATA_IMATRIX(p_randIndex);                  // p random effect indices for DM; index into p_u
+  DATA_IVECTOR(p_randIndex_i);                // p random effect index indices
   DATA_IVECTOR(p_counts);                     // count of p random effect indices by id
   DATA_IMATRIX(p_idIndex);                    // p random effect indices by id; index into u_phi to construct phi_u
+  DATA_IVECTOR(p_idIndex_i);                  // p random effect id index indices
   
   DATA_INTEGER(nrowpsi);                      // number of rows in the simplified design matrix for psi
   DATA_MATRIX(psidm);                         // design matrix for psi
@@ -44,9 +50,12 @@ Type objective_function<Type>::operator() ()
   DATA_INTEGER(psi_nre);                      // number of random effects for psi
   DATA_INTEGER(psi_krand);                    // number of columns in psi random effect DM
   DATA_MATRIX(psi_randDM);                    // psi random effect DM
+  DATA_IVECTOR(psi_randDM_i);                 // psi random DM indices
   DATA_IMATRIX(psi_randIndex);                // psi random effect indices for DM; index into phi_u
+  DATA_IVECTOR(psi_randIndex_i);              // psi random effect index indices
   DATA_IVECTOR(psi_counts);                   // count of psi random effect indices by id
   DATA_IMATRIX(psi_idIndex);                  // psi random effect indices by id; index into u_phi to construct phi_u
+  DATA_IVECTOR(psi_idIndex_i);                // psi random effect id index indices
   
   DATA_INTEGER(getreals);                     // if 1, report reals and std errors
   
@@ -122,7 +131,7 @@ Type objective_function<Type>::operator() ()
         phi_u(0)=0;
       else
         for(j=0;j<=phi_counts(i-1)-1;j++)
-          phi_u(j)=u_phi(phi_idIndex(i-1,j)-1);
+          phi_u(j)=u_phi(phi_idIndex(phi_idIndex_i(i-1)-1,j)-1);
     } 
     
     if(npcounts >0)                           // if any random effects for p, copy values from u_p to p_u
@@ -131,7 +140,7 @@ Type objective_function<Type>::operator() ()
         p_u(0)=0;
       else
         for(j=0;j<=p_counts(i-1)-1;j++)
-          p_u(j)=u_p(p_idIndex(i-1,j)-1);
+          p_u(j)=u_p(p_idIndex(p_idIndex_i(i-1)-1,j)-1);
     } 
     
     if(npsicounts >0)                           // if any random effects for psi, copy values from u_psi to psi_u
@@ -140,7 +149,7 @@ Type objective_function<Type>::operator() ()
         psi_u(0)=0;
       else
         for(j=0;j<=psi_counts(i-1)-1;j++)
-          psi_u(j)=u_psi(psi_idIndex(i-1,j)-1);
+          psi_u(j)=u_psi(psi_idIndex(psi_idIndex_i(i-1)-1,j)-1);
     } 
     //  compute phi and p values for the individual   
     bindex=(i-1)*nrows;                               // initialize indices into index values for the ith history
@@ -158,8 +167,8 @@ Type objective_function<Type>::operator() ()
             if(p_counts(i-1) > 0)	                        // random portion of mean if any
             {
               for(L=1;L<=p_krand;L++)
-                if(p_randIndex(i2-1,L-1)>0)
-                  mu+=p_randDM(i2-1,L-1)*p_u(p_randIndex(i2-1,L-1)-1)*exp(log_sigma_p(L-1));
+                if(p_randIndex(p_randIndex_i(i2-1)-1,L-1)>0)
+                  mu+=p_randDM(p_randDM_i(i2-1)-1,L-1)*p_u(p_randIndex(p_randIndex_i(i2-1)-1,L-1)-1)*exp(log_sigma_p(L-1));
             }	           
             p((j-1)*nS+k-1)=1/(1+exp(-(uniquep(idx)+mu)));
         }
@@ -173,8 +182,8 @@ Type objective_function<Type>::operator() ()
             if(phi_counts(i-1) > 0)	                        // random portion of mean if any
             {
               for(L=1;L<=phi_krand;L++)
-                if(phi_randIndex(i2-1,L-1)>0)
-                  mu+=phi_randDM(i2-1,L-1)*phi_u(phi_randIndex(i2-1,L-1)-1)*exp(log_sigma_phi(L-1));
+                if(phi_randIndex(phi_randIndex_i(i2-1)-1,L-1)>0)
+                  mu+=phi_randDM(phi_randDM_i(i2-1)-1,L-1)*phi_u(phi_randIndex(phi_randIndex_i(i2-1)-1,L-1)-1)*exp(log_sigma_phi(L-1));
             }	
             phi((j-1)*nS+k-1)=pow(1/(1+exp(-(uniquephi(idx)+mu))),tint(i-1,j-1)); 
         }
@@ -192,8 +201,8 @@ Type objective_function<Type>::operator() ()
               if(psi_counts(i-1) > 0)	                 
               {
                 for(L=1;L<=psi_krand;L++)
-                  if(psi_randIndex(i2-1,L-1)>0)
-                    mu+=psi_randDM(i2-1,L-1)*psi_u(psi_randIndex(i2-1,L-1)-1)*exp(log_sigma_psi(L-1));
+                  if(psi_randIndex(psi_randIndex_i(i2-1)-1,L-1)>0)
+                    mu+=psi_randDM(psi_randDM_i(i2-1)-1,L-1)*psi_u(psi_randIndex(psi_randIndex_i(i2-1)-1,L-1)-1)*exp(log_sigma_psi(L-1));
               }       
               psi(j-1,k-1,k2-1)=exp(uniquepsi(idx)+mu);
           }	

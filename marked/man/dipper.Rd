@@ -4,10 +4,12 @@
 \name{dipper}
 \alias{dipper}
 \title{Dipper capture-recapture data}
-\format{A data frame with 294 observations on the following 2 variables.
+\format{
+A data frame with 294 observations on the following 2 variables.
 \describe{ \item{ch}{a character vector containing the encounter history of
 each bird} \item{sex}{the sex of the bird: a factor with levels
-\code{Female} \code{Male}} }}
+\code{Female} \code{Male}} }
+}
 \source{
 Lebreton, J.-D., K. P. Burnham, J. Clobert, and D. R. Anderson.
 1992. Modeling survival and testing biological hypotheses using marked

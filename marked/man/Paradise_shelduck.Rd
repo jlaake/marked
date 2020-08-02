@@ -5,12 +5,14 @@
 \alias{Paradise_shelduck}
 \alias{ps}
 \title{Mulstistate Live-Dead Paradise Shelduck Data}
-\format{A data frame with 1704 observations of 3 variables 
+\format{
+A data frame with 1704 observations of 3 variables 
  \describe{ 
  \item{ch}{a character vector containing the capture history (each is 2 character positions LD) for 6 occasions}
  \item{freq}{capture history frequency} 
  \item{sex}{Male or Female}
- }}
+ }
+}
 \description{
 Paradise shelduck recapture and recovery data in multistrata provided by Richard Barker and Gary White.
 }
