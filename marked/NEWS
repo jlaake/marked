@@ -2,7 +2,7 @@ marked 1.2.7  2 August 2020
 -----------------
 NEW
 
-* added argument unit_scale to crm, predict.crm, and compute_real. If set to FALSE the real value estimates for variables like Phi and S are based on the interval length rather than on unit scale (e.g., annual if unit is 1 year).
+* added argument unit_scale to crm, predict.crm, and compute_real. If set to FALSE the real value estimates for variables like Phi and S are based on the interval length rather than on unit scale (e.g., annual if unit is 1 year). See ?crm for an example.
 
 CHANGES
 
@@ -16,9 +16,11 @@ CHANGES
 
 * crmlist_fromfiles was changed so it saves name of external file including .rda so it is consistent with crm.wrapper when external=TRUE
 
-* patched code in cjs.initial such that if glm fails that the initial values are set to 0 rather than failing altogether
+* patched code in cjs.initial such that if glm fails that the initial values are set to 0 rather than the code failing altogether. Thanks to Jason Baker for bringing this to my attention.
 
-* fixed wrong or unclear text in the help files for process.data crm thanks to comments from Jason Baker.
+* fixed wrong or unclear text in the help files for process.data and crm thanks to comments from Jason Baker.
+
+* MSLD and MSCJS models using TMB were changed to use simplification indexing for random effects as done for fixed effects. This is a transparent change to user.
 
 
 marked 1.2.6  7 December 2019
