@@ -80,7 +80,7 @@ setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 	  if(file.exists(dynlib(tpl))) unlink(dynlib(tpl))
 		file.copy(file.path(sdir,paste(tpl,".cpp",sep="")),file.path(getwd(),paste(tpl,".cpp",sep="")),overwrite=TRUE)
 		if(debug)message("compiling and linking TMB program\n")
-		compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
+		compile(paste(tpl,".cpp",sep=""), flags = '-Wno-ignored-attributes') # Compile the C++ file
 		dyn.load(dynlib(tpl))                           # Dynamically link the C++ code
 	} else
 	{
@@ -99,14 +99,14 @@ setup_tmb=function(tpl,clean=FALSE,debug=FALSE)
 			if(tpl%in%names(getLoadedDLLs()))dyn.unload(dynlib(tpl))
 			if(file.exists(dynlib(tpl))) unlink(dynlib(tpl))
 	    if(debug)message("compiling and linking TMB program\n")
-		  compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
-			dyn.load(dynlib(tpl))          # Dynamically link the C++ code
+	    compile(paste(tpl,".cpp",sep=""), flags = '-Wno-ignored-attributes') # Compile the C++ file
+	    dyn.load(dynlib(tpl))          # Dynamically link the C++ code
 		} else
 			{
 				if(file.exists(paste(tpl,".o",sep=""))) unlink(paste(tpl,".o",sep=""))
 			  if(debug)message("compiling and linking TMB program\n")
-				compile(paste(tpl,".cpp",sep=""))               # Compile the C++ file
-				if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
+			  compile(paste(tpl,".cpp",sep=""), flags = '-Wno-ignored-attributes') # Compile the C++ file
+			  if(is.loaded(dynlib(tpl)))dyn.unload(dynlib(tpl))
 				dyn.load(dynlib(tpl))          # Dynamically link the C++ code
 			}	
 	  }
