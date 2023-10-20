@@ -1,6 +1,6 @@
 citHeader("To cite package 'marked' in publications use:")
 
-citEntry(entry="article",	
+bibentry(bibtype="article",	
          author = c(person("J.L.","Laake"),
                     person("D.S.","Johnson"),
                     person("P.B.","Conn")),

@@ -22,7 +22,7 @@ js.hessian=function(model)
 							object$data$nocc,object$data$freq,chunk_size=model$options$chunk_size))
 		} else
 			model_data=model$model_data
-		scale=set.scale(names(object$model.parameters),model_data,1)
+		scale=set_scale(names(object$model.parameters),model_data,1)
 	} else
 #   Called within model fitting code
 	{
@@ -32,7 +32,7 @@ js.hessian=function(model)
 #nobstot number of unique caught at least once by group if applicable
 	markedfunc_eval=0
 	jsenv=environment()
-	vcv=numDeriv::hessian(js.lnl,scale.par(model$beta,scale),model_data=model$model_data,nobstot=model$ns,jsenv=jsenv)
+	vcv=numDeriv::hessian(js.lnl,scale_par(model$beta,scale),model_data=model$model_data,nobstot=model$ns,jsenv=jsenv)
 	vcv=try(solvecov(vcv))
 	if(is(vcv,"try-error"))
 	{

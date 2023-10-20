@@ -105,9 +105,9 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    }else
 	   model_data.save=NULL
 #  Scale the design matrices and parameters with either input scale or computed scale
-   scale=set.scale(names(dml),model_data,scale)
-   model_data=scale.dm(model_data,scale)
-   par=scale.par(par,scale)
+   scale=set_scale(names(dml),model_data,scale)
+   model_data=scale_dm(model_data,scale)
+   par=scale_par(par,scale)
 #  call optim to find mles with js.lnl which gives -log-likelihood
    markedfunc_eval=0
    jsenv=environment()
@@ -129,7 +129,7 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 	   convergence=mod$convcode
 	   lnl=mod$value
    }
-   js.beta=unscale.par(par,scale)
+   js.beta=unscale_par(par,scale)
 #  Compute additional likelihood component so lnl matches output for MARK; not needed for optimization
    if(is.null(model_data.save))
    {

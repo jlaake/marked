@@ -51,10 +51,13 @@ mod3
 #                                           p=list(formula=~time)),hessian=TRUE,use.admb=TRUE)
 #mod4
 #file.remove("mvms.std")
-# uses TMB with mvmscjs
-mod5=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
-                                           p=list(formula=~time)),hessian=TRUE,use.tmb=TRUE)
-mod5
+# uses TMB with mvmscjs -remove comment to use
+#mod5=crm(ms3,ms3.ddl,model.parameters=list(Psi=list(formula=~-1+stratum:tostratum),
+#                                          p=list(formula=~time)),hessian=TRUE,use.tmb=TRUE)
+#mod5
+unlink("*.cpp")
+unlink("*.o")
+unlink("symbols.rds")
 }
 }
 \keyword{datasets}

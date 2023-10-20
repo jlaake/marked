@@ -17,8 +17,8 @@
 #' @param initial A named list (Phi,p). If null and imat is not null, uses cjs.initial to create initial values; otherwise assigns 0
 #' @param imat A list of vectors and matrices constructed by \code{\link{process.ch}} from the capture history data
 #' @section Prior distribution specification:
-#'        The prior distributions used in \code{probitCJS} are multivatiate normal with mean mu a
-#'        and variance tau*(X'X)^{-1} on the probit scale for fixed effects. The matrix X is 
+#'        The prior distributions used in \code{probitCJS} are multivariate normal with mean mu a
+#'        and variance tau*(X'X)^(-1) on the probit scale for fixed effects. The matrix X is 
 #'        the design matrix based on the model specification (located in \code{parameters$Phi$formula} and
 #'        \code{parameters$p$formula} respectively). Priors for random effect variance 
 #'        components are inverse gamma with shape parameter 'a' and rate parameter 'b'. Currently, 

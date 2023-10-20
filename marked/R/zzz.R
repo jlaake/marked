@@ -23,7 +23,7 @@ print.marked.version <- function()
 }
 #' @import methods
 ### setMethods for Matrix package
-setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), function(x,y) callNextMethod())
+#setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), function(x,y) callNextMethod())
 
 # setMethod(f="%*%", signature=signature(x="ddiMatrix", y="dtTMatrix"), function(x,y) Matrix:::diagCspprod(as(x, "CsparseMatrix"), y))
 # setMethod(f=crossprod, signature=signature(x="dgeMatrix", y="dtTMatrix"), 

@@ -128,6 +128,9 @@ if(require(expm))
     barplot(t(tag_status(4,mod3$results$mat$gamma[1,1,,])),beside=TRUE,
                    ylim=c(0,1),main="mod3")
 }
+unlink("*.cpp")
+unlink("*.o")
+unlink("symbols.rds")
 }
 }
 \keyword{datasets}

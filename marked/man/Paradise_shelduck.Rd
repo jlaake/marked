@@ -61,11 +61,15 @@ p.1=list(formula=~-1+stratum:time)
 r.1=list(formula=~-1+time+sex+site)
 Psi.1=list(formula=~-1+stratum:tostratum)
 # Run top model from paper but only for observable strata
-crmmod=crm(ps_dp,ddl,model.parameters=list(S=S.1,p=p.1,r=r.1,Psi=Psi.1),
-              method="nlminb",hessian=TRUE)
+# commented out to prevent dll being built - problem with CRAN check
+#crmmod=crm(ps_dp,ddl,model.parameters=list(S=S.1,p=p.1,r=r.1,Psi=Psi.1),
+#              method="nlminb",hessian=TRUE)
 # Run top model from paper for all strata using simulated annealing (commented out)
 # crmmod=crm(ps_dp,ddl,model.parameters=list(S=S.1,p=p.1,r=r.1,Psi=Psi.1),
 #                     method="SANN",itnmax=6e6,hessian=TRUE)
+unlink("*.cpp")
+unlink("*.o")
+unlink("symbols.rds")
 }
 }
 \references{

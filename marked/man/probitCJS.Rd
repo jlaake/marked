@@ -49,8 +49,8 @@ and draws a sample from the posterior distribution using a Gibbs sampler.
 }
 \section{Prior distribution specification}{
 
-       The prior distributions used in \code{probitCJS} are multivatiate normal with mean mu a
-       and variance tau*(X'X)^{-1} on the probit scale for fixed effects. The matrix X is 
+       The prior distributions used in \code{probitCJS} are multivariate normal with mean mu a
+       and variance tau*(X'X)^(-1) on the probit scale for fixed effects. The matrix X is 
        the design matrix based on the model specification (located in \code{parameters$Phi$formula} and
        \code{parameters$p$formula} respectively). Priors for random effect variance 
        components are inverse gamma with shape parameter 'a' and rate parameter 'b'. Currently, 

@@ -1,3 +1,9 @@
+marked 1.2.8  13 October 2023
+-----------------
+CHANGES
+
+*Minor changes to function names, examples etc to fix warnings/notes on CRAN check.
+
 marked 1.2.7  2 August 2020
 -----------------
 NEW
@@ -138,9 +144,7 @@ marked 1.1.12 26 September 2016
 -----------------
 NEW FEATURES
 
-* parameter pi has been added to MVMSCJS model. Including pi allows the initial 
-state at release to be uncertain. See ?initiate_pi for more details. initiate_pi is called
-from make.design.data for MVMSCJS models so existing code can be run without modification.
+* parameter pi has been added to MVMSCJS model. Including pi allows the initial state at release to be uncertain. See ?initiate_pi for more details. initiate_pi is called from make.design.data for MVMSCJS models so existing code can be run without modification.
 
 * modified mscjs and multistate.tpl file so fixed parameters can be included and design
 matrix can be simplified to speed up execution times.
@@ -158,8 +162,7 @@ CHANGES
 * pull request merged from Brett McClintock for probit.cjs. Changes Bayesian updating.
 
 * all values for a parameter can be fixed (e.g., S=1 or delta=1). This used to cause problems but now if
-all values are fixed, a message is given that the formula is being reset to ~0 which has no parameters. Likewise,
-if formula is ~0 and not all values are fixed then an error is generated. 
+all values are fixed, a message is given that the formula is being reset to ~0 which has no parameters. Likewise, if formula is ~0 and not all values are fixed then an error is generated. 
 
 * The above change made it possible to allow an mvmscjs specification in which all states are certain. In which case,
 no design data is generated for the delta parameter.
@@ -372,9 +375,7 @@ CHANGES
 * added code to crm to assure accumulate=FALSE with any random effect; individual random effect is supposed to work with weights but
 tpl and cpp code do not appear to be working together; with accumulate=FALSE, results are correct.
 
-* added code to make.design.data which handles subtract.stratum for Psi type parameters and cjs type parameters which sets value to 1
-when cohort=time. Those changes are for fitHMM code which uses subtract.stratum in MS models and uses first occasion seen parameters to 
-make the hmm code work with JS and CJS type models.
+* added code to make.design.data which handles subtract.stratum for Psi type parameters and cjs type parameters which sets value to 1 when cohort=time. Those changes are for fitHMM code which uses subtract.stratum in MS models and uses first occasion seen parameters to make the hmm code work with JS and CJS type models.
 
 * made changes to cjs and js for changes in optimx package
 
@@ -402,9 +403,7 @@ marked 1.0.8 23 Jan 2013
 
 NEW FEATURES
 
-* added multi-state model with fixed effects using admb. This is done with new function mscjs and multistate.tpl. 
-It required changes to create.dm,create.dmdf, crm, process.ch and process.data. The code is functional but currently only 
-returns admb object that will not work with other generic functions, so crm will not allow it currently.
+* added multi-state model with fixed effects using admb. This is done with new function mscjs and multistate.tpl. It required changes to create.dm,create.dmdf, crm, process.ch and process.data. The code is functional but currently only returns admb object that will not work with other generic functions, so crm will not allow it currently.
 
 
 marked 1.0.7 14 Dec 2012)

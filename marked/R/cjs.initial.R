@@ -23,7 +23,7 @@ cjs.initial=function(dml,imat,link="logit")
 	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3]))-1
 	x=dml[["p"]]$fe[dd.indices,]
   initial.p<-try(coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link))))
-  if(class(initial.p)=="try-error")initial.p=rep(0,ncol(x))
+  if(is(initial.p,"try-error"))initial.p=rep(0,ncol(x))
 	initial.p[is.na(initial.p)]=0
 	if(any(initial.p < -5 | initial.p > 5))initial.p=rep(0,length(initial.p))
 	#   Create initial values for S using bernoulli glm assuming p=1
@@ -36,7 +36,7 @@ cjs.initial=function(dml,imat,link="logit")
 	dd.indices=unlist(apply(ind,1,function(x) (x[1]-1)*(ncol(imat$chmat)-1)+x[2]:x[3]))-1
 	x=dml[["Phi"]]$fe[dd.indices,]
 	initial.Phi<-try(coef(glm.fit(x,dep.values,weights=wts,family=binomial(link=link))))
-	if(class(initial.Phi)=="try-error")initial.Phi=rep(0,ncol(x))
+	if(is(initial.Phi,"try-error"))initial.Phi=rep(0,ncol(x))
 	initial.Phi[is.na(initial.Phi)]=0
 	if(any(initial.Phi < -5 | initial.Phi > 5))initial.Phi=rep(0,length(initial.Phi))
 	return(list(Phi=initial.Phi,p=initial.p))

@@ -398,8 +398,8 @@ mvmscjs=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,in
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
 	scale=1
-	scale=set.scale(names(dml),model_data,scale)
-	model_data=scale.dm(model_data,scale)
+	scale=set_scale(names(dml),model_data,scale)
+	model_data=scale_dm(model_data,scale)
 	# setup tpl to be multistate.tpl 
 	if(!re)
 		tpl="mvms"
@@ -586,7 +586,7 @@ mvmscjs=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,in
 	convergence=attr(xx,"status")
 	if(is.null(convergence))convergence=0
 	res=read_admb(tpl)
-	beta=list(unscale.par(c(res$coeflist$phibeta,res$coeflist$pbeta,res$coeflist$dbeta,res$coeflist$psibeta,res$coeflist$pi),scale))
+	beta=list(unscale_par(c(res$coeflist$phibeta,res$coeflist$pbeta,res$coeflist$dbeta,res$coeflist$psibeta,res$coeflist$pi),scale))
 	parnames=names(unlist(beta))
 	fixed.npar=length(unlist(beta))
 	if(!is.null(res$hes))

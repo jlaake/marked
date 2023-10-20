@@ -2,23 +2,23 @@
 #' 
 #' Set scale, scale dm and scale/unscale parameters 
 #'
-#' @usage 	set.scale(pars,model_data,scale)
+#' @usage 	set_scale(pars,model_data,scale)
 #'  
-#'	        scale.dm(model_data,scale)
+#'	        scale_dm(model_data,scale)
 #' 
-#'          scale.par(par,scale)
+#'          scale_par(par,scale)
 #'
-#'          unscale.par(par,scale)
+#'          unscale_par(par,scale)
 #' 
-#' @aliases set.scale scale.dm scale.par unscale.par
+#' @aliases set_scale scale_dm scale_par unscale_par
 #' @param pars character vector of parameter names
 #' @param par list of parameter vectors or vector of parameter values
 #' @param scale list or vector of parameter scales
 #' @param model_data list of data/design objects
-#' @return List of scale values for set.scale, model.data with scaled design matrices for scale.dm,
-#' vector of scaled parameter values for scale.par, and list of unscaled parameter vectors for unscale.par
+#' @return List of scale values for set_scale, model.data with scaled design matrices for scale_dm,
+#' vector of scaled parameter values for scale_par, and list of unscaled parameter vectors for unscale_par
 #' @author Jeff Laake 
-set.scale=function(pars,model_data,scale)
+set_scale=function(pars,model_data,scale)
 {
 	scale.list=vector("list",length(pars))
 	names(scale.list)=pars
@@ -52,7 +52,7 @@ set.scale=function(pars,model_data,scale)
 	   names(scale.list[[parx]])=colnames(model_data[[paste(parx,".dm",sep="")]])	
 	return(scale.list)
 }
-scale.dm=function(model_data,scale)
+scale_dm=function(model_data,scale)
 {
 	pars=names(scale)
 	for(parx in pars)
@@ -60,14 +60,14 @@ scale.dm=function(model_data,scale)
 		model_data[[paste(parx,".dm",sep="")]]=t(t(as.matrix(model_data[[paste(parx,".dm",sep="")]]))/scale[[parx]])
     return(model_data)
 }
-scale.par=function(par,scale)
+scale_par=function(par,scale)
 {
 	pars=names(scale)
 	for(parx in pars)
 		par[[parx]]=par[[parx]]*scale[[parx]]
     return(unlist(par,use.names=FALSE))
 }
-unscale.par=function(par,scale)
+unscale_par=function(par,scale)
 {
 	if(!is.list(par))
 	{

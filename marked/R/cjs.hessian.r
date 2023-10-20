@@ -22,7 +22,7 @@ cjs.hessian=function(model)
 							                          object$data$nocc,object$data$freq,chunk_size=model$options$chunk_size))
 		} else
 			model_data=model$model_data
-		scale=set.scale(names(object$model.parameters),model_data,1)
+		scale=set_scale(names(object$model.parameters),model_data,1)
 	} else
 #   Called within model fitting code
 	{
@@ -31,7 +31,7 @@ cjs.hessian=function(model)
 	}
 	markedfunc_eval=0
 	cjsenv=environment()
-	vcv=numDeriv::hessian(cjs.lnl,scale.par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
+	vcv=numDeriv::hessian(cjs.lnl,scale_par(model$beta,scale),model_data=model_data,cjsenv=cjsenv)
 	vcv=try(solvecov(vcv))
 	if(is(vcv,"try-error"))
 	{

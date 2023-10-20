@@ -402,8 +402,8 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 #  scaling set to 1 but call needed to change dm to regular matrix; if scale used at some point
 #  need to scale hessian after fitting
 	scale=1
-	scale=set.scale(names(dml),model_data,scale)
-	model_data=scale.dm(model_data,scale)
+	scale=set_scale(names(dml),model_data,scale)
+	model_data=scale_dm(model_data,scale)
 	# setup tpl to be multistate.tpl 
 	if(re)
 		stop("random effect portion not completed for this model")
@@ -592,7 +592,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
 	  else
 	    par_summary<-sdreport(f,getReportCovariance=vcv)
 	res=mod
-	cjs.beta=unscale.par(par,scale)
+	cjs.beta=unscale_par(par,scale)
 	if(hessian) 
 	{
 	  if(debug)message("Inverting hessian...")
@@ -631,7 +631,7 @@ mvmscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRU
                       chunk_size=chunk_size,itnmax=itnmax,control=control))		
 
 	
-	# beta=list(unscale.par(c(res$coeflist$phibeta,res$coeflist$pbeta,res$coeflist$dbeta,res$coeflist$psibeta,res$coeflist$pi),scale))
+	# beta=list(unscale_par(c(res$coeflist$phibeta,res$coeflist$pbeta,res$coeflist$dbeta,res$coeflist$psibeta,res$coeflist$pi),scale))
 	# parnames=names(unlist(beta))
 	# fixed.npar=length(unlist(beta))
 	# if(!is.null(res$hes))

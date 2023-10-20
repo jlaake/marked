@@ -113,17 +113,17 @@
 #' be included.
 #' 
 #' To use ADMB (use.admb=TRUE), you need to install: 1) the R package R2admb, 2) ADMB, and 3) a C++ compiler (I recommend gcc compiler).
-#' The following are instructions for installation with Windows. For other operating systems see (\url{http://www.admb-project.org/downloads}) and 
-#'  (\url{http://www.admb-project.org/tools/gcc/}). 
+#' The following are instructions for installation with Windows. For other operating systems see (\url{http://www.admb-project.org/}) and 
+#'  (\url{https://www.admb-project.org/tools/gcc/}). 
 #' 
 #' Windows Instructions:
 #'
 #'  1) In R use install.packages function or choose Packages/Install Packages from menu and select R2admb.
 #' 
-#'  2) Install ADMB 11: \url{http://www.admb-project.org/downloads}. Put the software in C:/admb to
+#'  2) Install ADMB 11: \url{https://www.admb-project.org/downloads/}. Put the software in C:/admb to
 #'  avoid problems with spaces in directory name and for the function below to work.
 #' 
-#'  3) Install gcc compiler from: \url{http://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
+#'  3) Install gcc compiler from: \url{https://www.admb-project.org/tools/gcc/}. Put in c:/MinGW
 #' 
 #' I use the following function in R to setup R2admb to access ADMB rather than adding to my path so gcc versions
 #' with Rtools don't conflict. 
@@ -198,7 +198,11 @@
 #'              rnorm sd nlminb
 #' @importFrom utils capture.output flush.console
 #'             read.delim
+#' @importFrom methods as is
 #' @import data.table
+#' @import bookdown
+#' @import kableExtra
+#' @import knitr
 #' @return crm model object with class=("crm",submodel), eg "CJS".
 #' @author Jeff Laake
 #' @export crm

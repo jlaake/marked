@@ -120,14 +120,14 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
    if(use.admb)scale=1
-   scale=set.scale(names(dml),model_data,scale)
-   model_data=scale.dm(model_data,scale)
+   scale=set_scale(names(dml),model_data,scale)
+   model_data=scale_dm(model_data,scale)
 ########################################################################
 #   CJS with R
 ########################################################################
    if(!use.admb)
    {
-	   par=scale.par(par,scale)
+	   par=scale_par(par,scale)
 	   #  Call optimx to find mles with cjs.lnl which gives -log-likelihood
 	   message("Starting optimization for ",length(par)," parameters...")
 	   #flush.console()
@@ -151,7 +151,7 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
 		   lnl=mod$value
 	   }
 	   #  Rescale parameter vector 
-	   cjs.beta=unscale.par(par,scale)
+	   cjs.beta=unscale_par(par,scale)
        # Create results list 
 	   res=list(beta=cjs.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(cjs.beta,length)),
 			   convergence=convergence,optim.details=mod,
@@ -284,7 +284,7 @@ cjs_admb=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=N
 	   convergence=attr(xx,"status")
 	   if(is.null(convergence))convergence=0
 	   res=read_admb(tpl)
-	   cjs.beta.fixed=unscale.par(c(res$coeflist$phi_beta,res$coeflist$p_beta),scale)
+	   cjs.beta.fixed=unscale_par(c(res$coeflist$phi_beta,res$coeflist$p_beta),scale)
 	   cjs.beta.random=c(Phi=res$coeflist$phi_sigma,p=res$coeflist$p_sigma)
 	   if(!is.null(cjs.beta.random))names(cjs.beta.random)=paste("sigma_",names(cjs.beta.random),sep="")
 	   cjs.beta=c(cjs.beta.fixed,cjs.beta.random)

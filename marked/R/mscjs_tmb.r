@@ -110,8 +110,8 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 #   p.links=which(p.links==1)
 #  Scale the design matrices and parameters with either input scale or computed scale
 	scale=1
-	scale=set.scale(names(dml),model_data,scale)
-	model_data=scale.dm(model_data,scale)
+	scale=set_scale(names(dml),model_data,scale)
+	model_data=scale_dm(model_data,scale)
 	setup_tmb("multistate_tmb",clean=clean)
 
 	# S design matrix
@@ -293,7 +293,7 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 	if(p_relist$nre+phi_relist$nre+psi_relist$nre>0)
 	{
 	 	par=par_summary$par.fixed[1:fixed.npar]
-		cjs.beta.fixed=unscale.par(par,scale)
+		cjs.beta.fixed=unscale_par(par,scale)
 		cjs.beta.sigma=par_summary$par.fixed[-(1:fixed.npar)]
 		sigma=NULL
 		if(phi_relist$krand>0)
@@ -318,7 +318,7 @@ mscjs_tmb=function(x,ddl,fullddl,dml,model_data=NULL,parameters,accumulate=TRUE,
 		beta.vcv=par_summary$cov.fixed
 	}else
 	{	
-		cjs.beta=unscale.par(par,scale)
+		cjs.beta=unscale_par(par,scale)
 		if(hessian) 
 		{
 			message("Computing hessian...")
