@@ -42,6 +42,8 @@ SystemRequirements: ADMB version 11 <http://admb-project.org/> for
     use.admb=TRUE; see readme.txt
 LazyLoad: yes
 VignetteBuilder: knitr
+URL: https://github.com/jlaake/marked
+BugReports: https://github.com/jlaake/marked/issues
 License: GPL (>=2)
 RoxygenNote: 7.2.3
 Encoding: UTF-8
