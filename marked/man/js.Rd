@@ -20,7 +20,7 @@ js(
   refit,
   itnmax = NULL,
   control = NULL,
-  scale,
+  scaleDM = TRUE,
   ...
 )
 }
@@ -61,7 +61,7 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{control}{control string for optimization functions}
 
-\item{scale}{vector of scale values for parameters}
+\item{scaleDM}{if TRUE scales design matrix columns}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optimx} or \code{\link{js.lnl}}}
@@ -92,7 +92,7 @@ Be cautious with this function at present.  It does not include many checks
 to make sure values like fixed values will remain in the specified range of
 the data.  Normally this would not be a big problem but because
 \code{\link{js.lnl}} calls an external FORTRAN subroutine via
-\code{\link{cjs.lnl}}, if it gets a subscirpt out of bounds, it will cause R
+\code{\link{cjs.lnl}}, if it gets a subscript out of bounds, it will cause R
 to terminate.  So make sure to save your workspace frequently if you use
 this function in its current implementation.
 }

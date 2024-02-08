@@ -54,7 +54,7 @@ compute_real<-function(model,parameter,ddl=NULL,dml=NULL,unique=TRUE,vcv=FALSE,s
     merge=FALSE
   }
 # if ddl not specified return results stored in model
-  if(is.null(ddl))return(model$results$reals)
+  if(is.null(ddl))return(model$results$reals[[parameter]])
 # set mcmc value
   mcmc=ifelse(is(model,"mcmc"),TRUE,FALSE)
 # Setup data (ddl for a parameter) and extract dm; currently is either passed as an argument or stored in model

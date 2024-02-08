@@ -14,7 +14,7 @@
 #' to make sure values like fixed values will remain in the specified range of
 #' the data.  Normally this would not be a big problem but because
 #' \code{\link{js.lnl}} calls an external FORTRAN subroutine via
-#' \code{\link{cjs.lnl}}, if it gets a subscirpt out of bounds, it will cause R
+#' \code{\link{cjs.lnl}}, if it gets a subscript out of bounds, it will cause R
 #' to terminate.  So make sure to save your workspace frequently if you use
 #' this function in its current implementation.
 #' 
@@ -40,7 +40,7 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
-#' @param scale vector of scale values for parameters
+#' @param scaleDM if TRUE scales design matrix columns
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optimx} or \code{\link{js.lnl}}
 #' @return The resulting value of the function is a list with the class of
@@ -57,9 +57,9 @@
 #' for the analysis of capture-recapture experiments in open populations.
 #' Biometrics 52:860-873.
 js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method="BFGS",
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scaleDM=TRUE,...)
 {
-    nocc=x$nocc
+   nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
 #  so that the initial time interval can vary by animal; use x$intervals if none are in ddl$Phi
 	if(!is.null(ddl$Phi$time.interval))
@@ -96,17 +96,23 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    model_data=list(Phi.dm=dml$Phi$fe,p.dm=dml$p$fe,pent.dm=dml$pent$fe,N.dm=dml$N$fe,imat=imat,Phi.fixed=parameters$Phi$fixed,
 		   p.fixed=parameters$p$fixed,pent.fixed=parameters$pent$fixed,time.intervals=time.intervals)
 #  If data are to be accumulated based on ch and design matrices do so here;
+   model_data.save=model_data   
    if(accumulate)
    {
  	   cat("Accumulating capture histories based on design. This can take awhile.\n")
 	   flush.console()
-	   model_data.save=model_data   
 	   model_data=js.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
-   }else
-	   model_data.save=NULL
+   }
 #  Scale the design matrices and parameters with either input scale or computed scale
-   scale=set_scale(names(dml),model_data,scale)
-   model_data=scale_dm(model_data,scale)
+   if(!is(scaleDM,"logical")) 
+     stop("For js function scaleDM is logical. If FALSE, DM is not scaled\n")
+   if(!scaleDM) 
+     scale=lapply(initial,function(x) sapply(x,function(x) x=1))
+   else
+   {
+     scale=set_scale(names(dml),model_data,scale=NULL)
+     model_data=scale_dm(model_data,scale)
+   }
    par=scale_par(par,scale)
 #  call optim to find mles with js.lnl which gives -log-likelihood
    markedfunc_eval=0
@@ -131,19 +137,10 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
    }
    js.beta=unscale_par(par,scale)
 #  Compute additional likelihood component so lnl matches output for MARK; not needed for optimization
-   if(is.null(model_data.save))
-   {
-	   if(is.null(x$group))
-		   ui=tapply(model_data$imat$freq,list(model_data$imat$first),sum)
-	   else
-		   ui=tapply(model_data$imat$freq,list(model_data$imat$first,x$group),sum)	  
-   } else
-   {
-	   if(is.null(x$group))
+   if(is.null(x$group))
 		   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first),sum)
-	   else
+   else
 		   ui=tapply(model_data.save$imat$freq,list(model_data.save$imat$first,x$group),sum)
-   }
    lnl=lnl+sum(lfactorial(ui))
 #  create results list
    res=list(beta=js.beta,neg2lnl=2*lnl,AIC=2*lnl+2*sum(sapply(js.beta,length)),

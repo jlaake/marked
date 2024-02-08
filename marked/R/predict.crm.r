@@ -107,7 +107,10 @@ predict.crm <-function(object,newdata=NULL,ddl=NULL,parameter=NULL,unique=TRUE,v
 		if(is.null(ddl))
 		{
 			if(!is.null(object$results$reals)&!(se||vcv))
-				return(object$results$reals)
+			  if(is.null(parameter))
+				  return(object$results$reals)
+		    else
+		      return(object$results$reals[[parameter]])
 			else{
 				if(!is.null(object$results$model_data$ddl))
 					ddl=object$results$model_data$ddl

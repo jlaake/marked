@@ -168,7 +168,7 @@
 #' @param control control string for optimization functions
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations for optimization 
-#' @param scale vector of scale values for parameters
+#' @param scale if TRUE, scales design matrix
 #' @param run if TRUE, it runs model; otherwise if FALSE can be used to test model build components 
 #' @param burnin number of iterations for mcmc burnin; specified default not realistic for actual use
 #' @param iter number of iterations after burnin for mcmc (not realistic default)
@@ -290,7 +290,7 @@
 #' }
 crm <- function(data,ddl=NULL,begin.time=1,model="CJS",title="",model.parameters=list(),design.parameters=list(),initial=NULL,
  groups = NULL, time.intervals = NULL,debug=FALSE, method=NULL, hessian=FALSE, accumulate=TRUE,chunk_size=1e7, 
- control=list(),refit=1,itnmax=5000,scale=NULL,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
+ control=list(),refit=1,itnmax=5000,scale=TRUE,run=TRUE,burnin=100,iter=1000,use.admb=FALSE,use.tmb=FALSE,crossed=NULL,reml=FALSE,compile=FALSE,extra.args=NULL,
  strata.labels=NULL,clean=NULL,save.matrices=FALSE,simplify=FALSE,getreals=FALSE,real.ids=NULL,check=FALSE,prior=FALSE,prior.list=NULL,useHess=FALSE,optimize=TRUE,unit_scale=TRUE,...)
 {
 model=toupper(model)
@@ -530,7 +530,7 @@ if(model=="CJS")
 		          refit=refit,control=control,itnmax=itnmax,scale=scale,use.admb=use.admb,crossed=crossed,compile=compile,extra.args=extra.args,reml=reml,clean=clean,...)
 if(model=="JS")
     runmodel=js(data.proc,ddl,dml,parameters=parameters,initial=initial,method=method,hessian=hessian,debug=debug,accumulate=FALSE,chunk_size=chunk_size,
-		          refit=refit,control=control,itnmax=itnmax,scale=scale,...)
+		          refit=refit,control=control,itnmax=itnmax,scaleDM=scale,...)
 if(model=="MSCJS")
 	if(use.tmb)
 	{
