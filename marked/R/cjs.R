@@ -39,7 +39,7 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
-#' @param scale vector of scale values for parameters
+#' @param scale either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling
 #' @param use.admb if TRUE creates data file for admbcjs.tpl and runs admb optimizer
 #' @param crossed if TRUE it uses cjs.tpl or cjs_reml.tpl if reml=FALSE or TRUE respectively; if FALSE, then it uses cjsre which can use Gauss-Hermite integration
 #' @param compile if TRUE forces re-compilation of tpl file

@@ -40,7 +40,7 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
-#' @param scaleDM if TRUE scales design matrix columns
+#' @param scale either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling
 #' @param ... any remaining arguments are passed to additional parameters
 #' passed to \code{optimx} or \code{\link{js.lnl}}
 #' @return The resulting value of the function is a list with the class of
@@ -57,7 +57,7 @@
 #' for the analysis of capture-recapture experiments in open populations.
 #' Biometrics 52:860-873.
 js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,method="BFGS",
-            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scaleDM=TRUE,...)
+            hessian=FALSE,debug=FALSE,chunk_size=1e7,refit,itnmax=NULL,control=NULL,scale,...)
 {
    nocc=x$nocc
 #  Time intervals has been changed to a matrix (columns=intervals,rows=animals)
@@ -104,15 +104,8 @@ js=function(x,ddl,dml,model_data=NULL,parameters,accumulate=TRUE,initial=NULL,me
 	   model_data=js.accumulate(x,model_data,nocc,freq,chunk_size=chunk_size)
    }
 #  Scale the design matrices and parameters with either input scale or computed scale
-   if(!is(scaleDM,"logical")) 
-     stop("For js function scaleDM is logical. If FALSE, DM is not scaled\n")
-   if(!scaleDM) 
-     scale=lapply(initial,function(x) sapply(x,function(x) x=1))
-   else
-   {
-     scale=set_scale(names(dml),model_data,scale=NULL)
-     model_data=scale_dm(model_data,scale)
-   }
+   scale=set_scale(names(dml),model_data,scale=scale)
+   model_data=scale_dm(model_data,scale)
    par=scale_par(par,scale)
 #  call optim to find mles with js.lnl which gives -log-likelihood
    markedfunc_eval=0

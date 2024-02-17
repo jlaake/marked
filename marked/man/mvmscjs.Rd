@@ -68,7 +68,7 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{control}{control string for optimization functions}
 
-\item{scale}{vector of scale values for parameters}
+\item{scale}{either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling}
 
 \item{re}{if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer}
 

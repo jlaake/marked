@@ -20,7 +20,7 @@ js(
   refit,
   itnmax = NULL,
   control = NULL,
-  scaleDM = TRUE,
+  scale,
   ...
 )
 }
@@ -61,7 +61,7 @@ histories; amount used is 8*chunk_size/1e6 MB (default 80MB)}
 
 \item{control}{control string for optimization functions}
 
-\item{scaleDM}{if TRUE scales design matrix columns}
+\item{scale}{either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling}
 
 \item{...}{any remaining arguments are passed to additional parameters
 passed to \code{optimx} or \code{\link{js.lnl}}}

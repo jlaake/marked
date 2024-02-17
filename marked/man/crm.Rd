@@ -23,7 +23,7 @@ crm(
   control = list(),
   refit = 1,
   itnmax = 5000,
-  scale = TRUE,
+  scale = NULL,
   run = TRUE,
   burnin = 100,
   iter = 1000,
@@ -93,7 +93,7 @@ histories and design matrices; amount used is 8*chunk_size/1e6 MB (default
 
 \item{itnmax}{maximum number of iterations for optimization}
 
-\item{scale}{if TRUE, scales design matrix}
+\item{scale}{either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling}
 
 \item{run}{if TRUE, it runs model; otherwise if FALSE can be used to test model build components}
 

@@ -1,10 +1,8 @@
-marked 1.2.9  8 February 2024
+marked 1.2.9  16 February 2024
 -----------------
 CHANGES
 
-*Fixed js which was storing scaled design matrix in model_data rather than unscaled version. This caused differences in results between compute_real and predict.crm when a continuous covariate was specified. predict.crm uses compute_real but it creates the unscaled design matrices before calling compute_real whereas the latter used the incorrect stored versions. Not both will produce the same result.
-
-*The parameter scale in js was changed to scaleDM and is now either TRUE/FALSE and if set to FALSE it does not scale the design matrix. Eventually I'll change each of the routines and redefine scale in crm. For the time being these will differ.
+*Fixed js which was storing scaled design matrix in model_data rather than unscaled version. This caused differences in results between compute_real and predict.crm when a continuous covariate was specified. predict.crm uses compute_real but it creates the unscaled design matrices before calling compute_real whereas the latter used the incorrect stored versions. Now both will produce the same result. Documentation for scale parameter was changed to specify that setting scale=1 will produce an unscaled design matrix.
 
 *Modified predict.crm and compute_real to only return any specified parameter rather than all parameters from model object when ddl and dml are both NULL.
 

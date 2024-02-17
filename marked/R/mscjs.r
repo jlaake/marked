@@ -31,7 +31,7 @@
 #' @param refit non-zero entry to refit
 #' @param itnmax maximum number of iterations
 #' @param control control string for optimization functions
-#' @param scale vector of scale values for parameters
+#' @param scale either a list of vectors with values for each parameter properly named, 1 to not scale or NULL for automatic scaling
 #' @param re if TRUE creates random effect model admbcjsre.tpl and runs admb optimizer
 #' @param compile if TRUE forces re-compilation of tpl file
 #' @param extra.args optional character string that is passed to admb 
