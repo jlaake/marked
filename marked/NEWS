@@ -1,10 +1,14 @@
-marked 1.2.9  16 February 2024
+marked 1.2.9  24 June 2024
 -----------------
 CHANGES
 
 *Fixed js which was storing scaled design matrix in model_data rather than unscaled version. This caused differences in results between compute_real and predict.crm when a continuous covariate was specified. predict.crm uses compute_real but it creates the unscaled design matrices before calling compute_real whereas the latter used the incorrect stored versions. Now both will produce the same result. Documentation for scale parameter was changed to specify that setting scale=1 will produce an unscaled design matrix.
 
 *Modified predict.crm and compute_real to only return any specified parameter rather than all parameters from model object when ddl and dml are both NULL.
+
+*Fixed initiate_pi and mvms_design_data to use stringsAsFactors=TRUE in data.frame call that creates strata fields.  This was handled for other functions when default was changed in R but was missed in these functions.
+
+* Default method is now nlminb for crm.  It is a much more reliable optimization method than BFGS-B.
 
 marked 1.2.8  13 October 2023
 -----------------

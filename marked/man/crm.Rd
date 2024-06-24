@@ -16,7 +16,7 @@ crm(
   groups = NULL,
   time.intervals = NULL,
   debug = FALSE,
-  method = NULL,
+  method = "nlminb",
   hessian = FALSE,
   accumulate = TRUE,
   chunk_size = 1e+07,

@@ -98,16 +98,16 @@ mvms_design_data=function(df.states,df=NULL,transition=TRUE)
 		if(is.null(df))
 		{
 			if(ncol(df.states)>1)
-				return(cbind(data.frame(stratum=z),df.states))
+				return(cbind(data.frame(stratum=z,stringsAsFactors = TRUE),df.states))
 			else
-				return(cbind(data.frame(stratum=z)))
+				return(cbind(data.frame(stratum=z,stringsAsFactors = TRUE)))
 		} else
 		{
 			uncertain=sapply(df,function(x) length(grep("u",x))>0)
 			if(ncol(df.states)>1)
-				xx=cbind(data.frame(stratum=z),df.states)
+				xx=cbind(data.frame(stratum=z,stringsAsFactors = TRUE),df.states)
 			else
-				xx=cbind(data.frame(stratum=z))
+				xx=cbind(data.frame(stratum=z,stringsAsFactors = TRUE))
 			assignobs=function(x)
 			{
 				xx=as.list(as.data.frame(rbind(as.matrix(x)),stringsAsFactors=FALSE))

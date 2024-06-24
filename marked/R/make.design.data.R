@@ -287,7 +287,7 @@ set_pifix=function(id)
 		fix[!regexpr(match_value,strata)==-1]=NA
 		splitch=strsplit(first_value,"")[[1]]
 		whichu=grep("u",splitch,fixed=TRUE)
-		splitch[whichu]=strsplit(levels(ddl$pi$stratum)[1],"")[[1]][whichu]
+		splitch[whichu]=strsplit(levels(as.factor(ddl$pi$stratum))[1],"")[[1]][whichu]
 		fix[strata==paste(splitch,collapse="")]=1
 	}
 	return(fix)
