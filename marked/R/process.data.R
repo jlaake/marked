@@ -189,6 +189,9 @@ initial.ages=c(0),time.intervals=NULL,nocc=NULL,accumulate=TRUE,strata.labels=NU
 	      stop("\nstrata.labels must be specified for stratified models\n")
      if(model=="MSLD" & "1" %in%strata.labels)
         stop("1 cannot be used as a stratum label because it is reserved for a recovery in the MSLD model")
+     if(substr(model,1,4)=="MVMS")
+       if(any(sapply(strata.labels,function(x) any(x=="0"))))
+        stop("0 cannot be used as a stratum label in MVMS model")
    }
    if(model.list$IShmm)
    {
