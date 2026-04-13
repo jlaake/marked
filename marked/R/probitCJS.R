@@ -83,6 +83,7 @@
 #' }
 probitCJS = function(ddl,dml,parameters,design.parameters,burnin, iter, initial=NULL, imat=NULL){
   
+  message("This is a proof-of-concept MCMC analysis. It is not optimized for large data and/or iterations and may cause memory issues for R!\n")
   ### DEFINE SOME FUNCTIONS ###
   
   sample.z = function(id, mu.y, mu.z, yvec){
